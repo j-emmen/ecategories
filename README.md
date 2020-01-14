@@ -18,7 +18,7 @@ Some basic properties of some the stuff defined in ecats/basic-defs/.
 ecats/finite-limits/  
 Definitions of the main finite limits together with notation and bsic properties.
 
-ecats/functors/
+ecats/functors/  
 Definition, notation and basic properties of functors. 
 
 ecats/exact-completion/  
