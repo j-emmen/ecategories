@@ -17,7 +17,7 @@ ecats/basic-props/
 Some basic properties of some of the stuff defined in ecats/basic-defs/.
 
 ecats/finite-limits/  
-Definitions of the main finite limits together with notation and basic properties.
+Definitions of the main finite (weak) limits together with notation and basic properties.
 
 ecats/functors/  
 Definition, notation and basic properties of functors, exact and left coverinf functors and projective covers.
