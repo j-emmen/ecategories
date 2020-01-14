@@ -10,7 +10,7 @@ tt-basics/
 Basic stuff in type theory, including the definitions of setoid, extensional map etc.
 
 ecats/basic-defs/  
-Contains the definition of e-category in ecategory.agda, some notation for it,
+Definition of e-category in ecategory.agda, some notation for it,
 definitions of regular and exact e-category and definitions of some properties of arrrows in a category.
 
 ecats/basic-props/  
