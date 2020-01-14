@@ -3,7 +3,7 @@
 A little libray on e-categories with the aim of formalising the exact completion of a category with weak finite limits. Hence the material is mainly about regular and exact categories, exact and left covering functors and projective covers.
 
 The formalisation is in Agda 2.5.4.1 with the option `--without-K`.
-The formalisation requires two universes which are taken to be the first two universies in Agda's hierarchy.
+The formalisation requires two universes which are taken to be the first two universes in Agda's hierarchy.
 
 The repository contains:
 
