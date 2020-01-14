@@ -1,6 +1,6 @@
 # E-categories in Martin-Löf Type Theory
 
-A little libray on e-categories with the aim of formalising the exact completion of a category with weak finite limits. Hence the material is mainly about regular and exact categories, left covering functors and projective covers.
+A little libray on e-categories with the aim of formalising the exact completion of a category with weak finite limits. Hence the material is mainly about regular and exact categories, exact and left covering functors and projective covers.
 
 The formalisation is in Agda 2.5.4.1.
 
