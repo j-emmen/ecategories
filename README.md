@@ -2,6 +2,8 @@
 
 A little libray on e-categories with the aim of formalising the exact completion of a category with weak finite limits. Hence the material is mainly about regular and exact categories, left covering functors and projective covers.
 
+The formalisation is in Agda 2.5.4.1.
+
 The repository contains:
 
 tt-basics/  
