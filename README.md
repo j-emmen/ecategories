@@ -8,24 +8,24 @@ The formalisation requires two universes which are taken to be the first two uni
 
 The repository contains:
 
-tt-basics/
+tt-basics/  
 Basic stuff in type theory needed for the theory of e-categories, including the definitions of setoid, extensional map etc.
 
-ecats/basic-defs/
+ecats/basic-defs/  
 Definition of e-category in ecategory.agda, some notation for it,
 definitions of regular and exact e-category and definitions of some properties of arrrows in a category.
 
-ecats/basic-props/
+ecats/basic-props/  
 Some basic properties of some of the stuff defined in ecats/basic-defs/.
 
 ecats/finite-limits/
 Definitions of the main finite (weak) limits together with notation and basic properties.
 
-ecats/functors/
+ecats/functors/  
 Definition, notation and basic properties of functors, exact and left covering functors, projective covers and natural transformations. The file props/basic-props.agda contains a proof that two essentially equivalent e-categories are equivalent.
 
-ecats/constructions/
+ecats/constructions/  
 Definition of the e-category of small e-categories. Definition of the e-category of equivalence relations of an e-category, and proof that an exact e-category is a retract of its e-category of equivalence relations.
 
-ecats/exact-completion/
+ecats/exact-completion/  
 Construction of the exact completion, proof that it is exact and proof that the embedding is a projective cover. The proof of its universal property is to be completed.
