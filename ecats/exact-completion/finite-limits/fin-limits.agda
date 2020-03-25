@@ -7,7 +7,6 @@
 
 module ecats.exact-completion.finite-limits.fin-limits where
 
-open import setoids
 open import ecats.basic-defs.ecat-def&not
 open import ecats.finite-limits.defs.collective
 open import ecats.finite-limits.props.relations-among-limits

@@ -176,7 +176,7 @@ not A = implies A False
 
 -- type-theoretic equivalence relations
 
-record is-tt-eqrel {A : Set} (R : A → A → Set) : Set where
+record is-tt-eqrel {ℓ : Level} {A : Set ℓ} (R : A → A → Set ℓ) : Set ℓ where
   field
     refl : (x : A) → R x x
     sym : {x₁ x₂ : A} → R x₁ x₂ → R x₂ x₁

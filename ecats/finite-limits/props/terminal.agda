@@ -7,7 +7,6 @@
 
 module ecats.finite-limits.props.terminal where
 
-open import setoids
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.isomorphism

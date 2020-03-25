@@ -8,27 +8,13 @@
 module ecats.exact-completion.embedding.universal-property.def where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
-open import ecats.basic-props.image-fact
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-props.regular-ecat
 open import ecats.basic-defs.exact-ecat
 open import ecats.basic-props.exact-ecat
-open import ecats.finite-limits.all
+open import ecats.finite-limits.defs.collective
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
-open import ecats.functors.defs.projective-cover
-open import ecats.functors.props.projective-cover
 open import ecats.functors.defs.left-covering
-open import ecats.functors.props.left-covering
 open import ecats.exact-completion.construction
-open import ecats.exact-completion.finite-limits.fin-limits
-open import ecats.exact-completion.finite-limits.pullback
-open import ecats.exact-completion.exact.canonical-epi&mono
-open import ecats.exact-completion.exact.is-regular
-open import ecats.exact-completion.exact.is-exact
-open import ecats.exact-completion.embedding.is-projective-cover
 open import ecats.exact-completion.embedding.universal-property.eqrel-from-peq
 open import ecats.constructions.ecat-eqrel
 
@@ -37,37 +23,6 @@ open import ecats.constructions.ecat-eqrel
 -- Definition of the functor Ex ℂ [ hasfwl ] → 𝔼 induced by a left covering ℂ → 𝔼 into 𝔼 exact.
 
 module exact-compl-universal-def {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
-  {-private
-    module ℂ where
-      open ecategory ℂ public
-      open comm-shapes ℂ public
-      open pseudo-eq-rel-defs ℂ public
-      open finite-weak-limits ℂ public
-      --open can-epi&mono-defs hasfwl public
-    module fwlℂ where
-      open has-fin-weak-limits hasfwl public
-      open has-weak-pullbacks haswpb using (wpb-of) public
-      open has-weak-Wlimits (has-wpb⇒has-wW haswpb) public
-    module Exℂ where
-      open ecategory Ex ℂ [ hasfwl ] public
-      open comm-shapes Ex ℂ [ hasfwl ] public
-      open iso-defs Ex ℂ [ hasfwl ] public
-      open iso-transports Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
-      open image-fact-defs Ex ℂ [ hasfwl ] public
-      open image-fact-props Ex ℂ [ hasfwl ] public
-      open pullback-squares Ex ℂ [ hasfwl ] public
-      open pullback-props Ex ℂ [ hasfwl ] public
-      open projective-defs Ex ℂ [ hasfwl ] public
-    module imgExℂ = exact-compl-has-image-fact hasfwl
-    module imgof {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) = Exℂ.img-fact-of (imgExℂ.img-of f)
-    module Γex where
-      open efunctor-aux Γex ℂ [ hasfwl ] public
-      open is-projective-cover (excmpl-embed-is-projective-cover hasfwl) public
-      open projective-cover-props (exact-compl-has-fin-limits hasfwl) (excmpl-embed-is-projective-cover hasfwl) public
-      open is-left-covering (excmpl-embed-is-left-covering hasfwl) public
-      open left-covering-into-exact-props hasfwl (exact-compl-is-exact hasfwl) (excmpl-embed-is-left-covering hasfwl) public-}
 
   ↑ex : {𝔼 : ecategory} (exE : is-exact 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
            → efunctor Ex ℂ [ hasfwl ] 𝔼

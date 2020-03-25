@@ -7,32 +7,16 @@
 
 module ecats.exact-completion.embedding.universal-property.commut where
 
-open import tt-basics.id-type
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
-open import ecats.basic-props.image-fact
 open import ecats.basic-defs.regular-ecat
-open import ecats.basic-props.regular-ecat
 open import ecats.basic-defs.exact-ecat
 open import ecats.basic-props.exact-ecat
-open import ecats.finite-limits.all
+open import ecats.finite-limits.defs.collective
 open import ecats.constructions.ecat-eqrel
-open import ecats.constructions.ecat-ecats
 open import ecats.functors.defs.efunctor-d&n
-open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.natural-transformation
-open import ecats.functors.defs.projective-cover
-open import ecats.functors.props.projective-cover
 open import ecats.functors.defs.left-covering
-open import ecats.functors.props.left-covering
 open import ecats.exact-completion.construction
-open import ecats.exact-completion.finite-limits.fin-limits
-open import ecats.exact-completion.finite-limits.pullback
-open import ecats.exact-completion.exact.canonical-epi&mono
-open import ecats.exact-completion.exact.is-regular
-open import ecats.exact-completion.exact.is-exact
-open import ecats.exact-completion.embedding.is-projective-cover
 open import ecats.exact-completion.embedding.universal-property.def
 open import ecats.exact-completion.embedding.universal-property.eqrel-from-peq
 

@@ -10,27 +10,14 @@ module ecats.exact-completion.embedding.universal-property.eqrel-from-peq where
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.all-arrows
 open import ecats.basic-props.epi&mono
-open import ecats.basic-props.image-fact
 open import ecats.basic-defs.regular-ecat
 open import ecats.basic-props.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.exact-ecat
 open import ecats.finite-limits.all
 open import ecats.constructions.ecat-eqrel
 open import ecats.functors.defs.efunctor-d&n
-open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.natural-transformation
-open import ecats.functors.defs.projective-cover
-open import ecats.functors.props.projective-cover
 open import ecats.functors.defs.left-covering
-open import ecats.functors.props.left-covering
 open import ecats.exact-completion.construction
-open import ecats.exact-completion.finite-limits.fin-limits
-open import ecats.exact-completion.finite-limits.pullback
-open import ecats.exact-completion.exact.canonical-epi&mono
-open import ecats.exact-completion.exact.is-regular
-open import ecats.exact-completion.exact.is-exact
-open import ecats.exact-completion.embedding.is-projective-cover
 
 
 
@@ -40,34 +27,10 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
   private
     module ℂ where
       open ecategory ℂ public
-      open comm-shapes ℂ public
       open pseudo-eq-rel-defs ℂ public
       open finite-weak-limits ℂ public
-      --open can-epi&mono-defs hasfwl public
-    module fwlℂ where
-      open has-fin-weak-limits hasfwl public
-      open has-weak-pullbacks haswpb using (wpb-of) public
-      open has-weak-Wlimits (has-wpb⇒has-wW haswpb) public
-    module Exℂ where
-      open ecategory Ex ℂ [ hasfwl ] public
-      open comm-shapes Ex ℂ [ hasfwl ] public
-      open iso-defs Ex ℂ [ hasfwl ] public
-      open iso-transports Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
-      open image-fact-defs Ex ℂ [ hasfwl ] public
-      open image-fact-props Ex ℂ [ hasfwl ] public
-      open pullback-squares Ex ℂ [ hasfwl ] public
-      open pullback-props Ex ℂ [ hasfwl ] public
-      open projective-defs Ex ℂ [ hasfwl ] public
-    module rmfExℂ = exact-compl-has-repi-mono-fact hasfwl
-    module rmfof {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) = Exℂ.repi-mono-fact-of (rmfExℂ.rmf-of f)
-    module Γex where
-      open efunctor-aux Γex ℂ [ hasfwl ] public
-      open is-projective-cover (excmpl-embed-is-projective-cover hasfwl) public
-      open projective-cover-props (exact-compl-has-fin-limits hasfwl) (excmpl-embed-is-projective-cover hasfwl) public
-      open is-left-covering (excmpl-embed-is-left-covering hasfwl) public
-      --open left-covering-into-exact-props hasfwl (exact-compl-is-exact hasfwl) (excmpl-embed-is-left-covering hasfwl) public
+    module Exℂ = ecategory Ex ℂ [ hasfwl ]
+    module Γex = efunctor-aux Γex ℂ [ hasfwl ]
 
 
 
@@ -83,20 +46,14 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
         open epis&monos-defs 𝔼 public
         open epis&monos-props 𝔼 public
         open eq-rel-defs 𝔼 public
-        open image-fact-defs 𝔼 public
         open finite-limits-d&p 𝔼 public
       module r𝔼 where
         open is-regular reg𝔼 public
-        open has-terminal hastrm public
         open has-bin-products hasprd using (prd-of) public
-        open has-equalisers haseql using (eql-of) public
         open has-pullbacks haspb using (pb-of) public
-        open has-bows hasbw using (bw-of) public
         open regular-cat-props reg𝔼 public
       module F = efunctor-aux F
-      module lcF where
-        open is-left-covering lcovF public
-        open left-cov-relations-into-regular-cat F reg𝔼 public
+      module lcF = is-left-covering lcovF
 
     module eqrel-as-repi-mono-fact (A : ℂ.Peq) where
       private
@@ -365,41 +322,14 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
 
   module imgPeq-on-free  {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F) where
     private
-      module 𝔼 where
-        open ecategory 𝔼 public
-        --open comm-shapes 𝔼 public
-        open iso-defs 𝔼 public
-        --open iso-transports 𝔼 public
-        open epis&monos-defs 𝔼 public
-        open epis&monos-props 𝔼 public
-        open kernel-pairs-defs 𝔼 public
-        open pseudo-eq-rel-defs 𝔼 public
-        open eq-rel-defs 𝔼 public
-        open image-fact-defs 𝔼 public
-        open image-fact-props 𝔼 public
-        open binary-products 𝔼 public
-        --open pullback-squares 𝔼 public
-        --open pullback-props 𝔼 public
-        open projective-defs 𝔼 public
-        --open cat-of-equivalence-relations 𝔼 public
-        --open eqrel-mor-are-arrows public
-      module r𝔼 where
-        open regular-cat-d&p reg𝔼 public
-        open has-bin-products hasprd using (prd-of) public
-      {-module ER𝔼 where
-        open ecategory (EqRel 𝔼) public-}
-      module ER𝔼 where
-        open ecategory (EqRel 𝔼) public
-      module F where
-        open efunctor-aux F public
-        open is-left-covering Flcov public
-        --open left-covering-into-exact-props hasfwl 𝔼isex Flcov public
+      module 𝔼 = ecategory 𝔼
+      module F = efunctor-aux F
       module I = efunctor-aux (imgPeq reg𝔼 Flcov)
       module ΔER = efunctor-aux (ΔER 𝔼)
     
     module CRF% (A : Exℂ.Obj) where
       open eqrel-from-peq-via-left-covering reg𝔼 Flcov
-      open eqrel-as-repi-mono-fact A public -- hiding (eqrel/)
+      open eqrel-as-repi-mono-fact A public
       open rmfF% public
       open CF% public
 
@@ -499,84 +429,6 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
 -- end eqrel-from-peq-funct
 
 
-
-{-
-module check  {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
-              {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼)
-              {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
-              where
-  private
-    module ℂ where
-      open ecategory ℂ public
-      open comm-shapes ℂ public
-      open pseudo-eq-rel-defs ℂ public
-      open finite-weak-limits ℂ public
-      --open can-epi&mono-defs hasfwl public
-    module fwlℂ where
-      open has-fin-weak-limits hasfwl public
-      open has-weak-pullbacks haswpb using (wpb-of) public
-      open has-weak-Wlimits (has-wpb⇒has-wW haswpb) public
-    module Exℂ where
-      open ecategory Ex ℂ [ hasfwl ] public
-      open comm-shapes Ex ℂ [ hasfwl ] public
-      open iso-defs Ex ℂ [ hasfwl ] public
-      open iso-transports Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
-      open image-fact-defs Ex ℂ [ hasfwl ] public
-      open image-fact-props Ex ℂ [ hasfwl ] public
-      open pullback-squares Ex ℂ [ hasfwl ] public
-      open pullback-props Ex ℂ [ hasfwl ] public
-      open projective-defs Ex ℂ [ hasfwl ] public
-    module Γex where
-      open efunctor-aux Γex ℂ [ hasfwl ] public
-      open is-projective-cover (excmpl-embed-is-projective-cover hasfwl) public
-      open projective-cover-props (exact-compl-has-fin-limits hasfwl) (excmpl-embed-is-projective-cover hasfwl) public
-      open is-left-covering (excmpl-embed-is-left-covering hasfwl) public
-    module 𝔼 where
-      open ecategory 𝔼 public
-      open comm-shapes 𝔼 public
-      open epis&monos-defs 𝔼 public
-      open epis&monos-props 𝔼 public
-      open eq-rel-defs 𝔼 public
-      open image-fact-defs 𝔼 public
-      open finite-limits-d&p 𝔼 public
-    module r𝔼 where
-      open is-regular reg𝔼 public
-      open has-terminal hastrm public
-      open has-bin-products hasprd using (prd-of) public
-      open has-equalisers haseql using (eql-of) public
-      open has-pullbacks haspb using (pb-of) public
-      open has-bows hasbw using (bw-of) public
-      open regular-cat-props reg𝔼 public
-    module F = efunctor-aux F
-    module lcF where
-      open is-left-covering lcovF public
-      open left-cov-relations-into-regular-cat F reg𝔼 public
-    open eqrel-from-peq-funct hasfwl
-    module CRF% (A : ℂ.Peq) where
-      open eqrel-from-peq-via-left-covering reg𝔼 lcovF
-      open eqrel-as-repi-mono-fact A public
-      open rmfF% public
-      open CF% public
-    module ER𝔼 = ecategory (EqRel 𝔼)
-    I : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
-    I = imgPeq reg𝔼 lcovF
-    freesq : natural-iso (I ○ Γex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
-    freesq = imgPeq-sq reg𝔼 lcovF
-    module I = efunctor-aux I --(I ex𝔼.exact-is-regular Flcov)
-    --module Q = efunctor-aux (QER 𝔼isex)
-    module Δ = efunctor-aux (ΔER 𝔼)
-
-
-  check4 : (X : ℂ.Obj) → || ER𝔼.Hom (I.ₒ (Γex.ₒ X)) (efunctor.ₒ (I ○ (Γex ℂ [ hasfwl ])) X) ||
-  check4 X = {!ER𝔼.idar (I.ₒ (Γex.ₒ X))!}
-
-  check5 : (X : ℂ.Obj) → || ER𝔼.Hom (Δ.ₒ (F.ₒ X)) (efunctor.ₒ ((ΔER 𝔼) ○ F) X) ||
-  check5 X = ER𝔼.idar (Δ.ₒ (F.ₒ X))
-
--- end check
--}
 
 --   module imgPeq-def {𝔼 : ecategory} (𝔼isex : is-exact 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F) where
 --     private

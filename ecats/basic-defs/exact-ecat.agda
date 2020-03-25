@@ -7,7 +7,6 @@
 
 module ecats.basic-defs.exact-ecat where
 
-open import setoids
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.epi&mono
 open import ecats.basic-defs.eqv-rel

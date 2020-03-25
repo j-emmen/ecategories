@@ -7,7 +7,6 @@
 
 module ecats.finite-limits.defs.bin-product-is-weak where
 
-open import setoids
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
 open import ecats.finite-limits.defs.bin-weak-product

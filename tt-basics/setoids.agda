@@ -7,43 +7,32 @@
 
 module tt-basics.setoids where
 
+open import Agda.Primitive
 open import tt-basics.basics
 open import tt-basics.id-type
 
 
 -- Setoids
 
-record setoid : Set₁  where
+record setoid {ℓ : Level} : Set (lsuc ℓ)  where
  infix 2 _∼_
  field
-   object : Set
-   _∼_ : object → object → Set
+   object : Set ℓ
+   _∼_ : object → object → Set ℓ
    istteqrel : is-tt-eqrel _∼_
  open is-tt-eqrel istteqrel public
 
 infix 3 ||_||
 infix 2 <_>_~_
 
-||_|| : setoid → Set
+||_|| : {ℓ : Level} → setoid → Set ℓ
 || X || = setoid.object X
 
-<_>_~_ : (X : setoid) → || X || → || X || → Set
+<_>_~_ : {ℓ : Level} (X : setoid) → || X || → || X || → Set ℓ
 < X > a ~ b = setoid._∼_ X a b
 
-{-
-refl : (X : setoid) → (a : || X ||) →  < X > a ~ a
-refl X a =  (Refl (setoid.isEqrel X)) a 
 
-sym :  (X : setoid) → {a b : || X ||} → < X > a ~ b  →  < X > b ~ a 
-sym X {a} {b} p = impE (((Sym (setoid.isEqrel X)) a) b) p
-
-tra :  (X : setoid) → {a c : || X ||} → (b : || X ||)
-          → < X > a ~ b  → < X > b ~ c →  < X > a ~ c
-tra X {a} {c} b p q = impE (impE ((((Tra (setoid.isEqrel X)) a) b) c) p) q
--}
-
-
--- Free setoids
+-- Free setoids (small)
 
 ==istteqrel : (A : Set) → is-tt-eqrel (_==_ {A = A})
 ==istteqrel A = record
@@ -69,16 +58,16 @@ Freestd X = record
 
 -- Equational reasoning
 
-module setoid-aux (A : setoid) where
+module setoid-aux {ℓ : Level} (A : setoid {ℓ}) where
   open setoid A
 
   infix 2 _~_
   infixr 35 _⊙_
   infix 40 _ˢ
 
-  ob : Set
+  ob : Set ℓ
   ob = object
-  _~_ : ob → ob → Set
+  _~_ : ob → ob → Set ℓ
   _~_ = _∼_
     
   r : {a : ob} → a ∼ a
@@ -180,7 +169,7 @@ record is-ext-small-prop {X : setoid} (P : || X || → Set) : Set where
   field
     trnsp : {x x' : || X ||} → < X > x ~ x' → P x → P x'
 
-record is-ext-prop {X : setoid} (P : || X || → Set₁) : Set₁ where
+record is-ext-prop {ℓ ℓ' : Level} {X : setoid {ℓ}} (P : || X || → Set ℓ') : Set (ℓ ⊔ ℓ') where
   field
     trnsp : {x x' : || X ||} → < X > x ~ x' → P x → P x'
                  
