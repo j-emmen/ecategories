@@ -1,0 +1,32 @@
+
+-- disable the K axiom:
+
+{-# OPTIONS --without-K #-}
+
+-- Agda version 2.5.4.1
+
+module ecats.finite-limits.props.relations-among-weak-limits where
+
+open import ecats.basic-defs.ecat-def&not
+open import ecats.basic-defs.commut-shapes
+open import ecats.finite-limits.defs&not
+
+
+
+
+module relations-among-weak-limit-diagrams (ℂ : ecategory) where
+  open ecategory-aux ℂ
+  open comm-shapes ℂ
+  open bin-products ℂ
+  open finite-weak-limits ℂ
+  private
+    module sp = span/
+    module w×/of = wpullback-of-not
+    module ×of = product-of-not
+    module ×sp = bin-product
+    <>pf = ×of.<_,_>
+    Δpf = prod-Δ.Δ
+    syntax <>pf prdof f g = < f , g >[ prdof ]
+
+-- end relations-among-weak-limit-diagrams
+

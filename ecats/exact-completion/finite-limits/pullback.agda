@@ -12,7 +12,7 @@ open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.epi&mono
 open import ecats.basic-defs.eqv-rel
 open import ecats.finite-limits.defs.collective
-open import ecats.finite-limits.props.relations-among-limits
+open import ecats.finite-limits.props.relations-among-weak-limits
 open import ecats.finite-limits.d&n-pullback
 open import ecats.finite-limits.d&n-weak-pullback
 open import ecats.finite-limits.props.weak-pullback
@@ -91,7 +91,7 @@ module exact-compl-has-pullbacks-from-connected {ℂ : ecategory} (hasfwl : has-
         module h = ℂ.Peq-mor h
         module k = ℂ.Peq-mor k
         module pf = ℂ.Peq-mor-eq pf
-        module stdm = is-std-Ex-monic-sp Hisp.cmsp-is-std-Ex-monic
+        module stdm = is-Ex-monic-sp Hisp.cmsp-is-Ex-monic
         unlo : || ℂ.Hom U.Lo pbLo.wWOb ||
         unlo = pbLo.⟨ h.lo , pf.hty , k.lo ⟩[ pf.hty₀ ˢ , pf.hty₁ ˢ ]
         unhi₁₀ = π/₁.lo ∘ unlo ∘ U.%0    ~[ ass ⊙ ∘e r (pbLo.trl (pf.hty₀ ˢ) (pf.hty₁ ˢ)) ⊙ h.cmptb₀ ˢ ]
@@ -149,6 +149,4 @@ exact-compl-has-pullbacks hasfwl = ex-cmpl-pb
                                 where open exact-compl-has-pullbacks-from-connected hasfwl using (ex-cmpl-pb)
 
 exact-compl-qcart-has-pullbacks : {ℂ : ecategory} (qcart : is-quasi-cartesian ℂ) → has-pullbacks Ex ℂ qc[ qcart ]
-exact-compl-qcart-has-pullbacks qcart = exact-compl-has-pullbacks (qcart→has-fwl qcart)
---ex-cmpl-pb
-  --                              where open exact-compl-has-pullbacks-from-connected (qcart→has-fwl qcart) using (ex-cmpl-pb)
+exact-compl-qcart-has-pullbacks qcart = exact-compl-has-pullbacks (qcart→has-fwlim qcart)

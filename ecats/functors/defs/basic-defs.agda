@@ -88,16 +88,16 @@ record is-faithful {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
                   → F.ₐ f 𝔻.~ F.ₐ g → f ℂ.~ g
 
 
-record is-ess-surjective {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
+record is-ess-surjective-ob {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private
     module ℂ = ecategory ℂ
     module 𝔻 = ecategory 𝔻
     module F = efunctor F
   open iso-defs 𝔻
   field
-    esurj-ob : 𝔻.Obj → ℂ.Obj
-    esurj-ar : (Y : 𝔻.Obj) → || 𝔻.Hom (F.ₒ (esurj-ob Y)) Y ||
-    esurj-iso : (Y : 𝔻.Obj) → is-iso (esurj-ar Y)
+    ob : 𝔻.Obj → ℂ.Obj
+    ar : (Y : 𝔻.Obj) → || 𝔻.Hom (F.ₒ (ob Y)) Y ||
+    iso : (Y : 𝔻.Obj) → is-iso (ar Y)
 
 
 
@@ -111,4 +111,4 @@ record is-ess-equivalence {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set�
   field
     isfull : is-full F
     isfaithful : is-faithful F
-    isesurjobj : is-ess-surjective F
+    isesurjobj : is-ess-surjective-ob F

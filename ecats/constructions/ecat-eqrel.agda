@@ -317,11 +317,12 @@ module exact-is-retract-of-EqRel {𝔼 : ecategory} (𝔼isex : is-exact 𝔼) w
     where open ecategory-aux-only 𝔼
   iso : (A : 𝔼.Obj) → q.Ob (𝔼.free-eqrel A) 𝔼.≅ₒ A
   iso A = record
-        { a12 = uq-of-coeq-ar (idar-coeq A)
-        ; a21 = uq-of-coeq-ar⁻¹ (idar-coeq A) -- = q.ar (𝔼.free-eqrel A)
-        ; isop = uq-of-coeq-isopair (idar-coeq A)
+        { a12 = ar
+        ; a21 = ar⁻¹
+        ; isop = isopair
         }
         where open 𝔼.uniq-of-coequalisers (q.iscoeq (𝔼.free-eqrel A))
+              open same-rel-so-iso-coeq (idar-coeq A)
   module iso (A : 𝔼.Obj) = 𝔼._≅ₒ_ (iso A)
   nat : {A B : 𝔼.Obj} (f : || 𝔼.Hom A B ||) → iso.a12 B 𝔼.∘ QΔ𝔼.ₐ f 𝔼.~ f 𝔼.∘ iso.a12 A
   nat {A} {B} f = epi-pf (~proof

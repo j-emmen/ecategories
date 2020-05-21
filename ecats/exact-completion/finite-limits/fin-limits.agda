@@ -30,14 +30,14 @@ exact-compl-has-fin-products : {ℂ : ecategory} (hasfwl : has-fin-weak-limits �
 exact-compl-has-fin-products hasfwl = !and× (exact-compl-has-terminal hasfwl) (exact-compl-has-bin-products hasfwl)
 
 exact-compl-qcart-has-fin-products : {ℂ : ecategory} (qcart : is-quasi-cartesian ℂ) → has-fin-products Ex ℂ qc[ qcart ]
-exact-compl-qcart-has-fin-products qcart = exact-compl-has-fin-products (qcart→has-fwl qcart)
+exact-compl-qcart-has-fin-products qcart = exact-compl-has-fin-products (qcart→has-fwlim qcart)
 
 
 exact-compl-has-bows : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) → has-bows Ex ℂ [ hasfwl ]
 exact-compl-has-bows hasfwl = has-eql+pb⇒has-bw (exact-compl-has-equalisers hasfwl) (exact-compl-has-pullbacks hasfwl)
 
 exact-compl-qcart-has-bows : {ℂ : ecategory} (qcart : is-quasi-cartesian ℂ) → has-bows Ex ℂ qc[ qcart ]
-exact-compl-qcart-has-bows qcart = exact-compl-has-bows (qcart→has-fwl qcart)
+exact-compl-qcart-has-bows qcart = exact-compl-has-bows (qcart→has-fwlim qcart)
                      
 
 exact-compl-has-fin-limits : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) → has-fin-limits Ex ℂ [ hasfwl ]
@@ -50,4 +50,4 @@ exact-compl-has-fin-limits hasfwl = record { hastrm = hastrm
                                      where open has-fin-products (exact-compl-has-fin-products hasfwl)
 
 exact-compl-qcart-has-fin-limits : {ℂ : ecategory} (qcart : is-quasi-cartesian ℂ) → has-fin-limits Ex ℂ qc[ qcart ]
-exact-compl-qcart-has-fin-limits qcart = exact-compl-has-fin-limits (qcart→has-fwl qcart)
+exact-compl-qcart-has-fin-limits qcart = exact-compl-has-fin-limits (qcart→has-fwlim qcart)

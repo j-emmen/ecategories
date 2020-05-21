@@ -406,32 +406,24 @@ module epis&monos-props (ℂ : ecategory) where
             tr⁻¹ : h.⁻¹ ∘ f ~ q
             tr⁻¹ = ∘e (tr ˢ) r ⊙ ass ⊙ lidgg r h.iddom
 
-    uq-of-coeq-ar : {Q' : Obj} {q' : || Hom A Q' ||} (coeq' : is-coeq r₁ r₂ q')
-                        → || Hom Q Q' ||
-    uq-of-coeq-ar {q' = q'} coeq' = q.univ q' q'.eq
-                                 where module q' = is-coeq coeq'
-
-    uq-of-coeq-ar⁻¹ : {Q' : Obj} {q' : || Hom A Q' ||} (coeq' : is-coeq r₁ r₂ q')
-                        → || Hom Q' Q ||
-    uq-of-coeq-ar⁻¹ {q' = q'} coeq' = q'.univ q q.eq
-                                    where module q' = is-coeq coeq'
-
-    uq-of-coeq-isopair : {Q' : Obj} {q' : || Hom A Q' ||} (coeq' : is-coeq r₁ r₂ q')
-                                  → is-iso-pair (uq-of-coeq-ar coeq') (uq-of-coeq-ar⁻¹ coeq')
-    uq-of-coeq-isopair coeq' = record
-      { iddom = q.epi-pf (assˢ ⊙ ∘e (q.univ-eq q'.eq) r ⊙ lidgenˢ (q'.univ-eq q.eq))
-      ; idcod = q'.epi-pf (assˢ ⊙ ∘e (q'.univ-eq q.eq) r ⊙ lidgenˢ (q.univ-eq q'.eq))
-      }
-      where module q' = is-coeq coeq'
-
+    module same-rel-so-iso-coeq {Q' : Obj} {q' : || Hom A Q' ||} (coeq' : is-coeq r₁ r₂ q') where
+      module q' = is-coeq coeq'
+      ar : || Hom Q Q' ||
+      ar = q.univ q' q'.eq
+      ar⁻¹ : || Hom Q' Q ||
+      ar⁻¹ = q'.univ q q.eq
+      isopair : is-iso-pair ar ar⁻¹
+      isopair = record
+        { iddom = q.epi-pf (assˢ ⊙ ∘e (q.univ-eq q'.eq) r ⊙ lidgenˢ (q'.univ-eq q.eq))
+        ; idcod = q'.epi-pf (assˢ ⊙ ∘e (q'.univ-eq q.eq) r ⊙ lidgenˢ (q.univ-eq q'.eq))
+        }
+      ar-iso : is-iso ar
+      ar-iso = record
+        { invf = ar⁻¹
+        ; isisopair = isopair
+        }
+    -- end same-rel-so-iso-coeq
     
-    uq-of-coeq-ar-iso : {Q' : Obj} {q' : || Hom A Q' ||} (coeq' : is-coeq r₁ r₂ q')
-                            → is-iso (uq-of-coeq-ar coeq')
-    uq-of-coeq-ar-iso coeq' = record
-      { invf = uq-of-coeq-ar⁻¹ coeq'
-      ; isisopair = uq-of-coeq-isopair coeq'
-      }
-
     module iso-rel-so-iso-coeq {R' A' Q' : Obj} {r'₁ r'₂ : || Hom R' A' ||} {q' : || Hom A' Q' ||}
                                (coeq' : is-coeq r'₁ r'₂ q')
                                {rel : || Hom R R' ||} (rel-iso : is-iso rel) {base : || Hom A A' ||} (base-iso : is-iso base)
@@ -576,6 +568,12 @@ module epis&monos-props (ℂ : ecategory) where
     where open is-strong-epi strepi
           open is-monic
 
+
+  repi-is-reg-cov : {A B : Obj} {f : || Hom A B ||} → is-regular-epi f → reg-cover-of B
+  repi-is-reg-cov {A} {_} {f} frepi = record
+    { Ob = A
+    ; cov = record { ar = f ; is-repi = frepi }
+    }
 
   repi-is-epic : {A B : Obj} {f : || Hom A B ||} → is-regular-epi f → is-epic f
   repi-is-epic repi = uniq
@@ -794,12 +792,12 @@ module epis&monos-props (ℂ : ecategory) where
 
 
   kerp-of-repi-is-exact : {K A B : Obj} {kp₁ kp₂ : || Hom K A ||} {f : || Hom A B ||}
-                             → is-kernel-pair-of kp₁ kp₂ f → is-regular-epi f → is-exact-seq kp₁ kp₂ f
+                          {kpsqpf : f ∘ kp₁ ~ f ∘ kp₂}
+                             → is-pb-square (mksq (mksq/ kpsqpf)) → is-regular-epi f → is-exact-seq kp₁ kp₂ f
   kerp-of-repi-is-exact {kp₁ = kp₁} {kp₂} {f} iskp repi = record
-    { iscoeq = repi-is-coeq-of-ker-pair repi (mkpb-of ispb)
-    ; iskerpair = ispb
+    { iscoeq = repi-is-coeq-of-ker-pair repi (mkpb-of iskp)
+    ; iskerpair = iskp
     }
-    where open is-kernel-pair-of iskp
 
 
   -- Epis & monos & pullbacks
@@ -858,11 +856,11 @@ module epis&monos-props (ℂ : ecategory) where
 -}
 
   
-    module reg-covers-of-pb→epi-cover-of-pb (repi-pbof-stb : is-pbof-stable is-regular-epi)
-                                             {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
-                                             (pb : pullback-of a b)
-                                             (covA : reg-cover-of A)(covB : reg-cover-of B)
-                                             where
+    module pb-of-reg-covers-is-epi-cover-of-pb (repi-pbof-stb : is-pbof-stable is-regular-epi)
+                                               {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
+                                               (pb : pullback-of a b)
+                                               (covA : reg-cover-of A)(covB : reg-cover-of B)
+                                               where
       private
         module a×/b = pullback-of-not pb
         module cA = reg-cover-of covA
@@ -883,7 +881,7 @@ module epis&monos-props (ℂ : ecategory) where
       diagl-epi = epi-cmp (repi-is-epic cl-repi) (repi-is-epic cu'-repi) r
       diagr-epi : is-epic diagr
       diagr-epi = epi-cmp (repi-is-epic cu-repi) (repi-is-epic cl'-repi) r
-    -- end reg-covers-of-pb→epi-cover-of-pb
+    -- end pb-of-reg-covers-is-epi-cover-of-pb
 
 
     module reg-covers-of-bws→epi-cover-of-bw (repi-pbof-stb : is-pbof-stable is-regular-epi)

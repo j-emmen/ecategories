@@ -12,11 +12,6 @@ open import ecats.basic-defs.all-arrows
 open import ecats.basic-props.epi&mono
 open import ecats.basic-props.image-fact
 open import ecats.basic-defs.regular-ecat
-{-open import ecats.basic-defs.commut-shapes
-open import ecats.basic-defs.isomorphism
-open import ecats.basic-defs.epi&mono
-open import ecats.basic-defs.image-fact
-open import ecats.basic-defs.eqv-rel-}
 open import ecats.finite-limits.all
 open import ecats.exact-completion.construction
 open import ecats.exact-completion.finite-limits.fin-limits
@@ -49,20 +44,18 @@ module exact-compl-has-repi-mono-fact {ℂ : ecategory} (hasfwl : has-fin-weak-l
       module A = ℂ.Peq A
       module B = ℂ.Peq B
       module f = ℂ.Peq-mor f
-    module cmf = ℂ.canonical-mono B.peqover f.lo
-    module remOb = ℂ.Peq cmf.cmPeq
-    cmf-data : ℂ.is-std-Ex-monic cmf.cmar
-    cmf-data = cmf.cmar-is-std-Ex-monic
-    cref-data : ℂ.canonical-repi A.peqover remOb.peqover
-    cref-data = record
-      { crepi-hi = cmf-stdm.⟨ A.%0 , f.hi , A.%1 ⟩[ f.cmptb₀ ˢ , f.cmptb₁ ˢ ]
-      ; crepi-ax₀ = cmf-stdm.trl (f.cmptb₀ ˢ) (f.cmptb₁ ˢ)
-      ; crepi-ax₁ = cmf-stdm.trr (f.cmptb₀ ˢ) (f.cmptb₁ ˢ)
+    cmf-data : ℂ.canonical-mono f.lo B.peqover
+    cmf-data = ℂ.can-mono-over f.lo B.peqover
+    module cmf = ℂ.canonical-mono cmf-data
+    crf-data : ℂ.canonical-repi A.peqover cmf.Ob/
+    crf-data = record
+      { crepi-hi = cmf.⟨ A.%0 , f.hi , A.%1 ⟩[ f.cmptb₀ ˢ , f.cmptb₁ ˢ ]
+      ; crepi-ax₀ = cmf.trl (f.cmptb₀ ˢ) (f.cmptb₁ ˢ)
+      ; crepi-ax₁ = cmf.trr (f.cmptb₀ ˢ) (f.cmptb₁ ˢ)
       }
       where open ecategory-aux-only ℂ
-            module cmf-stdm = ℂ.is-std-Ex-monic cmf.cmar-is-std-Ex-monic
-    module cref = ℂ.canonical-repi cref-data
-    rem-tr : cmf.cmar Exℂ.∘ cref.ar Exℂ.~ f
+    module crf = ℂ.canonical-repi crf-data
+    rem-tr : cmf.ar Exℂ.∘ crf.ar Exℂ.~ f
     rem-tr = record { hty = B.ρ ℂ.∘ f.lo
                     ; hty₀ = ass ⊙ lidgg ridˢ B.ρ-ax₀
                     ; hty₁ = ass ⊙ lidgg r B.ρ-ax₁
@@ -72,22 +65,26 @@ module exact-compl-has-repi-mono-fact {ℂ : ecategory} (hasfwl : has-fin-weak-l
 
   rmf-of : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) → Exℂ.repi-mono-fact-of f
   rmf-of f = record
-         { M = cmf.cmar
-         ; C = cref.ar
+         { Ob = cmf.Ob
+         ; M = cmf.ar
+         ; C = crf.ar
          ; tr = rem-tr
          ; isrem = record
-                 { M-is-monic = cmf.cmar-is-monic
-                 ; C-is-repi = cref.can-repi-is-repi
+                 { M-is-monic = cmf.ar-monic
+                 ; C-is-repi = crf.can-repi-is-repi
                  }
          }
          where open rem-fact-objarr f
-  remM-is-std-Ex-monic : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) → ℂ.is-std-Ex-monic (Exℂ.repi-mono-fact-of.M (rmf-of f))
-  remM-is-std-Ex-monic f = cmf-data
-                         where open rem-fact-objarr f using (cmf-data)
+         
+  remM-is-can-monic : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||)
+                            → ℂ.canonical-mono (ℂ.Peq-mor.lo f) (ℂ.Peq.peqover B)
+  remM-is-can-monic f = cmf-data
+                      where open rem-fact-objarr f using (cmf-data)
+                         
   remC-is-can-repi : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||)
                         → ℂ.canonical-repi (ℂ.Peq.peqover A) (ℂ.Peq.peqover (Exℂ.repi-mono-fact-of.Ob (rmf-of f)))
-  remC-is-can-repi f = cref-data
-                     where open rem-fact-objarr f using (cref-data)
+  remC-is-can-repi f = crf-data
+                     where open rem-fact-objarr f using (crf-data)
 -- end exact-compl-has-repi-mono-fact
 
 
@@ -151,7 +148,8 @@ module exact-compl-has-pb-stable-repis {ℂ : ecategory} (hasfwl : has-fin-weak-
       module g*cre = ℂ.Peq-mor g×/cre.π/₁
       module rmf[g*cre] = rmfof (g×/cre.π/₁)
       module Ig*cre = ℂ.Peq rmf[g*cre].Ob
-      module Mg*cre = ℂ.is-std-Ex-monic (rmfExℂ.remM-is-std-Ex-monic g×/cre.π/₁)
+      module Mg*cre = ℂ.canonical-mono (rmfExℂ.remM-is-can-monic g×/cre.π/₁)
+      --ℂ.is-std-Ex-monic (rmfExℂ.remM-is-std-Ex-monic g×/cre.π/₁)
     Mg*cre-is-sepi : Exℂ.is-split-epi rmf[g*cre].M
     Mg*cre-is-sepi = record
       { rinv = record
@@ -225,14 +223,14 @@ module exact-compl-has-pb-stable-repis {ℂ : ecategory} (hasfwl : has-fin-weak-
       module Mf = Exℂ.is-iso Mf-iso
       trf⁻¹ = Mf.⁻¹ Exℂ.∘ f ~[ ∘e (rmff.tr ˢ) r ⊙ ass {_} {rmff.Ob} {B} ⊙ lidgg r Mf.iddom
               ] rmff.C
-      cref-sqpf : (Mf.⁻¹ Exℂ.∘ g) Exℂ.∘ g×/f.π/₁ Exℂ.~ rmff.C Exℂ.∘ g×/f.π/₂
-      cref-sqpf = ~proof (Mf.⁻¹ Exℂ.∘ g) Exℂ.∘ g×/f.π/₁               ~[ assˢ {_} {C} {B} ⊙ ∘e g×/f.×/sqpf r ] /
+      crf-sqpf : (Mf.⁻¹ Exℂ.∘ g) Exℂ.∘ g×/f.π/₁ Exℂ.~ rmff.C Exℂ.∘ g×/f.π/₂
+      crf-sqpf = ~proof (Mf.⁻¹ Exℂ.∘ g) Exℂ.∘ g×/f.π/₁               ~[ assˢ {_} {C} {B} ⊙ ∘e g×/f.×/sqpf r ] /
                          Mf.⁻¹ Exℂ.∘ f Exℂ.∘ g×/f.π/₂                ~[ ass {_} {A} {B} ⊙ ∘e r trf⁻¹ ]∎
                          rmff.C Exℂ.∘ g×/f.π/₂ ∎
-      cref-pb : Exℂ.is-pb-square (Exℂ.mksq {C} {A} (Exℂ.mksq/ cref-sqpf))
-      cref-pb = Exℂ.subsq-of-pb-is-pb g×/f cref-sqpf (ass {_} {B} {rmff.Ob} ⊙ lidgg r Mf.idcod) rmff.tr
+      crf-pb : Exℂ.is-pb-square (Exℂ.mksq {C} {A} (Exℂ.mksq/ crf-sqpf))
+      crf-pb = Exℂ.subsq-of-pb-is-pb g×/f crf-sqpf (ass {_} {B} {rmff.Ob} ⊙ lidgg r Mf.idcod) rmff.tr
     isrepi : Exℂ.is-regular-epi g×/f.π/₁
-    isrepi = pb-crepi-is-repi (Exℂ.mkpb-of cref-pb)
+    isrepi = pb-crepi-is-repi (Exℂ.mkpb-of crf-pb)
            where open pbsq-of-can-repi-is-repi (rmfExℂ.remC-is-can-repi f) (Mf.⁻¹ Exℂ.∘ g)
   -- end pbsq-of-repi-is-repi
 
@@ -261,10 +259,13 @@ exact-compl-is-regular {ℂ} hasfwl = record
 
 exact-compl-qcart-is-regular : {ℂ : ecategory} (qcart : is-quasi-cartesian ℂ)
                                   → is-regular Ex ℂ qc[ qcart ]
-exact-compl-qcart-is-regular qcart = exact-compl-is-regular (qcart→has-fwl qcart)
+exact-compl-qcart-is-regular qcart = exact-compl-is-regular (qcart→has-fwlim qcart)
 
 
 
+
+
+-- OLD STUFF
 
 -- module exact-compl-has-image-fact {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
 --   private

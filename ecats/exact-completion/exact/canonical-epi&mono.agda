@@ -17,7 +17,7 @@ open import ecats.finite-limits.defs.collective
 open import ecats.finite-limits.d&n-weak-pullback
 open import ecats.finite-limits.props.weak-pullback
 open import ecats.finite-limits.defs.weak-Wlimit
-open import ecats.finite-limits.props.relations-among-limits
+open import ecats.finite-limits.props.relations-among-weak-limits
 open import ecats.exact-completion.construction
 
 
@@ -387,50 +387,77 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
 
   -- standard & canonical monos
 
-  record is-std-Ex-monic {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) : Set₁ where
-    -- this is the universal property of weak limits of W diagrams
+{-
+  record is-Ex-monic {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) : Set₁ where
+    -- this is a bit less than the universal property of weak limits of W diagrams
     private
       module A = ℂ.Peq A
       module B = ℂ.Peq B
       module f = ℂ.Peq-mor f
     field
-      ⟨_,_,_⟩[_,_] : {X : ℂ.Obj} (gl : || ℂ.Hom X A.Lo ||) (gc : || ℂ.Hom X B.Hi ||) (gr : || ℂ.Hom X A.Lo ||)
-                          → f.lo ℂ.∘ gl ℂ.~ B.%0 ℂ.∘ gc → f.lo ℂ.∘ gr ℂ.~ B.%1 ℂ.∘ gc
+      ⟨_⟩[_,_] : {X : ℂ.Obj} {gl : || ℂ.Hom X A.Lo ||} {gr : || ℂ.Hom X A.Lo ||} (h : || ℂ.Hom X B.Hi ||)
+                          → f.lo ℂ.∘ gl ℂ.~ B.%0 ℂ.∘ h → f.lo ℂ.∘ gr ℂ.~ B.%1 ℂ.∘ h
                             → || ℂ.Hom X A.Hi ||
-      trl : {X : ℂ.Obj} {gl : || ℂ.Hom X A.Lo ||} {gc : || ℂ.Hom X B.Hi ||} {gr : || ℂ.Hom X A.Lo ||}
-              (pfl : f.lo ℂ.∘ gl ℂ.~ B.%0 ℂ.∘ gc) (pfr : f.lo ℂ.∘ gr ℂ.~ B.%1 ℂ.∘ gc)
-                → A.%0 ℂ.∘ ⟨ gl , gc , gr ⟩[ pfl , pfr ] ℂ.~ gl
-      trc : {X : ℂ.Obj} {gl : || ℂ.Hom X A.Lo ||} {gc : || ℂ.Hom X B.Hi ||} {gr : || ℂ.Hom X A.Lo ||}
-              (pfl : f.lo ℂ.∘ gl ℂ.~ B.%0 ℂ.∘ gc) (pfr : f.lo ℂ.∘ gr ℂ.~ B.%1 ℂ.∘ gc)
-                → f.hi ℂ.∘ ⟨ gl , gc , gr ⟩[ pfl , pfr ] ℂ.~ gc
-      trr : {X : ℂ.Obj} {gl : || ℂ.Hom X A.Lo ||} {gc : || ℂ.Hom X B.Hi ||} {gr : || ℂ.Hom X A.Lo ||}
-              (pfl : f.lo ℂ.∘ gl ℂ.~ B.%0 ℂ.∘ gc) (pfr : f.lo ℂ.∘ gr ℂ.~ B.%1 ℂ.∘ gc)
-                → A.%1 ℂ.∘ ⟨ gl , gc , gr ⟩[ pfl , pfr ] ℂ.~ gr
+      trl : {X : ℂ.Obj} {gl : || ℂ.Hom X A.Lo ||} {gr : || ℂ.Hom X A.Lo ||} {h : || ℂ.Hom X B.Hi ||}
+              (pfl : f.lo ℂ.∘ gl ℂ.~ B.%0 ℂ.∘ h) (pfr : f.lo ℂ.∘ gr ℂ.~ B.%1 ℂ.∘ h)
+                → A.%0 ℂ.∘ ⟨ h ⟩[ pfl , pfr ] ℂ.~ gl
+      trr : {X : ℂ.Obj} {gl : || ℂ.Hom X A.Lo ||} {gr : || ℂ.Hom X A.Lo ||} {h : || ℂ.Hom X B.Hi ||}
+              (pfl : f.lo ℂ.∘ gl ℂ.~ B.%0 ℂ.∘ h) (pfr : f.lo ℂ.∘ gr ℂ.~ B.%1 ℂ.∘ h)
+                → A.%1 ℂ.∘ ⟨ h ⟩[ pfl , pfr ] ℂ.~ gr
 
 
-  std-Ex-monic-is-monic : {A B : Exℂ.Obj} {f : || Exℂ.Hom A B ||}
-                         → is-std-Ex-monic f → Exℂ.is-monic f
-  std-Ex-monic-is-monic {A} {B} {f} isxm = record
+  Ex-monic-is-monic : {A B : Exℂ.Obj} {f : || Exℂ.Hom A B ||}
+                         → is-Ex-monic f → Exℂ.is-monic f
+  Ex-monic-is-monic {A} {B} {f} isxm = record
     { mono-pf = λ {_} {g} {g'} pf → record
-              { hty = ⟨ lo g , hty pf , lo g' ⟩[ hty₀ pf ˢ , hty₁ pf ˢ ]
+              { hty = ⟨ hty pf ⟩[ hty₀ pf ˢ , hty₁ pf ˢ ]
               ; hty₀ = trl (hty₀ pf ˢ) (hty₁ pf ˢ)
               ; hty₁ = trr (hty₀ pf ˢ) (hty₁ pf ˢ)
               }
     }
     where open ecategory-aux-only ℂ
-          open is-std-Ex-monic isxm
+          open is-Ex-monic isxm
           open ℂ.Peq
           open ℂ.Peq-mor
           open ℂ.Peq-mor-eq
+-}
+
+  record canonical-mono {X Y : ℂ.Obj} (loar : || ℂ.Hom X Y ||) (R : ℂ.PeqOver Y) : Set₁ where
+    open ecategory-aux-only ℂ
+    private module R = ℂ.PeqOver R
+    field
+      Ob/ : ℂ.PeqOver X
+    --private module Ob = ℂ.PeqOver Ob
+    Ob : Exℂ.Obj
+    Ob = ℂ.mkpeq-c Ob/
+    field
+      isext : ℂ.is-extensional-ar Ob (ℂ.mkpeq-c R) loar
+    --private module ar = ℂ.is-extensional-ar isext
+    open ℂ.is-extensional-ar isext public
+    field
+      iswW : ℂ.is-wWlim (cmptb₀ ˢ) (cmptb₁ ˢ)
+    open ℂ.is-wWlim iswW public
+    ar : || Exℂ.Hom Ob (ℂ.mkpeq-c R) ||
+    ar = record
+      { lo = loar
+      ; isext = isext
+      }
+    ar-monic : Exℂ.is-monic ar
+    ar-monic = record
+      { mono-pf = λ {_} {g} {g'} pf → record
+                { hty = ⟨ lo g , hty pf , lo g' ⟩[ hty₀ pf ˢ , hty₁ pf ˢ ]
+                ; hty₀ = trl (hty₀ pf ˢ) (hty₁ pf ˢ)
+                ; hty₁ = trr (hty₀ pf ˢ) (hty₁ pf ˢ)
+                }
+      }
+      where open ℂ.Peq-mor
+            open ℂ.Peq-mor-eq
 
 
-
-
-  module canonical-mono {Y : ℂ.Obj} (R : ℂ.PeqOver Y) {X : ℂ.Obj} (lo-cm : || ℂ.Hom X Y ||) where
+  module can-mono-constr {X Y : ℂ.Obj} (lo-cm : || ℂ.Hom X Y ||) (R : ℂ.PeqOver Y) where
     private
       module R  = ℂ.PeqOver R
       module wW = fwlℂ.wW-of lo-cm (ℂ.mkspan/ R.%0 R.%1) lo-cm
-    
       cmPeq/ : ℂ.PeqOver X
       cmPeq/ = record
         { Hi = wW.wWOb
@@ -490,10 +517,27 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
                 R.%1 ∘ R.τ ∘ τmed ∎
     -- end private
     
+    cmar-data : canonical-mono lo-cm R
+    cmar-data = record
+      { Ob/ = cmPeq/
+      ; isext = record
+        { hi = wW.πc
+        ; cmptb₀ = wW.sqpfl ˢ
+        ; cmptb₁ = wW.sqpfr ˢ
+        }
+      ; iswW = record
+        { ⟨_,_,_⟩[_,_] = wW.⟨_,_,_⟩[_,_]
+        ; trl = wW.trl
+        ; trc = wW.trc
+        ; trr = wW.trr
+        }
+      }
+      where open ecategory-aux-only ℂ
+{-
     cmPeq : ℂ.Peq
     cmPeq = ℂ.mkpeq-c cmPeq/
 
-    cmar : ℂ.Peq-mor cmPeq (ℂ.mkpeq R.ispeq)
+    cmar : ℂ.Peq-mor cmPeq (ℂ.mkpeq-c R)
     cmar = record
       { lo = lo-cm
       ; isext = record
@@ -504,21 +548,29 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       }
       where open ecategory-aux-only ℂ
 
-    cmar-is-std-Ex-monic : is-std-Ex-monic cmar
-    cmar-is-std-Ex-monic = record
-      { ⟨_,_,_⟩[_,_] = wW.⟨_,_,_⟩[_,_]
+    cmar-is-Ex-monic : is-Ex-monic cmar
+    cmar-is-Ex-monic = record
+      { ⟨_⟩[_,_] = λ {_} {gl} {gr} h → wW.⟨ gl , h , gr ⟩[_,_]
       ; trl = wW.trl
-      ; trc = wW.trc
       ; trr = wW.trr
-      }      
-
-    cmar-is-monic : Exℂ.is-monic cmar
-    cmar-is-monic = std-Ex-monic-is-monic cmar-is-std-Ex-monic
-
-  -- end canonical-mono
+      }
+-}
+  -- end can-mono-constr
 
 
-  record is-std-Ex-monic-sp {O1 O2 : Exℂ.Obj} (sp/ : Exℂ.span/ O1 O2) : Set₁ where
+  can-mono-over : {X Y : ℂ.Obj} (loar : || ℂ.Hom X Y ||) (R : ℂ.PeqOver Y)
+                       → canonical-mono loar R
+  can-mono-over loar R = cmar-data
+                         where open can-mono-constr loar R
+
+{-
+  module can-mono {X Y : ℂ.Obj} (loar : || ℂ.Hom X Y ||) (R : ℂ.PeqOver Y) where
+    open can-mono-constr loar R
+    open canonical-mono cmar-data public
+-}
+
+
+  record is-Ex-monic-sp {O1 O2 : Exℂ.Obj} (sp/ : Exℂ.span/ O1 O2) : Set₁ where
     private
       module O1 = ℂ.Peq O1
       module O2 = ℂ.Peq O2
@@ -550,14 +602,14 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
                 → a₂.hi ℂ.∘ ⟨ g₁ , h₁ , h₂ , g₂ ⟩[ pf₁₁ , pf₁₂ , pf₂₁ , pf₂₂ ] ℂ.~ h₂
 
 
-  module Ex-monic-sp-is-jm {O1 O2 : Exℂ.Obj} (sp/ : Exℂ.span/ O1 O2) (isxm : is-std-Ex-monic-sp sp/) where
+  module Ex-monic-sp-is-jm {O1 O2 : Exℂ.Obj} (sp/ : Exℂ.span/ O1 O2) (isxm : is-Ex-monic-sp sp/) where
     open ecategory-aux ℂ
     private
       module O1 = ℂ.Peq O1
       module O2 =  ℂ.Peq O2
       module sp where
         open Exℂ.span/ sp/ public
-        open is-std-Ex-monic-sp isxm public
+        open is-Ex-monic-sp isxm public
       module O12 =  ℂ.Peq sp.O12
       module a₁ = ℂ.Peq-mor sp.a1
       module a₂ = ℂ.Peq-mor sp.a2
@@ -578,7 +630,7 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
   -- end Ex-monic-sp-is-jm
   
   Ex-monic-sp-is-jm : {O1 O2 : Exℂ.Obj} {sp/ : Exℂ.span/ O1 O2}
-                          → is-std-Ex-monic-sp sp/ → Exℂ.is-jointly-monic/ sp/
+                          → is-Ex-monic-sp sp/ → Exℂ.is-jointly-monic/ sp/
   Ex-monic-sp-is-jm {O1} {O2} {sp/} isxm = record
     { jm-pf = λ {C} {h} {h'} → isjm-pf {C} h h'
     }
@@ -772,8 +824,8 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       module cm₂ = ℂ.Peq-mor cmsp.a2
 
 
-    cmsp-is-std-Ex-monic : is-std-Ex-monic-sp cmsp
-    cmsp-is-std-Ex-monic = record
+    cmsp-is-Ex-monic : is-Ex-monic-sp cmsp
+    cmsp-is-Ex-monic = record
       { ⟨_,_,_,_⟩[_,_,_,_] = λ g₁ h₁ h₂ g₂ pf₁₁ pf₁₂ pf₂₁ pf₂₂ →
                            pbHi.⟨ imgR.⟨ g₁ , h₁ , g₂ ⟩[ pf₁₁ , pf₁₂ ]
                                 , imgS.⟨ g₁ , h₂ , g₂ ⟩[ pf₂₁ , pf₂₂ ]
@@ -808,7 +860,7 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
             un₂ pf₁₁ pf₁₂ pf₂₁ pf₂₂ = imgR.trr pf₁₁ pf₁₂ ⊙ imgS.trr pf₂₁ pf₂₂ ˢ
 
     cmsp-is-jm/ : Exℂ.is-jointly-monic/ cmsp
-    cmsp-is-jm/ = Ex-monic-sp-is-jm cmsp-is-std-Ex-monic
+    cmsp-is-jm/ = Ex-monic-sp-is-jm cmsp-is-Ex-monic
   -- end canonical-mono-sp
 
 -- end can-epi&mono-defs

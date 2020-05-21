@@ -146,22 +146,25 @@ module kernel-pairs-defs (ℂ : ecategory) where
     module sp/ = span/
     module ×//of = bow-of
 
-
+{-
   record is-kernel-pair-of {K A B : Obj} (kp₁ kp₂ : || Hom K A ||) (f : || Hom A B ||) : Set₁ where
     -- constructor mkiskpof
     field
       {sqpf} : f ∘ kp₁  ~ f ∘ kp₂
       ispb : is-pb-square (mksq (mksq/ sqpf))
     open pullback-sq-not (mkpb-sq ispb) public
-
+-}
 
   record is-kernel-pair {K A : Obj} (kp₁ kp₂ : || Hom K A ||) : Set₁ where
     -- constructor mkkp-c
     field
       {Ob} : Obj
       {ar} : || Hom A Ob ||
-      iskpof : is-kernel-pair-of kp₁ kp₂ ar
-    open is-kernel-pair-of iskpof public
+      {sqpf} : ar ∘ kp₁  ~ ar ∘ kp₂
+      ispbsq : is-pb-square (mksq (mksq/ sqpf)) 
+      --is-kernel-pair-of kp₁ kp₂ ar
+    --open is-kernel-pair-of iskpof public
+    open pullback-sq-not (mkpb-sq ispbsq) public
       
 
   mkkp : {K A B : Obj} {ar : || Hom A B ||} {kp₁ kp₂ : || Hom K A ||} {sqpf : ar ∘ kp₁  ~ ar ∘ kp₂}
@@ -169,9 +172,8 @@ module kernel-pairs-defs (ℂ : ecategory) where
   mkkp {B = B} {ar} {sqpf = sqpf} ispb = record
     { Ob = B
     ; ar = ar
-    ; iskpof = record { sqpf = sqpf
-                      ; ispb = ispb
-                      }
+    ; sqpf = sqpf
+    ; ispbsq = ispb
     }
 
   
@@ -183,7 +185,7 @@ module kernel-pairs-defs (ℂ : ecategory) where
       iskerpair : is-pb-square (mksq (mksq/ eq))
     open pullback-sq-not (mkpb-sq iskerpair) public
 
-
+{-
   record is-kernel-pair-of-sp/ {O1 O2 K : Obj} (sp/ : span/ O1 O2)
                                (kp₁ kp₂ : || Hom K (sp/.O12 sp/) ||) : Set₁
                                where
@@ -194,7 +196,7 @@ module kernel-pairs-defs (ℂ : ecategory) where
       {sqpf₂} : a2 ∘ kp₁  ~ a2 ∘ kp₂
       isbw : is-bow sqpf₁ sqpf₂
     open is-bow isbw public
-
+-}
 
   record is-kernel-pair-sp {A K : Obj} (kp₁ kp₂ : || Hom K A ||) : Set₁ where
     -- constructor mkkp-c
@@ -202,8 +204,12 @@ module kernel-pairs-defs (ℂ : ecategory) where
       {O1} {O2} : Obj
       {a1} : || Hom A O1 ||
       {a2} : || Hom A O2 ||
-      iskpofsp/ : is-kernel-pair-of-sp/ (mkspan/ a1 a2) kp₁ kp₂
-    open is-kernel-pair-of-sp/ iskpofsp/ public
+      {sqpf₁} : a1 ∘ kp₁  ~ a1 ∘ kp₂
+      {sqpf₂} : a2 ∘ kp₁  ~ a2 ∘ kp₂
+      isbw : is-bow sqpf₁ sqpf₂
+    open is-bow isbw public
+    --iskpofsp/ : is-kernel-pair-of-sp/ (mkspan/ a1 a2) kp₁ kp₂
+    --open is-kernel-pair-of-sp/ iskpofsp/ public
       
 
   mkkpsp : {O1 O2 A K : Obj} {sp/ : span/ O1 O2} (bwof : bow-of sp/ sp/)
@@ -212,9 +218,7 @@ module kernel-pairs-defs (ℂ : ecategory) where
   mkkpsp {sp/ = sp/} bwof = record
     { a1 = a1
     ; a2 = a2
-    ; iskpofsp/ = record
-                 { isbw = ×//of.is-bw bwof
-                 }
+    ; isbw = ×//of.is-bw bwof
     }
     where open span/ sp/
 
@@ -229,11 +233,11 @@ module kernel-pairs-defs (ℂ : ecategory) where
     private
       module kp {A B : Obj} (f : || Hom A B ||) = pullback-of-not (kp-of f)
 
-    π/iskpof : {A B : Obj} (f : || Hom A B ||) → is-kernel-pair-of (kp.π/₁ f) (kp.π/₂ f) f
-    π/iskpof f = record { ispb = kp.×/ispbsq f }
+    --π/iskpof : {A B : Obj} (f : || Hom A B ||) → is-kernel-pair-of (kp.π/₁ f) (kp.π/₂ f) f
+    --π/iskpof f = record { ispb = kp.×/ispbsq f }
 
     π/iskp : {A B : Obj} (f : || Hom A B ||) → is-kernel-pair (kp.π/₁ f) (kp.π/₂ f)
-    π/iskp f = record { iskpof = π/iskpof f }
+    π/iskp f = record { ispbsq = kp.×/ispbsq f }
   -- end cat-has-pb→kerpair-exists
 
 
@@ -245,12 +249,14 @@ module kernel-pairs-defs (ℂ : ecategory) where
     private
       module kpsp/ {O1 O2 : Obj} (sp/ : span/ O1 O2) = bow-of (kpsp-of sp/)
 
+{-
     π//iskpof : {O1 O2 : Obj} (sp/ : span/ O1 O2)
                     → is-kernel-pair-of-sp/ sp/ (kpsp/.π//₁ sp/) (kpsp/.π//₂ sp/)
     π//iskpof sp/ = record { isbw = kpsp/.is-bw sp/ }
+-}
 
     π//iskp : {O1 O2 : Obj} (sp/ : span/ O1 O2) → is-kernel-pair-sp (kpsp/.π//₁ sp/) (kpsp/.π//₂ sp/)
-    π//iskp sp/ = record { iskpofsp/ = π//iskpof sp/ }
+    π//iskp sp/ = record { isbw = kpsp/.is-bw sp/ }
   -- end cat-has-bw→kerpair-exist
   
 -- end kernel-pairs-defs

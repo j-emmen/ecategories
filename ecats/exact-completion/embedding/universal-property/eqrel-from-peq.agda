@@ -129,7 +129,7 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
         module τrpb = 𝔼.pullback-of-not τrpb
         module τAwpb = ℂ.wpullback-of-not A.τwpb
         module C×C where
-          open r𝔼.reg-covers-of-pb→reg-cover-of-pb τrpb CF%cov CF%cov public
+          open r𝔼.pb-of-reg-covers-is-reg-cover-of-pb τrpb CF%cov CF%cov public
           open 𝔼.is-regular-epi diagl-repi public
         τF%pb : 𝔼.pullback-of (F.ₐ A.%1) (F.ₐ A.%0)
         τF%pb = 𝔼.mkpb-of (𝔼.×/ext-dr C×C.outsq-pb rmfF%tr₂ rmfF%tr₁)
@@ -304,9 +304,9 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
   -- end eqrel-from-peq-via-left-covering
 
 
-  imgPeq :  {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
+  Rel :  {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
                → efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
-  imgPeq {𝔼} reg𝔼 {F} Flcov = record
+  Rel {𝔼} reg𝔼 {F} Flcov = record
     { FObj = eqr
     ; FHom = eqr-ar
     ; isF = record
@@ -320,11 +320,11 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
           module F = efunctor-aux F
 
 
-  module imgPeq-on-free  {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F) where
+  module Rel-on-free  {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F) where
     private
       module 𝔼 = ecategory 𝔼
       module F = efunctor-aux F
-      module I = efunctor-aux (imgPeq reg𝔼 Flcov)
+      module I = efunctor-aux (Rel reg𝔼 Flcov)
       module ΔER = efunctor-aux (ΔER 𝔼)
     
     module CRF% (A : Exℂ.Obj) where
@@ -364,7 +364,7 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
 -}
     -- end CRF%-is-iso
 
-    eqrelΔ2Δ : natural-transformation (imgPeq reg𝔼 Flcov ○ Γex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
+    eqrelΔ2Δ : natural-transformation (Rel reg𝔼 Flcov ○ Γex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
     eqrelΔ2Δ = record
         { fnc = λ {X} → record
               { base-ar = 𝔼.idar (F.ₒ X)
@@ -383,7 +383,7 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
         where open ecategory-aux-only 𝔼
               open ecategory-aux-only ℂ using () renaming (r to rℂ)
 
-    Δ2eqrelΔ : natural-transformation (ΔER 𝔼 ○ F) (imgPeq reg𝔼 Flcov ○ Γex ℂ [ hasfwl ])
+    Δ2eqrelΔ : natural-transformation (ΔER 𝔼 ○ F) (Rel reg𝔼 Flcov ○ Γex ℂ [ hasfwl ])
     Δ2eqrelΔ = record
         { fnc = λ {X} → record
               { base-ar = 𝔼.idar (F.ₒ  X)
@@ -400,12 +400,12 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
               }
         }
         where open ecategory-aux-only 𝔼
-  -- end imgPeq-on-free
+  -- end Rel-on-free
 
 
-  imgPeq-sq : {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
-                 → natural-iso (imgPeq reg𝔼 Flcov ○ Γex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
-  imgPeq-sq {𝔼} reg𝔼 {F} Flcov = record
+  Rel-sq : {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
+                 → natural-iso (Rel reg𝔼 Flcov ○ Γex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
+  Rel-sq {𝔼} reg𝔼 {F} Flcov = record
     { natt = eqrelΔ2Δ
     ; natt⁻¹ = Δ2eqrelΔ
     ; isiso = λ {X} → record
@@ -421,7 +421,7 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
                     }
             }
     }
-    where open imgPeq-on-free reg𝔼 Flcov
+    where open Rel-on-free reg𝔼 Flcov
           open ecategory-aux-only 𝔼
           module 𝔼 = ecategory 𝔼
           module F = efunctor-aux F

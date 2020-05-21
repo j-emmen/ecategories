@@ -76,6 +76,12 @@ module regular-cat-props {ℂ : ecategory} (isreg : is-regular ℂ) where
     (record { ∘c = λ grepi frepi → strong-epi-is-regular (∘c (repi-is-strong grepi) (repi-is-strong frepi)) })
     where open is-ecat-congr strepi-is-congr
 
+  repi-cmp : {A B C : Obj} {f : || Hom A B ||} {g : || Hom B C ||} {h : || Hom A C ||}
+                → is-regular-epi f → is-regular-epi g → g ∘ f ~ h → is-regular-epi h
+  repi-cmp repif repig tr = trnsp tr (∘c repig repif)
+                          where open is-ecat-congr regular-epi-is-congr
+
+
 {-
   -- regular epis are iso-transportable
   
@@ -136,29 +142,29 @@ module regular-cat-props {ℂ : ecategory} (isreg : is-regular ℂ) where
   reg2exact eqrel→kp = record
     { repi-pbof-stable = rℂ.repi-pbof-stable
     ; eqr-has-coeq = q.coeq
-    ; eqr-is-eff = λ eqr → record { iskpof = record { ispb = exs.iskerpair eqr } }
+    ; eqr-is-eff = λ eqr → record { ispbsq = exs.iskerpair eqr }
     }
     where module q  {A : Obj} (eqr : eqrel-over A) = has-quot-of-ker-pair (eqrel→kp eqr)
           module exs {A : Obj} (eqr : eqrel-over A) = is-exact-seq (q.exseq eqr)
 
 
 
-  module reg-covers-of-pb→reg-cover-of-pb {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
-                                           (pb : pullback-of a b)
-                                           (covA : reg-cover-of A)(covB : reg-cover-of B)
-                                           where
+  module pb-of-reg-covers-is-reg-cover-of-pb {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
+                                             (pb : pullback-of a b)
+                                             (covA : reg-cover-of A)(covB : reg-cover-of B)
+                                             where
     private
       module a×/b = pullback-of-not pb
       module cA = reg-cover-of covA
       module cB = reg-cover-of covB
-    open reg-covers-of-pb→epi-cover-of-pb rℂ.haspb rℂ.repi-pbof-stable pb covA covB public
+    open pb-of-reg-covers-is-epi-cover-of-pb rℂ.haspb rℂ.repi-pbof-stable pb covA covB public
     diagl-repi : is-regular-epi diagl
     diagl-repi = ∘c cl-repi cu'-repi
             where open is-ecat-congr regular-epi-is-congr
     diagr-repi : is-regular-epi diagr
     diagr-repi = ∘c cu-repi cl'-repi
             where open is-ecat-congr regular-epi-is-congr
-  -- end reg-covers-of-pb→reg-cover-of-pb
+  -- end pb-of-reg-covers-is-reg-cover-of-pb
 
 
   module sides-cover-so-pb-covers {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}(inpb : pullback-of a b)
@@ -184,7 +190,9 @@ module regular-cat-props {ℂ : ecategory} (isreg : is-regular ℂ) where
                 open is-pbof-stable rℂ.repi-pbof-stable
     module covpb = _covers_ covpb 
   -- end sides-cover-so-pb-covers
-          
+
+
+
 -- end regular-cat-props
 
 
@@ -196,6 +204,8 @@ module regular-cat-d&p {ℂ : ecategory} (reg : is-regular ℂ) where
 
 
 
+
+-- -- OLD STUFF
 
 -- -- Some properties of regular categories
 

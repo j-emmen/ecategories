@@ -67,6 +67,4 @@ exact-compl-has-terminal hasfwl = ex-cmpl-term
                                 where open exact-compl-has-terminal hasfwl using (ex-cmpl-term)
 
 exact-compl-qcart-has-terminal : {ℂ : ecategory} (qcart : is-quasi-cartesian ℂ) → has-terminal Ex ℂ qc[ qcart ]
-exact-compl-qcart-has-terminal qcart = exact-compl-has-terminal (qcart→has-fwl qcart)
---ex-cmpl-term
-  --                                   where open exact-compl-has-terminal (qcart→has-fwl qcart) using (ex-cmpl-term)
+exact-compl-qcart-has-terminal qcart = exact-compl-has-terminal (qcart→has-fwlim qcart)

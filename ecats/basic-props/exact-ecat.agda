@@ -94,9 +94,9 @@ module exact-cat-props-only {𝔼 : ecategory} (isex : is-exact 𝔼) where
       Trf = Qf.univ-eq kerf.×/sqpf
       module kerMf = pullback-of-not (ex𝔼.pb-of Mf Mf)
       module ul where
-        open reg-covers-of-pb→epi-cover-of-pb ex𝔼.haspb ex𝔼.repi-pbof-stable
-                                               kerMf.×/of covObf covObf
-                                               public
+        open pb-of-reg-covers-is-epi-cover-of-pb ex𝔼.haspb ex𝔼.repi-pbof-stable
+                                                 kerMf.×/of covObf covObf
+                                                 public
         open is-epic diagl-epi public
       Mf-is-monic : is-monic Mf
       Mf-is-monic = π/₁~π/₂→mono kerMf.×/of eqπ/

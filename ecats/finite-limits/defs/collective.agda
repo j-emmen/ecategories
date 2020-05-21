@@ -83,8 +83,8 @@ record has-fin-limits (ℂ : ecategory) : Set₁ where
     hasbw : has-bows ℂ
 
 
-has-fl→qcart : {ℂ : ecategory} → has-fin-limits ℂ → is-quasi-cartesian ℂ
-has-fl→qcart {ℂ} hasfl = record
+has-flim→qcart : {ℂ : ecategory} → has-fin-limits ℂ → is-quasi-cartesian ℂ
+has-flim→qcart {ℂ} hasfl = record
   { hastrm = hastrm
   ; hasprd = hasprd
   ; hasweql = has-eql⇒has-weql haseql
@@ -92,12 +92,9 @@ has-fl→qcart {ℂ} hasfl = record
   ; haswbw = has-bw⇒has-wbw hasbw
   }
   where open has-fin-limits hasfl
-        open equaliser→weak-equaliser ℂ
-        open pullback→weak-pullback ℂ
-        open bow→weak-bow ℂ
-
-qcart→has-fwl : {ℂ : ecategory} → is-quasi-cartesian ℂ → has-fin-weak-limits ℂ
-qcart→has-fwl {ℂ} cart = record
+        
+qcart→has-fwlim : {ℂ : ecategory} → is-quasi-cartesian ℂ → has-fin-weak-limits ℂ
+qcart→has-fwlim {ℂ} cart = record
   { haswtrm = has-trm⇒has-wtrm hastrm
   ; haswprd = has-prd⇒has-wprd hasprd
   ; hasweql = hasweql
@@ -105,9 +102,13 @@ qcart→has-fwl {ℂ} cart = record
   ; haswbw = haswbw
   }
   where open is-quasi-cartesian cart
-        open terminal→weak-terminal ℂ
-        open bin-product→bin-weak-product ℂ
 
-
-has-fl→has-fwl : {ℂ : ecategory} → has-fin-limits ℂ → has-fin-weak-limits ℂ
-has-fl→has-fwl hasfl = qcart→has-fwl (has-fl→qcart hasfl)
+has-flim→has-fwlim : {ℂ : ecategory} → has-fin-limits ℂ → has-fin-weak-limits ℂ
+has-flim→has-fwlim hasfl = record
+  { haswtrm = has-trm⇒has-wtrm hastrm
+  ; haswprd = has-prd⇒has-wprd hasprd
+  ; hasweql = has-eql⇒has-weql haseql
+  ; haswpb = has-pb⇒has-wpb haspb
+  ; haswbw = has-bw⇒has-wbw hasbw
+  }
+  where open has-fin-limits hasfl

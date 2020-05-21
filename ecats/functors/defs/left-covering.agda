@@ -66,16 +66,16 @@ module left-covering-defs (ℂ 𝔻 : ecategory) where
       module F = efunctor F
     field
       prduniv-is-repi : {X Y P : ℂ.Obj} {p₁ : || ℂ.Hom P X ||} {p₂ : || ℂ.Hom P Y ||}
-                        (iswprd : ℂ.is-wproduct (ℂ.mkspan p₁ p₂)) (isprd : 𝔻.product-of (F.ₒ X) (F.ₒ Y))
-                        {covprd : || 𝔻.Hom (F.ₒ P) (×of.O12 isprd) ||}
-                          → ×of.π₁ isprd 𝔻.∘ covprd 𝔻.~ F.ₐ p₁ → ×of.π₂ isprd 𝔻.∘ covprd 𝔻.~ F.ₐ p₂
+                        (iswprd : ℂ.is-wproduct (ℂ.mkspan p₁ p₂)) (prdof : 𝔻.product-of (F.ₒ X) (F.ₒ Y))
+                        {covprd : || 𝔻.Hom (F.ₒ P) (×of.O12 prdof) ||}
+                          → ×of.π₁ prdof 𝔻.∘ covprd 𝔻.~ F.ₐ p₁ → ×of.π₂ prdof 𝔻.∘ covprd 𝔻.~ F.ₐ p₂
                             → 𝔻.is-regular-epi covprd
 
 
   lc-isprd2lc-prd : {F : efunctor ℂ 𝔻} → is-left-covering-isprd F → is-left-covering-prd F
   lc-isprd2lc-prd {F} Flc = record
     { prduniv-is-repi = λ {X} {Y} wprdof prdof {covpb} tr₁ tr₂ →
-                     prduniv-is-repi (w×of.w×isprd wprdof) prdof tr₁ tr₂
+                     prduniv-is-repi (w×of.iswprd wprdof) prdof tr₁ tr₂
     }
     where open is-left-covering-isprd Flc
 

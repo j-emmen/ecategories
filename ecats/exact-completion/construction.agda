@@ -215,7 +215,7 @@ exact-compl-functor {ℂ} hasfwl = record
 
 exact-compl-qcart-functor : (ℂ : ecategory) (qcart : is-quasi-cartesian ℂ)
                          → efunctor ℂ (Ex ℂ qc[ qcart ])
-exact-compl-qcart-functor ℂ qcart = exact-compl-functor (qcart→has-fwl qcart)        
+exact-compl-qcart-functor ℂ qcart = exact-compl-functor (qcart→has-fwlim qcart)        
         
 
 

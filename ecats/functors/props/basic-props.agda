@@ -107,11 +107,11 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
                      → is-left-covering-pb F → is-left-covering-eql F
   pres×-lcpb→lc-eql prdC pres× lcpb = record
     { eqluniv-is-repi = λ {X} {Y} {f} {f'} weqlC eqlD {coveql} tr →
-                      pbuniv-is-repi (ℂl.weqlof2wpbof ℂ×.×of weqlC) (eql2pb eqlD) tr (assˢ ⊙ ∘e tr r ⊙ F.∘ax-rf)
+                      pbuniv-is-repi (ℂwl.weqlof2wpbof ℂ×.×of weqlC) (eql2pb eqlD) tr (assˢ ⊙ ∘e tr r ⊙ F.∘ax-rf)
     }
     where open ecategory-aux-only 𝔻
           module 𝔻l = relations-among-limit-diagrams 𝔻
-          module ℂl = relations-among-limit-diagrams ℂ
+          module ℂwl = relations-among-weak-limit-diagrams ℂ
           open preserves-bin-products pres×
           open is-left-covering-pb lcpb
           module ℂ× = bin-products-aux prdC
@@ -128,35 +128,6 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
                                     open 𝔻l.equaliser↔pullback-of-diag (F×of Y Y) eqleq
 
 
-  pres×/-pres-repi→is-exact : preserves-pullbacks F → preserves-regular-epis F → is-exact-functor F
-  pres×/-pres-repi→is-exact pres×/ presrepi = record
-    { pres-pbsq = pres×/
-    ; pres-ex-seq-pf = λ isex → record
-                     { iscoeq = repi-is-coeq-of-ker-pair (pres-repi-pf (qisrepi isex))
-                                                         (𝔻.mkpb-of (iskp isex))
-                     ; iskerpair = iskp isex
-                     }
-    }
-    where open preserves-pullbacks pres×/
-          open preserves-regular-epis presrepi
-          open epis&monos-props 𝔻
-          module ex = ℂ.is-exact-seq
-          module coeq {R A Q : ℂ.Obj} {r₁ r₂ : || ℂ.Hom R A ||} {q : || ℂ.Hom A Q ||} (isex : ℂ.is-exact-seq r₁ r₂ q)
-                      = ℂ.is-coeq (ex.iscoeq isex)
-          module pb {R A Q : ℂ.Obj} {r₁ r₂ : || ℂ.Hom R A ||} {q : || ℂ.Hom A Q ||} (isex : ℂ.is-exact-seq r₁ r₂ q)
-                      = ℂ.is-pb-square (ex.iskerpair isex)
-          open ecategory-aux-only 𝔻
-
-          qisrepi : {R A Q : ℂ.Obj} {r₁ r₂ : || ℂ.Hom R A ||} {q : || ℂ.Hom A Q ||} (isex : ℂ.is-exact-seq r₁ r₂ q)
-                       → ℂ.is-regular-epi q
-          qisrepi isex = record { coeq = ex.iscoeq isex }
-
-          iskp : {R A Q : ℂ.Obj} {r₁ r₂ : || ℂ.Hom R A ||} {q : || ℂ.Hom A Q ||} (isex : ℂ.is-exact-seq r₁ r₂ q)
-                    → 𝔻.is-pb-square (𝔻.mksq (𝔻.mksq/ (F.∘∘ (coeq.eq isex))))
-          iskp isex = pres-pbsq-gen (F.∘∘ (coeq.eq isex)) r r (ex.iskerpair isex)
-
-
-
 
 
   -- Essential equivalences are equivalences
@@ -165,16 +136,16 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     open is-ess-equivalence eeqv
     open is-full isfull
     open is-faithful isfaithful
-    open is-ess-surjective isesurjobj
+    private module essrj = is-ess-surjective-ob isesurjobj
     
     invFₒ : 𝔻.Obj → ℂ.Obj
-    invFₒ = esurj-ob
+    invFₒ = essrj.ob
 
     σ : (Y : 𝔻.Obj) → || 𝔻.Hom (F.ₒ (invFₒ Y)) Y ||
-    σ = esurj-ar
+    σ = essrj.ar
 
     private
-      module σ (Y : 𝔻.Obj) = 𝔻.is-iso (esurj-iso Y)
+      module σ (Y : 𝔻.Obj) = 𝔻.is-iso (essrj.iso Y)
     --open σ-tmp renaming (invf to σ⁻¹; isisopair to σ-isopair; iddom to σ⁻¹σ=id; idcod to σσ⁻¹=id)
 
     invFₐ : {Y Y' : 𝔻.Obj} → || 𝔻.Hom Y Y' || → || ℂ.Hom (invFₒ Y) (invFₒ Y') ||

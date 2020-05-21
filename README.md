@@ -28,4 +28,4 @@ ecats/constructions/
 Definition of the e-category of small e-categories. Definition of the e-category of equivalence relations of an e-category, and proof that an exact e-category is a retract of its e-category of equivalence relations.
 
 ecats/exact-completion/  
-Construction of the exact completion, proof that it is exact and proof that the embedding is a projective cover. The proof of its universal property is to be completed.
+Construction of the exact completion. Proof that it is exact, that the embedding is a projective cover and that it is universal among left covering functors into exact categories. Chracterisation of exact completions as exact categories with enough projectives.

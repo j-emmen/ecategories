@@ -36,7 +36,7 @@ module bin-wproduct-spans (ℂ : ecategory) where
     --renaming (wπ₁ to wπ₁ₛ; wπ₂ to wπ₂ₛ; <_,_> to <_,_>ₛ; w×tr₁ to w×tr₁ₛ; w×tr₂ to w×tr₂ₛ; w×uq to w×uqₛ)
 
     w×of : wproduct-of O1 O2
-    w×of = mkw×of w×isprd
+    w×of = mkw×of iswprd
 
   -- first triangle
 

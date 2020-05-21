@@ -31,9 +31,9 @@ module bin-wproduct-defs (ℂ : ecategory) where
     constructor mkw×
     field
       {w×sp} : span
-      w×isprd : is-wproduct w×sp
+      iswprd : is-wproduct w×sp
     open span w×sp renaming (a1 to wπ₁; a2 to wπ₂) public
-    open is-wproduct w×isprd public
+    open is-wproduct iswprd public
     
 
   record wproduct-of (O1 O2 : Obj) : Set₁ where
@@ -41,11 +41,11 @@ module bin-wproduct-defs (ℂ : ecategory) where
     --open commut-shapes ℂ
     field
       {w×sp/} : span/ O1 O2
-      w×isprd : is-wproduct (mkspan-c w×sp/)
+      iswprd : is-wproduct (mkspan-c w×sp/)
     open span/ w×sp/ renaming (a1 to wπ₁; a2 to wπ₂) public
-    open is-wproduct w×isprd public
+    open is-wproduct iswprd public
     wprdsp : bin-wproduct
-    wprdsp = mkw× w×isprd
+    wprdsp = mkw× iswprd
     
 -- end bin-wproduct-defs
 

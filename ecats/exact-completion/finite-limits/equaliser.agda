@@ -73,17 +73,17 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
     loeqlar = eqlLo.wπ//₁
 
     private
-      module Eql = fwlℂ.canonical-mono A.peqover loeqlar
-      module eql-mono = Exℂ.is-monic Eql.cmar-is-monic
-      module eqlOb = ℂ.Peq Eql.cmPeq
+      module Eql = fwlℂ.canonical-mono (fwlℂ.can-mono-over loeqlar A.peqover)
+      module eql-mono = Exℂ.is-monic Eql.ar-monic
+      module eqlOb = ℂ.Peq Eql.Ob
 
     eqlOb : Exℂ.Obj
-    eqlOb = Eql.cmPeq
+    eqlOb = Eql.Ob
 
     eqlar : || Exℂ.Hom eqlOb A ||
-    eqlar = Eql.cmar
+    eqlar = Eql.ar
 
-    eqleq : f Exℂ.∘ Eql.cmar Exℂ.~ f' Exℂ.∘ Eql.cmar
+    eqleq : f Exℂ.∘ Eql.ar Exℂ.~ f' Exℂ.∘ Eql.ar
     eqleq = record
       { hty = eqlLo.wπ//₂
       ; hty₀ = eqlLo.sqpf₁ ˢ
@@ -97,7 +97,7 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
         module C = ℂ.Peq C
         module g = ℂ.Peq-mor g
         module pf = ℂ.Peq-mor-eq pf
-        module HiE = fwlℂ.is-std-Ex-monic Eql.cmar-is-std-Ex-monic
+        --module HiE = fwlℂ.is-std-Ex-monic Eql.cmar-is-std-Ex-monic
 
       log|f-pfl : f.lo ℂ.∘ g.lo ℂ.~ B.%0 ℂ.∘ pf.hty
       log|f-pfl = pf.hty₀ ˢ
@@ -116,15 +116,15 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
       hig|f-pfr = ass ⊙ ∘e r (eqlLo.tr₁ log|f-pfl log|f-pfr) ⊙ g.cmptb₁ ˢ
                 where open ecategory-aux-only ℂ
       hig|f : || ℂ.Hom C.Hi eqlOb.Hi ||
-      hig|f = HiE.⟨ log|f ℂ.∘ C.%0 , g.hi , log|f ℂ.∘ C.%1 ⟩[ hig|f-pfl , hig|f-pfr ]
+      hig|f = Eql.⟨ log|f ℂ.∘ C.%0 , g.hi , log|f ℂ.∘ C.%1 ⟩[ hig|f-pfl , hig|f-pfr ]
 
       g|f : || Exℂ.Hom C eqlOb ||
       g|f = record
         { lo = log|f
         ; isext = record
           { hi = hig|f
-          ; cmptb₀ = HiE.trl hig|f-pfl hig|f-pfr
-          ; cmptb₁ = HiE.trr hig|f-pfl hig|f-pfr
+          ; cmptb₀ = Eql.trl hig|f-pfl hig|f-pfr
+          ; cmptb₁ = Eql.trr hig|f-pfl hig|f-pfr
           }
         }
 
@@ -169,6 +169,4 @@ exact-compl-has-equalisers {ℂ} hasfwl = ex-cmpl-eql
 
 exact-compl-qcart-has-equalisers : {ℂ : ecategory} (qcart : is-quasi-cartesian ℂ)
                                 → has-equalisers Ex ℂ qc[ qcart ]
-exact-compl-qcart-has-equalisers {ℂ} qcart = exact-compl-has-equalisers (qcart→has-fwl qcart)
---ex-cmpl-eql
-  --                                         where open exact-compl-has-equalisers {ℂ} (qcart→has-fwl qcart) using (ex-cmpl-eql)
+exact-compl-qcart-has-equalisers {ℂ} qcart = exact-compl-has-equalisers (qcart→has-fwlim qcart)

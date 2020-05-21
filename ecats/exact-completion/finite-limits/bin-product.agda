@@ -61,7 +61,7 @@ module exact-compl-has-bin-products {ℂ : ecategory} (hasfwl : has-fin-weak-lim
       module Hisp where
         open canonical-mono-sp R.peqover S.peqover (ℂ.mkspan/ Lo[R×S].wπ₁ Lo[R×S].wπ₂)
         open Exℂ.span/ cmsp public
-        open is-std-Ex-monic-sp cmsp-is-std-Ex-monic public
+        open is-Ex-monic-sp cmsp-is-Ex-monic public
         open Exℂ.is-jointly-monic/ cmsp-is-jm/ public
       module π₁ = ℂ.Peq-mor Hisp.a1
       module π₂ = ℂ.Peq-mor Hisp.a2
@@ -134,7 +134,7 @@ exact-compl-has-bin-products {ℂ} hasfwl = ex-cmpl-prd
 
 
 exact-compl-qcart-has-bin-products : {ℂ : ecategory} (qcart : is-quasi-cartesian ℂ) → has-bin-products Ex ℂ qc[ qcart ]
-exact-compl-qcart-has-bin-products qcart = exact-compl-has-bin-products (qcart→has-fwl qcart)
+exact-compl-qcart-has-bin-products qcart = exact-compl-has-bin-products (qcart→has-fwlim qcart)
 
 
 
