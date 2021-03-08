@@ -33,6 +33,7 @@ open import ecats.exact-completion.embedding.universal-property.eqrel-from-peq
 
 
 
+
 module exact-compl-character {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                              {ℙ : ecategory} {PC : efunctor ℙ 𝔼} (pjcPC : is-projective-cover PC)
                              where

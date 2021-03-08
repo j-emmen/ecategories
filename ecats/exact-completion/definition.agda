@@ -9,15 +9,16 @@ module ecats.exact-completion.definition where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.exact-ecat
---open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.left-covering
 
-
--- An exact completion of ℂ is an embedding ℂ → Ex[ℂ] into Ex[ℂ] exact
+--------------------------------------------------------------------------
+-- An exact completion of ℂ
+-- is a (conservative?) full and faithful ℂ → Ex[ℂ] into Ex[ℂ] exact
 -- which is initial among left-covering functors ℂ → 𝔼 into 𝔼 exact.
+--------------------------------------------------------------------------
 
 record is-left-cov-initial {ℂ 𝔼 : ecategory}(isex : is-exact 𝔼)
                            {F : efunctor ℂ 𝔼}(islcov : is-left-covering F)

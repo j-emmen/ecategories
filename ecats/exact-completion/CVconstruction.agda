@@ -14,7 +14,10 @@ open import ecats.basic-defs.eqv-rel
 open import ecats.finite-limits.defs&not
 open import ecats.functors.defs.efunctor
 
-
+--------------------------------------------------------------------------
+-- The construction by A. Carboni and E.M. Vitale of the exact completion
+-- of a category ℂ with weak finite limits.
+--------------------------------------------------------------------------
 
 module exact-compl-construction {ℂ : ecategory} (wpb : has-weak-pullbacks ℂ) where
   open ecategory ℂ
