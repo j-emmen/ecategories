@@ -20,9 +20,11 @@ open import ecats.constructions.ecat-eqrel
 
 
 
--- Definition of the functor Ex ℂ [ hasfwl ] → 𝔼 induced by a left covering ℂ → 𝔼 into 𝔼 exact.
+-- Definition of the functor 𝔼 → 𝔻 induced by a left covering ℂ → 𝔻 into 𝔻 exact.
 
-module exact-compl-universal-def {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
+module exact-compl-universal-def {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
+                                 {ℙ : ecategory}{PC : efunctor ℙ 𝔼}(pjcpc : is-projective-cover PC)
+                                 where
   open eqrel-from-peq-funct hasfwl public
 
   ↑ex : {𝔼 : ecategory} (exE : is-exact 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)

@@ -14,7 +14,7 @@ open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
-open import ecats.exact-completion.construction
+open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.embedding.universal-property.def
 open import ecats.exact-completion.embedding.universal-property.commut
 open import ecats.exact-completion.embedding.universal-property.is-exact-fun

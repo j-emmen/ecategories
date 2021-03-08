@@ -14,7 +14,7 @@ open import Agda.Primitive
 -- Identity type
 
 infix 8 _==_
-data _==_ {ℓ : Level}{A : Set ℓ} (a : A) : A → Set where
+data _==_ {ℓ : Level}{A : Set ℓ} (a : A) : A → Set ℓ where
   =rf : a == a
 
 

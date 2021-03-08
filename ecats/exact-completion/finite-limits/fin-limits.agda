@@ -10,7 +10,7 @@ module ecats.exact-completion.finite-limits.fin-limits where
 open import ecats.basic-defs.ecat-def&not
 open import ecats.finite-limits.defs.collective
 open import ecats.finite-limits.props.relations-among-limits
-open import ecats.exact-completion.construction
+open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.finite-limits.terminal using (exact-compl-has-terminal
                                                                 ; exact-compl-qcart-has-terminal) public
 open import ecats.exact-completion.finite-limits.bin-product using (exact-compl-has-bin-products

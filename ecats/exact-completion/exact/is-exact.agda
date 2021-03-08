@@ -15,7 +15,7 @@ open import ecats.basic-defs.regular-ecat
 open import ecats.basic-props.regular-ecat
 open import ecats.basic-defs.exact-ecat
 open import ecats.finite-limits.all
-open import ecats.exact-completion.construction
+open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.finite-limits.fin-limits
 open import ecats.exact-completion.finite-limits.pullback
 open import ecats.exact-completion.exact.canonical-epi&mono
@@ -336,8 +336,10 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
 
   private module eqr = Exℂ.eqrel-over
   eqrel→kp : {A : Exℂ.Obj} (eqr : Exℂ.eqrel-over A) → Exℂ.is-kernel-pair (eqr.r₁ eqr) (eqr.r₂ eqr)
-  eqrel→kp eqr = record { iskpof = record { ispb = q-pbsq } }
-                where open eq-rel-are-kernel-pairs eqr
+  eqrel→kp eqr = record
+    { ispbsq = q-pbsq
+    }
+    where open eq-rel-are-kernel-pairs eqr
 
 -- end eq-rels-are-effective
 
@@ -349,7 +351,7 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
 
 
 exact-compl-is-exact//hasfl : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
-                              → is-exact//has-finlim (exact-compl-has-fin-limits hasfwl)
+                              → is-exact//has-fin-lim (exact-compl-has-fin-limits hasfwl)
 exact-compl-is-exact//hasfl hasfwl = reg2exact eqrel→kp
                                    where open regular-cat-props (exact-compl-is-regular hasfwl)
                                          open eq-rels-are-effective hasfwl
@@ -361,8 +363,8 @@ exact-compl-is-exact {ℂ} hasfwl = record { hasfl = exact-compl-has-fin-limits 
 
 
 exact-compl-qcart-is-exact//hasfl : {ℂ : ecategory} (qcart : is-quasi-cartesian ℂ)
-                                       → is-exact//has-finlim (exact-compl-qcart-has-fin-limits qcart)
-exact-compl-qcart-is-exact//hasfl qcart = exact-compl-is-exact//hasfl (qcart→has-fwl qcart)
+                                       → is-exact//has-fin-lim (exact-compl-qcart-has-fin-limits qcart)
+exact-compl-qcart-is-exact//hasfl qcart = exact-compl-is-exact//hasfl (qcart→has-fwlim qcart)
 
 exact-compl-qcart-is-exact : {ℂ : ecategory} (qcart : is-quasi-cartesian ℂ) → is-exact Ex ℂ qc[ qcart ]
-exact-compl-qcart-is-exact qcart = exact-compl-is-exact (qcart→has-fwl qcart)
+exact-compl-qcart-is-exact qcart = exact-compl-is-exact (qcart→has-fwlim qcart)

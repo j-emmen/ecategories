@@ -138,7 +138,7 @@ module regular-cat-props {ℂ : ecategory} (isreg : is-regular ℂ) where
   -- Regular with effective eq rels is exact
 
   reg2exact : (eqrel→kp : {A : Obj} (eqr : eqrel-over A) → is-kernel-pair (eqr.r₁ eqr) (eqr.r₂ eqr))
-                        → is-exact//has-finlim rℂ.hasfl
+                        → is-exact//has-fin-lim rℂ.hasfl
   reg2exact eqrel→kp = record
     { repi-pbof-stable = rℂ.repi-pbof-stable
     ; eqr-has-coeq = q.coeq
