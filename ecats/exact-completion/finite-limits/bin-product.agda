@@ -46,13 +46,13 @@ module exact-compl-has-bin-products {ℂ : ecategory} (hasfwl : has-fin-weak-lim
     _∘_ : {A B C : ℂ.Obj} →  || ℂ.Hom B C ||  → || ℂ.Hom A B || → || ℂ.Hom A C ||
     _∘_ = ℂ._∘_
 
-  module Peq-product (R S : ℂ.Peq) where
+  module peq-product (R S : ℂ.peq) where
     --open ecategory-aux-only ℂ
     open bin-wproducts-aux fwlℂ.haswprd using (_w×ₐ_)
     open can-epi&mono-defs hasfwl
     private
-      module R = ℂ.Peq R
-      module S = ℂ.Peq S
+      module R = ℂ.peq R
+      module S = ℂ.peq S
       module Rτ = ℂ.wpullback-of-not R.τwpb
       module Sτ = ℂ.wpullback-of-not S.τwpb
       Lo[R×S] : ℂ.wproduct-of R.Lo S.Lo
@@ -63,18 +63,18 @@ module exact-compl-has-bin-products {ℂ : ecategory} (hasfwl : has-fin-weak-lim
         open Exℂ.span/ cmsp public
         open is-Ex-monic-sp cmsp-is-Ex-monic public
         open Exℂ.is-jointly-monic/ cmsp-is-jm/ public
-      module π₁ = ℂ.Peq-mor Hisp.a1
-      module π₂ = ℂ.Peq-mor Hisp.a2
+      module π₁ = ℂ.peq-mor Hisp.a1
+      module π₂ = ℂ.peq-mor Hisp.a2
 
-    Peq-prd : Exℂ.Obj
-    Peq-prd = Hisp.O12
-    Peq-π₁ : || Exℂ.Hom Peq-prd R ||
-    Peq-π₁ = Hisp.a1
-    Peq-π₂ : || Exℂ.Hom Peq-prd S ||
-    Peq-π₂ = Hisp.a2
+    peq-prd : Exℂ.Obj
+    peq-prd = Hisp.O12
+    peq-π₁ : || Exℂ.Hom peq-prd R ||
+    peq-π₁ = Hisp.a1
+    peq-π₂ : || Exℂ.Hom peq-prd S ||
+    peq-π₂ = Hisp.a2
 
-    Peq-<> : {T : ℂ.Peq} → || Exℂ.Hom T R || → || Exℂ.Hom T S || → || Exℂ.Hom T Peq-prd ||
-    Peq-<> {T} f g = record
+    peq-<> : {T : ℂ.peq} → || Exℂ.Hom T R || → || Exℂ.Hom T S || → || Exℂ.Hom T peq-prd ||
+    peq-<> {T} f g = record
       { lo = Lo[R×S].w< f.lo , g.lo >
       ; isext = record
         { hi = hiun
@@ -85,10 +85,10 @@ module exact-compl-has-bin-products {ℂ : ecategory} (hasfwl : has-fin-weak-lim
         }
       }
       where open ecategory-aux-only ℂ
-            module R×Sob = ℂ.Peq Peq-prd
-            module T = ℂ.Peq T
-            module f = ℂ.Peq-mor f
-            module g = ℂ.Peq-mor g
+            module R×Sob = ℂ.peq peq-prd
+            module T = ℂ.peq T
+            module f = ℂ.peq-mor f
+            module g = ℂ.peq-mor g
             hiun₁₀ = π₁.lo ∘ Lo[R×S].w< f.lo , g.lo > ∘ T.%0
                      ~[ ass ⊙ ∘e r Lo[R×S].w×tr₁ ⊙ f.cmptb₀ ˢ ]
                      R.%0 ∘ f.hi
@@ -105,23 +105,23 @@ module exact-compl-has-bin-products {ℂ : ecategory} (hasfwl : has-fin-weak-lim
             hiun = Hisp.⟨ Lo[R×S].w< f.lo , g.lo > ∘ T.%0 , f.hi , g.hi , Lo[R×S].w< f.lo , g.lo > ∘ T.%1
                         ⟩[ hiun₁₀ , hiun₁₁ , hiun₂₀ , hiun₂₁ ]
 
-    Peq-×of : Exℂ.product-of R S
-    Peq-×of = record
-            { ×sp/ = Exℂ.mkspan/ Peq-π₁ Peq-π₂
+    peq-×of : Exℂ.product-of R S
+    peq-×of = record
+            { ×sp/ = Exℂ.mkspan/ peq-π₁ peq-π₂
             ; ×isprd = record
-                     { <_,_> = Peq-<>
-                     ; ×tr₁ = ℂ.Peq-mor-eq-ext Lo[R×S].w×tr₁
-                     ; ×tr₂ = ℂ.Peq-mor-eq-ext Lo[R×S].w×tr₂
+                     { <_,_> = peq-<>
+                     ; ×tr₁ = ℂ.peq-mor-eq-ext Lo[R×S].w×tr₁
+                     ; ×tr₂ = ℂ.peq-mor-eq-ext Lo[R×S].w×tr₂
                      ; ×uq = Hisp.jm-pf
                      }
             }
-  -- end Peq-product
+  -- end peq-product
 
   ex-cmpl-prd : has-bin-products Ex ℂ [ hasfwl ]
   ex-cmpl-prd = record
-    { prd-of = Peq-×of
+    { prd-of = peq-×of
     }
-    where open Peq-product using (Peq-×of)
+    where open peq-product using (peq-×of)
 
 -- end exact-compl-has-bin-products
 
@@ -170,12 +170,12 @@ exact-compl-qcart-has-bin-products qcart = exact-compl-has-bin-products (qcart�
 --     _∘_ = ℂ._∘_
 
 
---   module Peq-product (R S : ℂ.Peq) where
+--   module peq-product (R S : ℂ.peq) where
 --     --open ecategory-aux-only ℂ
 --     open bin-products-aux qcℂ.hasprd using (_×ₐ_)
 --     private
---       module R = ℂ.Peq R
---       module S = ℂ.Peq S
+--       module R = ℂ.peq R
+--       module S = ℂ.peq S
 --       module Rτ = ℂ.wpullback-of-not R.τwpb
 --       module Sτ = ℂ.wpullback-of-not S.τwpb
 --       Lo[R×S] : ℂ.product-of R.Lo S.Lo
@@ -196,8 +196,8 @@ exact-compl-qcart-has-bin-products qcart = exact-compl-has-bin-products (qcart�
 --     private
 --       module R×Sτ = ℂ.wpullback-of R×Sτ
 
---     Peq-prd : ℂ.Peq
---     Peq-prd = record
+--     peq-prd : ℂ.peq
+--     peq-prd = record
 --       { Lo = Lo[R×S].O12
 --       ; peqover = record { Hi = Hi[R×S].O12
 --                          ; %0 = R.%0 ×ₐ S.%0
@@ -263,8 +263,8 @@ exact-compl-qcart-has-bin-products qcart = exact-compl-has-bin-products (qcart�
 --               (R.%1 ×ₐ S.%1) ∘ R×Sτ.wπ/₂ ∎
 
 
---     Peq-π₁ : || Exℂ.Hom Peq-prd R ||
---     Peq-π₁ = record { lo = Lo[R×S].π₁
+--     peq-π₁ : || Exℂ.Hom peq-prd R ||
+--     peq-π₁ = record { lo = Lo[R×S].π₁
 --                     ; isext = record
 --                       { hi = Hi[R×S].π₁
 --                       ; cmptb₀ = Lo[R×S].×tr₁ˢ
@@ -272,8 +272,8 @@ exact-compl-qcart-has-bin-products qcart = exact-compl-has-bin-products (qcart�
 --                       }
 --                     }
 
---     Peq-π₂ : || Exℂ.Hom Peq-prd S ||
---     Peq-π₂ = record { lo = Lo[R×S].π₂
+--     peq-π₂ : || Exℂ.Hom peq-prd S ||
+--     peq-π₂ = record { lo = Lo[R×S].π₂
 --                     ; isext = record
 --                       { hi = Hi[R×S].π₂
 --                       ; cmptb₀ = Lo[R×S].×tr₂ˢ
@@ -281,8 +281,8 @@ exact-compl-qcart-has-bin-products qcart = exact-compl-has-bin-products (qcart�
 --                       }
 --                     }
 
---     Peq-<> : {T : ℂ.Peq} → || Exℂ.Hom T R || → || Exℂ.Hom T S || → || Exℂ.Hom T Peq-prd ||
---     Peq-<> {T} f g = record
+--     peq-<> : {T : ℂ.peq} → || Exℂ.Hom T R || → || Exℂ.Hom T S || → || Exℂ.Hom T peq-prd ||
+--     peq-<> {T} f g = record
 --       { lo = Lo[R×S].< f.lo , g.lo >
 --       ; isext = record
 --         { hi = Hi[R×S].< f.hi , g.hi >
@@ -299,17 +299,17 @@ exact-compl-qcart-has-bin-products qcart = exact-compl-has-bin-products (qcart�
 --         }
 --       }
 --       where open ecategory-aux-only ℂ
---             module T = ℂ.Peq T
---             module f = ℂ.Peq-mor f
---             module g = ℂ.Peq-mor g
+--             module T = ℂ.peq T
+--             module f = ℂ.peq-mor f
+--             module g = ℂ.peq-mor g
 
---     Peq-×of : Exℂ.product-of R S
---     Peq-×of = record
---                 { ×sp/ = Exℂ.mkspan/ Peq-π₁ Peq-π₂
+--     peq-×of : Exℂ.product-of R S
+--     peq-×of = record
+--                 { ×sp/ = Exℂ.mkspan/ peq-π₁ peq-π₂
 --                 ; ×isprd = record
---                          { <_,_> = Peq-<>
---                          ; ×tr₁ = ℂ.Peq-mor-eq-ext Lo[R×S].×tr₁
---                          ; ×tr₂ = ℂ.Peq-mor-eq-ext Lo[R×S].×tr₂
+--                          { <_,_> = peq-<>
+--                          ; ×tr₁ = ℂ.peq-mor-eq-ext Lo[R×S].×tr₁
+--                          ; ×tr₂ = ℂ.peq-mor-eq-ext Lo[R×S].×tr₂
 --                          ; ×uq =  λ pf₁ pf₂ → record
 --                                { hty = Hi[R×S].< hty pf₁ , hty pf₂ > 
 --                                ; hty₀ = ×lhl.×ₐ<>~ar (hty₀ pf₁ ˢ) (hty₀ pf₂ ˢ)
@@ -318,13 +318,13 @@ exact-compl-qcart-has-bin-products qcart = exact-compl-has-bin-products (qcart�
 --                          }
 --                 }
 --                 where open ecategory-aux-only ℂ
---                       open ℂ.Peq-mor-eq
---     -- end Peq-product
+--                       open ℂ.peq-mor-eq
+--     -- end peq-product
 
 --   ex-cmpl-prd : has-bin-products Ex ℂ qc[ qcart ]
 --   ex-cmpl-prd = record
---               { prd-of = Peq-×of
+--               { prd-of = peq-×of
 --               }
---               where open Peq-product using (Peq-×of)
+--               where open peq-product using (peq-×of)
 
 -- -- end exact-compl-has-bin-products

@@ -30,25 +30,25 @@ module exact-compl-has-terminal {ℂ : ecategory} (hasfwl : has-fin-weak-limits 
     module trmHi = wproduct-of-not (wprd-of wtrmOb wtrmOb)
 
 
-  Peq-term : Exℂ.Obj
-  Peq-term = cofreePeq-from-wprd+wpb haswprd haswpb wtrmOb
+  peq-term : Exℂ.Obj
+  peq-term = cofreepeq-from-wprd+wpb haswprd haswpb wtrmOb
 
-  Peq-! : (R : Exℂ.Obj) → || Exℂ.Hom R Peq-term ||
-  Peq-! R = record { lo = lo!
+  peq-! : (R : Exℂ.Obj) → || Exℂ.Hom R peq-term ||
+  peq-! R = record { lo = lo!
                    ; isext = record
                      { hi = trmHi.w< lo! ∘ R.%0 , lo! ∘ R.%1 >
                      ; cmptb₀ = trmHi.w×tr₁
                      ; cmptb₁ = trmHi.w×tr₂
                      }
                    }
-                   where module R = Peq R
+                   where module R = peq R
                          lo! : || Hom R.Lo wtrmOb ||
                          lo! = w! R.Lo
   
   ex-cmpl-term : has-terminal Ex ℂ [ hasfwl ]
-  ex-cmpl-term = record { trmOb = Peq-term
+  ex-cmpl-term = record { trmOb = peq-term
                         ; istrm = record
-                                { ! = Peq-!
+                                { ! = peq-!
                                 ; !uniq = λ {R} f → record
                                         { hty = trmHi.w< lo f , w! (Lo R) >
                                         ; hty₀ = trmHi.w×tr₁
@@ -56,8 +56,8 @@ module exact-compl-has-terminal {ℂ : ecategory} (hasfwl : has-fin-weak-limits 
                                         }
                                 }
                         }
-               where open Peq using (Lo)
-                     open Peq-mor using (lo)
+               where open peq using (Lo)
+                     open peq-mor using (lo)
 
 -- end exact-compl-has-terminal
 

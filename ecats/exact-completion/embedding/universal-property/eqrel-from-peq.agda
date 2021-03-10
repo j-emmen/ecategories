@@ -33,9 +33,6 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
     module Γex = efunctor-aux Γex ℂ [ hasfwl ]
 
 
-
-  -- left covering functor from cat with weak fin limits into regular cat
-
   module eqrel-from-peq-via-left-covering {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼)
                                           {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
                                           where
@@ -55,9 +52,9 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
       module F = efunctor-aux F
       module lcF = is-left-covering lcovF
 
-    module eqrel-as-repi-mono-fact (A : ℂ.Peq) where
+    module eqrel-as-repi-mono-fact (A : ℂ.peq) where
       private
-        module A = ℂ.Peq A
+        module A = ℂ.peq A
         module FAL² = 𝔼.product-of-not (r𝔼.prd-of (F.ₒ A.Lo) (F.ₒ A.Lo))
       -- main definitions, to be used elsewhere
       F% : || 𝔼.Hom (F.ₒ A.Hi) FAL².O12 ||
@@ -81,7 +78,7 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
       F%rel = ∘e r (rmfF%.tr ˢ) ⊙ assˢ ⊙ ∘e CF%.eq r ⊙ ass ⊙ ∘e r rmfF%.tr
             where open ecategory-aux-only 𝔼
 
-      -- auxiliary definitions
+      -- auxiliary definitions to prove that < r₁ , r₂ > is an equivalence relation
       private
       -- jointly monic
         rjm : 𝔼.is-jointly-monic/ (𝔼.mkspan/ r₁ r₂)
@@ -194,7 +191,7 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
           (r₂ 𝔼.∘ τrpb.π/₂) 𝔼.∘ τcov ∎)
                    where open ecategory-aux-only 𝔼
 
-      -- equivalece relation
+      -- equivalence relation
         iseqr : 𝔼.is-eq-rel {rmfF%.Ob} {F.ₒ A.Lo} r₁ r₂
         iseqr = record
           { isjm/ = rjm
@@ -227,7 +224,7 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
         }
     -- end eqrel-as-repi-mono-fact
 
-    --eqr/ : (A : Exℂ.Obj) → 𝔼.eqrel-over (F.ₒ (ℂ.Peq.Lo A))
+    --eqr/ : (A : Exℂ.Obj) → 𝔼.eqrel-over (F.ₒ (ℂ.peq.Lo A))
     --eqr/ A = F.eqrel-from-peq-via-left-covering.eqrel/ A
 
     private
@@ -260,10 +257,10 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
               }
       }
       where open ecategory-aux-only 𝔼
-            module f = ℂ.Peq-mor f
-            module A = ℂ.Peq A
+            module f = ℂ.peq-mor f
+            module A = ℂ.peq A
             module FAL² = 𝔼.product-of-not (r𝔼.prd-of (F.ₒ A.Lo) (F.ₒ A.Lo))
-            module B = ℂ.Peq B
+            module B = ℂ.peq B
             module FBL² = 𝔼.product-of-not (r𝔼.prd-of (F.ₒ B.Lo) (F.ₒ B.Lo))
             open 𝔼.×ₐdef FBL².prdsp FAL².prdsp
             Ffl×Ffl : || 𝔼.Hom FAL².O12 FBL².O12 ||
@@ -295,10 +292,10 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
                       F.ₐ B.%1 𝔼.∘ F.ₐ f~f'.hty               ~[ F.∘ax f~f'.hty₁ ]∎
                       F.ₐ f'.lo ∎
       }
-      where module B = ℂ.Peq B
-            module f = ℂ.Peq-mor f
-            module f' = ℂ.Peq-mor f'
-            module f~f' = ℂ.Peq-mor-eq hty
+      where module B = ℂ.peq B
+            module f = ℂ.peq-mor f
+            module f' = ℂ.peq-mor f'
+            module f~f' = ℂ.peq-mor-eq hty
             module CRB = CRF% B
             open ecategory-aux-only 𝔼
   -- end eqrel-from-peq-via-left-covering
@@ -333,9 +330,9 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
       open rmfF% public
       open CF% public
 
-    module CRF%-is-iso {A : Exℂ.Obj} (isfree : ℂ.Peq.%0 A ℂ.~ ℂ.Peq.%1 A) where
+    module CRF%-is-iso {A : Exℂ.Obj} (isfree : ℂ.peq.%0 A ℂ.~ ℂ.peq.%1 A) where
       private
-        module A = ℂ.Peq A
+        module A = ℂ.peq A
         module CRA = CRF% A
 
       r₁~r₂ : CRA.r₁ 𝔼.~ CRA.r₂
@@ -369,9 +366,9 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
         { fnc = λ {X} → record
               { base-ar = 𝔼.idar (F.ₒ X)
               ; isext = record
-                      { rel-ar = CRF%.r₁ (ℂ.freePeq X)
-                      ; cmptb₀ = r {f = 𝔼.idar (F.ₒ X) 𝔼.∘ CRF%.r₁ (ℂ.freePeq X)}
-                      ; cmptb₁ = ∘e (CRF%-is-iso.r₁~r₂ {ℂ.freePeq X} rℂ) r
+                      { rel-ar = CRF%.r₁ (ℂ.freepeq X)
+                      ; cmptb₀ = r {f = 𝔼.idar (F.ₒ X) 𝔼.∘ CRF%.r₁ (ℂ.freepeq X)}
+                      ; cmptb₁ = ∘e (CRF%-is-iso.r₁~r₂ {ℂ.freepeq X} rℂ) r
                       }
               }
         ; nat = λ {X} {Y} f → record
@@ -388,15 +385,15 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
         { fnc = λ {X} → record
               { base-ar = 𝔼.idar (F.ₒ  X)
               ; isext = record
-                      { rel-ar = CRF%.C (ℂ.freePeq X)
-                      ; cmptb₀ = CRF%.rmfF%tr₁ (ℂ.freePeq X) ⊙ lidgenˢ F.id
-                      ; cmptb₁ = CRF%.rmfF%tr₂ (ℂ.freePeq X) ⊙ lidgenˢ F.id
+                      { rel-ar = CRF%.C (ℂ.freepeq X)
+                      ; cmptb₀ = CRF%.rmfF%tr₁ (ℂ.freepeq X) ⊙ lidgenˢ F.id
+                      ; cmptb₁ = CRF%.rmfF%tr₂ (ℂ.freepeq X) ⊙ lidgenˢ F.id
                       }
               }
         ; nat = λ {X} {Y} f → record
-              { wit = CRF%.C (ℂ.freePeq Y) 𝔼.∘ F.ₐ f
-              ; wit₀ = ass ⊙ ∘e r (CRF%.rmfF%tr₁ (ℂ.freePeq Y) ⊙ F.id)
-              ; wit₁ = ass ⊙ lidgg (ridˢ {f = F.ₐ f}) (CRF%.rmfF%tr₂ (ℂ.freePeq Y) ⊙ F.id) 
+              { wit = CRF%.C (ℂ.freepeq Y) 𝔼.∘ F.ₐ f
+              ; wit₀ = ass ⊙ ∘e r (CRF%.rmfF%tr₁ (ℂ.freepeq Y) ⊙ F.id)
+              ; wit₁ = ass ⊙ lidgg (ridˢ {f = F.ₐ f}) (CRF%.rmfF%tr₂ (ℂ.freepeq Y) ⊙ F.id) 
               }
         }
         where open ecategory-aux-only 𝔼
@@ -410,9 +407,9 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
     ; natt⁻¹ = Δ2eqrelΔ
     ; isiso = λ {X} → record
             { iddom = record
-                    { wit = CRF%.C (ℂ.freePeq X)
-                    ; wit₀ = CRF%.rmfF%tr₁ (ℂ.freePeq X) ⊙ lidgenˢ F.id
-                    ; wit₁ = CRF%.rmfF%tr₂ (ℂ.freePeq X) ⊙ F.id
+                    { wit = CRF%.C (ℂ.freepeq X)
+                    ; wit₀ = CRF%.rmfF%tr₁ (ℂ.freepeq X) ⊙ lidgenˢ F.id
+                    ; wit₁ = CRF%.rmfF%tr₂ (ℂ.freepeq X) ⊙ F.id
                     }
             ; idcod = record
                     { wit = 𝔼.idar (F.ₒ X)

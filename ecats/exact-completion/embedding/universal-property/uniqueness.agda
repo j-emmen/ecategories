@@ -90,17 +90,17 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
     Gcxs-is-exs A = exG.pres-ex-seq-pf {cxs.kpOb A} {cxs.freeLo A} {A} (cxs.isexseq A)
     private module Gcxs (A : Exℂ.Obj) = 𝔼.is-exact-seq (Gcxs-is-exs A)
     
-    Gcre-coeq-of-GΓex : (A : Exℂ.Obj) → 𝔼.is-coeq (G.ₐ (Γex.ₐ (ℂ.Peq.%0 A))) (G.ₐ (Γex.ₐ (ℂ.Peq.%1 A))) (G.ₐ (cxs.cre.ar A))
+    Gcre-coeq-of-GΓex : (A : Exℂ.Obj) → 𝔼.is-coeq (G.ₐ (Γex.ₐ (ℂ.peq.%0 A))) (G.ₐ (Γex.ₐ (ℂ.peq.%1 A))) (G.ₐ (cxs.cre.ar A))
     Gcre-coeq-of-GΓex A = 𝔼.epi/coeq-so-coeq {G.ₒ (cxs.kpOb A)} {G.ₒ (Γex.ₒ A.Lo)} {G.ₒ A}
                                               {G.ₐ (cxs.kp₁ A)} {G.ₐ (cxs.kp₂ A)} {R' = G.ₒ (Γex.ₒ A.Hi)}
                                               {G.ₐ (cxs.cc.ar A)} (𝔼.repi-is-epic Gcc-repi)
                                               (G.∘ax (cxs.cc.tr₁ A)) (G.∘ax (cxs.cc.tr₂ A))
                                               (Gcxs.iscoeq A)
-                        where module A = ℂ.Peq A
+                        where module A = ℂ.peq A
                               Gcc-repi : 𝔼.is-regular-epi (G.ₐ (cxs.cc.ar A))
                               Gcc-repi = exG.pres-repi-pf (cxs.cc.can-repi-is-repi A)
     private module GΓex-coeq (A : Exℂ.Obj) = 𝔼.coeq-of (𝔼.mkcoeq-of (Gcre-coeq-of-GΓex A))
-    F↑ex-coeq-of-F : (A : Exℂ.Obj) → 𝔼.is-coeq (F.ₐ (ℂ.Peq.%0 A)) (F.ₐ (ℂ.Peq.%1 A)) (F↑ex-coeq.ar A)
+    F↑ex-coeq-of-F : (A : Exℂ.Obj) → 𝔼.is-coeq (F.ₐ (ℂ.peq.%0 A)) (F.ₐ (ℂ.peq.%1 A)) (F↑ex-coeq.ar A)
     F↑ex-coeq-of-F A = 𝔼.epi/coeq-so-coeq (𝔼.repi-is-epic (CRF%.C-is-repi A))
                                           (CRF%.rmfF%tr₁ A)
                                           (CRF%.rmfF%tr₂ A)
@@ -109,7 +109,7 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
     private
       module fnc (A : Exℂ.Obj) where
         open 𝔼.uniq-of-coequalisers (Gcre-coeq-of-GΓex A)
-        private module A = ℂ.Peq A
+        private module A = ℂ.peq A
         isoHi : 𝔼.is-iso (GΓex≅F.fnc {A.Hi})
         isoHi = (𝔼.mkis-iso (GΓex≅F.isiso {A.Hi}))
         isoLo : 𝔼.is-iso (GΓex≅F.fnc {A.Lo})
@@ -119,7 +119,7 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
       -- end fnc
 
     Γexsq : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||)
-               → f Exℂ.∘ cxs.cre.ar A Exℂ.~ cxs.cre.ar B Exℂ.∘ Γex.ₐ (ℂ.Peq-mor.lo f)
+               → f Exℂ.∘ cxs.cre.ar A Exℂ.~ cxs.cre.ar B Exℂ.∘ Γex.ₐ (ℂ.peq-mor.lo f)
     Γexsq {A} {B} f = record
       { hty = B.ρ ℂ.∘ f.lo
       ; hty₀ = ass ⊙ lidgg ridˢ B.ρ-ax₀
@@ -127,19 +127,19 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
       
       }
       where open ecategory-aux-only ℂ
-            module A = ℂ.Peq A
-            module B = ℂ.Peq B
-            module f = ℂ.Peq-mor f
+            module A = ℂ.peq A
+            module B = ℂ.peq B
+            module f = ℂ.peq-mor f
 
     γ : natural-transformation G (↑ex ex𝔼 lcovF)
     γ = record
       { fnc = λ {A} → fnc.ar A
       ; nat = λ {A} {B} f → GΓex-coeq.epi-pf A (~proof
         (fnc.ar B 𝔼.∘ G.ₐ f) 𝔼.∘ GΓex-coeq.ar A                                ~[ assˢ ⊙ ∘e (G.∘∘ (Γexsq f)) r ] /
-        fnc.ar B 𝔼.∘ GΓex-coeq.ar B 𝔼.∘ GΓex.ₐ (ℂ.Peq-mor.lo f)                ~[ ass ⊙ ∘e r (fnc.ar-sq B) ⊙ assˢ ] /
-        F↑ex-coeq.ar B 𝔼.∘ GΓex≅F.fnc {ℂ.Peq.Lo B} 𝔼.∘ GΓex.ₐ (ℂ.Peq-mor.lo f) ~[ ∘e (GΓex≅F.nat (ℂ.Peq-mor.lo f)) r ] /
-        F↑ex-coeq.ar B 𝔼.∘ (FRel.base-ar f) 𝔼.∘ GΓex≅F.fnc {ℂ.Peq.Lo A}           ~[ ass ⊙ ∘e r (q-sq (FRel.ₐ f) ˢ) ⊙ assˢ ] /
-        F↑ex.ₐ f 𝔼.∘ F↑ex-coeq.ar A 𝔼.∘ GΓex≅F.fnc {ℂ.Peq.Lo A}                ~[ ∘e (fnc.ar-sq A ˢ) r ⊙ ass ]∎
+        fnc.ar B 𝔼.∘ GΓex-coeq.ar B 𝔼.∘ GΓex.ₐ (ℂ.peq-mor.lo f)                ~[ ass ⊙ ∘e r (fnc.ar-sq B) ⊙ assˢ ] /
+        F↑ex-coeq.ar B 𝔼.∘ GΓex≅F.fnc {ℂ.peq.Lo B} 𝔼.∘ GΓex.ₐ (ℂ.peq-mor.lo f) ~[ ∘e (GΓex≅F.nat (ℂ.peq-mor.lo f)) r ] /
+        F↑ex-coeq.ar B 𝔼.∘ (FRel.base-ar f) 𝔼.∘ GΓex≅F.fnc {ℂ.peq.Lo A}           ~[ ass ⊙ ∘e r (q-sq (FRel.ₐ f) ˢ) ⊙ assˢ ] /
+        F↑ex.ₐ f 𝔼.∘ F↑ex-coeq.ar A 𝔼.∘ GΓex≅F.fnc {ℂ.peq.Lo A}                ~[ ∘e (fnc.ar-sq A ˢ) r ⊙ ass ]∎
         (F↑ex.ₐ f 𝔼.∘ fnc.ar A) 𝔼.∘ GΓex-coeq.ar A ∎)
       -- 
       }
@@ -152,9 +152,9 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
       ; nat = λ {A} {B} f → F↑ex-coeq.epi-pf A (~proof
         (fnc.ar⁻¹ B 𝔼.∘ F↑ex.ₐ f) 𝔼.∘ F↑ex-coeq.ar A                             ~[ assˢ ⊙ ∘e (q-sq (FRel.ₐ f)) r ] /
         fnc.ar⁻¹ B 𝔼.∘ F↑ex-coeq.ar B 𝔼.∘ FRel.base-ar f                            ~[ ass ⊙ ∘e r (fnc.ar⁻¹-sq B) ⊙ assˢ ] /
-        GΓex-coeq.ar B 𝔼.∘ GΓex≅F.fnc⁻¹ {ℂ.Peq.Lo B} 𝔼.∘ FRel.base-ar f             ~[ ∘e (GΓex≅F.nat⁻¹ (ℂ.Peq-mor.lo f)) r ] /
-        GΓex-coeq.ar B 𝔼.∘ GΓex.ₐ (ℂ.Peq-mor.lo f) 𝔼.∘ GΓex≅F.fnc⁻¹ {ℂ.Peq.Lo A} ~[ ass ⊙ ∘e r (G.∘∘ (Γexsq f) ˢ) ⊙ assˢ ] /
-        G.ₐ f 𝔼.∘ GΓex-coeq.ar A 𝔼.∘ GΓex≅F.fnc⁻¹ {ℂ.Peq.Lo A}                   ~[ ∘e (fnc.ar⁻¹-sq A ˢ) r ⊙ ass ]∎
+        GΓex-coeq.ar B 𝔼.∘ GΓex≅F.fnc⁻¹ {ℂ.peq.Lo B} 𝔼.∘ FRel.base-ar f             ~[ ∘e (GΓex≅F.nat⁻¹ (ℂ.peq-mor.lo f)) r ] /
+        GΓex-coeq.ar B 𝔼.∘ GΓex.ₐ (ℂ.peq-mor.lo f) 𝔼.∘ GΓex≅F.fnc⁻¹ {ℂ.peq.Lo A} ~[ ass ⊙ ∘e r (G.∘∘ (Γexsq f) ˢ) ⊙ assˢ ] /
+        G.ₐ f 𝔼.∘ GΓex-coeq.ar A 𝔼.∘ GΓex≅F.fnc⁻¹ {ℂ.peq.Lo A}                   ~[ ∘e (fnc.ar⁻¹-sq A ˢ) r ⊙ ass ]∎
         (G.ₐ f 𝔼.∘ fnc.ar⁻¹ A) 𝔼.∘ F↑ex-coeq.ar A ∎)
       }
       where open ecategory-aux-only 𝔼

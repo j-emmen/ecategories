@@ -41,9 +41,9 @@ module exact-compl-has-repi-mono-fact {ℂ : ecategory} (hasfwl : has-fin-weak-l
 
   module rem-fact-objarr {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) where
     private
-      module A = ℂ.Peq A
-      module B = ℂ.Peq B
-      module f = ℂ.Peq-mor f
+      module A = ℂ.peq A
+      module B = ℂ.peq B
+      module f = ℂ.peq-mor f
     cmf-data : ℂ.canonical-mono f.lo B.peqover
     cmf-data = ℂ.can-mono-over f.lo B.peqover
     module cmf = ℂ.canonical-mono cmf-data
@@ -77,12 +77,12 @@ module exact-compl-has-repi-mono-fact {ℂ : ecategory} (hasfwl : has-fin-weak-l
          where open rem-fact-objarr f
          
   remM-is-can-monic : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||)
-                            → ℂ.canonical-mono (ℂ.Peq-mor.lo f) (ℂ.Peq.peqover B)
+                            → ℂ.canonical-mono (ℂ.peq-mor.lo f) (ℂ.peq.peqover B)
   remM-is-can-monic f = cmf-data
                       where open rem-fact-objarr f using (cmf-data)
                          
   remC-is-can-repi : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||)
-                        → ℂ.canonical-repi (ℂ.Peq.peqover A) (ℂ.Peq.peqover (Exℂ.repi-mono-fact-of.Ob (rmf-of f)))
+                        → ℂ.canonical-repi (ℂ.peq.peqover A) (ℂ.peq.peqover (Exℂ.repi-mono-fact-of.Ob (rmf-of f)))
   remC-is-can-repi f = crf-data
                      where open rem-fact-objarr f using (crf-data)
 -- end exact-compl-has-repi-mono-fact
@@ -133,21 +133,21 @@ module exact-compl-has-pb-stable-repis {ℂ : ecategory} (hasfwl : has-fin-weak-
 
 
   -- chosen pullback of a canonical repi is a regular epi
-  module pb-of-can-repi-is-repi {X : ℂ.Obj} {R S : ℂ.PeqOver X} (fdata : ℂ.canonical-repi R S)
+  module pb-of-can-repi-is-repi {X : ℂ.Obj} {R S : ℂ.peqOver X} (fdata : ℂ.canonical-repi R S)
                                 {A : Exℂ.Obj} (g : || Exℂ.Hom A (ℂ.mkpeq-c S) ||)
                                 where
     private
       module cre = ℂ.canonical-repi fdata
-      module A = ℂ.Peq A
-      module R = ℂ.PeqOver R
-      module S = ℂ.PeqOver S
-      module g = ℂ.Peq-mor g
+      module A = ℂ.peq A
+      module R = ℂ.peqOver R
+      module S = ℂ.peqOver S
+      module g = ℂ.peq-mor g
       g×/cre : Exℂ.pullback-of g cre.ar
       g×/cre = flExℂ.pb-of g cre.ar
       module g×/cre = Exℂ.pullback-of g×/cre
-      module g*cre = ℂ.Peq-mor g×/cre.π/₁
+      module g*cre = ℂ.peq-mor g×/cre.π/₁
       module rmf[g*cre] = rmfof (g×/cre.π/₁)
-      module Ig*cre = ℂ.Peq rmf[g*cre].Ob
+      module Ig*cre = ℂ.peq rmf[g*cre].Ob
       module Mg*cre = ℂ.canonical-mono (rmfExℂ.remM-is-can-monic g×/cre.π/₁)
       --ℂ.is-std-Ex-monic (rmfExℂ.remM-is-std-Ex-monic g×/cre.π/₁)
     Mg*cre-is-sepi : Exℂ.is-split-epi rmf[g*cre].M
@@ -168,13 +168,13 @@ module exact-compl-has-pb-stable-repis {ℂ : ecategory} (hasfwl : has-fin-weak-
       }
       where open ecategory-aux-only ℂ
             open exact-compl-has-pullbacks-from-connected hasfwl
-            open Peq-pb-of g cre.ar
-            module Peq-pbob = ℂ.Peq Peq-pbob
+            open peq-pb-of g cre.ar
+            module peq-pbob = ℂ.peq peq-pbob
             minv-lo₀ = g.lo ∘ ℂ.idar A.Lo      ~[ lidggˢ rid S.ρ-ax₀ ⊙ assˢ ]
                        S.%0 ∘ S.ρ ∘ g.lo
             minv-lo₁ = ℂ.idar X ∘ g.lo          ~[ lidggˢ lid S.ρ-ax₁ ⊙ assˢ ]
                        S.%1 ∘ S.ρ ∘ g.lo                  
-            minv-lo : || ℂ.Hom A.Lo Peq-pbob.Lo ||
+            minv-lo : || ℂ.Hom A.Lo peq-pbob.Lo ||
             minv-lo = pbLo.⟨ ℂ.idar A.Lo , S.ρ ∘ g.lo , g.lo ⟩[ minv-lo₀ , minv-lo₁ ]
             minv-hi₀ = g*cre.lo ∘ minv-lo ∘ A.%0   ~[ ass ⊙ lidgg ridˢ (pbLo.trl minv-lo₀ minv-lo₁) ]
                        A.%0 ℂ.∘ ℂ.idar A.Hi
@@ -191,7 +191,7 @@ module exact-compl-has-pb-stable-repis {ℂ : ecategory} (hasfwl : has-fin-weak-
 
 
   -- any pullback of a canonical repi is a regular epi
-  module pbsq-of-can-repi-is-repi {X : ℂ.Obj} {R S : ℂ.PeqOver X} (fdata : ℂ.canonical-repi R S)
+  module pbsq-of-can-repi-is-repi {X : ℂ.Obj} {R S : ℂ.peqOver X} (fdata : ℂ.canonical-repi R S)
                                   {A : Exℂ.Obj} (g : || Exℂ.Hom A (ℂ.mkpeq-c S) ||)
                                   where
     private
@@ -284,11 +284,11 @@ exact-compl-qcart-is-regular qcart = exact-compl-is-regular (qcart→has-fwlim q
 
 --   module img-fact-objarr {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) where
 --     private
---       module A = ℂ.Peq A
---       module B = ℂ.Peq B
---       module f = ℂ.Peq-mor f
+--       module A = ℂ.peq A
+--       module B = ℂ.peq B
+--       module f = ℂ.peq-mor f
 --       module cmf = ℂ.canonical-mono B.peqover f.lo
---       module imgOb = ℂ.Peq cmf.cmPeq    
+--       module imgOb = ℂ.peq cmf.cmpeq    
 --     cmf-data : ℂ.is-std-Ex-monic cmf.cmar
 --     cmf-data = cmf.cmar-is-std-Ex-monic
 --     cref-data : ℂ.canonical-repi A.peqover imgOb.peqover
@@ -321,7 +321,7 @@ exact-compl-qcart-is-regular qcart = exact-compl-is-regular (qcart→has-fwlim q
 --                          where open img-fact-objarr f using (cmf-data)
 
 --   imgC-is-can-repi : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||)
---                         → ℂ.canonical-repi (ℂ.Peq.peqover A) (ℂ.Peq.peqover (Exℂ.img-fact-of.Ob (img-of f)))
+--                         → ℂ.canonical-repi (ℂ.peq.peqover A) (ℂ.peq.peqover (Exℂ.img-fact-of.Ob (img-of f)))
 --   imgC-is-can-repi f = cref-data
 --                      where open img-fact-objarr f using (cref-data)
 -- -- end exact-compl-has-image-fact
@@ -374,21 +374,21 @@ exact-compl-qcart-is-regular qcart = exact-compl-is-regular (qcart→has-fwlim q
 
 
 
---   module pb-of-can-repi-is-strepi {X : ℂ.Obj} {R S : ℂ.PeqOver X} (fdata : ℂ.canonical-repi R S)
+--   module pb-of-can-repi-is-strepi {X : ℂ.Obj} {R S : ℂ.peqOver X} (fdata : ℂ.canonical-repi R S)
 --                                   {A : Exℂ.Obj} (g : || Exℂ.Hom A (ℂ.mkpeq-c S) ||)
 --                                   where
 --     private
 --       module cre = ℂ.canonical-repi fdata
---       module A = ℂ.Peq A
---       module R = ℂ.PeqOver R
---       module S = ℂ.PeqOver S
---       module g = ℂ.Peq-mor g
+--       module A = ℂ.peq A
+--       module R = ℂ.peqOver R
+--       module S = ℂ.peqOver S
+--       module g = ℂ.peq-mor g
 --       g×/cre : Exℂ.pullback-of g cre.ar
 --       g×/cre = flExℂ.pb-of g cre.ar
 --       module g×/cre = Exℂ.pullback-of g×/cre
---       module g*cre = ℂ.Peq-mor g×/cre.π/₁
+--       module g*cre = ℂ.peq-mor g×/cre.π/₁
 --       module img[g*cre] = imgof (g×/cre.π/₁)
---       module Ig*cre = ℂ.Peq img[g*cre].Ob
+--       module Ig*cre = ℂ.peq img[g*cre].Ob
 --       module Mg*cre = ℂ.is-std-Ex-monic (imgExℂ.imgM-is-std-Ex-monic g×/cre.π/₁)
 
 --     Mg*cre-is-sepi : Exℂ.is-split-epi img[g*cre].M
@@ -409,13 +409,13 @@ exact-compl-qcart-is-regular qcart = exact-compl-is-regular (qcart→has-fwlim q
 --       }
 --       where open ecategory-aux-only ℂ
 --             open exact-compl-has-pullbacks-from-connected hasfwl
---             open Peq-pb-of g cre.ar
---             module Peq-pbob = ℂ.Peq Peq-pbob
+--             open peq-pb-of g cre.ar
+--             module peq-pbob = ℂ.peq peq-pbob
 --             minv-lo₀ = g.lo ∘ ℂ.idar A.Lo      ~[ lidggˢ rid S.ρ-ax₀ ⊙ assˢ ]
 --                        S.%0 ∘ S.ρ ∘ g.lo
 --             minv-lo₁ = ℂ.idar X ∘ g.lo          ~[ lidggˢ lid S.ρ-ax₁ ⊙ assˢ ]
 --                        S.%1 ∘ S.ρ ∘ g.lo                  
---             minv-lo : || ℂ.Hom A.Lo Peq-pbob.Lo ||
+--             minv-lo : || ℂ.Hom A.Lo peq-pbob.Lo ||
 --             minv-lo = pbLo.⟨ ℂ.idar A.Lo , S.ρ ∘ g.lo , g.lo ⟩[ minv-lo₀ , minv-lo₁ ]
 --             minv-hi₀ = g*cre.lo ∘ minv-lo ∘ A.%0   ~[ ass ⊙ lidgg ridˢ (pbLo.trl minv-lo₀ minv-lo₁) ]
 --                        A.%0 ℂ.∘ ℂ.idar A.Hi
@@ -435,7 +435,7 @@ exact-compl-qcart-is-regular qcart = exact-compl-is-regular (qcart→has-fwlim q
 --   -- end pb-of-can-repi-is-strepi
 
 
---   module pbsq-of-can-repi-is-strepi {X : ℂ.Obj} {R S : ℂ.PeqOver X} (fdata : ℂ.canonical-repi R S)
+--   module pbsq-of-can-repi-is-strepi {X : ℂ.Obj} {R S : ℂ.peqOver X} (fdata : ℂ.canonical-repi R S)
 --                                     {A : Exℂ.Obj} (g : || Exℂ.Hom A (ℂ.mkpeq-c S) ||)
 --                                     where
 --     open pb-of-can-repi-is-strepi fdata g

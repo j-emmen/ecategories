@@ -112,10 +112,10 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       T'pf = flExℂ.istrm
       private
         module wT where
-          open ℂ.Peq wT public
+          open ℂ.peq wT public
           open Exℂ.is-wterminal wTpf public
         module T' where
-          open ℂ.Peq T' public
+          open ℂ.peq T' public
           open Exℂ.is-terminal T'pf public
         module T =  𝔼.is-terminal Tpf
       -- Lo of the chosen terminal in Exℂ is weakly terminal in ℂ
@@ -158,16 +158,16 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       A×B : Exℂ.product-of A B
       A×B = flExℂ.prd-of A B
       private
-        module A = ℂ.Peq A
-        module B = ℂ.Peq B
+        module A = ℂ.peq A
+        module B = ℂ.peq B
         module wP where
-          open ℂ.Peq wP public
+          open ℂ.peq wP public
           open Exℂ.wproduct-of-not (Exℂ.mkw×of wPpf) public
         module A×B where
           open Exℂ.product-of-not A×B public
-          module Ob = ℂ.Peq O12
-          module π₁ = ℂ.Peq-mor π₁
-          module π₂ = ℂ.Peq-mor π₂
+          module Ob = ℂ.peq O12
+          module π₁ = ℂ.peq-mor π₁
+          module π₂ = ℂ.peq-mor π₂
         module P = 𝔼.product-of-not (𝔼.mk×of Ppf)
 
       Lo[A×B] : ℂ.is-wproduct (ℂ.mkspan A×B.π₁.lo A×B.π₂.lo)
@@ -248,14 +248,14 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
                                  {coveql : || 𝔼.Hom (F↑ex.ₒ wE) E ||} (trpf : e 𝔼.∘ coveql 𝔼.~ F↑ex.ₐ {wE} {A} we)
                                  where
       private
-        module A = ℂ.Peq A
-        module B = ℂ.Peq B
-        module f = ℂ.Peq-mor f
-        module g = ℂ.Peq-mor g
+        module A = ℂ.peq A
+        module B = ℂ.peq B
+        module f = ℂ.peq-mor f
+        module g = ℂ.peq-mor g
         module wE where
           open Exℂ.is-wequaliser wEpf public
-          module Ob = ℂ.Peq wE
-          module we = ℂ.Peq-mor we
+          module Ob = ℂ.peq wE
+          module we = ℂ.peq-mor we
         module Efg where
           open exact-compl-has-equalisers hasfwl
           open ExC-eql-of f g using (eqlLo; eql-of) renaming (sp-lof to sp-lofg) public
@@ -516,21 +516,21 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       a×/b : Exℂ.pullback-of a b
       a×/b = flExℂ.pb-of {I} {A} {B} a b
       private
-        module I = ℂ.Peq I
-        module A = ℂ.Peq A
-        module B = ℂ.Peq B
-        module a = ℂ.Peq-mor a
-        module b = ℂ.Peq-mor b
+        module I = ℂ.peq I
+        module A = ℂ.peq A
+        module B = ℂ.peq B
+        module a = ℂ.peq-mor a
+        module b = ℂ.peq-mor b
         module wP where
           open Exℂ.wpullback-of-not (Exℂ.mkwpb-of wPpf) public
-          module Ob = ℂ.Peq wP
-          module wπ/₁ = ℂ.Peq-mor wπ/₁
-          module wπ/₂ = ℂ.Peq-mor wπ/₂
+          module Ob = ℂ.peq wP
+          module wπ/₁ = ℂ.peq-mor wπ/₁
+          module wπ/₂ = ℂ.peq-mor wπ/₂
         module a×/b where
           open Exℂ.pullback-of-not a×/b public
-          module Ob = ℂ.Peq ul
-          module π/₁ = ℂ.Peq-mor π/₁
-          module π/₂ = ℂ.Peq-mor π/₂
+          module Ob = ℂ.peq ul
+          module π/₁ = ℂ.peq-mor π/₁
+          module π/₂ = ℂ.peq-mor π/₂
         module P = 𝔼.pullback-of-not (𝔼.mkpb-of Ppf)
 
       Lo[a×/b] : ℂ.wWlim-of a.lo I.sp/ b.lo

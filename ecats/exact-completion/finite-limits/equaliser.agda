@@ -52,10 +52,10 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
 
   module ExC-eql-of {A B : Exℂ.Obj} (f f' : || Exℂ.Hom A B ||) where
     private
-      module A = ℂ.Peq A
-      module B = ℂ.Peq B
-      module f = ℂ.Peq-mor f
-      module f' = ℂ.Peq-mor f'
+      module A = ℂ.peq A
+      module B = ℂ.peq B
+      module f = ℂ.peq-mor f
+      module f' = ℂ.peq-mor f'
     sp-lof : ℂ.span/ B.Lo B.Lo
     sp-lof = ℂ.mkspan/ f.lo f'.lo
     private
@@ -75,7 +75,7 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
     private
       module Eql = fwlℂ.canonical-mono (fwlℂ.can-mono-over loeqlar A.peqover)
       module eql-mono = Exℂ.is-monic Eql.ar-monic
-      module eqlOb = ℂ.Peq Eql.Ob
+      module eqlOb = ℂ.peq Eql.Ob
 
     eqlOb : Exℂ.Obj
     eqlOb = Eql.Ob
@@ -94,9 +94,9 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
 
     module Eql-univ (C : Exℂ.Obj) (g : || Exℂ.Hom C A ||) (pf : f Exℂ.∘ g Exℂ.~ f' Exℂ.∘ g) where
       private
-        module C = ℂ.Peq C
-        module g = ℂ.Peq-mor g
-        module pf = ℂ.Peq-mor-eq pf
+        module C = ℂ.peq C
+        module g = ℂ.peq-mor g
+        module pf = ℂ.peq-mor-eq pf
         --module HiE = fwlℂ.is-std-Ex-monic Eql.cmar-is-std-Ex-monic
 
       log|f-pfl : f.lo ℂ.∘ g.lo ℂ.~ B.%0 ℂ.∘ pf.hty

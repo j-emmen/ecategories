@@ -106,7 +106,7 @@ module pseudo-eq-rel-defs (ℂ : ecategory) where
     open is-transitive/wpb iswτ public
     
 
-  record PeqOver (Lo : Obj) : Set₁ where
+  record peqOver (Lo : Obj) : Set₁ where
     -- constructor mkpeq/
     field
        Hi : Obj
@@ -118,15 +118,15 @@ module pseudo-eq-rel-defs (ℂ : ecategory) where
     sp/ = mkspan/ %0 %1
 
 
-  record Peq : Set₁ where
+  record peq : Set₁ where
     constructor mkpeq-c
     field
       {Lo} : Obj
-      peqover : PeqOver Lo
-    open PeqOver peqover public
+      peqover : peqOver Lo
+    open peqOver peqover public
 
 
-  mkpeq : {Lo Hi : Obj} {%0 %1 : || Hom Hi Lo ||} → is-peq-rel %0 %1 → Peq
+  mkpeq : {Lo Hi : Obj} {%0 %1 : || Hom Hi Lo ||} → is-peq-rel %0 %1 → peq
   mkpeq {Lo} {Hi} {%0} {%1} ispeq = record
     { Lo = Lo
     ; peqover = record
@@ -138,8 +138,8 @@ module pseudo-eq-rel-defs (ℂ : ecategory) where
     }
 
 
-  record is-extensional-ar (R S : Peq) (lo : || Hom (Peq.Lo R) (Peq.Lo S) ||) : Set where
-    open Peq
+  record is-extensional-ar (R S : peq) (lo : || Hom (peq.Lo R) (peq.Lo S) ||) : Set where
+    open peq
     field
       hi : || Hom (Hi R)  (Hi S) ||
       cmptb₀ :  %0 S ∘ hi ~ lo ∘ %0 R
@@ -150,19 +150,19 @@ module pseudo-eq-rel-defs (ℂ : ecategory) where
     cmptb₁g = ass ⊙ ∘e r cmptb₁ ⊙ assˢ
 
 
-  record Peq-mor (R S : Peq) : Set where
+  record peq-mor (R S : peq) : Set where
     -- constructor mkpeq-mor
-    open Peq
+    open peq
     field
       lo : || Hom (Lo R)  (Lo S) ||
       isext : is-extensional-ar R S lo
     open is-extensional-ar isext public
       
 
-  record Peq-mor-eq {R S : Peq} (f g : Peq-mor R S) : Set where
+  record peq-mor-eq {R S : peq} (f g : peq-mor R S) : Set where
     -- constructor mkper-mor-eq
-    open Peq
-    open Peq-mor
+    open peq
+    open peq-mor
     field
       hty : || Hom (Lo R) (Hi S) ||
       hty₀ : %0 S ∘ hty ~ lo f
@@ -173,25 +173,25 @@ module pseudo-eq-rel-defs (ℂ : ecategory) where
     hty₁g = ass ⊙ ∘e r hty₁
 
 
-  Peq-mor-eq-ext : {R S : Peq} {f g : Peq-mor R S}
-                      → Peq-mor.lo f ~ Peq-mor.lo g →  Peq-mor-eq f g
-  Peq-mor-eq-ext {R} {S} {f} {g} pf = record
+  peq-mor-eq-ext : {R S : peq} {f g : peq-mor R S}
+                      → peq-mor.lo f ~ peq-mor.lo g →  peq-mor-eq f g
+  peq-mor-eq-ext {R} {S} {f} {g} pf = record
     { hty = S.ρ ∘ f.lo
     ; hty₀ = ass ⊙ ∘e r S.ρ-ax₀ ⊙ lid
     ; hty₁ = ass ⊙ ∘e r S.ρ-ax₁ ⊙ lidgen pf
     }
-    where module S = Peq S
-          module f = Peq-mor f
+    where module S = peq S
+          module f = peq-mor f
 
 
-  -- Some canonical Peq
+  -- Some canonical peq
   
-  module CanPeq where
-    open Peq
-    open Peq-mor
+  module Canpeq where
+    open peq
+    open peq-mor
 
-    freePeq : Obj → Peq
-    freePeq X = record
+    freepeq : Obj → peq
+    freepeq X = record
       { Lo = X
       ; peqover = record
         { Hi = X
@@ -224,9 +224,9 @@ module pseudo-eq-rel-defs (ℂ : ecategory) where
               }
 
 
-    cofreePeq-from-wprd+wpb : has-bin-weak-products ℂ → has-weak-pullbacks ℂ
-                                → Obj → Peq
-    cofreePeq-from-wprd+wpb haswprd haswpb X = record
+    cofreepeq-from-wprd+wpb : has-bin-weak-products ℂ → has-weak-pullbacks ℂ
+                                → Obj → peq
+    cofreepeq-from-wprd+wpb haswprd haswpb X = record
       { Lo = X
       ; peqover = record
         { Hi = X×X.O12
@@ -264,8 +264,8 @@ module pseudo-eq-rel-defs (ℂ : ecategory) where
             module τwpbX = wpullback-of τwpbX
 
 
-    cofreePeq-from-prd : has-bin-products ℂ → Obj → Peq
-    cofreePeq-from-prd hasprd X = record
+    cofreepeq-from-prd : has-bin-products ℂ → Obj → peq
+    cofreepeq-from-prd hasprd X = record
       { Lo = X
       ; peqover = record
         { Hi = X×X.O12
@@ -306,8 +306,8 @@ module pseudo-eq-rel-defs (ℂ : ecategory) where
               open pullback-of-not pbprd.×/of public
 
 
-    freePeq-is-min : {X : Obj} (R : Peq) → || Hom X (Lo R) || → Peq-mor (freePeq X) R
-    freePeq-is-min R f = record
+    freepeq-is-min : {X : Obj} (R : peq) → || Hom X (Lo R) || → peq-mor (freepeq X) R
+    freepeq-is-min R f = record
       { lo = f
       ; isext = record
         { hi = ρ R ∘ f
@@ -316,39 +316,39 @@ module pseudo-eq-rel-defs (ℂ : ecategory) where
         }
       }
 
-    freePeq-mor : {A B : Obj} → || Hom A B || → Peq-mor (freePeq A) (freePeq B)
-    freePeq-mor {A} {B} f = freePeq-is-min (freePeq B) f
+    freepeq-mor : {A B : Obj} → || Hom A B || → peq-mor (freepeq A) (freepeq B)
+    freepeq-mor {A} {B} f = freepeq-is-min (freepeq B) f
     -- with this definition lo = idar B ∘ f, but more useful later on when dealing with canonical regular epis
 {-
 record { hi = f ; lo = f ; cmptb₀ = lid f ⊙ ridˢ f ; cmptb₁ = lid f ⊙ ridˢ f }
 -}
 
 
-    freePeq-min-eq : {X : Obj} (R : Peq) {f f' : || Hom X (Lo R) ||} {h : || Hom X (Hi R) ||}
+    freepeq-min-eq : {X : Obj} (R : peq) {f f' : || Hom X (Lo R) ||} {h : || Hom X (Hi R) ||}
                         → %0 R ∘ h ~ f → %1 R ∘ h ~ f'
-                          → Peq-mor-eq (freePeq-is-min R f) (freePeq-is-min R f')
-    freePeq-min-eq R {h = h} pf0 pf1 = record
+                          → peq-mor-eq (freepeq-is-min R f) (freepeq-is-min R f')
+    freepeq-min-eq R {h = h} pf0 pf1 = record
       { hty = h
       ; hty₀ = pf0
       ; hty₁ = pf1
       }
 
 
-    freePeq-min-min-eq : {X : Obj} (R : Peq) {f f' : || Hom X (Lo R) ||} → f ~ f'
-                          → Peq-mor-eq (freePeq-is-min R f) (freePeq-is-min R f')
-    freePeq-min-min-eq R {f} {f'} pf = freePeq-min-eq R {h = ρ R ∘ f} (ρ-ax₀g R) (ρ-ax₁g R ⊙ pf)
+    freepeq-min-min-eq : {X : Obj} (R : peq) {f f' : || Hom X (Lo R) ||} → f ~ f'
+                          → peq-mor-eq (freepeq-is-min R f) (freepeq-is-min R f')
+    freepeq-min-min-eq R {f} {f'} pf = freepeq-min-eq R {h = ρ R ∘ f} (ρ-ax₀g R) (ρ-ax₁g R ⊙ pf)
 
 
-  --end module CanPeq
-  open CanPeq public
+  --end module Canpeq
+  open Canpeq public
 
 
 
-  module Peq&prods (prd : has-bin-products ℂ) where
+  module peq&prods (prd : has-bin-products ℂ) where
     open bin-products-aux prd
 
-    module PeqOver-aux {Lo : Obj} (R : PeqOver Lo) where
-      open PeqOver R public
+    module peqOver-aux {Lo : Obj} (R : peqOver Lo) where
+      open peqOver R public
       open wpullback-of τwpb
       %01 : || Hom Hi (Lo × Lo) ||
       %01 = < %0 , %1 >
@@ -360,31 +360,30 @@ record { hi = f ; lo = f ; cmptb₀ = lid f ⊙ ridˢ f ; cmptb₁ = lid f ⊙ r
       τ-ax = <>ar~<> τ-ax₀ τ-ax₁
 
 
-    module Peq-aux (R : Peq) where
-      module peq = Peq R
-      open PeqOver-aux peq.peqover public
+    module peq-aux (R : peq) where
+      open peqOver-aux (peq.peqover R) public
       Lo : Obj
-      Lo = peq.Lo
-      peqover : PeqOver Lo
-      peqover = peq.peqover
+      Lo = peq.Lo R
+      peqover : peqOver Lo
+      peqover = peq.peqover R
 
 
-    module Peq-mor-aux {R S : Peq} (f : Peq-mor R S) where
-      open Peq-aux
-      open Peq-mor f public
+    module peq-mor-aux {R S : peq} (f : peq-mor R S) where
+      open peq-aux
+      open peq-mor f public
       cmptb : %01 S ∘ hi ~ lo ×ₐ lo ∘ %01 R
       cmptb = <>ar~ar (ass ⊙ ∘e r ×tr₁ ⊙ assˢ ⊙ ∘e ×tr₁ r ⊙ cmptb₀ ˢ)
                         (ass ⊙ ∘e r ×tr₂ ⊙ assˢ ⊙ ∘e ×tr₂ r ⊙ cmptb₁ ˢ)
 
 
-    module Peq-mor-eq-aux {R  S : Peq} {f g : Peq-mor R S} (h : Peq-mor-eq f g) where
-      open Peq-aux
-      open Peq-mor-aux
-      open Peq-mor-eq h public
+    module peq-mor-eq-aux {R  S : peq} {f g : peq-mor R S} (h : peq-mor-eq f g) where
+      open peq-aux
+      open peq-mor-aux
+      open peq-mor-eq h public
       hty-ax : %01 S ∘ hty ~ < lo f , lo g >
       hty-ax = <>ar~<> hty₀ hty₁
 
-  -- end Peq&prods
+  -- end peq&prods
 
 
   is-wkerp+τpb→is-peqr :  {A K : Obj} {wkp₁ wkp₂ : || Hom K A ||}
@@ -454,7 +453,7 @@ record { hi = f ; lo = f ; cmptb₀ = lid f ⊙ ridˢ f ; cmptb₁ = lid f ⊙ r
       module wpb {A B : Obj} (f : || Hom A B ||) = wpullback-of-not (wpb-of f f)
     open has-wpb→has-wkerpair haswpb
     
-    wπ/-peq/ : {A B : Obj} (f : || Hom A B ||) → PeqOver A
+    wπ/-peq/ : {A B : Obj} (f : || Hom A B ||) → peqOver A
     wπ/-peq/ f = record
       { Hi = wpb.ul f
       ; %0 = wpb.wπ/₁ f
@@ -462,7 +461,7 @@ record { hi = f ; lo = f ; cmptb₀ = lid f ⊙ ridˢ f ; cmptb₁ = lid f ⊙ r
       ; ispeq = is-wkerp+τpb→is-peqr (wπ/iswkp f) (wpb-of (wpb.wπ/₂ f) (wpb.wπ/₁ f))
       }
                           
-    wπ/-peq : {A B : Obj} (f : || Hom A B ||) → Peq
+    wπ/-peq : {A B : Obj} (f : || Hom A B ||) → peq
     wπ/-peq f = mkpeq-c (wπ/-peq/ f)
   -- end has-wpb→wker-are-peq
 
@@ -554,7 +553,6 @@ module eq-rel-defs (ℂ : ecategory) where
     open eqrel-over eqrelover public
 
 
-
   record is-eqrel-ext-ar (R S : eqrel)
                          (base-ar : || Hom (eqrel.baseOb R) (eqrel.baseOb S) ||) : Set
                          where
@@ -567,7 +565,6 @@ module eq-rel-defs (ℂ : ecategory) where
     cmptb₀g = ass ⊙ ∘e r cmptb₀ ⊙ assˢ
     cmptb₁g : {X : Obj} {k : || Hom X (relOb R) ||} → r₂ S ∘ rel-ar ∘ k ~ base-ar ∘ r₂ R ∘ k
     cmptb₁g = ass ⊙ ∘e r cmptb₁ ⊙ assˢ
-
 
   record eqrel-mor (R S : eqrel) : Set where
     -- constructor mkpeq-mor
@@ -601,7 +598,6 @@ module eq-rel-defs (ℂ : ecategory) where
     }
     where module S = eqrel S
           module f = eqrel-mor f
-
 
   -- Some canonical eqrel
   

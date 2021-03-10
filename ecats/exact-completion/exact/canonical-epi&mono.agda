@@ -53,12 +53,12 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
 
   -- canonical regular epi
   
-  record canonical-repi {Lo : ℂ.Obj} (R/ S/ : ℂ.PeqOver Lo) : Set₁ where
+  record canonical-repi {Lo : ℂ.Obj} (R/ S/ : ℂ.peqOver Lo) : Set₁ where
     private
       R = ℂ.mkpeq-c R/
       S = ℂ.mkpeq-c S/
-      module R = ℂ.Peq R
-      module S = ℂ.Peq S
+      module R = ℂ.peq R
+      module S = ℂ.peq S
     field
       crepi-hi : || ℂ.Hom R.Hi S.Hi ||
       crepi-ax₀ : S.%0 ℂ.∘ crepi-hi ℂ.~ R.%0
@@ -76,9 +76,9 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       where open ecategory-aux-only ℂ
     can-repi-is-repi : Exℂ.is-regular-epi ar
     can-repi-is-repi = record
-      { relOb = ℂ.freePeq S.Hi
-      ; rel₁ = ℂ.freePeq-is-min R S.%0
-      ; rel₂ = ℂ.freePeq-is-min R S.%1
+      { relOb = ℂ.freepeq S.Hi
+      ; rel₁ = ℂ.freepeq-is-min R S.%0
+      ; rel₂ = ℂ.freepeq-is-min R S.%1
       ; coeq = record
         { eq = eq
         ; univ = λ {U} f pf → un.uar U f pf
@@ -87,7 +87,7 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
         }
       }
       where open ecategory-aux-only ℂ
-            eq : ar Exℂ.∘ ℂ.freePeq-is-min R S.%0 Exℂ.~ ar Exℂ.∘ ℂ.freePeq-is-min R S.%1
+            eq : ar Exℂ.∘ ℂ.freepeq-is-min R S.%0 Exℂ.~ ar Exℂ.∘ ℂ.freepeq-is-min R S.%1
             eq = record
               { hty = ℂ.idar S.Hi
               ; hty₀ = ridgen lidˢ
@@ -100,13 +100,13 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
               ; hty₀ = pf.hty₀ ⊙ rid
               ; hty₁ = pf.hty₁ ⊙ rid
               }
-              where module pf = ℂ.Peq-mor-eq pf
+              where module pf = ℂ.peq-mor-eq pf
             module un (U : Exℂ.Obj) (f : || Exℂ.Hom R U ||)
-                      (pf : f Exℂ.∘ ℂ.freePeq-is-min R S.%0 Exℂ.~ f Exℂ.∘ ℂ.freePeq-is-min R S.%1) where
+                      (pf : f Exℂ.∘ ℂ.freepeq-is-min R S.%0 Exℂ.~ f Exℂ.∘ ℂ.freepeq-is-min R S.%1) where
               private
-                module U = ℂ.Peq U
-                module f = ℂ.Peq-mor f
-                module pf = ℂ.Peq-mor-eq pf
+                module U = ℂ.peq U
+                module f = ℂ.peq-mor f
+                module pf = ℂ.peq-mor-eq pf
               uar : || Exℂ.Hom S U ||
               uar = record
                 { lo = f.lo
@@ -141,14 +141,14 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
                      }
               }
               where open ecategory-aux-only ℂ
-                    open ℂ.Peq
-                    open ℂ.Peq-mor
-                    open ℂ.Peq-mor-eq
-                    can-repi-peq : ℂ.Peq
-            can-repi-peq = ℂ.freePeq S.Hi
+                    open ℂ.peq
+                    open ℂ.peq-mor
+                    open ℂ.peq-mor-eq
+                    can-repi-peq : ℂ.peq
+            can-repi-peq = ℂ.freepeq S.Hi
             can-repi-peq₀ can-repi-peq₁ : || Exℂ.Hom can-repi-peq R ||
-            can-repi-peq₀ = ℂ.freePeq-is-min R S.%0
-            can-repi-peq₁ = ℂ.freePeq-is-min R S.%1
+            can-repi-peq₀ = ℂ.freepeq-is-min R S.%0
+            can-repi-peq₁ = ℂ.freepeq-is-min R S.%1
                                                       c-univ : {U : Exℂ.Obj} (f : || Exℂ.Hom R U ||)
                                 → f Exℂ.∘ can-repi-peq₀ Exℂ.~ f Exℂ.∘ can-repi-peq₁
                                   → || Exℂ.Hom S U ||
@@ -165,20 +165,20 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
   -- end record canonical-repi
 
 
-  module canonical-ex-seq (R : ℂ.Peq) where
-    private module R = ℂ.Peq R
-    freeLo freeHi : ℂ.Peq
-    freeLo = ℂ.freePeq R.Lo
-    freeHi = ℂ.freePeq R.Hi
-    module freeHi = ℂ.Peq freeHi
-    module freeLo = ℂ.Peq freeLo
+  module canonical-ex-seq (R : ℂ.peq) where
+    private module R = ℂ.peq R
+    freeLo freeHi : ℂ.peq
+    freeLo = ℂ.freepeq R.Lo
+    freeHi = ℂ.freepeq R.Hi
+    module freeHi = ℂ.peq freeHi
+    module freeLo = ℂ.peq freeLo
     crepi : canonical-repi freeLo.peqover R.peqover
     crepi = record
       { crepi-hi = R.ρ
       ; crepi-ax₀ = R.ρ-ax₀
       ; crepi-ax₁ = R.ρ-ax₁
       }
-    coeq-of-free : Exℂ.coeq-of (ℂ.freePeq-mor R.%0) (ℂ.freePeq-mor R.%1)
+    coeq-of-free : Exℂ.coeq-of (ℂ.freepeq-mor R.%0) (ℂ.freepeq-mor R.%1)
     coeq-of-free = record
       { ar = cr.ar
       ; iscoeq = record
@@ -190,18 +190,18 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       }
       where open ecategory-aux-only ℂ
             module cr = canonical-repi crepi
-            sqpf : cr.ar Exℂ.∘ ℂ.freePeq-mor R.%0 Exℂ.~ cr.ar Exℂ.∘ ℂ.freePeq-mor R.%1
+            sqpf : cr.ar Exℂ.∘ ℂ.freepeq-mor R.%0 Exℂ.~ cr.ar Exℂ.∘ ℂ.freepeq-mor R.%1
             sqpf = record
               { hty = ℂ.idar R.Hi
               ; hty₀ = ridgen {f' = ℂ.idar R.Lo ℂ.∘ R.%0} lidˢ
               ; hty₁ = ridgen {f' = ℂ.idar R.Lo ℂ.∘ R.%1} lidˢ
               }
-            module un (U : Exℂ.Obj) (f : || Exℂ.Hom (ℂ.freePeq R.Lo) U ||)
-                      (pf : f Exℂ.∘ ℂ.freePeq-mor R.%0 Exℂ.~ f Exℂ.∘ ℂ.freePeq-mor R.%1) where
+            module un (U : Exℂ.Obj) (f : || Exℂ.Hom (ℂ.freepeq R.Lo) U ||)
+                      (pf : f Exℂ.∘ ℂ.freepeq-mor R.%0 Exℂ.~ f Exℂ.∘ ℂ.freepeq-mor R.%1) where
               private
-                module U = ℂ.Peq U
-                module f = ℂ.Peq-mor f
-                module pf = ℂ.Peq-mor-eq pf
+                module U = ℂ.peq U
+                module f = ℂ.peq-mor f
+                module pf = ℂ.peq-mor-eq pf
               ar : || Exℂ.Hom R U ||
               ar = record
                 { lo = f.lo
@@ -219,7 +219,7 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
                 }
     module cre where
       open canonical-repi crepi hiding (can-repi-is-repi) public
-      open ℂ.Peq-mor ar public
+      open ℂ.peq-mor ar public
       private module c = Exℂ.coeq-of coeq-of-free
       isrepi : Exℂ.is-regular-epi ar
       isrepi = record { coeq = c.iscoeq }
@@ -230,20 +230,20 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       open ℂ.wbow-of (wkpsp-of R.sp/) public
       iswkp : ℂ.is-wkernel-pair-sp wπ//₁ wπ//₂
       iswkp = wπ//iswkp R.sp/
-    kpOb/ : ℂ.PeqOver R.Hi
+    kpOb/ : ℂ.peqOver R.Hi
     kpOb/ = record
       { Hi = KP.Ob
       ; %0 = KP.wπ//₁
       ; %1 = KP.wπ//₂
       ; ispeq = ℂ.is-wkerpsp+τpb→is-peqr (KP.iswkp) (fwlℂ.wpb-of KP.wπ//₂ KP.wπ//₁)
       }
-    kpOb : ℂ.Peq
+    kpOb : ℂ.peq
     kpOb = record
       { Lo = R.Hi
       ; peqover = kpOb/
       }
-    module kpOb = ℂ.Peq kpOb
-    kp₁ kp₂ : ℂ.Peq-mor kpOb freeLo
+    module kpOb = ℂ.peq kpOb
+    kp₁ kp₂ : ℂ.peq-mor kpOb freeLo
     kp₁ = record
       { lo = R.%0
       ; isext = record
@@ -271,14 +271,14 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       where open ecategory-aux-only ℂ
 
     private
-      module KP-univ (U : ℂ.Peq) (h k : ℂ.Peq-mor U freeLo) (pf : ℂ.Peq-mor-eq (cre.ar Exℂ.∘ h) (cre.ar Exℂ.∘ k))
+      module KP-univ (U : ℂ.peq) (h k : ℂ.peq-mor U freeLo) (pf : ℂ.peq-mor-eq (cre.ar Exℂ.∘ h) (cre.ar Exℂ.∘ k))
                      where
         open ecategory-aux-only ℂ
         private
-          module U = ℂ.Peq U
-          module h = ℂ.Peq-mor h
-          module k = ℂ.Peq-mor k
-          module pf = ℂ.Peq-mor-eq pf
+          module U = ℂ.peq U
+          module h = ℂ.peq-mor h
+          module k = ℂ.peq-mor k
+          module pf = ℂ.peq-mor-eq pf
         kpunpf₁ = ~proof R.%0 ℂ.∘ pf.hty ℂ.∘ U.%0 ~[ ass ⊙ ∘e r pf.hty₀ ⊙ assˢ ] /
                          cre.lo ℂ.∘ h.lo ℂ.∘ U.%0 ~[ ∘e (h.cmptb₀ ˢ ⊙ h.cmptb₁) r ] /
                          cre.lo ℂ.∘ h.lo ℂ.∘ U.%1 ~[ ass ⊙ ∘e r (pf.hty₀ ˢ) ⊙ assˢ ]∎
@@ -297,9 +297,9 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
             }
           }
         kp-tr₁ : kp₁ Exℂ.∘ kp-univ Exℂ.~ h
-        kp-tr₁ = ℂ.Peq-mor-eq-ext (pf.hty₀ ⊙ lid)
+        kp-tr₁ = ℂ.peq-mor-eq-ext (pf.hty₀ ⊙ lid)
         kp-tr₂ : kp₂ Exℂ.∘ kp-univ Exℂ.~ k
-        kp-tr₂ = ℂ.Peq-mor-eq-ext (pf.hty₁ ⊙ lid)
+        kp-tr₂ = ℂ.peq-mor-eq-ext (pf.hty₁ ⊙ lid)
       -- end KP-univ
       kppbuq : (U : Exℂ.Obj) (h h' : || Exℂ.Hom U kpOb ||)
                   → kp₁ Exℂ.∘ h Exℂ.~ kp₁ Exℂ.∘ h' → kp₂ Exℂ.∘ h Exℂ.~ kp₂ Exℂ.∘ h'
@@ -310,11 +310,11 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
         ; hty₁ = KP.tr₂ (pf1.hty₀ ˢ ⊙ pf1.hty₁) (pf2.hty₀ ˢ ⊙ pf2.hty₁)
         }
         where open ecategory-aux-only ℂ
-              module U = ℂ.Peq U
-              module h = ℂ.Peq-mor h
-              module h' = ℂ.Peq-mor h'
-              module pf1 = ℂ.Peq-mor-eq pf1
-              module pf2 = ℂ.Peq-mor-eq pf2
+              module U = ℂ.peq U
+              module h = ℂ.peq-mor h
+              module h' = ℂ.peq-mor h'
+              module pf1 = ℂ.peq-mor-eq pf1
+              module pf2 = ℂ.peq-mor-eq pf2
 
     kppbsq : Exℂ.is-pb-square (Exℂ.mksq {freeLo} {freeLo} (Exℂ.mksq/ kpsqpf))
     kppbsq = record
@@ -349,9 +349,9 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
         }
       }
       where open ecategory-aux-only ℂ
-            open ℂ.Peq
-            open ℂ.Peq-mor
-            open ℂ.Peq-mor-eq
+            open ℂ.peq
+            open ℂ.peq-mor
+            open ℂ.peq-mor-eq
     isexseq : Exℂ.is-exact-seq kp₁ kp₂ cre.ar
     isexseq = record
       { iscoeq = crepi-coeq-kp
@@ -367,14 +367,14 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       where open ecategory-aux-only ℂ using (r)
     module cc where
       open canonical-repi can-cov public
-      tr₁ : kp₁ Exℂ.∘ ar Exℂ.~ ℂ.freePeq-mor R.%0
+      tr₁ : kp₁ Exℂ.∘ ar Exℂ.~ ℂ.freepeq-mor R.%0
       tr₁ = record
         { hty = R.%0
         ; hty₀ = lidgen ridˢ
         ; hty₁ = lid
         }
         where open ecategory-aux-only ℂ
-      tr₂ : kp₂ Exℂ.∘ ar Exℂ.~ ℂ.freePeq-mor R.%1
+      tr₂ : kp₂ Exℂ.∘ ar Exℂ.~ ℂ.freepeq-mor R.%1
       tr₂ = record
         { hty = R.%1
         ; hty₀ = lidgen ridˢ
@@ -391,9 +391,9 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
   record is-Ex-monic {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) : Set₁ where
     -- this is a bit less than the universal property of weak limits of W diagrams
     private
-      module A = ℂ.Peq A
-      module B = ℂ.Peq B
-      module f = ℂ.Peq-mor f
+      module A = ℂ.peq A
+      module B = ℂ.peq B
+      module f = ℂ.peq-mor f
     field
       ⟨_⟩[_,_] : {X : ℂ.Obj} {gl : || ℂ.Hom X A.Lo ||} {gr : || ℂ.Hom X A.Lo ||} (h : || ℂ.Hom X B.Hi ||)
                           → f.lo ℂ.∘ gl ℂ.~ B.%0 ℂ.∘ h → f.lo ℂ.∘ gr ℂ.~ B.%1 ℂ.∘ h
@@ -417,17 +417,17 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
     }
     where open ecategory-aux-only ℂ
           open is-Ex-monic isxm
-          open ℂ.Peq
-          open ℂ.Peq-mor
-          open ℂ.Peq-mor-eq
+          open ℂ.peq
+          open ℂ.peq-mor
+          open ℂ.peq-mor-eq
 -}
 
-  record canonical-mono {X Y : ℂ.Obj} (loar : || ℂ.Hom X Y ||) (R : ℂ.PeqOver Y) : Set₁ where
+  record canonical-mono {X Y : ℂ.Obj} (loar : || ℂ.Hom X Y ||) (R : ℂ.peqOver Y) : Set₁ where
     open ecategory-aux-only ℂ
-    private module R = ℂ.PeqOver R
+    private module R = ℂ.peqOver R
     field
-      Ob/ : ℂ.PeqOver X
-    --private module Ob = ℂ.PeqOver Ob
+      Ob/ : ℂ.peqOver X
+    --private module Ob = ℂ.peqOver Ob
     Ob : Exℂ.Obj
     Ob = ℂ.mkpeq-c Ob/
     field
@@ -450,16 +450,16 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
                 ; hty₁ = trr (hty₀ pf ˢ) (hty₁ pf ˢ)
                 }
       }
-      where open ℂ.Peq-mor
-            open ℂ.Peq-mor-eq
+      where open ℂ.peq-mor
+            open ℂ.peq-mor-eq
 
 
-  module can-mono-constr {X Y : ℂ.Obj} (lo-cm : || ℂ.Hom X Y ||) (R : ℂ.PeqOver Y) where
+  module can-mono-constr {X Y : ℂ.Obj} (lo-cm : || ℂ.Hom X Y ||) (R : ℂ.peqOver Y) where
     private
-      module R  = ℂ.PeqOver R
+      module R  = ℂ.peqOver R
       module wW = fwlℂ.wW-of lo-cm (ℂ.mkspan/ R.%0 R.%1) lo-cm
-      cmPeq/ : ℂ.PeqOver X
-      cmPeq/ = record
+      cmpeq/ : ℂ.peqOver X
+      cmpeq/ = record
         { Hi = wW.wWOb
         ; %0 = wW.πl
         ; %1 = wW.πr
@@ -519,7 +519,7 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
     
     cmar-data : canonical-mono lo-cm R
     cmar-data = record
-      { Ob/ = cmPeq/
+      { Ob/ = cmpeq/
       ; isext = record
         { hi = wW.πc
         ; cmptb₀ = wW.sqpfl ˢ
@@ -534,10 +534,10 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       }
       where open ecategory-aux-only ℂ
 {-
-    cmPeq : ℂ.Peq
-    cmPeq = ℂ.mkpeq-c cmPeq/
+    cmpeq : ℂ.peq
+    cmpeq = ℂ.mkpeq-c cmpeq/
 
-    cmar : ℂ.Peq-mor cmPeq (ℂ.mkpeq-c R)
+    cmar : ℂ.peq-mor cmpeq (ℂ.mkpeq-c R)
     cmar = record
       { lo = lo-cm
       ; isext = record
@@ -558,13 +558,13 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
   -- end can-mono-constr
 
 
-  can-mono-over : {X Y : ℂ.Obj} (loar : || ℂ.Hom X Y ||) (R : ℂ.PeqOver Y)
+  can-mono-over : {X Y : ℂ.Obj} (loar : || ℂ.Hom X Y ||) (R : ℂ.peqOver Y)
                        → canonical-mono loar R
   can-mono-over loar R = cmar-data
                          where open can-mono-constr loar R
 
 {-
-  module can-mono {X Y : ℂ.Obj} (loar : || ℂ.Hom X Y ||) (R : ℂ.PeqOver Y) where
+  module can-mono {X Y : ℂ.Obj} (loar : || ℂ.Hom X Y ||) (R : ℂ.peqOver Y) where
     open can-mono-constr loar R
     open canonical-mono cmar-data public
 -}
@@ -572,12 +572,12 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
 
   record is-Ex-monic-sp {O1 O2 : Exℂ.Obj} (sp/ : Exℂ.span/ O1 O2) : Set₁ where
     private
-      module O1 = ℂ.Peq O1
-      module O2 = ℂ.Peq O2
+      module O1 = ℂ.peq O1
+      module O2 = ℂ.peq O2
       module sp = Exℂ.span/ sp/
-      module O12 = ℂ.Peq sp.O12
-      module a₁ = ℂ.Peq-mor sp.a1
-      module a₂ = ℂ.Peq-mor sp.a2
+      module O12 = ℂ.peq sp.O12
+      module a₁ = ℂ.peq-mor sp.a1
+      module a₂ = ℂ.peq-mor sp.a2
     field
       ⟨_,_,_,_⟩[_,_,_,_] : {X : ℂ.Obj} (g₁ : || ℂ.Hom X O12.Lo ||) (h₁ : || ℂ.Hom X O1.Hi ||)
                            (h₂ : || ℂ.Hom X O2.Hi ||) (g₂ : || ℂ.Hom X O12.Lo ||)
@@ -605,14 +605,14 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
   module Ex-monic-sp-is-jm {O1 O2 : Exℂ.Obj} (sp/ : Exℂ.span/ O1 O2) (isxm : is-Ex-monic-sp sp/) where
     open ecategory-aux ℂ
     private
-      module O1 = ℂ.Peq O1
-      module O2 =  ℂ.Peq O2
+      module O1 = ℂ.peq O1
+      module O2 =  ℂ.peq O2
       module sp where
         open Exℂ.span/ sp/ public
         open is-Ex-monic-sp isxm public
-      module O12 =  ℂ.Peq sp.O12
-      module a₁ = ℂ.Peq-mor sp.a1
-      module a₂ = ℂ.Peq-mor sp.a2
+      module O12 =  ℂ.peq sp.O12
+      module a₁ = ℂ.peq-mor sp.a1
+      module a₂ = ℂ.peq-mor sp.a2
 
     isjm-pf : {C : Exℂ.Obj} (h h' : || Exℂ.Hom C sp.O12 ||)
                  → sp.a1 Exℂ.∘  h Exℂ.~ sp.a1 Exℂ.∘ h' → sp.a2 Exℂ.∘ h Exℂ.~ sp.a2 Exℂ.∘ h'
@@ -622,10 +622,10 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       ; hty₀ = sp.trl₀ (pf₁.hty₀ ˢ) (pf₁.hty₁ ˢ) (pf₂.hty₀ ˢ) (pf₂.hty₁ ˢ)
       ; hty₁ = sp.trl₁ (pf₁.hty₀ ˢ) (pf₁.hty₁ ˢ) (pf₂.hty₀ ˢ) (pf₂.hty₁ ˢ)
       }
-      where module h = ℂ.Peq-mor h
-            module h' = ℂ.Peq-mor h'
-            module pf₁ = ℂ.Peq-mor-eq pf₁
-            module pf₂ = ℂ.Peq-mor-eq pf₂
+      where module h = ℂ.peq-mor h
+            module h' = ℂ.peq-mor h'
+            module pf₁ = ℂ.peq-mor-eq pf₁
+            module pf₂ = ℂ.peq-mor-eq pf₂
     
   -- end Ex-monic-sp-is-jm
   
@@ -637,7 +637,7 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
     where open Ex-monic-sp-is-jm sp/ isxm
     
 
-  module canonical-mono-sp {O1 O2 : ℂ.Obj} (R/ : ℂ.PeqOver O1) (S/ : ℂ.PeqOver O2)
+  module canonical-mono-sp {O1 O2 : ℂ.Obj} (R/ : ℂ.peqOver O1) (S/ : ℂ.peqOver O2)
                            (sp/ : ℂ.span/ O1 O2)
                            where
     open ecategory ℂ
@@ -647,8 +647,8 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       R S : Exℂ.Obj
       R = ℂ.mkpeq-c R/
       S = ℂ.mkpeq-c S/
-      module R  = ℂ.Peq R
-      module S  = ℂ.Peq S
+      module R  = ℂ.peq R
+      module S  = ℂ.peq S
       module Rτ = ℂ.wpullback-of-not R.τwpb
       module Sτ = ℂ.wpullback-of-not S.τwpb
       module sp = ℂ.span/ sp/
@@ -778,7 +778,7 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
                               imgS.πr ∘ imgS.⟨ pb%0 ∘ pbwτ.wπ/₁ , S.τ ∘ τSar , pb%1 ∘ pbwτ.wπ/₂ ⟩[ τimgS₀ , τimgS₁ ]
 
 
-      cmsp-ob/ : ℂ.PeqOver sp.O12
+      cmsp-ob/ : ℂ.peqOver sp.O12
       cmsp-ob/ = record
         { Hi = pbHi.Ob
         ; %0 = pb%0
@@ -819,9 +819,9 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
     cmsp = Exℂ.mkspan/ cmsp-a₁ cmsp-a₂
     private
       module cmsp = Exℂ.span/ cmsp
-      module cmob = ℂ.Peq cmsp.O12
-      module cm₁ = ℂ.Peq-mor cmsp.a1
-      module cm₂ = ℂ.Peq-mor cmsp.a2
+      module cmob = ℂ.peq cmsp.O12
+      module cm₁ = ℂ.peq-mor cmsp.a1
+      module cm₂ = ℂ.peq-mor cmsp.a2
 
 
     cmsp-is-Ex-monic : is-Ex-monic-sp cmsp

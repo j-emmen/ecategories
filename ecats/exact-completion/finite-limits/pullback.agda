@@ -51,46 +51,46 @@ module exact-compl-has-pullbacks-from-connected {ℂ : ecategory} (hasfwl : has-
     _∘_ = ℂ._∘_
 
 
-  module Peq-pb-of {R S T : Exℂ.Obj} (f : || Exℂ.Hom R T ||) (g : || Exℂ.Hom S T ||) where
+  module peq-pb-of {R S T : Exℂ.Obj} (f : || Exℂ.Hom R T ||) (g : || Exℂ.Hom S T ||) where
     open can-epi&mono-defs hasfwl
     private
-      module R = ℂ.Peq R
-      module S = ℂ.Peq S
-      module T = ℂ.Peq T
-      module f = ℂ.Peq-mor f
-      module g = ℂ.Peq-mor g
+      module R = ℂ.peq R
+      module S = ℂ.peq S
+      module T = ℂ.peq T
+      module f = ℂ.peq-mor f
+      module g = ℂ.peq-mor g
     module pbLo = fwlℂ.wW-of f.lo T.sp/ g.lo
     module Hisp where
       open canonical-mono-sp R.peqover S.peqover (ℂ.mkspan/ pbLo.πl pbLo.πr) public
       open Exℂ.span/ cmsp public
     private
-      module π/₁ = ℂ.Peq-mor Hisp.a1
-      module π/₂ = ℂ.Peq-mor Hisp.a2
+      module π/₁ = ℂ.peq-mor Hisp.a1
+      module π/₂ = ℂ.peq-mor Hisp.a2
 
-    Peq-pbob : Exℂ.Obj
-    Peq-pbob = Hisp.O12
+    peq-pbob : Exℂ.Obj
+    peq-pbob = Hisp.O12
 
-    Peq-π/₁ : || Exℂ.Hom Peq-pbob R ||
-    Peq-π/₁ = Hisp.a1
-    Peq-π/₂ : || Exℂ.Hom Peq-pbob S ||
-    Peq-π/₂ = Hisp.a2
-    Peq-sqpf : f Exℂ.∘ Peq-π/₁ Exℂ.~ g Exℂ.∘ Peq-π/₂
-    Peq-sqpf = record
+    peq-π/₁ : || Exℂ.Hom peq-pbob R ||
+    peq-π/₁ = Hisp.a1
+    peq-π/₂ : || Exℂ.Hom peq-pbob S ||
+    peq-π/₂ = Hisp.a2
+    peq-sqpf : f Exℂ.∘ peq-π/₁ Exℂ.~ g Exℂ.∘ peq-π/₂
+    peq-sqpf = record
              { hty = pbLo.πc
              ; hty₀ = pbLo.sqpfl ˢ
              ; hty₁ = pbLo.sqpfr ˢ
              }
              where open ecategory-aux-only ℂ
 
-    module Peq-univ (U : Exℂ.Obj) (h : || Exℂ.Hom U R ||) (k : || Exℂ.Hom U S ||)
+    module peq-univ (U : Exℂ.Obj) (h : || Exℂ.Hom U R ||) (k : || Exℂ.Hom U S ||)
                     (pf : f Exℂ.∘ h Exℂ.~ g Exℂ.∘ k)
                     where
       open ecategory-aux-only ℂ
       private
-        module U = ℂ.Peq U
-        module h = ℂ.Peq-mor h
-        module k = ℂ.Peq-mor k
-        module pf = ℂ.Peq-mor-eq pf
+        module U = ℂ.peq U
+        module h = ℂ.peq-mor h
+        module k = ℂ.peq-mor k
+        module pf = ℂ.peq-mor-eq pf
         module stdm = is-Ex-monic-sp Hisp.cmsp-is-Ex-monic
         unlo : || ℂ.Hom U.Lo pbLo.wWOb ||
         unlo = pbLo.⟨ h.lo , pf.hty , k.lo ⟩[ pf.hty₀ ˢ , pf.hty₁ ˢ ]
@@ -102,8 +102,8 @@ module exact-compl-has-pullbacks-from-connected {ℂ : ecategory} (hasfwl : has-
                  S.%0 ∘ k.hi
         unhi₂₁ = π/₂.lo ∘ unlo ∘ U.%1    ~[ ass ⊙ ∘e r (pbLo.trr (pf.hty₀ ˢ) (pf.hty₁ ˢ)) ⊙ k.cmptb₁ ˢ ]
                  S.%1 ∘ k.hi
-      Peq-univ : || Exℂ.Hom U Peq-pbob ||
-      Peq-univ = record
+      peq-univ : || Exℂ.Hom U peq-pbob ||
+      peq-univ = record
         { lo = unlo
         ; isext = record
           { hi = stdm.⟨ unlo ∘ U.%0 , h.hi , k.hi , unlo ∘ U.%1 ⟩[ unhi₁₀ , unhi₁₁ , unhi₂₀ , unhi₂₁ ]
@@ -112,34 +112,34 @@ module exact-compl-has-pullbacks-from-connected {ℂ : ecategory} (hasfwl : has-
           }
         }
 
-      Peq-tr₁ : Peq-π/₁ Exℂ.∘ Peq-univ Exℂ.~ h
-      Peq-tr₁ = ℂ.Peq-mor-eq-ext (pbLo.trl (pf.hty₀ ˢ) (pf.hty₁ ˢ))
-      Peq-tr₂ : Peq-π/₂ Exℂ.∘ Peq-univ Exℂ.~ k
-      Peq-tr₂ = ℂ.Peq-mor-eq-ext (pbLo.trr (pf.hty₀ ˢ) (pf.hty₁ ˢ))
-    -- end Peq-univ
+      peq-tr₁ : peq-π/₁ Exℂ.∘ peq-univ Exℂ.~ h
+      peq-tr₁ = ℂ.peq-mor-eq-ext (pbLo.trl (pf.hty₀ ˢ) (pf.hty₁ ˢ))
+      peq-tr₂ : peq-π/₂ Exℂ.∘ peq-univ Exℂ.~ k
+      peq-tr₂ = ℂ.peq-mor-eq-ext (pbLo.trr (pf.hty₀ ˢ) (pf.hty₁ ˢ))
+    -- end peq-univ
 
-    Peq-sq/ : Exℂ.square/cosp f g
-    Peq-sq/ = Exℂ.mksq/ Peq-sqpf
-    Peq-is-pbsq : Exℂ.is-pb-square (Exℂ.mksq Peq-sq/)
-    Peq-is-pbsq = record
-      { ⟨_,_⟩[_] = λ {U} h k → Peq-univ U h k
-      ; ×/tr₁ = λ {U} {h} {k} → Peq-tr₁ U h k
-      ; ×/tr₂ = λ {U} {h} {k} → Peq-tr₂ U h k
+    peq-sq/ : Exℂ.square/cosp f g
+    peq-sq/ = Exℂ.mksq/ peq-sqpf
+    peq-is-pbsq : Exℂ.is-pb-square (Exℂ.mksq peq-sq/)
+    peq-is-pbsq = record
+      { ⟨_,_⟩[_] = λ {U} h k → peq-univ U h k
+      ; ×/tr₁ = λ {U} {h} {k} → peq-tr₁ U h k
+      ; ×/tr₂ = λ {U} {h} {k} → peq-tr₂ U h k
       ; ×/uq = λ {U} {h} {h'} pf₁ pf₂ → stdm-jm.jm-pf {U} {h} {h'} pf₁ pf₂
       }
-      where open Peq-univ
+      where open peq-univ
             module stdm-jm = Exℂ.is-jointly-monic/ Hisp.cmsp-is-jm/
             
-    Peq-pb-of : Exℂ.pullback-of f g
-    Peq-pb-of = record
-              { ×/sq/ = Peq-sq/
-              ; ×/ispbsq = Peq-is-pbsq
+    peq-pb-of : Exℂ.pullback-of f g
+    peq-pb-of = record
+              { ×/sq/ = peq-sq/
+              ; ×/ispbsq = peq-is-pbsq
               }
-  -- end Peq-pb-of
+  -- end peq-pb-of
 
   ex-cmpl-pb : has-pullbacks Ex ℂ [ hasfwl ]
-  ex-cmpl-pb = record { pb-of = Peq-pb-of }
-             where open Peq-pb-of using (Peq-pb-of)
+  ex-cmpl-pb = record { pb-of = peq-pb-of }
+             where open peq-pb-of using (peq-pb-of)
   
 -- end exact-compl-has-pullbacks-from-connected
 

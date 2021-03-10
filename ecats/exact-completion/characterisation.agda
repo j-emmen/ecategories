@@ -33,7 +33,6 @@ open import ecats.exact-completion.embedding.universal-property.eqrel-from-peq
 
 
 
-
 module exact-compl-character {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                              {ℙ : ecategory} {PC : efunctor ℙ 𝔼} (pjcPC : is-projective-cover PC)
                              where
@@ -66,9 +65,11 @@ module exact-compl-character {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
     module PC where
       open efunctor-aux PC public
       open is-projective-cover pjcPC public
-      open projective-cover-on-reg-cat-props reg𝔼 pjcPC using ()
-                                                         renaming (PC-is-left-cov to islcov)
-                                                         public
+      islcov : is-left-covering PC
+      islcov = pjcov-of-reg-is-lcov reg𝔼 pjcPC
+      {-open projective-cover-of-reg-cat-is-left-covering reg𝔼 pjcPC using ()
+                                                                   renaming (PC-is-left-cov to islcov)
+                                                                   public-}
     module eqr (A : 𝔼.Obj) = projective-cover-on-reg-cat-props.Peq-from-Obj reg𝔼 pjcPC A
     module fwlℙ where
       open has-fin-weak-limits fwlℙ public

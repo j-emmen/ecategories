@@ -84,8 +84,8 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
     module preserves-repis {A B : Exℂ.Obj} {f : || Exℂ.Hom A B ||} (frepi : Exℂ.is-regular-epi f) where
       open ecategory-aux-only 𝔼
       private
-        module A = ℂ.Peq A
-        module B = ℂ.Peq B
+        module A = ℂ.peq A
+        module B = ℂ.peq B
         module imgf where
           open has-repi-mono-fact (ex-cmpl-rm-fact hasfwl)
           open Exℂ.repi-mono-fact-of (rmf-of f) public
