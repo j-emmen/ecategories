@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.embedding.universal-property.eqrel-from-peq where
+module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.eqrel-from-peq where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.all-arrows

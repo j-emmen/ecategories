@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.embedding.universal-property.uniqueness where
+module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.uniqueness where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.all-arrows
@@ -21,8 +21,8 @@ open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
 open import ecats.constructions.ecat-eqrel
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.exact.canonical-epi&mono
-open import ecats.exact-completion.embedding.universal-property.def
+open import ecats.exact-completion.CVconstr-is-excompl.exact.canonical-epi&mono
+open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.def
 
 
 -- Definition of the functor Ex ℂ [ hasfwl ] → 𝔼 induced by a left covering ℂ → 𝔼 into 𝔼 exact.

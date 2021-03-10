@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.finite-limits.terminal where
+module ecats.exact-completion.CVconstr-is-excompl.finite-limits.terminal where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.eqv-rel

@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.exact.is-exact where
+module ecats.exact-completion.CVconstr-is-excompl.exact.is-exact where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.all-arrows
@@ -16,10 +16,10 @@ open import ecats.basic-props.regular-ecat
 open import ecats.basic-defs.exact-ecat
 open import ecats.finite-limits.all
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.finite-limits.fin-limits
-open import ecats.exact-completion.finite-limits.pullback
-open import ecats.exact-completion.exact.canonical-epi&mono
-open import ecats.exact-completion.exact.is-regular
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.fin-limits
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.pullback
+open import ecats.exact-completion.CVconstr-is-excompl.exact.canonical-epi&mono
+open import ecats.exact-completion.CVconstr-is-excompl.exact.is-regular
 
 
 -- Equivalence relations are effective
@@ -63,15 +63,15 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
   module eq-rel-are-kernel-pairs {A : Exℂ.Obj} (eqr : Exℂ.eqrel-over A) where
     open ecategory-aux-only ℂ
     private
-      module A = ℂ.Peq A
+      module A = ℂ.peq A
       module Aτwpb = ℂ.wpullback-of-not A.τwpb
       module eqr/ = Exℂ.eqrel-over eqr
-      module R = ℂ.Peq eqr/.relOb
-      module r₁ = ℂ.Peq-mor eqr/.r₁
-      module r₂ = ℂ.Peq-mor eqr/.r₂
-      module rρ = ℂ.Peq-mor eqr/.ρ
-      module rρ-ax₀ = ℂ.Peq-mor-eq eqr/.ρ-ax₀
-      module rρ-ax₁ = ℂ.Peq-mor-eq eqr/.ρ-ax₁
+      module R = ℂ.peq eqr/.relOb
+      module r₁ = ℂ.peq-mor eqr/.r₁
+      module r₂ = ℂ.peq-mor eqr/.r₂
+      module rρ = ℂ.peq-mor eqr/.ρ
+      module rρ-ax₀ = ℂ.peq-mor-eq eqr/.ρ-ax₀
+      module rρ-ax₁ = ℂ.peq-mor-eq eqr/.ρ-ax₁
       HiQ : ℂ.wWlim-of A.%0 (ℂ.mkspan/ r₁.lo r₂.lo) A.%0
       HiQ = fwlℂ.wW-of A.%0 (ℂ.mkspan/ r₁.lo r₂.lo) A.%0
       module HiQ = ℂ.wWlim-of HiQ
@@ -79,9 +79,9 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
     -- quotient peq
     private
       --symmetry
-      module rσ = ℂ.Peq-mor eqr/.σ
-      module rσ-ax₀ = ℂ.Peq-mor-eq eqr/.σ-ax₀
-      module rσ-ax₁ = ℂ.Peq-mor-eq eqr/.σ-ax₁
+      module rσ = ℂ.peq-mor eqr/.σ
+      module rσ-ax₀ = ℂ.peq-mor-eq eqr/.σ-ax₀
+      module rσ-ax₁ = ℂ.peq-mor-eq eqr/.σ-ax₁
       Qσl-pf = A.%1 ∘ rσ-ax₀.hty ℂ.∘ HiQ.πc   ~[ rσ-ax₀.hty₁g ⊙ HiQ.sqpfr ˢ ]
                A.%0 ∘ HiQ.πr
       Qσl : || ℂ.Hom HiQ.wWOb A.Hi ||
@@ -102,9 +102,9 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
       r₂×/r₁ = flExℂ.pb-of eqr/.r₂ eqr/.r₁
       module r₂×/r₁ = Exℂ.pullback-of-not r₂×/r₁
       module risτ' = Exℂ.is-transitive/pb (Exℂ.trans-is-pb-irrel r₂×/r₁ eqr/.isτ)
-      module rτ' = ℂ.Peq-mor risτ'.τ
-      module rτ'-ax₀ = ℂ.Peq-mor-eq risτ'.τ-ax₀
-      module rτ'-ax₁ = ℂ.Peq-mor-eq risτ'.τ-ax₁
+      module rτ' = ℂ.peq-mor risτ'.τ
+      module rτ'-ax₀ = ℂ.peq-mor-eq risτ'.τ-ax₀
+      module rτ'-ax₁ = ℂ.peq-mor-eq risτ'.τ-ax₁
       module Lo[r₂×/r₁] = ℂ.wWlim-of (fwlℂ.wW-of r₂.lo A.sp/ r₁.lo)
       Qτwpb : ℂ.wpullback-of (A.%1 ∘ HiQ.πr) (A.%1 ∘ HiQ.πl)
       Qτwpb = fwlℂ.wpb-of (A.%1 ∘ HiQ.πr) (A.%1 ∘ HiQ.πl)
@@ -146,7 +146,7 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
                       r₂.lo ∘ rτ'.lo ∘ Qτc-aux ∎
     -- end private
     
-    Q : ℂ.Peq
+    Q : ℂ.peq
     Q = record
       { Lo = A.Lo
       ; peqover = record
@@ -190,7 +190,7 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
                 }
         }
       }
-    private module Q = ℂ.Peq Q      
+    private module Q = ℂ.peq Q      
 
 
     -- quotient arrow
@@ -219,7 +219,7 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
     private
       module q where
         open ℂ.canonical-repi qdata public
-        open ℂ.Peq-mor ar public
+        open ℂ.peq-mor ar public
     q : || Exℂ.Hom A Q ||
     q = q.ar
 
@@ -237,15 +237,15 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
       }
       where q-hty : || ℂ.Hom R.Lo HiQ.wWOb ||
             q-hty = HiQ.⟨ A.ρ ∘ r₁.lo , ℂ.idar R.Lo , A.ρ ∘ r₂.lo ⟩[ A.ρ-ax₀g ⊙ ridˢ , A.ρ-ax₀g ⊙ ridˢ ]
-    private module qsq = ℂ.Peq-mor-eq q-sq
+    private module qsq = ℂ.peq-mor-eq q-sq
 
 
     module qsq-is-pb {B : Exℂ.Obj} (h k : || Exℂ.Hom B A ||) (eqpf : q Exℂ.∘ h Exℂ.~ q Exℂ.∘ k) where
       private
-        module B = ℂ.Peq B
-        module h = ℂ.Peq-mor h
-        module k = ℂ.Peq-mor k
-        module eqpf = ℂ.Peq-mor-eq eqpf
+        module B = ℂ.peq B
+        module h = ℂ.peq-mor h
+        module k = ℂ.peq-mor k
+        module eqpf = ℂ.peq-mor-eq eqpf
 
       loun : || ℂ.Hom B.Lo R.Lo ||
       loun = HiQ.πc ∘ eqpf.hty
@@ -261,7 +261,7 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
       eq-conc-aux : {X : ℂ.Obj} {x₁ x₂ x₃ x₄ : || ℂ.Hom X A.Lo ||} {y₁ y₂ y₃ : || ℂ.Hom X A.Hi ||}
                     (y₁₀ : A.%0 ∘ y₁ ~ x₁) (y₁₁ : A.%1 ∘ y₁ ~ x₂) (y₂₀ : A.%0 ∘ y₂ ~ x₂)
                     (y₂₁ : A.%1 ∘ y₂ ~ x₃) (y₃₀ : A.%0 ∘ y₃ ~ x₄) (y₃₁ : A.%1 ∘ y₃ ~ x₃)
-                      → ℂ.freePeq-is-min A x₁ Exℂ.~ ℂ.freePeq-is-min A x₄
+                      → ℂ.freepeq-is-min A x₁ Exℂ.~ ℂ.freepeq-is-min A x₄
       eq-conc-aux {y₁ = y₁} {y₂} {y₃} y₁₀ y₁₁ y₂₀ y₂₁ y₃₀ y₃₁ = record
         { hty = A.τ ∘ Aτwpb.w⟨ A.τ ∘ Aτwpb.w⟨ y₁ , y₂ ⟩[ fstpf ] , A.σ ∘ y₃ ⟩[ sndpf ]
         ; hty₀ = A.τ-ax₀g ⊙ A.τ-ax₀g ⊙ y₁₀
@@ -272,34 +272,34 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
                                ~[ A.τ-ax₁g ⊙ (y₂₁ ⊙ y₃₁ ˢ) ⊙ A.σ-ax₀g ˢ ]
                       A.%0 ∘ A.σ ∘ y₃
 
-      loun-ext-pf1 : eqr/.r₁ Exℂ.∘ ℂ.freePeq-is-min eqr/.relOb (loun ∘ B.%0)
-                       Exℂ.~    eqr/.r₁ Exℂ.∘ ℂ.freePeq-is-min eqr/.relOb (loun ∘ B.%1)
+      loun-ext-pf1 : eqr/.r₁ Exℂ.∘ ℂ.freepeq-is-min eqr/.relOb (loun ∘ B.%0)
+                       Exℂ.~    eqr/.r₁ Exℂ.∘ ℂ.freepeq-is-min eqr/.relOb (loun ∘ B.%1)
       loun-ext-pf1 = record
         { hty = r₁un-ext.hty
         ; hty₀ = r₁un-ext.hty₀
         ; hty₁ = r₁un-ext.hty₁
         }
-        where r₁un-ext : ℂ.freePeq-is-min A (r₁.lo ∘ loun ∘ B.%0) Exℂ.~ ℂ.freePeq-is-min A (r₁.lo ∘ loun ∘ B.%1)
+        where r₁un-ext : ℂ.freepeq-is-min A (r₁.lo ∘ loun ∘ B.%0) Exℂ.~ ℂ.freepeq-is-min A (r₁.lo ∘ loun ∘ B.%1)
               r₁un-ext = eq-conc-aux {y₁ = r₁un~h ∘ B.%0} {y₂ = h.hi} {y₃ = r₁un~h ∘ B.%1}
                                      (ass ⊙ ∘e r r₁un~h₀ ⊙ assˢ) (ass ⊙ ∘e r r₁un~h₁) h.cmptb₀
                                      h.cmptb₁ (ass ⊙ ∘e r r₁un~h₀ ⊙ assˢ) (ass ⊙ ∘e r r₁un~h₁)
-              module r₁un-ext = ℂ.Peq-mor-eq r₁un-ext
-      loun-ext-pf2 : eqr/.r₂ Exℂ.∘ ℂ.freePeq-is-min eqr/.relOb (loun ∘ B.%0)
-                       Exℂ.~    eqr/.r₂ Exℂ.∘ ℂ.freePeq-is-min eqr/.relOb (loun ∘ B.%1)
+              module r₁un-ext = ℂ.peq-mor-eq r₁un-ext
+      loun-ext-pf2 : eqr/.r₂ Exℂ.∘ ℂ.freepeq-is-min eqr/.relOb (loun ∘ B.%0)
+                       Exℂ.~    eqr/.r₂ Exℂ.∘ ℂ.freepeq-is-min eqr/.relOb (loun ∘ B.%1)
       loun-ext-pf2 = record
         { hty = r₂un-ext.hty
         ; hty₀ = r₂un-ext.hty₀
         ; hty₁ = r₂un-ext.hty₁
         }
-        where r₂un-ext : ℂ.freePeq-is-min A (r₂.lo ∘ loun ∘ B.%0) Exℂ.~ ℂ.freePeq-is-min A (r₂.lo ∘ loun ∘ B.%1)
+        where r₂un-ext : ℂ.freepeq-is-min A (r₂.lo ∘ loun ∘ B.%0) Exℂ.~ ℂ.freepeq-is-min A (r₂.lo ∘ loun ∘ B.%1)
               r₂un-ext = eq-conc-aux {y₁ = r₂un~k ∘ B.%0} {y₂ = k.hi} {y₃ = r₂un~k ∘ B.%1}
                                      (ass ⊙ ∘e r r₂un~k₀ ⊙ assˢ) (ass ⊙ ∘e r r₂un~k₁) k.cmptb₀
                                      k.cmptb₁ (ass ⊙ ∘e r r₂un~k₀ ⊙ assˢ) (ass ⊙ ∘e r r₂un~k₁)
-              module r₂un-ext = ℂ.Peq-mor-eq r₂un-ext
-      loun-ext : ℂ.freePeq-is-min eqr/.relOb (loun ∘ B.%0)
-                          Exℂ.~    ℂ.freePeq-is-min eqr/.relOb (loun ∘ B.%1)
+              module r₂un-ext = ℂ.peq-mor-eq r₂un-ext
+      loun-ext : ℂ.freepeq-is-min eqr/.relOb (loun ∘ B.%0)
+                          Exℂ.~    ℂ.freepeq-is-min eqr/.relOb (loun ∘ B.%1)
       loun-ext = eqr/.jm-pf loun-ext-pf1 loun-ext-pf2
-      module hilo = ℂ.Peq-mor-eq loun-ext
+      module hilo = ℂ.peq-mor-eq loun-ext
 
 
       univ : || Exℂ.Hom B eqr/.relOb ||
@@ -356,7 +356,7 @@ exact-compl-is-exact//hasfl hasfwl = reg2exact eqrel→kp
                                    where open regular-cat-props (exact-compl-is-regular hasfwl)
                                          open eq-rels-are-effective hasfwl
 
-exact-compl-is-exact : {ℂ : ecategory} → (hasfwl : has-fin-weak-limits ℂ) → is-exact Ex ℂ [ hasfwl ]
+exact-compl-is-exact : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) → is-exact Ex ℂ [ hasfwl ]
 exact-compl-is-exact {ℂ} hasfwl = record { hasfl = exact-compl-has-fin-limits hasfwl
                                          ; isex/fl = exact-compl-is-exact//hasfl hasfwl
                                          }

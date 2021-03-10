@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.embedding.universal-property.is-exact-fun where
+module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.is-exact-fun where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.all-arrows
@@ -23,10 +23,10 @@ open import ecats.functors.props.basic-props
 open import ecats.functors.props.left-covering
 open import ecats.constructions.ecat-eqrel
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.finite-limits.fin-limits
-open import ecats.exact-completion.exact.is-regular
-open import ecats.exact-completion.embedding.universal-property.def
-open import ecats.exact-completion.embedding.universal-property.is-left-covering
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.fin-limits
+open import ecats.exact-completion.CVconstr-is-excompl.exact.is-regular
+open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.def
+open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.is-left-covering
 
 
 

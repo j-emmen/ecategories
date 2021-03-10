@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.finite-limits.bin-product where
+module ecats.exact-completion.CVconstr-is-excompl.finite-limits.bin-product where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
@@ -16,7 +16,7 @@ open import ecats.finite-limits.d&n-bin-weak-product
 open import ecats.finite-limits.d&n-weak-pullback
 open import ecats.finite-limits.d&n-bin-product
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.exact.canonical-epi&mono
+open import ecats.exact-completion.CVconstr-is-excompl.exact.canonical-epi&mono
 
 
 

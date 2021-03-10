@@ -5,19 +5,19 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.finite-limits.fin-limits where
+module ecats.exact-completion.CVconstr-is-excompl.finite-limits.fin-limits where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.finite-limits.defs.collective
 open import ecats.finite-limits.props.relations-among-limits
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.finite-limits.terminal using (exact-compl-has-terminal
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.terminal using (exact-compl-has-terminal
                                                                 ; exact-compl-qcart-has-terminal) public
-open import ecats.exact-completion.finite-limits.bin-product using (exact-compl-has-bin-products
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.bin-product using (exact-compl-has-bin-products
                                                                    ; exact-compl-qcart-has-bin-products) public
-open import ecats.exact-completion.finite-limits.equaliser using (exact-compl-has-equalisers
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.equaliser using (exact-compl-has-equalisers
                                                                  ; exact-compl-qcart-has-equalisers) public
-open import ecats.exact-completion.finite-limits.pullback using (exact-compl-has-pullbacks
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.pullback using (exact-compl-has-pullbacks
                                                                 ; exact-compl-qcart-has-pullbacks) public
 
 

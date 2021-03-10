@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.exact.canonical-epi&mono where
+module ecats.exact-completion.CVconstr-is-excompl.exact.canonical-epi&mono where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes

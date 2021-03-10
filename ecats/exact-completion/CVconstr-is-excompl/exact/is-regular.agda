@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.exact.is-regular where
+module ecats.exact-completion.CVconstr-is-excompl.exact.is-regular where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.all-arrows
@@ -14,9 +14,9 @@ open import ecats.basic-props.image-fact
 open import ecats.basic-defs.regular-ecat
 open import ecats.finite-limits.all
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.finite-limits.fin-limits
-open import ecats.exact-completion.finite-limits.pullback
-open import ecats.exact-completion.exact.canonical-epi&mono
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.fin-limits
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.pullback
+open import ecats.exact-completion.CVconstr-is-excompl.exact.canonical-epi&mono
 
 
 

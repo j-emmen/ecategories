@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.embedding.universal-property.commut where
+module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.commut where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.regular-ecat
@@ -17,7 +17,7 @@ open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.left-covering
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.embedding.universal-property.def
+open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.def
 
 
 

@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.embedding.is-projective-cover where
+module ecats.exact-completion.CVconstr-is-excompl.embedding.is-projective-cover where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.all-arrows
@@ -16,11 +16,11 @@ open import ecats.basic-props.regular-ecat
 open import ecats.basic-defs.exact-ecat
 open import ecats.finite-limits.all
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.finite-limits.fin-limits
-open import ecats.exact-completion.finite-limits.pullback
-open import ecats.exact-completion.exact.canonical-epi&mono
-open import ecats.exact-completion.exact.is-regular
-open import ecats.exact-completion.exact.is-exact
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.fin-limits
+open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.pullback
+open import ecats.exact-completion.CVconstr-is-excompl.exact.canonical-epi&mono
+open import ecats.exact-completion.CVconstr-is-excompl.exact.is-regular
+open import ecats.exact-completion.CVconstr-is-excompl.exact.is-exact
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.projective-cover
@@ -67,7 +67,7 @@ module exact-compl-embed-is-prjcov {ℂ : ecategory} (hasfwl : has-fin-weak-limi
     { faith-pf = λ pf → hty₀ pf ˢ ⊙ hty₁ pf
     }
     where open ecategory-aux-only ℂ
-          open ℂ.Peq-mor-eq
+          open ℂ.peq-mor-eq
   open is-faithful Γex-faith
 
 
@@ -77,19 +77,19 @@ module exact-compl-embed-is-prjcov {ℂ : ecategory} (hasfwl : has-fin-weak-limi
     ; full-pf = λ {_} {_} {f} → record { hty = lo f ; hty₀ = lid ; hty₁ = lid }
     }
     where open ecategory-aux-only ℂ
-          open ℂ.Peq-mor
+          open ℂ.peq-mor
   open is-full Γex-full
 
 
 
-  module Γex-crepi-projective {Y : ℂ.Obj} {R S : ℂ.PeqOver Y} (crepi : ℂ.canonical-repi R S)
+  module Γex-crepi-projective {Y : ℂ.Obj} {R S : ℂ.peqOver Y} (crepi : ℂ.canonical-repi R S)
                               {X : ℂ.Obj} (f : || Exℂ.Hom (Γex.ₒ X) (ℂ.mkpeq-c S) ||)
                               where
     private
-      module R = ℂ.PeqOver R
-      module S = ℂ.PeqOver S
+      module R = ℂ.peqOver R
+      module S = ℂ.peqOver S
       module cre = ℂ.canonical-repi crepi
-      module f = ℂ.Peq-mor f
+      module f = ℂ.peq-mor f
     lift-crepi : || Exℂ.Hom (Γex.ₒ X) (ℂ.mkpeq-c R) ||
     lift-crepi = record { lo = f.lo
                         ; isext = record
@@ -138,18 +138,18 @@ module exact-compl-embed-is-prjcov {ℂ : ecategory} (hasfwl : has-fin-weak-limi
                    ; img-proj = Γex-img-proj
                    ; reg-cov-obj = λ A → Lo A
                    ; is-reg-cov = λ A → record
-                                { ar = crepiPeq.ar A
-                                ; is-repi = crepiPeq.can-repi-is-repi A
+                                { ar = crepipeq.ar A
+                                ; is-repi = crepipeq.can-repi-is-repi A
                                 }
                    }
-                   where open ℂ.Peq
-                         crepiPeq : (A : Exℂ.Obj)
+                   where open ℂ.peq
+                         crepipeq : (A : Exℂ.Obj)
                                        → ℂ.canonical-repi (peqover (Γex.ₒ (Lo A))) (peqover A)
-                         crepiPeq A = record { crepi-hi = ρ A
+                         crepipeq A = record { crepi-hi = ρ A
                                              ; crepi-ax₀ = ρ-ax₀ A 
                                              ; crepi-ax₁ = ρ-ax₁ A
                                              }
-                         module crepiPeq (A : Exℂ.Obj) = ℂ.canonical-repi (crepiPeq A)
+                         module crepipeq (A : Exℂ.Obj) = ℂ.canonical-repi (crepipeq A)
 -- end exact-compl-embed-is-prjcov
 
 
@@ -161,5 +161,5 @@ excmpl-embed-is-projective-cover hasfwl = Γex-proj-cov
 
 excmpl-embed-is-left-covering : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
                                    → is-left-covering Γex ℂ [ hasfwl ]
-excmpl-embed-is-left-covering hasfwl = proj-cover-is-left-covering (exact-compl-is-regular hasfwl)
+excmpl-embed-is-left-covering hasfwl = pjcov-of-reg-is-lcov (exact-compl-is-regular hasfwl)
                                                                    (excmpl-embed-is-projective-cover hasfwl)

@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.embedding.universal-prop where
+module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-prop where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.exact-ecat
@@ -14,14 +14,38 @@ open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
+open import ecats.functors.defs.projective-cover
+open import ecats.functors.props.projective-cover
+open import ecats.exact-completion.def
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.embedding.universal-property.def
-open import ecats.exact-completion.embedding.universal-property.commut
-open import ecats.exact-completion.embedding.universal-property.is-exact-fun
-open import ecats.exact-completion.embedding.universal-property.uniqueness
+open import ecats.exact-completion.CVconstr-is-excompl.exact.is-regular
+open import ecats.exact-completion.CVconstr-is-excompl.exact.is-exact
+open import ecats.exact-completion.CVconstr-is-excompl.embedding.is-projective-cover
+open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.def
+open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.commut
+open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.is-exact-fun
+open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.uniqueness
 
 
 
+CVexcmpl-is-init-lcov-ex : {ℂ : ecategory}(hasfwl : has-fin-weak-limits ℂ)
+  → exwlex-universal-prop hasfwl
+                           (exact-compl-is-exact hasfwl)
+                           (pjcov-of-reg-is-lcov (exact-compl-is-regular hasfwl)
+                                                 (excmpl-embed-is-projective-cover hasfwl))
+CVexcmpl-is-init-lcov-ex hasfwl = record
+  { fnct = def.↑ex
+  ; ex = ex.↑ex-is-exact
+  ; tr = tr.↑ex-tr
+  ; uq = uq.↑ex-uq
+  }
+  where module def = exact-compl-universal-def hasfwl
+        module tr = exact-compl-universal-commut hasfwl
+        module ex = exact-compl-universal-is-exact hasfwl
+        module uq = exact-compl-universal-uniq hasfwl
+
+
+{-
 module exact-compl-universal-prop {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
                                   {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                                   {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
@@ -48,3 +72,19 @@ module exact-compl-universal-prop {ℂ : ecategory} (hasfwl : has-fin-weak-limit
               (Gtr : natural-iso (G ○ Γex ℂ [ hasfwl ]) F)
                 = natural-iso (↑ex-uq exG Gtr)
 -- end exact-compl-universal-prop
+
+
+CVexcmpl-is-init-lcov-ex : {ℂ : ecategory}(hasfwl : has-fin-weak-limits ℂ)
+  → exwlex-universal-prop hasfwl
+                           (exact-compl-is-exact hasfwl)
+                           (pjcov-of-reg-is-lcov (exact-compl-is-regular hasfwl)
+                                                 (excmpl-embed-is-projective-cover hasfwl))
+CVexcmpl-is-init-lcov-ex hasfwl = record
+  { fnct = ↑ex
+  ; ex = ↑ex-is-exact
+  ; tr = ↑ex-tr
+  ; uq = ↑ex-uq
+  }
+  where open exact-compl-universal-prop hasfwl
+-}
+
