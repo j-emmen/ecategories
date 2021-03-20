@@ -71,10 +71,10 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
       open efunctor-aux CVex ℙ [ fwlℙ ] public
       open is-exwlex-completion (CVconstr-is-excompl fwlℙ) public
     module PC↑ex where --= efunctor-aux (CVex.fnct ex𝔼 PC.islcov)
-      fnct : efunctor Ex ℙ [ fwlℙ ] 𝔼
-      fnct = CVex.unv.fctr ex𝔼 PC.islcov
-      --open CVex.univ ex𝔼 PC.islcov using (fnct) public
-      open efunctor-aux fnct public
+      --fnct : efunctor Ex ℙ [ fwlℙ ] 𝔼
+      --fnct = CVex.unv.fctr ex𝔼 PC.islcov
+      open CVex.unv ex𝔼 PC.islcov using (fctr) public
+      open efunctor-aux fctr public
     
     module CRF (R : Exℙ.Obj) where
       open eqrel-from-peq-funct fwlℙ
@@ -212,14 +212,14 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
     -- end PC↑ex-faithful
   -- end private
 
-  PC↑ex-full : is-full PC↑ex.fnct
+  PC↑ex-full : is-full PC↑ex.fctr
   PC↑ex-full = record
     { full-ar = λ {R} {S} g → ar {R} {S} g
     ; full-pf = λ {R} {S} {g} → eqpf {R} {S} g
     }
     where open PC↑ex-full
     
-  PC↑ex-faithful : is-faithful PC↑ex.fnct
+  PC↑ex-faithful : is-faithful PC↑ex.fctr
   PC↑ex-faithful = record
     { faith-pf = λ {R} {S} {f} {f'} eqpf → pf {R} {S} {f} {f'} eqpf
     }
@@ -340,7 +340,7 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
     -- end peq-from-Obj
   -- end private
   
-  PC↑ex-ess-surj-obs : is-ess-surjective-ob PC↑ex.fnct
+  PC↑ex-ess-surj-obs : is-ess-surjective-ob PC↑ex.fctr
   PC↑ex-ess-surj-obs = record
     { ob = ob
     ; ar = iso.ar
@@ -357,14 +357,14 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
             open same-rel-so-iso-coeq {A} {peq-from-Obj.rc.ar A} (peq-from-Obj.qexs A) public
 
 
-  PC↑ex-eequiv : is-ess-equivalence PC↑ex.fnct
+  PC↑ex-eequiv : is-ess-equivalence PC↑ex.fctr
   PC↑ex-eequiv = record
     { isfull = PC↑ex-full
     ; isfaithful = PC↑ex-faithful
     ; isesurjobj = PC↑ex-ess-surj-obs
     }
 
-  PC↑ex-is-eqv : is-equivalence PC↑ex.fnct
+  PC↑ex-is-eqv : is-equivalence PC↑ex.fctr
   PC↑ex-is-eqv = ess-equiv-is-equiv PC↑ex-eequiv
 
 -- end projcov-of-exact-is-eqv-to-CVconstr

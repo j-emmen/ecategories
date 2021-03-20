@@ -66,6 +66,8 @@ module check {ℂ : ecategory}(fwlℂ : has-fin-weak-limits ℂ)
   tr : _○_ {_} {Ex ℂ [ fwlℂ ]} {_} fctr CVex ℂ [ fwlℂ ] ≅ₐ F
   tr = unv.tr ex𝔻 lcovF
 
+-- with ℂfwl = has-flim→has-fwlim flℂ it takes too long...
+
 
 
 -- module exact-compl-universal-prop {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)

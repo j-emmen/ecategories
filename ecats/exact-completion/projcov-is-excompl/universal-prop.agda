@@ -36,8 +36,6 @@ open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-prope
 
 module projcov-universal-prop {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼){ℙ : ecategory}
                               {PC : efunctor ℙ 𝔼}(pjcPC : is-projective-cover PC)
-                              {𝔻 : ecategory} (ex𝔻 : is-exact 𝔻)
-                              {G : efunctor ℙ 𝔻}(lcovG : is-left-covering G)
                               where
   private
     module 𝔼 where
@@ -59,113 +57,94 @@ module projcov-universal-prop {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼){ℙ : e
       open ecategory ℙ public
       open pseudo-eq-rel-defs ℙ public
       --open finite-weak-limits-d&p ℙ public
-    fwlℙ : has-fin-weak-limits ℙ
+    {-fwlℙ : has-fin-weak-limits ℙ
     fwlℙ = proj-cov-has-wlim pjcPC ex𝔼.hasfl
     module fwlℙ where
       open has-fin-weak-limits fwlℙ public
-      open has-weak-pullbacks haswpb using (wpb-of) public
+      open has-weak-pullbacks haswpb using (wpb-of) public-}
     module PC where
       open efunctor-aux PC public
       open is-projective-cover pjcPC public
       islcov : is-left-covering PC
       islcov = pjcov-of-reg-is-lcov reg𝔼 pjcPC
 
+  module univ-prop-aux (fwlℙ : has-fin-weak-limits ℙ)
+                       {𝔻 : ecategory} (ex𝔻 : is-exact 𝔻)
+                       {G : efunctor ℙ 𝔻}(lcovG : is-left-covering G)
+                       where    
     module Exℙ where
       open ecategory Ex ℙ [ fwlℙ ] public
       open iso-defs Ex ℙ [ fwlℙ ] public
       open epis&monos-defs Ex ℙ [ fwlℙ ] public
       open epis&monos-props Ex ℙ [ fwlℙ ] public
       open image-fact-defs Ex ℙ [ fwlℙ ] public
-
     module CVex where
       open efunctor-aux CVex ℙ [ fwlℙ ] public
       open is-exwlex-completion (CVconstr-is-excompl fwlℙ) public
-    PC↑ex : efunctor Ex ℙ [ fwlℙ ] 𝔼
+    {-PC↑ex : efunctor Ex ℙ [ fwlℙ ] 𝔼
     PC↑ex = CVex.unv.fctr ex𝔼 PC.islcov
     PC↑ex-tr : PC↑ex ○ CVex ℙ [ fwlℙ ] ≅ₐ PC
-    PC↑ex-tr = {!CVex.unv.tr ex𝔼 PC.islcov!}
+    PC↑ex-tr = CVex.unv.tr ex𝔼 PC.islcov-}
     module PC↑ex where --= efunctor-aux (CVex.fnct ex𝔼 PC.islcov)
-      --open CVex.univ ex𝔼 PC.islcov public
+      open CVex.unv ex𝔼 PC.islcov public
+      open efunctor-aux fctr public
       --tr : fnct ○ CVex ℙ [ fwlℙ ] ≅ₐ PC
       --tr = ∘e {ℙ} {Ex ℙ [ fwlℙ ]} {𝔼} {CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]} {{!fnct!}} {_} r r ⊙ fnct.tr
       --{ℙ} {Ex ℙ [ fwlℙ ]} {𝔼} {CVex ℙ [ fwlℙ ]} {?} {fnct} {?} r ?
            --where open Large-ecategory-aux Cat
       --open fnct public
-      open exwlex-universal-prop-data (CVex ℙ [ fwlℙ ]) PC
+      {-open exwlex-universal-prop-data (CVex ℙ [ fwlℙ ]) PC
       fnct : efunctor Ex ℙ [ fwlℙ ] 𝔼
       fnct = CVex.unv.fctr ex𝔼 PC.islcov
       tr : fnct ○ CVex ℙ [ fwlℙ ] ≅ₐ PC
-      tr = {!CVex.unv.tr {𝔼} ex𝔼 {PC} PC.islcov!}
+      tr = {!CVex.unv.tr {𝔼} ex𝔼 {PC} PC.islcov!}-}
          --where module aux = is-unique-ex+tr (CVex.unv-prop ex𝔼 PC.islcov)
-      open efunctor-aux fnct public
       --open is-unique-ex+tr (CVex.unv-prop ex𝔼 PC.islcov) public
-    G↑ex : efunctor Ex ℙ [ fwlℙ ] 𝔻
-    G↑ex = CVex.unv.fctr ex𝔻 lcovG
-    G↑ex-tr : G↑ex ○ CVex ℙ [ fwlℙ ] ≅ₐ G
-    G↑ex-tr = {!CVex.unv.tr {𝔻} ex𝔻 {G} lcovG!}
-    module G↑ex where --= efunctor-aux (CVex.fnct ex𝔼 PC.islcov)
-      --open CVex.univ ex𝔻 lcovG public --using (fnct; tr)
-      --open fnct public
-      --open efunctor-aux fnct public
     module Eqv where
       open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 pjcPC
       open is-equivalence PC↑ex-is-eqv renaming (invF to PC↓ex) public
-      open Large-ecategory-aux Cat
-      check : Set
+      tr : _○_ {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]} PC↓ex PC ≅ₐ CVex ℙ [ fwlℙ ]
+      tr = iso-trcod {f = PC↑ex.fctr} {PC↓ex} {!ι2!} {!ι1!} {CVex ℙ [ fwlℙ ]} {PC} PC↑ex.tr
+      {-∘e {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]} {f = PC} {f' = PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {g = PC↓ex} {g' = PC↓ex}
+              (PC↑ex.tr ˢ) r ⊙ {!ass ⊙ lidgg r ι2!}-}
+      -- ∘e (PC↑ex.tr ˢ) r ⊙ ass ⊙ lidgg r ι2
+         where open Large-ecategory-aux Cat
+               iso-trcod : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}
+                           (iddom : f' ∘ f ~ idar a)(idcod : f ∘ f' ~ idar b)
+                           {g : || Hom c a ||} {h : || Hom c b ||}
+                             → f ∘ g ~ h → (f' ∘ h) ≅ₐ g
+               iso-trcod {a} {b} {c} {f = f} {f'} iddom idcod {g} {h} pf = ~proof
+                 f' ∘ h         ~[ ∘e {f = h} {f ∘ g} {f'} {f'} (pf ˢ) r ] /
+                 f' ∘ f ∘ g     ~[ ass {f = g} {f} {f'} ] /
+                 (f' ∘ f) ∘ g   ~[ lidgg r iddom ]∎
+                 g ∎
+
+      --open Large-ecategory-aux Cat
       {-PC↑ex.fnct ≅ₐ ecats.exact-completion.CVconstr-is-excompl.embedding.universal-prop.exact-compl-universal-prop.↑ex (proj-cov-has-wlim pjcPC ex𝔼.hasfl) ex𝔼 PC.islcov-}
-      check = {!=rf {a = PC↑ex}!}
+    {-G↑ex : efunctor Ex ℙ [ fwlℙ ] 𝔻
+    G↑ex = CVex.unv.fctr ex𝔻 lcovG
+    G↑ex-tr : G↑ex ○ CVex ℙ [ fwlℙ ] ≅ₐ G
+    G↑ex-tr = {!CVex.unv.tr {𝔻} ex𝔻 {G} lcovG!}-}
+    module G↑ex where --= efunctor-aux (CVex.fnct ex𝔼 PC.islcov)
+      open CVex.unv ex𝔻 lcovG public
+      open efunctor-aux fctr public
 
 {-
-PC↑ex.fnct
-=
-efunctor-cmp
-{exact-compl-cat ℙ
-                 (projective-cover-props.dom-has-fin-weak-limits {𝔼} ex𝔼.hasfl {ℙ} {PC} pjcPC)}
-{ecats.constructions.ecat-eqrel.EqRel 𝔼}
-{𝔼}
-(ecats.constructions.ecat-eqrel.QER {𝔼} ex𝔼)
-(ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.eqrel-from-peq.eqrel-from-peq-funct.Rel
- {ℙ}
- (projective-cover-props.dom-has-fin-weak-limits {𝔼} ex𝔼.hasfl {ℙ} {PC} pjcPC)
- {𝔼}
- ex𝔼.is-reg
- {PC}
- (projective-cover-of-reg-cat-is-left-cov.PC-is-left-cov {𝔼} ex𝔼.is-reg {ℙ} {PC} pjcPC))
-
-exact-compl-universal-def.↑ex fwlℙ ex𝔼 PC.islcov
-=
-efunctor-cmp
-{exact-compl-cat ℙ
-                 (projective-cover-props.dom-has-fin-weak-limits {𝔼} ex𝔼.hasfl {ℙ} {PC} pjcPC)}
-{ecats.constructions.ecat-eqrel.EqRel 𝔼} 
-{𝔼}
-(ecats.constructions.ecat-eqrel.QER {𝔼} ex𝔼)
-(ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.eqrel-from-peq.eqrel-from-peq-funct.Rel
- {ℙ}
- (projective-cover-props.dom-has-fin-weak-limits {𝔼} ex𝔼.hasfl {ℙ} {PC} pjcPC)
- {𝔼}
- ex𝔼.is-reg
- {PC}
- (projective-cover-of-reg-cat-is-left-cov.PC-is-left-cov {𝔼} ex𝔼.is-reg {ℙ} {PC} pjcPC))
--}
-      tr' : PC↑ex.fnct ○ CVex ℙ [ fwlℙ ] ≅ₐ PC
+      tr' : PC↑ex.fctr ○ CVex ℙ [ fwlℙ ] ≅ₐ PC
       tr' = {!tr!}
           --where open exwlex-universal-prop-data.is-unique-ex+tr (CVex.unv-prop ex𝔼 PC.islcov)
-      tr : PC↓ex ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
-      tr = {!∘e {?} {?} {?} {f = PC} {f' = PC↑ex.fnct ○ CVex ℙ [ fwlℙ ]} {g = ?} {g' = ?} ? (PC↑ex.tr ˢ) ⊙ ?!}
-      -- ∘e (PC↑ex.tr ˢ) r ⊙ ass ⊙ lidgg r ι2
-         --where open Large-ecategory-aux Cat
-      
+-}
 
---   fnct : efunctor 𝔼 𝔻
---   fnct = G↑ex.fnct ○ Eqv.PC↓ex
+    fnct : efunctor 𝔼 𝔻
+    fnct = G↑ex.fctr ○ Eqv.PC↓ex
 
---   tr : fnct ○ PC ≅ₐ G
---   tr = assˢ ⊙ ∘e Eqv.tr r ⊙ G↑ex.tr
---      where open Large-ecategory-aux Catᵍ
-  
+    tr : fnct ○ PC ≅ₐ G
+    tr = {!!} --assˢ ⊙ ∘e Eqv.tr r ⊙ G↑ex.tr
+       where open Large-ecategory-aux Cat
+       
+  -- end univ-prop-aux  
 
--- -- end projcov-universal-prop
+-- end projcov-universal-prop
 
 
 -- projcov-is-init-lcov-ex : {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼){ℙ : ecategory}
