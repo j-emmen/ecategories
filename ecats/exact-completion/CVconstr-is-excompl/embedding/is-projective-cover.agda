@@ -59,38 +59,17 @@ module exact-compl-embed-is-prjcov {ℂ : ecategory} (hasfwl : has-fin-weak-limi
       open projective-defs Ex ℂ [ hasfwl ] public
     module rmfExℂ = exact-compl-has-repi-mono-fact hasfwl
     module rmfof {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) = Exℂ.repi-mono-fact-of (rmfExℂ.rmf-of f)
-    module Γex = efunctor-aux Γex ℂ [ hasfwl ]
-  
+    module CVex = efunctor-aux CVex ℂ [ hasfwl ]
 
-  Γex-faith : is-faithful Γex ℂ [ hasfwl ]
-  Γex-faith = record
-    { faith-pf = λ pf → hty₀ pf ˢ ⊙ hty₁ pf
-    }
-    where open ecategory-aux-only ℂ
-          open ℂ.peq-mor-eq
-  open is-faithful Γex-faith
-
-
-  Γex-full : is-full Γex ℂ [ hasfwl ]
-  Γex-full = record
-    { full-ar = λ f → lo f
-    ; full-pf = λ {_} {_} {f} → record { hty = lo f ; hty₀ = lid ; hty₁ = lid }
-    }
-    where open ecategory-aux-only ℂ
-          open ℂ.peq-mor
-  open is-full Γex-full
-
-
-
-  module Γex-crepi-projective {Y : ℂ.Obj} {R S : ℂ.peqOver Y} (crepi : ℂ.canonical-repi R S)
-                              {X : ℂ.Obj} (f : || Exℂ.Hom (Γex.ₒ X) (ℂ.mkpeq-c S) ||)
+  module CVex-crepi-projective {Y : ℂ.Obj} {R S : ℂ.peqOver Y} (crepi : ℂ.canonical-repi R S)
+                              {X : ℂ.Obj} (f : || Exℂ.Hom (CVex.ₒ X) (ℂ.mkpeq-c S) ||)
                               where
     private
       module R = ℂ.peqOver R
       module S = ℂ.peqOver S
       module cre = ℂ.canonical-repi crepi
       module f = ℂ.peq-mor f
-    lift-crepi : || Exℂ.Hom (Γex.ₒ X) (ℂ.mkpeq-c R) ||
+    lift-crepi : || Exℂ.Hom (CVex.ₒ X) (ℂ.mkpeq-c R) ||
     lift-crepi = record { lo = f.lo
                         ; isext = record
                           { hi = R.ρ ℂ.∘ f.lo
@@ -105,11 +84,11 @@ module exact-compl-embed-is-prjcov {ℂ : ecategory} (hasfwl : has-fin-weak-limi
                            ; hty₁ = ass ⊙ lidgg r S.ρ-ax₁
                            }
                            where open ecategory-aux-only ℂ
-  -- end Γex-img-crepi-projective
+  -- end CVex-img-crepi-projective
 
 
-  Γex-img-proj : (X : ℂ.Obj) → Exℂ.is-reg-projective (Γex.ₒ X)
-  Γex-img-proj X = record
+  CVex-img-proj : (X : ℂ.Obj) → Exℂ.is-reg-projective (CVex.ₒ X)
+  CVex-img-proj X = record
     { lift = cr.lift-crepi
     ; lift-tr = λ {A} {B} {f} {repi} {g} → lift-tr repi g
     }
@@ -120,10 +99,10 @@ module exact-compl-embed-is-prjcov {ℂ : ecategory} (hasfwl : has-fin-weak-limi
           module Mf {A B : Exℂ.Obj} {f : || Exℂ.Hom A B ||} (repi : Exℂ.is-regular-epi f)
                     = Exℂ.is-iso (Mf-iso repi)
           module cr {A B : Exℂ.Obj} {f : || Exℂ.Hom A B ||} (repi : Exℂ.is-regular-epi f)
-                    (g : || Exℂ.Hom (Γex.ₒ X) B ||)
-                    = Γex-crepi-projective (rmfExℂ.remC-is-can-repi f) (Mf.⁻¹ repi Exℂ.∘ g)
+                    (g : || Exℂ.Hom (CVex.ₒ X) B ||)
+                    = CVex-crepi-projective (rmfExℂ.remC-is-can-repi f) (Mf.⁻¹ repi Exℂ.∘ g)
           lift-tr : {A B : Exℂ.Obj} {f : || Exℂ.Hom A B ||} (repi : Exℂ.is-regular-epi f)
-                    (g : || Exℂ.Hom (Γex.ₒ X) B ||) → f Exℂ.∘ cr.lift-crepi repi g Exℂ.~ g
+                    (g : || Exℂ.Hom (CVex.ₒ X) B ||) → f Exℂ.∘ cr.lift-crepi repi g Exℂ.~ g
           lift-tr {f = f} repi g = ~proof
             f Exℂ.∘ cr.lift-crepi repi g                         ~[ ∘e r (rmfof.tr f ˢ) ⊙ assˢ {g = rmfof.C f} ] /
             rmfof.M f Exℂ.∘ rmfof.C f Exℂ.∘ cr.lift-crepi repi g     ~[ ∘e (cr.lift-crepi-tr repi g) r ] /
@@ -131,11 +110,11 @@ module exact-compl-embed-is-prjcov {ℂ : ecategory} (hasfwl : has-fin-weak-limi
                                           g ∎
                                  where open ecategory-aux-only Ex ℂ [ hasfwl ]
 
-  Γex-proj-cov : is-projective-cover Γex ℂ [ hasfwl ]
-  Γex-proj-cov = record
-                   { isfull = Γex-full
-                   ; isfaith = Γex-faith
-                   ; img-proj = Γex-img-proj
+  CVex-proj-cov : is-projective-cover CVex ℂ [ hasfwl ]
+  CVex-proj-cov = record
+                   { isfull = CVex-full hasfwl
+                   ; isfaith = CVex-faith hasfwl
+                   ; img-proj = CVex-img-proj
                    ; reg-cov-obj = λ A → Lo A
                    ; is-reg-cov = λ A → record
                                 { ar = crepipeq.ar A
@@ -144,7 +123,7 @@ module exact-compl-embed-is-prjcov {ℂ : ecategory} (hasfwl : has-fin-weak-limi
                    }
                    where open ℂ.peq
                          crepipeq : (A : Exℂ.Obj)
-                                       → ℂ.canonical-repi (peqover (Γex.ₒ (Lo A))) (peqover A)
+                                       → ℂ.canonical-repi (peqover (CVex.ₒ (Lo A))) (peqover A)
                          crepipeq A = record { crepi-hi = ρ A
                                              ; crepi-ax₀ = ρ-ax₀ A 
                                              ; crepi-ax₁ = ρ-ax₁ A
@@ -155,11 +134,11 @@ module exact-compl-embed-is-prjcov {ℂ : ecategory} (hasfwl : has-fin-weak-limi
 
 
 excmpl-embed-is-projective-cover : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
-                                      → is-projective-cover Γex ℂ [ hasfwl ]
-excmpl-embed-is-projective-cover hasfwl = Γex-proj-cov
+                                      → is-projective-cover CVex ℂ [ hasfwl ]
+excmpl-embed-is-projective-cover hasfwl = CVex-proj-cov
                                         where open exact-compl-embed-is-prjcov hasfwl
 
 excmpl-embed-is-left-covering : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
-                                   → is-left-covering Γex ℂ [ hasfwl ]
+                                   → is-left-covering CVex ℂ [ hasfwl ]
 excmpl-embed-is-left-covering hasfwl = pjcov-of-reg-is-lcov (exact-compl-is-regular hasfwl)
                                                                    (excmpl-embed-is-projective-cover hasfwl)

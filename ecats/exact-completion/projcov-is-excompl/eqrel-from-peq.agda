@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.projcov-as-excompl.eqrel-from-peq where
+module ecats.exact-completion.projcov-is-excompl.eqrel-from-peq where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.all-arrows
@@ -91,9 +91,9 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
       module F = efunctor-aux F
       module lcF = is-left-covering lcovF
 
-    module eqrel-as-repi-mono-fact (A : ℙ.Peq) where
+    module eqrel-as-repi-mono-fact (A : ℙ.peq) where
       private
-        module A = ℙ.Peq A
+        module A = ℙ.peq A
         module FAL² = 𝔹.product-of-not (reg𝔹.prd-of (F.ₒ A.Lo) (F.ₒ A.Lo))
       -- main definitions, to be used elsewhere
       F% : || 𝔹.Hom (F.ₒ A.Hi) FAL².O12 ||
@@ -263,7 +263,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
         }
     -- end eqrel-as-repi-mono-fact
 
-    --eqr/ : (A : Exℙ.Obj) → 𝔹.eqrel-over (F.ₒ (ℙ.Peq.Lo A))
+    --eqr/ : (A : Exℙ.Obj) → 𝔹.eqrel-over (F.ₒ (ℙ.peq.Lo A))
     --eqr/ A = F.eqrel-from-peq-via-left-covering.eqrel/ A
 
     private
@@ -296,10 +296,10 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
               }
       }
       where open ecategory-aux-only 𝔹
-            module f = ℙ.Peq-mor f
-            module A = ℙ.Peq A
+            module f = ℙ.peq-mor f
+            module A = ℙ.peq A
             module FAL² = 𝔹.product-of-not (reg𝔹.prd-of (F.ₒ A.Lo) (F.ₒ A.Lo))
-            module B = ℙ.Peq B
+            module B = ℙ.peq B
             module FBL² = 𝔹.product-of-not (reg𝔹.prd-of (F.ₒ B.Lo) (F.ₒ B.Lo))
             open 𝔹.×ₐdef FBL².prdsp FAL².prdsp
             Ffl×Ffl : || 𝔹.Hom FAL².O12 FBL².O12 ||
@@ -331,10 +331,10 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
                       F.ₐ B.%1 𝔹.∘ F.ₐ f~f'.hty               ~[ F.∘ax f~f'.hty₁ ]∎
                       F.ₐ f'.lo ∎
       }
-      where module B = ℙ.Peq B
-            module f = ℙ.Peq-mor f
-            module f' = ℙ.Peq-mor f'
-            module f~f' = ℙ.Peq-mor-eq hty
+      where module B = ℙ.peq B
+            module f = ℙ.peq-mor f
+            module f' = ℙ.peq-mor f'
+            module f~f' = ℙ.peq-mor-eq hty
             module CRB = CRF% B
             open ecategory-aux-only 𝔹
   -- end eqrel-from-peq-via-left-covering
@@ -369,9 +369,9 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
       open rmfF% public
       open CF% public
 
-    module CRF%-is-iso {A : Exℙ.Obj} (isfree : ℙ.Peq.%0 A ℙ.~ ℙ.Peq.%1 A) where
+    module CRF%-is-iso {A : Exℙ.Obj} (isfree : ℙ.peq.%0 A ℙ.~ ℙ.peq.%1 A) where
       private
-        module A = ℙ.Peq A
+        module A = ℙ.peq A
         module CRA = CRF% A
 
       r₁~r₂ : CRA.r₁ 𝔹.~ CRA.r₂
@@ -405,9 +405,9 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
         { fnc = λ {X} → record
               { base-ar = 𝔹.idar (F.ₒ X)
               ; isext = record
-                      { rel-ar = CRF%.r₁ (ℙ.freePeq X)
-                      ; cmptb₀ = r {f = 𝔹.idar (F.ₒ X) 𝔹.∘ CRF%.r₁ (ℙ.freePeq X)}
-                      ; cmptb₁ = ∘e (CRF%-is-iso.r₁~r₂ {ℙ.freePeq X} rℙ) r
+                      { rel-ar = CRF%.r₁ (ℙ.freepeq X)
+                      ; cmptb₀ = r {f = 𝔹.idar (F.ₒ X) 𝔹.∘ CRF%.r₁ (ℙ.freepeq X)}
+                      ; cmptb₁ = ∘e (CRF%-is-iso.r₁~r₂ {ℙ.freepeq X} rℙ) r
                       }
               }
         ; nat = λ {X} {Y} f → record
@@ -424,15 +424,15 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
         { fnc = λ {X} → record
               { base-ar = 𝔹.idar (F.ₒ  X)
               ; isext = record
-                      { rel-ar = CRF%.C (ℙ.freePeq X)
-                      ; cmptb₀ = CRF%.rmfF%tr₁ (ℙ.freePeq X) ⊙ lidgenˢ F.id
-                      ; cmptb₁ = CRF%.rmfF%tr₂ (ℙ.freePeq X) ⊙ lidgenˢ F.id
+                      { rel-ar = CRF%.C (ℙ.freepeq X)
+                      ; cmptb₀ = CRF%.rmfF%tr₁ (ℙ.freepeq X) ⊙ lidgenˢ F.id
+                      ; cmptb₁ = CRF%.rmfF%tr₂ (ℙ.freepeq X) ⊙ lidgenˢ F.id
                       }
               }
         ; nat = λ {X} {Y} f → record
-              { wit = CRF%.C (ℙ.freePeq Y) 𝔹.∘ F.ₐ f
-              ; wit₀ = ass ⊙ ∘e r (CRF%.rmfF%tr₁ (ℙ.freePeq Y) ⊙ F.id)
-              ; wit₁ = ass ⊙ lidgg (ridˢ {f = F.ₐ f}) (CRF%.rmfF%tr₂ (ℙ.freePeq Y) ⊙ F.id) 
+              { wit = CRF%.C (ℙ.freepeq Y) 𝔹.∘ F.ₐ f
+              ; wit₀ = ass ⊙ ∘e r (CRF%.rmfF%tr₁ (ℙ.freepeq Y) ⊙ F.id)
+              ; wit₁ = ass ⊙ lidgg (ridˢ {f = F.ₐ f}) (CRF%.rmfF%tr₂ (ℙ.freepeq Y) ⊙ F.id) 
               }
         }
         where open ecategory-aux-only 𝔹
@@ -446,9 +446,9 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
     ; natt⁻¹ = Δ2eqrelΔ
     ; isiso = λ {X} → record
             { iddom = record
-                    { wit = CRF%.C (ℙ.freePeq X)
-                    ; wit₀ = CRF%.rmfF%tr₁ (ℙ.freePeq X) ⊙ lidgenˢ F.id
-                    ; wit₁ = CRF%.rmfF%tr₂ (ℙ.freePeq X) ⊙ F.id
+                    { wit = CRF%.C (ℙ.freepeq X)
+                    ; wit₀ = CRF%.rmfF%tr₁ (ℙ.freepeq X) ⊙ lidgenˢ F.id
+                    ; wit₁ = CRF%.rmfF%tr₂ (ℙ.freepeq X) ⊙ F.id
                     }
             ; idcod = record
                     { wit = 𝔹.idar (F.ₒ X)
@@ -466,7 +466,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 
 
 
---   module imgPeq-def {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F) where
+--   module imgpeq-def {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F) where
 --     private
 --       module 𝔹 where
 --         open ecategory 𝔹 public
@@ -497,7 +497,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 --         --open left-covering-into-exact-props hasfwl 𝔹isex Flcov public
 --       open eqrel-from-peq-via-left-covering ex𝔹.exact-is-regular Flcov
 
---     --eqr/ : (A : Exℙ.Obj) → 𝔹.eqrel-over (F.ₒ (ℙ.Peq.Lo A))
+--     --eqr/ : (A : Exℙ.Obj) → 𝔹.eqrel-over (F.ₒ (ℙ.peq.Lo A))
 --     --eqr/ A = F.eqrel-from-peq-via-left-covering.eqrel/ A
 --     module qrF% (A : Exℙ.Obj) where
 --       --open F.eqrel-from-peq-via-left-covering.imgF% A public
@@ -529,9 +529,9 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 --               }
 --       }
 --       where open ecategory-aux-only 𝔹
---             module f = ℙ.Peq-mor f
---             module A = ℙ.Peq A
---             module B = ℙ.Peq B
+--             module f = ℙ.peq-mor f
+--             module A = ℙ.peq A
+--             module B = ℙ.peq B
 --             module qrA = qrF% A
 --             module qrB = qrF% B
 --             rel-ar-pf : (qrB.ar 𝔹.∘ F.ₐ f.hi) 𝔹.∘ qrA.kpF%.π//₁ 𝔹.~ (qrB.ar 𝔹.∘ F.ₐ f.hi) 𝔹.∘ qrA.kpF%.π//₂
@@ -561,18 +561,18 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 --                       F.ₐ B.%1 𝔹.∘ F.ₐ f~f'.hty               ~[ F.∘ax f~f'.hty₁ ]∎
 --                       F.ₐ f'.lo ∎
 --       }
---       where module B = ℙ.Peq B
---             module f = ℙ.Peq-mor f
---             module f' = ℙ.Peq-mor f'
---             module f~f' = ℙ.Peq-mor-eq hty
+--       where module B = ℙ.peq B
+--             module f = ℙ.peq-mor f
+--             module f' = ℙ.peq-mor f'
+--             module f~f' = ℙ.peq-mor-eq hty
 --             module qrB = qrF% B
 --             open ecategory-aux-only 𝔹
---   -- end imgPeq-def
+--   -- end imgpeq-def
 
 
---   imgPeq :  {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F)
+--   imgpeq :  {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F)
 --                → efunctor Ex ℙ [ hasfwl ] (EqRel 𝔹)
---   imgPeq {𝔹} 𝔹isex {F} Flcov = record
+--   imgpeq {𝔹} 𝔹isex {F} Flcov = record
 --     { FObj = eqr
 --     ; FHom = eqr-ar
 --     ; isF = record
@@ -581,11 +581,11 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 --           ; cmp = λ {A} {B} {C} f g → 𝔹.eqrel-mor-eq-ext F.∘ax-rf
 --           }
 --     }
---     where open imgPeq-def 𝔹isex Flcov
+--     where open imgpeq-def 𝔹isex Flcov
 --           module 𝔹 = eq-rel-defs 𝔹
 --           module F = efunctor-aux F
 
---   module imgPeq-on-free  {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F) where
+--   module imgpeq-on-free  {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F) where
 --     private
 --       module 𝔹 where
 --         open ecategory 𝔹 public
@@ -616,7 +616,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 --         open efunctor-aux F public
 --         open is-left-covering Flcov public
 --         open left-covering-into-exact-props hasfwl 𝔹isex Flcov public
---       module I = efunctor-aux (imgPeq 𝔹isex Flcov)
+--       module I = efunctor-aux (imgpeq 𝔹isex Flcov)
 --       module ΔER = efunctor-aux (ΔER 𝔹)
       
 --     module qrF% (A : Exℙ.Obj) where
@@ -626,9 +626,9 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 --       eqr : 𝔹.eqrel
 --       eqr = record { eqrelover = eqrel/ }
             
---     module qrF%-is-iso {A : Exℙ.Obj} (isfree : ℙ.Peq.%0 A ℙ.~ ℙ.Peq.%1 A) where
+--     module qrF%-is-iso {A : Exℙ.Obj} (isfree : ℙ.peq.%0 A ℙ.~ ℙ.peq.%1 A) where
 --       private
---         module A = ℙ.Peq A
+--         module A = ℙ.peq A
 --         module qrA = qrF% A
 
 --       r₁~r₂ : qrA.r₁ 𝔹.~ qrA.r₂
@@ -658,14 +658,14 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- -}
 --     -- end qrF%-is-iso
 
---     eqrelΔ2Δ : natural-transformation (imgPeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ]) (ΔER 𝔹 ○ F)
+--     eqrelΔ2Δ : natural-transformation (imgpeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ]) (ΔER 𝔹 ○ F)
 --     eqrelΔ2Δ = record
 --         { fnc = λ {X} → record
 --               { base-ar = 𝔹.idar (F.ₒ X)
 --               ; isext = record
---                       { rel-ar = qrF%.r₁ (ℙ.freePeq X) --qrF%.r₁ (ℙ.freePeq X)
+--                       { rel-ar = qrF%.r₁ (ℙ.freepeq X) --qrF%.r₁ (ℙ.freepeq X)
 --                       ; cmptb₀ = r --r --{qrF%.Ob X} {F.ₒ X} {f = 𝔹.idar (F.ₒ X) 𝔹.∘ qrF%.r₁ X}
---                       ; cmptb₁ = ∘e (qrF%-is-iso.r₁~r₂ {ℙ.freePeq X} rℙ) r
+--                       ; cmptb₁ = ∘e (qrF%-is-iso.r₁~r₂ {ℙ.freepeq X} rℙ) r
 --                       --∘e (qrF%-is-iso.r₁~r₂ rℙ) r --∘e (qrF%-is-iso.r₁~r₂ X) (r {f = 𝔹.idar (F.ₒ X)})
 --                       }
 --               }
@@ -678,37 +678,37 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 --         where open ecategory-aux-only 𝔹
 --               open ecategory-aux-only ℙ using () renaming (r to rℙ)
 
---     Δ2eqrelΔ : natural-transformation (ΔER 𝔹 ○ F) (imgPeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ])
+--     Δ2eqrelΔ : natural-transformation (ΔER 𝔹 ○ F) (imgpeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ])
 --     Δ2eqrelΔ = record
 --         { fnc = λ {X} → record
 --               { base-ar = 𝔹.idar (F.ₒ  X)
 --               ; isext = record
---                       { rel-ar = qrF%.ar (ℙ.freePeq X)
---                       ; cmptb₀ = qrF%.r₁tr (ℙ.freePeq X) ⊙ lidgenˢ F.id
---                       ; cmptb₁ = qrF%.r₂tr (ℙ.freePeq X) ⊙ lidgenˢ F.id
+--                       { rel-ar = qrF%.ar (ℙ.freepeq X)
+--                       ; cmptb₀ = qrF%.r₁tr (ℙ.freepeq X) ⊙ lidgenˢ F.id
+--                       ; cmptb₁ = qrF%.r₂tr (ℙ.freepeq X) ⊙ lidgenˢ F.id
 --                       }
 --               }
 --         ; nat = λ {X} {Y} f → record
---               { wit = qrF%.ar (ℙ.freePeq Y) 𝔹.∘ F.ₐ f
---               ; wit₀ = ass ⊙ ∘e r (qrF%.r₁tr (ℙ.freePeq Y) ⊙ F.id)
---               ; wit₁ = ass ⊙ lidgg (ridˢ {f = F.ₐ f}) (qrF%.r₂tr (ℙ.freePeq Y) ⊙ F.id) 
+--               { wit = qrF%.ar (ℙ.freepeq Y) 𝔹.∘ F.ₐ f
+--               ; wit₀ = ass ⊙ ∘e r (qrF%.r₁tr (ℙ.freepeq Y) ⊙ F.id)
+--               ; wit₁ = ass ⊙ lidgg (ridˢ {f = F.ₐ f}) (qrF%.r₂tr (ℙ.freepeq Y) ⊙ F.id) 
 --               }
 --         }
 --         where open ecategory-aux-only 𝔹
---   -- end imgPeq-on-free
+--   -- end imgpeq-on-free
 
 
 
---   imgPeq-sq : {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F)
---                  → natural-iso (imgPeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ]) (ΔER 𝔹 ○ F)
---   imgPeq-sq {𝔹} 𝔹isex {F} Flcov = record
+--   imgpeq-sq : {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F)
+--                  → natural-iso (imgpeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ]) (ΔER 𝔹 ○ F)
+--   imgpeq-sq {𝔹} 𝔹isex {F} Flcov = record
 --     { natt = eqrelΔ2Δ
 --     ; natt⁻¹ = Δ2eqrelΔ
 --     ; isiso = λ {X} → record
 --             { iddom = record
---                     { wit = qrF%.ar (ℙ.freePeq X)
---                     ; wit₀ = qrF%.r₁tr (ℙ.freePeq X) ⊙ lidgenˢ F.id
---                     ; wit₁ = qrF%.r₂tr (ℙ.freePeq X) ⊙ F.id
+--                     { wit = qrF%.ar (ℙ.freepeq X)
+--                     ; wit₀ = qrF%.r₁tr (ℙ.freepeq X) ⊙ lidgenˢ F.id
+--                     ; wit₁ = qrF%.r₂tr (ℙ.freepeq X) ⊙ F.id
 --                     }
 --             ; idcod = record
 --                     { wit = 𝔹.idar (F.ₒ X)
@@ -717,7 +717,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 --                     }
 --             }
 --     }
---     where open imgPeq-on-free 𝔹isex Flcov
+--     where open imgpeq-on-free 𝔹isex Flcov
 --           open ecategory-aux-only 𝔹
 --           module 𝔹 = ecategory 𝔹
 --           module F = efunctor-aux F
@@ -726,7 +726,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 
     
 -- -- {-
--- --   module imgPeq-on-free  {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F) where
+-- --   module imgpeq-on-free  {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F) where
 -- --     private
 -- --       module 𝔹 where
 -- --         open ecategory 𝔹 public
@@ -757,11 +757,11 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- --         open efunctor-aux F public
 -- --         open is-left-covering Flcov public
 -- --         open left-covering-into-exact-props hasfwl 𝔹isex Flcov public
--- --       module I = efunctor-aux (imgPeq 𝔹isex Flcov)
+-- --       module I = efunctor-aux (imgpeq 𝔹isex Flcov)
 -- --       module ΔER = efunctor-aux (ΔER 𝔹)
       
 -- --     module qrF% (X : ℙ.Obj) where
--- --       open F.eqrel-from-peq-via-left-covering (ℙ.freePeq X) public -- hiding (eqrel/) 
+-- --       open F.eqrel-from-peq-via-left-covering (ℙ.freepeq X) public -- hiding (eqrel/) 
 -- --       open qF% public
 -- --       open 𝔹.is-eq-rel iseqr using (jm-pf) renaming (isjm/ to risjm/) public
 -- --       eqr : 𝔹.eqrel
@@ -813,7 +813,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- -- {-
 -- --     module eqrelΔ2Δ-ar (X : ℙ.Obj) where
 -- --       private
--- --         module X = ℙ.Peq
+-- --         module X = ℙ.peq
 -- --         module qrX = qrF% X
 -- --         module qrXiso = qrF%-is-iso X
 
@@ -831,7 +831,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- -- -}
 
 
--- --     eqrelΔ2Δ : natural-transformation (imgPeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ]) (ΔER 𝔹 ○ F)
+-- --     eqrelΔ2Δ : natural-transformation (imgpeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ]) (ΔER 𝔹 ○ F)
 -- --     eqrelΔ2Δ = record
 -- --         { fnc = λ {X} → record
 -- --               { base-ar = 𝔹.idar (F.ₒ X)
@@ -849,7 +849,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- --         }
 -- --         where open ecategory-aux-only 𝔹
 
--- --     Δ2eqrelΔ : natural-transformation (ΔER 𝔹 ○ F) (imgPeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ])
+-- --     Δ2eqrelΔ : natural-transformation (ΔER 𝔹 ○ F) (imgpeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ])
 -- --     Δ2eqrelΔ = record
 -- --         { fnc = λ {X} → record
 -- --               { base-ar = 𝔹.idar (F.ₒ X)
@@ -868,12 +868,12 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- --         where open ecategory-aux-only 𝔹
 
 
--- --   -- end imgPeq-on-free
+-- --   -- end imgpeq-on-free
 
 
--- --   imgPeq-sq : {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F)
--- --                  → natural-iso (imgPeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ]) (ΔER 𝔹 ○ F)
--- --   imgPeq-sq {𝔹} 𝔹isex {F} Flcov = record
+-- --   imgpeq-sq : {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F)
+-- --                  → natural-iso (imgpeq 𝔹isex Flcov ○ Γex ℙ [ hasfwl ]) (ΔER 𝔹 ○ F)
+-- --   imgpeq-sq {𝔹} 𝔹isex {F} Flcov = record
 -- --     { natt = eqrelΔ2Δ
 -- --     ; natt⁻¹ = Δ2eqrelΔ
 -- --     ; isiso = λ {X} → record
@@ -889,7 +889,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- --                     }
 -- --             }
 -- --     }
--- --     where open imgPeq-on-free 𝔹isex Flcov
+-- --     where open imgpeq-on-free 𝔹isex Flcov
 -- --           open ecategory-aux-only 𝔹
 -- --           module 𝔹 = ecategory 𝔹
 -- --           module F = efunctor-aux F
@@ -900,7 +900,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 
 -- -- -- -- OLD
   
--- -- --   module imgPeq-def {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F) where
+-- -- --   module imgpeq-def {𝔹 : ecategory} (𝔹isex : is-exact 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F) where
 -- -- --     private
 -- -- --       module 𝔹 where
 -- -- --         open ecategory 𝔹 public
@@ -930,7 +930,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- -- --         open is-left-covering Flcov public
 -- -- --         open left-covering-into-exact-props hasfwl 𝔹isex Flcov public
 
--- -- --     eqr/ : (A : Exℙ.Obj) → 𝔹.eqrel-over (F.ₒ (ℙ.Peq.Lo A))
+-- -- --     eqr/ : (A : Exℙ.Obj) → 𝔹.eqrel-over (F.ₒ (ℙ.peq.Lo A))
 -- -- --     eqr/ A = F.eqrel-from-peq-via-left-covering.eqrel/ A
 -- -- --     module img (A : Exℙ.Obj) where
 -- -- --       open F.eqrel-from-peq-via-left-covering.imgF% A public
@@ -950,22 +950,22 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- -- --               ; cmptb₀ = CA.epi-pf (~proof
 -- -- --                        (imgB.r₁ 𝔹.∘ rel-ar) 𝔹.∘ imgA.C    ~[ assˢ ⊙ ∘e (CA.univ-eq rel-ar-pf) r ] /
 -- -- --                        imgB.r₁ 𝔹.∘ imgB.C 𝔹.∘ F.ₐ f.hi    ~[ ass ⊙ ∘e r imgB.imgF%tr₁ ⊙ F.∘∘ f.cmptb₀ ] /
--- -- --                        F.ₐ f.lo 𝔹.∘ F.ₐ (ℙ.Peq.%0 A)       ~[ ∘e (imgA.imgF%tr₁ ˢ) r ⊙ ass ]∎
+-- -- --                        F.ₐ f.lo 𝔹.∘ F.ₐ (ℙ.peq.%0 A)       ~[ ∘e (imgA.imgF%tr₁ ˢ) r ⊙ ass ]∎
 -- -- --                        (F.ₐ f.lo 𝔹.∘ imgA.r₁) 𝔹.∘ imgA.C ∎)
 -- -- --               ; cmptb₁ = CA.epi-pf (~proof
 -- -- --                        (imgB.r₂ 𝔹.∘ rel-ar) 𝔹.∘ imgA.C    ~[ assˢ ⊙ ∘e (CA.univ-eq rel-ar-pf) r ] /
 -- -- --                        imgB.r₂ 𝔹.∘ imgB.C 𝔹.∘ F.ₐ f.hi    ~[ ass ⊙ ∘e r imgB.imgF%tr₂ ⊙ F.∘∘ f.cmptb₁ ] /
--- -- --                        F.ₐ f.lo 𝔹.∘ F.ₐ (ℙ.Peq.%1 A)       ~[ ∘e (imgA.imgF%tr₂ ˢ) r ⊙ ass ]∎
+-- -- --                        F.ₐ f.lo 𝔹.∘ F.ₐ (ℙ.peq.%1 A)       ~[ ∘e (imgA.imgF%tr₂ ˢ) r ⊙ ass ]∎
 -- -- --                        (F.ₐ f.lo 𝔹.∘ imgA.r₂) 𝔹.∘ imgA.C ∎)
 -- -- --               }
 -- -- --       }
--- -- --       where module f = ℙ.Peq-mor f
+-- -- --       where module f = ℙ.peq-mor f
 -- -- --             module imgA = img A
 -- -- --             module imgB = img B
 -- -- --             module CA = 𝔹.is-regular-epi imgA.C-is-repi
 -- -- --             module MB = 𝔹.is-monic imgB.M-is-monic
--- -- --             module FAL² = 𝔹.product-of-not (ex𝔹.prd-of (F.ₒ (ℙ.Peq.Lo A)) (F.ₒ (ℙ.Peq.Lo A)))
--- -- --             module FBL² = 𝔹.product-of-not (ex𝔹.prd-of (F.ₒ (ℙ.Peq.Lo B)) (F.ₒ (ℙ.Peq.Lo B)))
+-- -- --             module FAL² = 𝔹.product-of-not (ex𝔹.prd-of (F.ₒ (ℙ.peq.Lo A)) (F.ₒ (ℙ.peq.Lo A)))
+-- -- --             module FBL² = 𝔹.product-of-not (ex𝔹.prd-of (F.ₒ (ℙ.peq.Lo B)) (F.ₒ (ℙ.peq.Lo B)))
 -- -- --             open ecategory-aux-only 𝔹
 -- -- --             rel-ar-pf : (imgB.C 𝔹.∘ F.ₐ f.hi) 𝔹.∘ CA.rel₁ 𝔹.~ (imgB.C 𝔹.∘ F.ₐ f.hi) 𝔹.∘ CA.rel₂
 -- -- --             rel-ar-pf = MB.mono-pf (~proof
@@ -994,14 +994,14 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- -- --                       F.ₐ B.%1 𝔹.∘ F.ₐ f~f'.hty               ~[ F.∘ax f~f'.hty₁ ]∎
 -- -- --                       F.ₐ f'.lo ∎
 -- -- --       }
--- -- --       where module B = ℙ.Peq B
--- -- --             module f = ℙ.Peq-mor f
--- -- --             module f' = ℙ.Peq-mor f'
--- -- --             module f~f' = ℙ.Peq-mor-eq hty
+-- -- --       where module B = ℙ.peq B
+-- -- --             module f = ℙ.peq-mor f
+-- -- --             module f' = ℙ.peq-mor f'
+-- -- --             module f~f' = ℙ.peq-mor-eq hty
 -- -- --             module imgB = img B
 -- -- --             open ecategory-aux-only 𝔹
 
--- -- -- {- problems with amount of time for typechecking in imgPeq 
+-- -- -- {- problems with amount of time for typechecking in imgpeq 
 -- -- --     eqr-ar-id : (A : Exℙ.Obj) → 𝔹.eqrel-mor-eq (eqr-ar {A} {A} (Exℙ.idar A)) (𝔹.eqrel-idar (eqr A))
 -- -- --     --(eqr-ar {A} {A} (Exℙ.idar A)) ER𝔹.~ (ER𝔹.idar (eqr A))
 -- -- --     eqr-ar-id A = record
@@ -1009,7 +1009,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- -- --       ; wit₀ = erA.ρ-ax₀ ⊙ F.idˢ
 -- -- --       ; wit₁ = erA.ρ-ax₁
 -- -- --       } --𝔹.eqrel-mor-eq-ext F.id
--- -- --       where --module A = ℙ.Peq A
+-- -- --       where --module A = ℙ.peq A
 -- -- --             module erA = 𝔹.eqrel (eqr A)
 -- -- --             open ecategory-aux-only 𝔹
     
@@ -1018,4 +1018,4 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -- -- --     eqr-ar-cmp f g = 𝔹.eqrel-mor-eq-ext F.∘ax-rf --𝔹.eqrel-mor-eq-ext F.∘ax-rf
 -- -- -- -}
 
--- -- --   -- end imgPeq-def
+-- -- --   -- end imgpeq-def

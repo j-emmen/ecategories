@@ -28,9 +28,9 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
   private
     module ℂ = ecategory ℂ
     module Exℂ = ecategory Ex ℂ [ hasfwl ]
-    Γex : efunctor ℂ Ex ℂ [ hasfwl ]
-    Γex = Γex ℂ [ hasfwl ]
-    module Γex = efunctor-aux Γex
+    CVex : efunctor ℂ Ex ℂ [ hasfwl ]
+    CVex = CVex ℂ [ hasfwl ]
+    module CVex = efunctor-aux CVex
   open exact-compl-universal-def hasfwl
   
   module ↑ex-commut {𝔼 : ecategory} (𝔼isex : is-exact 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F) where
@@ -40,39 +40,39 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
       module ER𝔼 = ecategory (EqRel 𝔼)
       module F = efunctor-aux F
       reg𝔼 : is-regular 𝔼
-      reg𝔼 = ex𝔼.exact-is-regular
+      reg𝔼 = ex𝔼.is-reg
       module F↑ex = efunctor-aux (↑ex 𝔼isex Flcov)
-      module F↑exΓex = efunctor-aux (↑ex 𝔼isex Flcov ○ Γex ℂ [ hasfwl ])
+      module F↑exCVex = efunctor-aux (↑ex 𝔼isex Flcov ○ CVex ℂ [ hasfwl ])
       FRel : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
       FRel = Rel reg𝔼 Flcov
-      FRel-sq : natural-iso (FRel ○ Γex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
+      FRel-sq : natural-iso (FRel ○ CVex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
       FRel-sq = Rel-sq reg𝔼 Flcov
       module Q = efunctor-aux (QER 𝔼isex)
       module Δ = efunctor-aux (ΔER 𝔼)
       module RΓ≅ΔF = natural-iso FRel-sq
       module QΔ≅Id = natural-iso (ex-retr-EqR 𝔼isex)
 
-    red : natural-transformation (↑ex 𝔼isex Flcov ○ Γex ℂ [ hasfwl ]) F
+    red : natural-transformation (↑ex 𝔼isex Flcov ○ CVex ℂ [ hasfwl ]) F
     red = record
       { fnc = λ {X} → QΔ≅Id.fnc {F.ₒ X} 𝔼.∘ Q.ₐ (RΓ≅ΔF.fnc {X})
       ; nat = λ {X} {Y} f → ~proof
-      (QΔ≅Id.fnc {F.ₒ Y} 𝔼.∘ Q.ₐ (RΓ≅ΔF.fnc {Y})) 𝔼.∘ F↑exΓex.ₐ f     ~[ assˢ ⊙ ∘e (Q.∘∘ (RΓ≅ΔF.nat f)) r ] /
+      (QΔ≅Id.fnc {F.ₒ Y} 𝔼.∘ Q.ₐ (RΓ≅ΔF.fnc {Y})) 𝔼.∘ F↑exCVex.ₐ f     ~[ assˢ ⊙ ∘e (Q.∘∘ (RΓ≅ΔF.nat f)) r ] /
       QΔ≅Id.fnc {F.ₒ Y} 𝔼.∘ Q.ₐ (Δ.ₐ (F.ₐ f)) 𝔼.∘ Q.ₐ (RΓ≅ΔF.fnc {X}) ~[ ass ⊙ ∘e r (QΔ≅Id.nat (F.ₐ f)) ⊙ assˢ ]∎
       F.ₐ f 𝔼.∘ QΔ≅Id.fnc {F.ₒ X} 𝔼.∘ Q.ₐ (RΓ≅ΔF.fnc {X}) ∎
       }
       where open ecategory-aux-only 𝔼
 
-    exp : natural-transformation F (↑ex 𝔼isex Flcov ○ Γex ℂ [ hasfwl ])
+    exp : natural-transformation F (↑ex 𝔼isex Flcov ○ CVex ℂ [ hasfwl ])
     exp = record
       { fnc = λ {X} → Q.ₐ (RΓ≅ΔF.fnc⁻¹ {X}) 𝔼.∘ QΔ≅Id.fnc⁻¹ {F.ₒ X}
       ; nat = λ {X} {Y} f → ~proof
       (Q.ₐ (RΓ≅ΔF.fnc⁻¹ {Y}) 𝔼.∘ QΔ≅Id.fnc⁻¹ {F.ₒ Y}) 𝔼.∘ F.ₐ f           ~[ assˢ ⊙ ∘e (QΔ≅Id.nat⁻¹ (F.ₐ f)) r ] /
       Q.ₐ (RΓ≅ΔF.fnc⁻¹ {Y}) 𝔼.∘ Q.ₐ (Δ.ₐ (F.ₐ f)) 𝔼.∘ QΔ≅Id.fnc⁻¹ {F.ₒ X} ~[ ass ⊙ ∘e r (Q.∘∘ (RΓ≅ΔF.nat⁻¹ f)) ⊙ assˢ ]∎
-      F↑exΓex.ₐ f 𝔼.∘ Q.ₐ (RΓ≅ΔF.fnc⁻¹ {X}) 𝔼.∘ QΔ≅Id.fnc⁻¹ {F.ₒ X} ∎
+      F↑exCVex.ₐ f 𝔼.∘ Q.ₐ (RΓ≅ΔF.fnc⁻¹ {X}) 𝔼.∘ QΔ≅Id.fnc⁻¹ {F.ₒ X} ∎
       }
       where open ecategory-aux-only 𝔼
 
-    tr-iso : natural-iso (↑ex 𝔼isex Flcov ○ Γex ℂ [ hasfwl ]) F
+    tr-iso : natural-iso (↑ex 𝔼isex Flcov ○ CVex ℂ [ hasfwl ]) F
     tr-iso = record
            { natt = red
            ; natt⁻¹ = exp
@@ -94,7 +94,7 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
 
   ↑ex-tr : {𝔼 : ecategory} (𝔼isex : is-exact 𝔼)  
               {F : efunctor ℂ 𝔼} (islcov : is-left-covering F)
-                → natural-iso (↑ex 𝔼isex islcov ○ Γex ℂ [ hasfwl ]) F
+                → natural-iso (↑ex 𝔼isex islcov ○ CVex ℂ [ hasfwl ]) F
   ↑ex-tr 𝔼isex islcov = tr-iso
                        where open ↑ex-commut 𝔼isex islcov
 -- end exact-compl-universal-commut

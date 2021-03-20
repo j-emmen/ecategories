@@ -27,9 +27,9 @@ open import ecats.constructions.ecat-eqrel
 open import ecats.exact-completion.CVconstruction
 --open import ecats.exact-completion.finite-limits.fin-limits
 --open import ecats.exact-completion.exact.is-regular
-open import ecats.exact-completion.definition
-open import ecats.exact-completion.embedding.universal-prop
-open import ecats.exact-completion.embedding.universal-property.eqrel-from-peq
+open import ecats.exact-completion.def
+open import ecats.exact-completion.CVconstr-is-excompl
+--open import ecats.exact-completion.embedding.universal-property.eqrel-from-peq
 
 
 
@@ -70,7 +70,8 @@ module exact-compl-character {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
       {-open projective-cover-of-reg-cat-is-left-covering reg𝔼 pjcPC using ()
                                                                    renaming (PC-is-left-cov to islcov)
                                                                    public-}
-    module eqr (A : 𝔼.Obj) = projective-cover-on-reg-cat-props.Peq-from-Obj reg𝔼 pjcPC A
+    module eqr (A : 𝔼.Obj) where
+     --projective-cover-on-reg-cat-props.peq-from-Obj reg𝔼 pjcPC A
     module fwlℙ where
       open has-fin-weak-limits fwlℙ public
       open has-weak-pullbacks haswpb using (wpb-of) public

@@ -13,6 +13,7 @@ open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.eqv-rel
 open import ecats.finite-limits.defs&not
 open import ecats.functors.defs.efunctor
+open import ecats.functors.defs.basic-defs
 
 
 
@@ -219,9 +220,31 @@ exact-compl-qcart-functor ℂ qcart = exact-compl-functor (qcart→has-fwlim qca
         
 
 
-Γex_[_] : (ℂ : ecategory) (hasfwl : has-fin-weak-limits ℂ) → efunctor ℂ Ex ℂ [ hasfwl ]
-Γex ℂ [ hasfwl ] = exact-compl-functor {ℂ} hasfwl
+CVex_[_] : (ℂ : ecategory) (hasfwl : has-fin-weak-limits ℂ) → efunctor ℂ Ex ℂ [ hasfwl ]
+CVex ℂ [ hasfwl ] = exact-compl-functor {ℂ} hasfwl
 
 
-Γex_qc[_] : (ℂ : ecategory) (qcart : is-quasi-cartesian ℂ) → efunctor ℂ Ex ℂ qc[ qcart ]
-Γex ℂ qc[ qcart ] = exact-compl-qcart-functor ℂ qcart
+CVex_qc[_] : (ℂ : ecategory) (qcart : is-quasi-cartesian ℂ) → efunctor ℂ Ex ℂ qc[ qcart ]
+CVex ℂ qc[ qcart ] = exact-compl-qcart-functor ℂ qcart
+
+
+
+CVex-faith : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
+               → is-faithful CVex ℂ [ hasfwl ]
+CVex-faith {ℂ} hasfwl = record
+  { faith-pf = λ pf → hty₀ pf ˢ ⊙ hty₁ pf
+  }
+  where open ecategory-aux-only ℂ
+        open pseudo-eq-rel-defs ℂ
+        open peq-mor-eq
+
+
+CVex-full : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
+           → is-full CVex ℂ [ hasfwl ]
+CVex-full {ℂ} hasfwl = record
+  { full-ar = λ f → lo f
+  ; full-pf = λ {_} {_} {f} → record { hty = lo f ; hty₀ = lid ; hty₁ = lid }
+  }
+  where open ecategory-aux-only ℂ
+        open pseudo-eq-rel-defs ℂ
+        open peq-mor

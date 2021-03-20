@@ -75,6 +75,20 @@ module iso-defs (ℂ : ecategory) where
       isop : is-iso-pair a12 a21
     open is-iso-pair isop public
 
+  iso-trdom : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
+              {g : || Hom b c ||} {h : || Hom a  c ||}
+                → g ∘ f ~ h → h ∘ f' ~ g
+  iso-trdom isop pf = ∘e r (pf ˢ) ⊙ ass ˢ ⊙ ridgg r idcod
+                    where open is-iso-pair isop
+                          open ecategory-aux-only ℂ
+
+  iso-trcod : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
+              {g : || Hom c a ||} {h : || Hom c b ||}
+                → f ∘ g ~ h → f' ∘ h ~ g
+  iso-trcod isop pf = ∘e (pf ˢ) r ⊙ ass ⊙ lidgg r iddom
+                    where open is-iso-pair isop
+                          open ecategory-aux-only ℂ
+
 -- end module iso-defs
 
 

@@ -8,14 +8,11 @@
 module ecats.exact-completion.CVconstr-is-excompl where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.finite-limits.defs&not
 open import ecats.basic-defs.exact-ecat
+open import ecats.finite-limits.defs&not
 open import ecats.functors.defs.efunctor-d&n
-open import ecats.functors.defs.natural-transformation
-open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.left-covering
-open import ecats.functors.defs.projective-cover
-open import ecats.functors.props.projective-cover
+open import ecats.functors.defs.natural-transformation
 open import ecats.exact-completion.def
 open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.CVconstr-is-excompl.exact.is-exact
@@ -29,12 +26,18 @@ open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-prop
 --------------------------------------------------------------
 
 CVconstr-is-excompl : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
-                         → is-exwlex-completion hasfwl (Γex ℂ [ hasfwl ])
+                         → is-exwlex-completion hasfwl (CVex ℂ [ hasfwl ])
 CVconstr-is-excompl hasfwl = record
   { cat-ex = exact-compl-is-exact hasfwl
-  ; emb-full = isfull
-  ; emb-faith = isfaith
+  ; emb-full = CVex-full hasfwl
+  ; emb-faith = CVex-faith hasfwl
   ; emb-lcov = excmpl-embed-is-left-covering hasfwl
-  ; emb-init = CVexcmpl-is-init-lcov-ex hasfwl
+  {-; unv-fctr = ↑ex
+  ; unv-tr = tr
+  ; unv-ex = ex
+  ; unv-uq = uq-}
+  --; unv-prop = ↑ex-uqst
+  ; emb-unv = CVexcmpl-is-init-lcov-ex hasfwl
   }
-  where open is-projective-cover (excmpl-embed-is-projective-cover hasfwl) using (isfull; isfaith)
+  --where open exact-compl-universal-prop hasfwl
+

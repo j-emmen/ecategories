@@ -12,6 +12,7 @@ open import ecats.basic-defs.all-arrows
 open import ecats.basic-defs.eqv-rel
 open import ecats.basic-defs.regular-ecat
 open import ecats.basic-defs.exact-ecat
+open import ecats.basic-props.exact-ecat
 open import ecats.basic-props.all
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
@@ -486,6 +487,11 @@ pjcov-of-reg-is-lcov : {𝔼 : ecategory} (𝔼isreg : is-regular 𝔼) {ℙ : e
 pjcov-of-reg-is-lcov 𝔼isreg ispjcov = PC-is-left-cov
                                     where open projective-cover-of-reg-cat-is-left-cov 𝔼isreg ispjcov
 
+pjcov-of-ex-is-lcov : {𝔼 : ecategory} (𝔼isex : is-exact 𝔼) {ℙ : ecategory}
+                    {PC : efunctor ℙ 𝔼} (ispjcov : is-projective-cover PC)
+                      → is-left-covering PC
+pjcov-of-ex-is-lcov 𝔼isex ispjcov = pjcov-of-reg-is-lcov 𝔼isreg ispjcov
+                                   where open exact-cat-d&p 𝔼isex using () renaming (is-reg to 𝔼isreg)
 
 
 --   -- Peq in ℙ from quasi-exact seq in 𝔼

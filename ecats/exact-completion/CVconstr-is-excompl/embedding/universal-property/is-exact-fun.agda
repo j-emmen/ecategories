@@ -41,7 +41,7 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
       open epis&monos-defs Ex ℂ [ hasfwl ] public
       open epis&monos-props Ex ℂ [ hasfwl ] public
       open image-fact-defs Ex ℂ [ hasfwl ] public
-    module Γex = efunctor-aux Γex ℂ [ hasfwl ]
+    module CVex = efunctor-aux CVex ℂ [ hasfwl ]
   open exact-compl-universal-def hasfwl
 
   module extension-is-exact {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
@@ -63,8 +63,9 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
       F↑ex = ↑ex ex𝔼 lcovF
       module F↑ex = efunctor-aux F↑ex
       reg𝔼 : is-regular 𝔼
-      reg𝔼 = ex𝔼.exact-is-regular
-      -- declaring reg𝔼 explicitly is crucial for typechecking Q/F↑ex.Ob A = F↑ex.ₒ A
+      reg𝔼 = ex𝔼.is-reg
+      -- it seems that declaring reg𝔼 explicitly is crucial
+      -- for typechecking Q/F↑ex.Ob A = F↑ex.ₒ A
       FRel : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
       FRel = Rel reg𝔼 lcovF
       module FRel where

@@ -34,14 +34,14 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
       open pseudo-eq-rel-defs ℂ public
       open can-epi&mono-defs hasfwl public
     module Exℂ = ecategory Ex ℂ [ hasfwl ]
-    module Γex = efunctor-aux Γex ℂ [ hasfwl ]
+    module CVex = efunctor-aux CVex ℂ [ hasfwl ]
   open exact-compl-universal-def hasfwl
   --open eqrel-from-peq-funct hasfwl
 
   module exact-functor-determined-by-free-peq {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                                               {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
                                               {G : efunctor Ex ℂ [ hasfwl ] 𝔼} (exG : is-exact-functor G)
-                                              (Gtr : natural-iso (G ○ Γex ℂ [ hasfwl ]) F)
+                                              (Gtr : natural-iso (G ○ CVex ℂ [ hasfwl ]) F)
                                               where
     private
       module 𝔼 where
@@ -60,11 +60,12 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
       module exG = is-exact-functor exG
       module F↑ex = efunctor-aux (↑ex ex𝔼 lcovF)
       reg𝔼 : is-regular 𝔼
-      reg𝔼 = ex𝔼.exact-is-regular
-      -- declaring reg𝔼 explicitly is crucial for typechecking F↑ex-coeq.Ob A = F↑ex.ₒ A
+      reg𝔼 = ex𝔼.is-reg
+      -- it seems that declaring reg𝔼 explicitly is crucial
+      -- for typechecking F↑ex-coeq.Ob A = F↑ex.ₒ A
       FRel : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
       FRel = Rel reg𝔼 lcovF
-      FRel-sq : natural-iso (FRel ○ Γex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
+      FRel-sq : natural-iso (FRel ○ CVex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
       FRel-sq = Rel-sq reg𝔼 lcovF
       module FRel where
         open efunctor-aux FRel public
@@ -74,11 +75,11 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
         open tmpOb public
         open tmpAr public
       module Q = efunctor-aux (QER ex𝔼)
-      module GΓex = efunctor (G ○ Γex ℂ [ hasfwl ])
+      module GΓex = efunctor (G ○ CVex ℂ [ hasfwl ])
       module GΓex≅F = natural-iso Gtr
       module cxs = ℂ.canonical-ex-seq
       module CRF% (A : Exℂ.Obj) where
-        open eqrel-from-peq-via-left-covering ex𝔼.exact-is-regular lcovF
+        open eqrel-from-peq-via-left-covering reg𝔼 lcovF
         open eqrel-as-repi-mono-fact A public
         open rmfF% public
         open CF% public
@@ -90,9 +91,9 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
     Gcxs-is-exs A = exG.pres-ex-seq-pf {cxs.kpOb A} {cxs.freeLo A} {A} (cxs.isexseq A)
     private module Gcxs (A : Exℂ.Obj) = 𝔼.is-exact-seq (Gcxs-is-exs A)
     
-    Gcre-coeq-of-GΓex : (A : Exℂ.Obj) → 𝔼.is-coeq (G.ₐ (Γex.ₐ (ℂ.peq.%0 A))) (G.ₐ (Γex.ₐ (ℂ.peq.%1 A))) (G.ₐ (cxs.cre.ar A))
-    Gcre-coeq-of-GΓex A = 𝔼.epi/coeq-so-coeq {G.ₒ (cxs.kpOb A)} {G.ₒ (Γex.ₒ A.Lo)} {G.ₒ A}
-                                              {G.ₐ (cxs.kp₁ A)} {G.ₐ (cxs.kp₂ A)} {R' = G.ₒ (Γex.ₒ A.Hi)}
+    Gcre-coeq-of-GΓex : (A : Exℂ.Obj) → 𝔼.is-coeq (G.ₐ (CVex.ₐ (ℂ.peq.%0 A))) (G.ₐ (CVex.ₐ (ℂ.peq.%1 A))) (G.ₐ (cxs.cre.ar A))
+    Gcre-coeq-of-GΓex A = 𝔼.epi/coeq-so-coeq {G.ₒ (cxs.kpOb A)} {G.ₒ (CVex.ₒ A.Lo)} {G.ₒ A}
+                                              {G.ₐ (cxs.kp₁ A)} {G.ₐ (cxs.kp₂ A)} {R' = G.ₒ (CVex.ₒ A.Hi)}
                                               {G.ₐ (cxs.cc.ar A)} (𝔼.repi-is-epic Gcc-repi)
                                               (G.∘ax (cxs.cc.tr₁ A)) (G.∘ax (cxs.cc.tr₂ A))
                                               (Gcxs.iscoeq A)
@@ -119,7 +120,7 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
       -- end fnc
 
     Γexsq : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||)
-               → f Exℂ.∘ cxs.cre.ar A Exℂ.~ cxs.cre.ar B Exℂ.∘ Γex.ₐ (ℂ.peq-mor.lo f)
+               → f Exℂ.∘ cxs.cre.ar A Exℂ.~ cxs.cre.ar B Exℂ.∘ CVex.ₐ (ℂ.peq-mor.lo f)
     Γexsq {A} {B} f = record
       { hty = B.ρ ℂ.∘ f.lo
       ; hty₀ = ass ⊙ lidgg ridˢ B.ρ-ax₀
@@ -171,7 +172,7 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
   ↑ex-uq : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
            {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
            {G : efunctor Ex ℂ [ hasfwl ] 𝔼} (exG : is-exact-functor G)
-           (Gtr : natural-iso (G ○ Γex ℂ [ hasfwl ]) F)
+           (Gtr : natural-iso (G ○ CVex ℂ [ hasfwl ]) F)
              → natural-iso G (↑ex ex𝔼 lcovF)
   ↑ex-uq ex𝔼 lcovF exG Gtr = G≅F↑ex
                             where open exact-functor-determined-by-free-peq ex𝔼 lcovF exG Gtr  
