@@ -24,9 +24,10 @@ open import ecats.functors.props.basic-props
 open import ecats.functors.props.left-covering
 open import ecats.functors.props.projective-cover
 open import ecats.constructions.ecat-eqrel
-open import ecats.exact-completion.construction
+open import ecats.exact-completion.CVconstruction
 --open import ecats.exact-completion.finite-limits.fin-limits
 --open import ecats.exact-completion.exact.is-regular
+open import ecats.exact-completion.definition
 open import ecats.exact-completion.embedding.universal-prop
 open import ecats.exact-completion.embedding.universal-property.eqrel-from-peq
 
@@ -137,14 +138,14 @@ module exact-compl-character {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
         module R where
           open ℙ.Peq R public
           module RMF = CRF R
-          module rpL = PC.rp Lo
-          module rpH = PC.rp Hi
+          module rpL = PC.rprj Lo
+          module rpH = PC.rprj Hi
           module Q = Q/PC↑ex R
         module S where
           open ℙ.Peq S public
           module RMF = CRF S
-          module rpL = PC.rp Lo
-          module rpH = PC.rp Hi
+          module rpL = PC.rprj Lo
+          module rpH = PC.rprj Hi
           module Q = Q/PC↑ex S
         lo : || ℙ.Hom R.Lo S.Lo ||
         lo = PC.full-ar (R.rpL.lift S.Q.repi (g 𝔼.∘ R.Q.ar))
@@ -205,14 +206,14 @@ module exact-compl-character {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
         module R where
           open ℙ.Peq R public
           module RMF = CRF R
-          module rpL = PC.rp Lo
-          module rpH = PC.rp Hi
+          module rpL = PC.rprj Lo
+          module rpH = PC.rprj Hi
           module Q = Q/PC↑ex R
         module S where
           open ℙ.Peq S public
           module RMF = CRF S
-          module rpL = PC.rp Lo
-          module rpH = PC.rp Hi
+          module rpL = PC.rprj Lo
+          module rpH = PC.rprj Hi
           module Q = Q/PC↑ex S
         module f = ℙ.Peq-mor f
         module f' = ℙ.Peq-mor f'

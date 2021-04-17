@@ -15,7 +15,7 @@ open import ecats.basic-defs.regular-ecat
 open import ecats.basic-props.regular-ecat
 open import ecats.basic-defs.exact-ecat
 open import ecats.finite-limits.all
-open import ecats.exact-completion.construction
+open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.finite-limits.fin-limits
 open import ecats.exact-completion.finite-limits.pullback
 open import ecats.exact-completion.exact.canonical-epi&mono

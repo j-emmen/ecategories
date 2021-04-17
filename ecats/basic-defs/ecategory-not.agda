@@ -31,8 +31,9 @@ module ecategory-aux-level {ℓ ℓ' : Level} {Obj : Set ℓ} {Hom : Obj → Obj
                    where module H = setoid-aux (Hom _ _)
   
   ~proof_~[_]_ : {a b : Obj} (f₁ {f₂ f₃} : || Hom a b ||) → f₁ ~ f₂ → f₂ ~ f₃ → f₁ ~ f₃
-  ~proof f₁ ~[ pf ] pf' = H./ f₁ ~[ pf ] pf'
-                        where module H = setoid-aux (Hom _ _)
+  ~proof_~[_]_ {a} {b} f₁ pf pf' = H.~proof f₁ ~[ pf ] pf'
+              --~proof f₁ ~[ pf ] pf' = H.~proof f₁ ~[ pf ] pf'
+                                 where module H = setoid-aux (Hom a b)
 
   theeqproof eqres-end : {a b : Obj} (f f' : || Hom a b ||) → f ~ f' → f ~ f'
   theeqproof = H.eqreasend

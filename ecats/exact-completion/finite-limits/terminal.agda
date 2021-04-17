@@ -12,7 +12,7 @@ open import ecats.basic-defs.eqv-rel
 open import ecats.finite-limits.defs.collective
 open import ecats.finite-limits.defs.terminal
 open import ecats.finite-limits.d&n-bin-weak-product
-open import ecats.exact-completion.construction
+open import ecats.exact-completion.CVconstruction
 
 
 

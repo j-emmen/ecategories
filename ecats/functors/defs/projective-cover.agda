@@ -63,8 +63,8 @@ record is-projective-cover {ℂ ℙ : ecategory} (PC : efunctor ℙ ℂ) : Set�
     --reg-cover-is-repi : (A : ℂ.Obj) → ℂ.is-regular-epi (reg-cover-ar A)
   open is-full isfull public
   open is-faithful isfaith public
-  module rp (X : ℙ.Obj) = ℂ.is-reg-projective (img-proj X)
-  module rc (A : ℂ.Obj) where
+  module rprj (X : ℙ.Obj) = ℂ.is-reg-projective (img-proj X)
+  module rcov-of (A : ℂ.Obj) where
     open ℂ._covers_ (is-reg-cov A) public
     Ob : ℙ.Obj
     Ob = reg-cov-obj A

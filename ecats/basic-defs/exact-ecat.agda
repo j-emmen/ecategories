@@ -17,7 +17,7 @@ open import ecats.finite-limits.props.pullback
 
 
  
-record is-exact//has-connlim {ℂ : ecategory} (hascl : has-conn-limits ℂ) : Set₁ where
+record is-exact//has-conn-lim {ℂ : ecategory} (hascl : has-conn-limits ℂ) : Set₁ where
   open ecategory ℂ
   open epis&monos-defs ℂ
   open kernel-pairs-defs ℂ
@@ -37,18 +37,18 @@ record is-exact//has-connlim {ℂ : ecategory} (hascl : has-conn-limits ℂ) : S
 record is-locally-exact (ℂ : ecategory) : Set₁ where
   field
     hascl : has-conn-limits ℂ
-    isex/cl : is-exact//has-connlim hascl
-  open is-exact//has-connlim isex/cl public
+    isex/cl : is-exact//has-conn-lim hascl
+  open is-exact//has-conn-lim isex/cl public
   open has-conn-limits hascl public
 
 
-mklocexact : {ℂ : ecategory} {hascl : has-conn-limits ℂ} → is-exact//has-connlim hascl
+mklocexact : {ℂ : ecategory} {hascl : has-conn-limits ℂ} → is-exact//has-conn-lim hascl
                 → is-locally-exact ℂ
 mklocexact {ℂ} {hascl} isex/cl = record { hascl = hascl ; isex/cl = isex/cl }
 
 
 
-record is-exact//has-finlim {ℂ : ecategory} (hascl : has-fin-limits ℂ) : Set₁ where
+record is-exact//has-fin-lim {ℂ : ecategory} (hascl : has-fin-limits ℂ) : Set₁ where
   open ecategory ℂ
   open epis&monos-defs ℂ
   open kernel-pairs-defs ℂ
@@ -68,10 +68,10 @@ record is-exact//has-finlim {ℂ : ecategory} (hascl : has-fin-limits ℂ) : Set
 record is-exact (ℂ : ecategory) : Set₁ where
   field
     hasfl : has-fin-limits ℂ
-    isex/fl : is-exact//has-finlim hasfl
-  open is-exact//has-finlim isex/fl public
+    isex/fl : is-exact//has-fin-lim hasfl
+  open is-exact//has-fin-lim isex/fl public
   open has-fin-limits hasfl public
 
 
-mkexact : {ℂ : ecategory} {hasfl : has-fin-limits ℂ} → is-exact//has-finlim hasfl → is-exact ℂ
+mkexact : {ℂ : ecategory} {hasfl : has-fin-limits ℂ} → is-exact//has-fin-lim hasfl → is-exact ℂ
 mkexact {ℂ} {hasfl} isex/fl = record { hasfl = hasfl ; isex/fl = isex/fl }

@@ -79,13 +79,18 @@ module setoid-aux {ℓ : Level} (A : setoid {ℓ}) where
   _⊙_ : {a a' a'' : ob} → a ~ a' → a' ~ a'' → a ~ a''
   pf₁ ⊙ pf₂ = tra pf₁ pf₂
 
+  infix 3 eqendp
   infixr 2 /_~[_]_
   infix 1 ~proof_~[_]_
 
-  ~proof_~[_]_ : (a₁ {a₂ a₃} : ob) →  a₁ ~ a₂ →  a₂ ~ a₃ →  a₁ ~ a₃
+  eqendp : (a₁ a₂ : ob) → a₁ ~ a₂ → a₁ ~ a₂
+  eqendp a₁ a₂ p = p
+  syntax eqendp a₁ a₂ p = a₁ ~[ p ] a₂
+
+  ~proof_~[_]_ : (a₁ : ob) {a₂ a₃ : ob} →  a₁ ~ a₂ →  a₂ ~ a₃ →  a₁ ~ a₃
   ~proof a₁ ~[ pf ] pf' = tra pf pf'
 
-  /_~[_]_ : (a₁ {a₂ a₃} : || A ||) →  a₁ ~ a₂ →  a₂ ~ a₃ →  a₁ ~ a₃
+  /_~[_]_ : (a₁ : ob) {a₂ a₃ : ob} →  a₁ ~ a₂ →  a₂ ~ a₃ →  a₁ ~ a₃
   / a₁ ~[ pf ] pf' = tra pf pf'
 
   eqreasend : (a a' : ob) → a ~ a' → a ~ a'
@@ -139,6 +144,15 @@ free-stdmap f = record
   ; ext = =ap f
   }
 
+free-std-is-min : {X : Set} {A : setoid} (f : X → || A ||)
+                     → setoidmap (Freestd X) A
+free-std-is-min {X} {A} f = record
+  { op = f
+  ; ext = λ pf → ==→~ A (=ap f pf)
+  }
+
+can-cover : (A : setoid) → setoidmap (Freestd || A ||) A
+can-cover A = free-std-is-min (λ x → x)
 
 
 std-id : {A : setoid} → || A ⇒ A ||

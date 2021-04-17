@@ -15,7 +15,7 @@ open import ecats.finite-limits.defs.collective
 open import ecats.finite-limits.d&n-bin-weak-product
 open import ecats.finite-limits.d&n-weak-pullback
 open import ecats.finite-limits.d&n-bin-product
-open import ecats.exact-completion.construction
+open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.exact.canonical-epi&mono
 
 

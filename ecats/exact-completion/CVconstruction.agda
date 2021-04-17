@@ -5,7 +5,7 @@
 
 -- Agda version 2.5.4.1
 
-module ecats.exact-completion.construction where
+module ecats.exact-completion.CVconstruction where
 
 open import tt-basics.basics using (is-tt-eqrel)
 open import tt-basics.setoids hiding (||_||)

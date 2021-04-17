@@ -9,6 +9,8 @@ module ecats.finite-limits.props.relations-among-limits where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
+open import ecats.basic-defs.epi&mono
+open import ecats.basic-props.epi&mono-basic
 open import ecats.finite-limits.defs&not
 
 
@@ -17,9 +19,12 @@ open import ecats.finite-limits.defs&not
 module relations-among-limit-diagrams (ℂ : ecategory) where
   open ecategory-aux ℂ
   open comm-shapes ℂ
+  open epis&monos-defs ℂ
+  open epis&monos-basic-props ℂ
   open finite-limits ℂ
   private
     module sp = span/
+    module sq/ = square/cosp
     module ×/of = pullback-of-not
     module ×/sq = pb-square
     module ×of = product-of-not
@@ -71,90 +76,158 @@ module relations-among-limit-diagrams (ℂ : ecategory) where
 
 
 
-  module square-is-pullback↔subprod-is-equaliser {A B : Obj} (A×B : product-of A B)
-                                                  {C : Obj} {f : || Hom A C ||} {g : || Hom B C ||}
-                                                  (cone : square/cosp f g)
+  module square-is-pullback↔subprod-is-equaliser {I A B : Obj} {a : || Hom A I ||} {b : || Hom B I ||}
+                                                  (cone : square/cosp a b)
+                                                  (A×B : product-of A B)
+                                                  {e : || Hom (sq/.ul cone) (×of.O12 A×B) ||}
+                                                  (eq : (a ∘ ×of.π₁ A×B) ∘ e ~ (b ∘ ×of.π₂ A×B) ∘ e)
+                                                  (etr₁ : ×of.π₁ A×B ∘ e ~ sq/.left cone)
+                                                  (etr₂ : ×of.π₂ A×B ∘ e ~ sq/.up cone)
                                                   where
-    open product-of-not A×B
+    open product-of-not A×B renaming (O12 to AxB)
     open square/cosp cone
 
-    eqlar : || Hom ul O12 ||
-    eqlar = < left , up >
-    eqleq : (f ∘ π₁) ∘ eqlar ~ (g ∘ π₂) ∘ eqlar
-    eqleq = assˢ ⊙ ∘e ×tr₁ r ⊙ sq-pf ⊙ ∘e (×tr₂ˢ {f = left}) r ⊙ ass
-
-    is-pb→is-eql : is-pb-square (mksq cone) → is-equaliser eqleq
+    is-pb→is-eql : is-pb-square (mksq cone) → is-equaliser eq
     is-pb→is-eql ispb = record
-      { _|eql[_] = λ h pf → ⟨ π₁ ∘ h , π₂ ∘ h ⟩[ ass ⊙ pf ⊙ assˢ ]
-      ; eqltr = λ pf → <>ar~ar (×/tr₁ (ass ⊙ pf ⊙ assˢ) ˢ) (×/tr₂ (ass ⊙ pf ⊙ assˢ) ˢ)
-      ; eqluq =  λ pf → ×/uq (∘e r (×tr₁ˢ {g = up}) ⊙ assˢ ⊙ ∘e pf r ⊙ ass ⊙ ∘e r ×tr₁)
-                              (∘e r (×tr₂ˢ {f = left}) ⊙ assˢ ⊙ ∘e pf r ⊙ ass ⊙ ∘e r ×tr₂)
+      { _|eql[_] = λ h pf → ⟨ π₁ ∘ h , π₂ ∘ h ⟩[ unpf pf ]
+      ; eqltr = λ pf → ×uq (ass ⊙ ∘e r etr₁ ⊙ ×/tr₁ (unpf pf)) (ass ⊙ ∘e r etr₂ ⊙ ×/tr₂ (unpf pf))
+      ; eqluq = mono-pf
       }
       where open pullback-sq-not (mkpb-sq ispb)
-  -- end square-is-pullback↔subprod-is-equaliser
-    
+            unpf : {X : Obj} {h : || Hom X AxB ||} → (a ∘ π₁) ∘ h ~ (b ∘ π₂) ∘ h
+                      → a ∘ π₁ ∘ h ~ b ∘ π₂ ∘ h
+            unpf pf = ass ⊙ pf ⊙ assˢ
+            emon : is-monic e
+            emon = jointly-monic-tr etr₁ etr₂ (π/s-are-jointly-monic/ ×/pbsq)
+            open is-monic emon
 
-  pbof→eqlof : {A B : Obj} (A×B : product-of A B) {I : Obj} {f : || Hom A I ||} {g : || Hom B I ||} 
+    is-eql→is-pb : is-equaliser eq → is-pb-square (mksq cone)
+    is-eql→is-pb iseql = record
+      { ⟨_,_⟩[_] = λ h k pf → < h , k > |eql[ unpf pf ]
+      ; ×/tr₁ = λ pf → ∘e r (etr₁ ˢ) ⊙ (assˢ ⊙ ∘e (eqltr (unpf pf)) r ⊙ ×tr₁) 
+      ; ×/tr₂ = λ pf → ∘e r (etr₂ ˢ) ⊙ (assˢ ⊙ ∘e (eqltr (unpf pf)) r ⊙ ×tr₂) 
+      ; ×/uq = jm-pf
+      }
+      where open is-equaliser iseql
+            unpf : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||} → a ∘ h ~ b ∘ k
+                      → (a ∘ π₁) ∘ < h , k > ~ (b ∘ π₂) ∘ < h , k >
+            unpf {h = h} pf = assˢ ⊙ ∘e ×tr₁ r ⊙ pf ⊙ ∘e (×tr₂ˢ {f = h}) r ⊙ ass
+            π/jm : is-jointly-monic/ (mkspan/ left up)
+            π/jm = jm∘mono-is-jm (πs-are-jointly-monic/ prdsp)
+                                 (eqlof-is-monic (mkeql-of iseql))
+                                 etr₁ etr₂
+            open is-jointly-monic/ π/jm
+
+  -- end square-is-pullback↔subprod-is-equaliser
+
+
+  pbof→eqlofπ's : {A B : Obj} (A×B : product-of A B) {I : Obj} {f : || Hom A I ||} {g : || Hom B I ||} 
                     → pullback-of f g → equaliser-of (f ∘ ×of.π₁ A×B) (g ∘ ×of.π₂ A×B)
-  pbof→eqlof A×B pbof = record
+  pbof→eqlofπ's A×B {f = f} {g} pbof = record
     { Eql = ul
     ; eqlar = < π/₁ , π/₂ >
-    ; eqleq = eqleq
+    ; eqleq = eq
     ; iseql = is-pb→is-eql ×/ispbsq
     }
     where open pullback-of-not pbof
-          open ×of A×B
-          open square-is-pullback↔subprod-is-equaliser A×B  ×/sq/
+          open product-of-not A×B
+          eq : (f ∘ π₁) ∘ < π/₁ , π/₂ > ~ (g ∘ π₂) ∘ < π/₁ , π/₂ >
+          eq = assˢ ⊙ ∘e ×tr₁ r ⊙ ×/sqpf ⊙ ∘e (×tr₂ˢ {f = π/₁}) r ⊙ ass
+          open square-is-pullback↔subprod-is-equaliser ×/sq/ A×B eq ×tr₁ ×tr₂
+
+  eqlofπ's→pbof : {A B : Obj} (A×B : product-of A B) {I : Obj} {f : || Hom A I ||} {g : || Hom B I ||} 
+                    → equaliser-of (f ∘ ×of.π₁ A×B) (g ∘ ×of.π₂ A×B) → pullback-of f g
+  eqlofπ's→pbof A×B {_} {f} {g} eqlof = record
+    { ×/sq/ = cone
+    ; ×/ispbsq = is-eql→is-pb iseql
+    }
+    where open equaliser-of eqlof
+          cone : square/cosp f g
+          cone = record
+               { upleft = mkspan/ (×of.π₁ A×B ∘ eqlar) (×of.π₂ A×B ∘ eqlar)
+               ; sq-pf = ass ⊙ eqleq ⊙ assˢ
+               }
+          open square-is-pullback↔subprod-is-equaliser cone A×B {eqlar} eqleq r r
+          
 
 
+
+  module equaliser↔pullback-of-diag-aux {B : Obj} (B×B : product-of B B)
+                                         {A : Obj} (f f' : || Hom A B ||)
+                                         where
+    open product-of-not B×B
+    open prod-Δ B×B
+    sq2eq₁ : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
+              → < f , f' > ∘ h ~ Δ ∘ k → f ∘ h ~ k
+    sq2eq₁ {C} {h} {k} pf =
+                 ~proof f ∘ h                    ~[ ∘e r (×tr₁ˢ {g = f'}) ⊙ assˢ ] /
+                        π₁ ∘ < f , f' > ∘ h      ~[ ∘e pf r ⊙ ass ⊙ lidgg r ×tr₁ ]∎
+                        k ∎
+    sq2eq₂ : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
+              → < f , f' > ∘ h ~ Δ ∘ k → f' ∘ h ~ k
+    sq2eq₂ {C} {h} {k} pf =
+                 ~proof f' ∘ h                    ~[ ∘e r (×tr₂ˢ {f = f}) ⊙ assˢ ] /
+                        π₂ ∘ < f , f' > ∘ h       ~[ ∘e pf r ⊙ ass ⊙ lidgg r ×tr₂ ]∎
+                        k ∎
+    sq2eql : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
+                → < f , f' > ∘ h ~ Δ ∘ k → f ∘ h ~ f' ∘ h
+    sq2eql {C} {h} {k} pf = sq2eq₁ pf ⊙ sq2eq₂ pf ˢ
+  -- end equaliser↔pullback-of-diag-aux
 
   module equaliser↔pullback-of-diag {B : Obj} (B×B : product-of B B)
                                      {A E : Obj} {f f' : || Hom A B ||} {e : || Hom E A ||}
-                                     (pf : f ∘ e ~ f' ∘ e)                                     
+                                     (eq : f ∘ e ~ f' ∘ e)
+                                     {up : || Hom E B ||} (sqpf : < f , f' >[ B×B ] ∘ e ~ Δpf B×B ∘ up)
                                      where
     open product-of-not B×B
     open prod-Δ B×B
+    open equaliser↔pullback-of-diag-aux B×B f f'
+    tr₁ : up ~ f ∘ e
+    tr₂ : up ~ f' ∘ e
+    tr₁ = sq2eq₁ sqpf ˢ
+    tr₂ = sq2eq₂ sqpf ˢ    
 
-    up : || Hom E B ||
-    up = f ∘ e
-    sqpf : < f , f' > ∘ e ~ Δ ∘ up
-    sqpf = <>ar~<>ar lidˢ (lidgenˢ (pf ˢ))
-
-    is-eql→is-pb : is-equaliser pf → is-pb-square (mksq (mksq/ sqpf))
+    is-eql→is-pb : is-equaliser eq → is-pb-square (mksq (mksq/ sqpf))
     is-eql→is-pb iseql = record
       { ⟨_,_⟩[_] = λ h k pf → h |eql[ sq2eql pf ]
       ; ×/tr₁ = λ pf → eqltr (sq2eql pf)
-      ; ×/tr₂ = λ pf → assˢ ⊙ ∘e (eqltr (sq2eql pf)) r ⊙ aux₁ pf
+      ; ×/tr₂ = λ pf → ∘e r tr₁ ⊙ (assˢ ⊙ ∘e (eqltr (sq2eql pf)) r ⊙ sq2eq₁ pf)
       ; ×/uq = λ pf1 pf2 → eqluq pf1
       }
-      where open is-equaliser iseql
-            aux₁ : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
-                      → < f , f' > ∘ h ~ Δ ∘ k → f ∘ h ~ k
-            aux₁ {C} {h} {k} pf =
-                         ~proof f ∘ h                    ~[ ∘e r (×tr₁ˢ {g = f'}) ⊙ assˢ ] /
-                                π₁ ∘ < f , f' > ∘ h      ~[ ∘e pf r ⊙ ass ⊙ lidgg r ×tr₁ ]∎
-                                k ∎
-                                
-            aux₂ : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
-                      → < f , f' > ∘ h ~ Δ ∘ k → f' ∘ h ~ k
-            aux₂ {C} {h} {k} pf =
-                         ~proof f' ∘ h                    ~[ ∘e r (×tr₂ˢ {f = f}) ⊙ assˢ ] /
-                                π₂ ∘ < f , f' > ∘ h       ~[ ∘e pf r ⊙ ass ⊙ lidgg r ×tr₂ ]∎
-                                k ∎
-            
-            sq2eql : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
-                        → < f , f' > ∘ h ~ Δ ∘ k → f ∘ h ~ f' ∘ h
-            sq2eql {C} {h} {k} pf = aux₁ pf ⊙ aux₂ pf ˢ
+      where open is-equaliser iseql            
+    
+    is-pb→is-eql : is-pb-square (mksq (mksq/ sqpf)) → is-equaliser eq
+    is-pb→is-eql ispb = record
+      { _|eql[_] = λ h pf → ⟨ h , f ∘ h ⟩[ unpf pf ]
+      ; eqltr = λ pf → ×/tr₁ (unpf pf)
+      ; eqluq = λ pf → ×/uq pf (∘e r tr₁ ⊙ (assˢ ⊙ ∘e pf r ⊙ (ass ⊙ ∘e r (tr₁ ˢ))))
+      }
+      where open pullback-of-not (mkpb-of ispb)
+            unpf : {C : Obj} {h : || Hom C A ||} (pf : f ∘ h ~ f' ∘ h)
+                      → < f , f' >[ B×B ] ∘ h ~ Δpf B×B ∘ f ∘ h
+            unpf pf = <>ar~<>ar lidˢ (pf ˢ ⊙ lidˢ)
+
   -- end equaliser↔pullback-of-diag
 
 
-  eqlof2pbof : {B : Obj} (B×B : product-of B B) {A : Obj} {f f' : || Hom A B ||}
+
+  eqlof→pbof<> : {B : Obj} (B×B : product-of B B) {A : Obj} {f f' : || Hom A B ||}
                     → equaliser-of f f' → pullback-of < f , f' >[ B×B ] (Δpf B×B)
-  eqlof2pbof B×B eqlof = record
+  eqlof→pbof<> B×B {f = f} eqlof = record
     { ×/ispbsq = is-eql→is-pb iseql
     }
     where open equaliser-of eqlof
-          open equaliser↔pullback-of-diag B×B eqleq
+          open product-of-not B×B
+          open equaliser↔pullback-of-diag B×B eqleq {f ∘ eqlar} (<>ar~<>ar lidˢ (lidgenˢ (eqleq ˢ)))
+
+  pbof<>→eqlof : {B : Obj} (B×B : product-of B B) {A : Obj} {f f' : || Hom A B ||}
+                    → pullback-of < f , f' >[ B×B ] (Δpf B×B) → equaliser-of f f'
+  pbof<>→eqlof B×B {f = f} {f'} pbof = mkeql-of (is-pb→is-eql ×/ispbsq)
+                                     where open pullback-of-not pbof
+                                           open equaliser↔pullback-of-diag-aux B×B f f'
+                                           eq : f ∘ π/₁ ~ f' ∘ π/₁
+                                           eq = sq2eql ×/sqpf
+                                           open equaliser↔pullback-of-diag B×B eq {π/₂} ×/sqpf
 
 -- end relations-among-limit-diagrams
 
@@ -162,34 +235,27 @@ module relations-among-limit-diagrams (ℂ : ecategory) where
 
 
 
+has-prd+eql⇒has-pb : {ℂ : ecategory} (prod : has-bin-products ℂ) → (eql : has-equalisers ℂ)
+                          → has-pullbacks ℂ
+has-prd+eql⇒has-pb {ℂ} prod eql = record
+  { pb-of = λ {I} {A} {B} a b → eqlofπ's→pbof (prd-of A B) (eql-of (a ∘ π₁) (b ∘ π₂))
+  }
+  where open ecategory ℂ
+        open has-bin-products prod
+        open has-equalisers eql
+        open relations-among-limit-diagrams ℂ
+
+
 has-prd+pb⇒has-eql : {ℂ : ecategory} (prod : has-bin-products ℂ) → (pb : has-pullbacks ℂ)
                           → has-equalisers ℂ
 has-prd+pb⇒has-eql {ℂ} prod pb = record
-  { eql-of = λ f f' → record
-           { Eql = < f , f' > ×/ₒ (Δ _)
-           ; eqlar = π/₁
-           ; eqleq = auxf f f' ⊙ (auxf' f f' ˢ)
-           ; iseql = record
-                   { _|eql[_] = λ h pf → ⟨ h , f ∘ h ⟩[ eqcond pf ]
-                   ; eqltr = λ pf → ×/tr₁ (eqcond pf)
-                   ; eqluq = λ pf → ×/uq pf (∘e r (auxf f f' ˢ) ⊙ assˢ ⊙ ∘e pf r ⊙ ass ⊙ ∘e r (auxf f f'))
-                   }
-           }
+  { eql-of = λ {A} {B} f f' → pbof<>→eqlof (prd-of B B) (pb-of < f , f' > (Δ B))
   }
-  where open ecategory-aux ℂ
-        open comm-shapes ℂ
-        open pullback-defs ℂ
-        open equaliser-defs ℂ
+  where open ecategory ℂ
         open bin-products-aux prod
         open has-pullbacks pb
-        eqcond : {A B C : Obj} {f f' : || Hom A B ||} {h : || Hom C A ||}
-                    → f ∘ h ~ f' ∘ h → < f , f' > ∘ h ~ Δ B ∘ f ∘ h
-        eqcond {f = f} {f'} {h} pf = <>dist h ⊙ <>ar~<>ˢ lid (lidgen pf)
-        auxf : {A B : Obj} (f f' : || Hom A B ||) → f ∘ π/₁ ~ π/₂ {a = < f , f' >} {Δ B}
-        auxf f f' = ∘e r (×tr₁ˢ) ⊙ (assˢ ⊙ (∘e ×/sqpf r ⊙ (ass ⊙ lidcmp ×tr₁)))
-        auxf' : {A B : Obj} (f f' : || Hom A B ||) → f' ∘ π/₁ ~ π/₂ {a = < f , f' >} {Δ B}
-        auxf' f f' = ∘e r ×tr₂ˢ ⊙ (assˢ ⊙ (∘e ×/sqpf r ⊙ (ass ⊙ lidcmp ×tr₂)))
-
+        open relations-among-limit-diagrams ℂ
+        
 
 
 

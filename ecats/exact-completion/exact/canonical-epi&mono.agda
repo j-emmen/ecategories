@@ -18,7 +18,7 @@ open import ecats.finite-limits.d&n-weak-pullback
 open import ecats.finite-limits.props.weak-pullback
 open import ecats.finite-limits.defs.weak-Wlimit
 open import ecats.finite-limits.props.relations-among-weak-limits
-open import ecats.exact-completion.construction
+open import ecats.exact-completion.CVconstruction
 
 
 

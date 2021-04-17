@@ -21,6 +21,7 @@ open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.projective-cover
 open import ecats.functors.defs.left-covering
 open import ecats.functors.props.left-covering
+open import ecats.exact-completion.CVconstruction
 
 
 -- Properties of projective covers into finitely complete categories
@@ -65,12 +66,14 @@ module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
 
   module cover-of-terminal-is-weak-terminal {T : ℂ.Obj} (istrm : ℂ.is-terminal T) where
     private
-      module T = ℂ.is-terminal istrm
+      module T where
+        open ℂ.is-terminal istrm public
+        module rcov = PC.rcov-of T
     wT : ℙ.Obj
-    wT = PC.rc.Ob T
+    wT = T.rcov.Ob
     iswtrm : ℙ.is-wterminal wT
     iswtrm = record
-             { w! = λ X → PC.full-ar (PC.rp.lift X (PC.rc.is-repi T) (T.! (PC.ₒ X)))
+             { w! = λ X → PC.full-ar (PC.rprj.lift X T.rcov.is-repi (T.! (PC.ₒ X)))
              }
   -- end cover-of-terminal-is-weak-terminal
 
@@ -87,18 +90,18 @@ module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
   module cover-of-product-is-weak-product {X Y : ℙ.Obj} (prd : ℂ.product-of (PC.ₒ X) (PC.ₒ Y)) where
     private
       module PCX×PCY = ℂ.product-of-not prd
-      module ×rc = PC.rc PCX×PCY.O12
+      module ×rc = PC.rcov-of PCX×PCY.O12
       w×Ob : ℙ.Obj
-      w×Ob = PC.rc.Ob PCX×PCY.O12
+      w×Ob = PC.rcov-of.Ob PCX×PCY.O12
       wπ₁ : || ℙ.Hom w×Ob X ||
       wπ₁ = PC.full-ar (PCX×PCY.π₁ ℂ.∘ ×rc.ar)
       wπ₂ : || ℙ.Hom w×Ob Y ||
       wπ₂ = PC.full-ar (PCX×PCY.π₂ ℂ.∘ ×rc.ar)
       wun-aux : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (k : || ℙ.Hom Z Y ||) → || ℂ.Hom (PC.ₒ Z) (PC.ₒ w×Ob) ||
-      wun-aux {Z} h k = PC.rp.lift Z ×rc.is-repi PCX×PCY.< PC.ₐ h , PC.ₐ k >
+      wun-aux {Z} h k = PC.rprj.lift Z ×rc.is-repi PCX×PCY.< PC.ₐ h , PC.ₐ k >
       wun-aux-tr : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (k : || ℙ.Hom Z Y ||)
                       → ×rc.ar ℂ.∘ wun-aux h k ℂ.~ PCX×PCY.< PC.ₐ h , PC.ₐ k >
-      wun-aux-tr {Z} h k = PC.rp.lift-tr Z {repi = ×rc.is-repi} {PCX×PCY.< PC.ₐ h , PC.ₐ k >}
+      wun-aux-tr {Z} h k = PC.rprj.lift-tr Z {repi = ×rc.is-repi} {PCX×PCY.< PC.ₐ h , PC.ₐ k >}
       wun : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (k : || ℙ.Hom Z Y ||) → || ℙ.Hom Z w×Ob ||
       wun h k = PC.full-ar (wun-aux h k)
       tr₁PC : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (k : || ℙ.Hom Z Y ||)
@@ -145,9 +148,9 @@ module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
                                            where
     private
       module PCf~PCf' = ℂ.equaliser-of eql
-      module ~rc = PC.rc PCf~PCf'.Eql
+      module ~rc = PC.rcov-of PCf~PCf'.Eql
       wE : ℙ.Obj
-      wE = PC.rc.Ob PCf~PCf'.Eql
+      wE = PC.rcov-of.Ob PCf~PCf'.Eql
       we : || ℙ.Hom wE X ||
       we = PC.full-ar (PCf~PCf'.eqlar ℂ.∘ ~rc.ar)
       weq : f ℙ.∘ we ℙ.~ f' ℙ.∘ we
@@ -157,10 +160,10 @@ module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
 
       wun-aux : {Z : ℙ.Obj} {h : || ℙ.Hom Z X ||} (pf : f ℙ.∘ h ℙ.~ f' ℙ.∘ h)
                    → || ℂ.Hom (PC.ₒ Z) (PC.ₒ wE) ||
-      wun-aux {Z} {h} pf = PC.rp.lift Z ~rc.is-repi (PC.ₐ h PCf~PCf'.|eql[ PC.∘∘ pf ])
+      wun-aux {Z} {h} pf = PC.rprj.lift Z ~rc.is-repi (PC.ₐ h PCf~PCf'.|eql[ PC.∘∘ pf ])
       wun-aux-tr : {Z : ℙ.Obj} {h : || ℙ.Hom Z X ||} (pf : f ℙ.∘ h ℙ.~ f' ℙ.∘ h)
                    → ~rc.ar ℂ.∘ wun-aux pf ℂ.~ PC.ₐ h PCf~PCf'.|eql[ PC.∘∘ pf ]
-      wun-aux-tr {Z} {h} pf = PC.rp.lift-tr Z {repi = ~rc.is-repi} {PC.ₐ h PCf~PCf'.|eql[ PC.∘∘ pf ]}
+      wun-aux-tr {Z} {h} pf = PC.rprj.lift-tr Z {repi = ~rc.is-repi} {PC.ₐ h PCf~PCf'.|eql[ PC.∘∘ pf ]}
       wun : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (pf : f ℙ.∘ h ℙ.~ f' ℙ.∘ h) → || ℙ.Hom Z wE ||
       wun _ pf = PC.full-ar (wun-aux pf)
       trPC : {Z : ℙ.Obj} {h : || ℙ.Hom Z X ||} (pf : f ℙ.∘ h ℙ.~ f' ℙ.∘ h)
@@ -201,9 +204,9 @@ module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
                                          where
     private
       module PCf×/PCg = ℂ.pullback-of-not pb
-      module ×/rc = PC.rc PCf×/PCg.ul
+      module ×/rc = PC.rcov-of PCf×/PCg.ul
       w×/Ob : ℙ.Obj
-      w×/Ob = PC.rc.Ob PCf×/PCg.ul
+      w×/Ob = PC.rcov-of.Ob PCf×/PCg.ul
       wπ/₁ : || ℙ.Hom w×/Ob X ||
       wπ/₁ = PC.full-ar (PCf×/PCg.π/₁ ℂ.∘ ×/rc.ar)
       wπ/₂ : || ℙ.Hom w×/Ob Y ||
@@ -217,10 +220,10 @@ module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
               where open ecategory-aux-only ℂ
       wun-aux : {W : ℙ.Obj} {h : || ℙ.Hom W X ||} {k : || ℙ.Hom W Y ||}
                    → f ℙ.∘ h ℙ.~ g ℙ.∘ k → || ℂ.Hom (PC.ₒ W) (PC.ₒ w×/Ob) ||
-      wun-aux {W} {h} {k} pf = PC.rp.lift W ×/rc.is-repi PCf×/PCg.⟨ PC.ₐ h , PC.ₐ k ⟩[ PC.∘∘ pf ]
+      wun-aux {W} {h} {k} pf = PC.rprj.lift W ×/rc.is-repi PCf×/PCg.⟨ PC.ₐ h , PC.ₐ k ⟩[ PC.∘∘ pf ]
       wun-aux-tr : {W : ℙ.Obj} {h : || ℙ.Hom W X ||} {k : || ℙ.Hom W Y ||} (pf : f ℙ.∘ h ℙ.~ g ℙ.∘ k)
                       → ×/rc.ar ℂ.∘ wun-aux pf ℂ.~ PCf×/PCg.⟨ PC.ₐ h , PC.ₐ k ⟩[ PC.∘∘ pf ]
-      wun-aux-tr {W} {h} {k} pf = PC.rp.lift-tr W {repi = ×/rc.is-repi} {PCf×/PCg.⟨ PC.ₐ h , PC.ₐ k ⟩[ PC.∘∘ pf ]}
+      wun-aux-tr {W} {h} {k} pf = PC.rprj.lift-tr W {repi = ×/rc.is-repi} {PCf×/PCg.⟨ PC.ₐ h , PC.ₐ k ⟩[ PC.∘∘ pf ]}
       wun : {W : ℙ.Obj} (h : || ℙ.Hom W X ||) (k : || ℙ.Hom W Y ||)
                → f ℙ.∘ h ℙ.~ g ℙ.∘ k → || ℙ.Hom W w×/Ob ||
       wun h k pf = PC.full-ar (wun-aux pf)
@@ -341,7 +344,7 @@ module projective-cover-on-reg-cat-props {𝔼 : ecategory} (𝔼isreg : is-regu
       private
         module PT = ℙ.is-wterminal PT-pf
         module CT = 𝔼.is-terminal CT-pf
-        module rcT = PC.rc CT
+        module rcT = PC.rcov-of CT
         module wTrc where
           Ob : ℙ.Obj
           Ob = PC.cover-of-terminal-is-weak-terminal.wT CT-pf
@@ -370,7 +373,7 @@ module projective-cover-on-reg-cat-props {𝔼 : ecategory} (𝔼isreg : is-regu
       private
         module Pw× = ℙ.bin-wproduct-not (ℙ.mkw× Pw×)
         module E× = 𝔼.bin-product-not (𝔼.mk× E×)
-        module rc× = PC.rc E×.O12
+        module rc× = PC.rcov-of E×.O12
         module w×rc = ℙ.wproduct-of-not (PC.cover-of-product-is-weak-product.Xw×Y (𝔼.mk×of E×))
       med-ar : || ℙ.Hom w×rc.O12 V ||
       med-ar = Pw×.w< w×rc.wπ₁ , w×rc.wπ₂ >
@@ -404,7 +407,7 @@ module projective-cover-on-reg-cat-props {𝔼 : ecategory} (𝔼isreg : is-regu
       private
         module Pe = ℙ.wequaliser-of (ℙ.mkweql-of Pweql-pf)
         module Ee = 𝔼.equaliser-of (𝔼.mkeql-of Eeql-pf)
-        module rce = PC.rc Ee.Eql
+        module rce = PC.rcov-of Ee.Eql
         module werc = ℙ.wequaliser-of (PC.cover-of-equaliser-is-weak-equaliser.fw~f' (𝔼.mkeql-of Eeql-pf))
       med-ar : || ℙ.Hom werc.wEql Pe.wEql ||
       med-ar =  werc.weqlar Pe.|weql[ werc.weqleq ]
@@ -444,7 +447,7 @@ module projective-cover-on-reg-cat-props {𝔼 : ecategory} (𝔼isreg : is-regu
       private
         module Pw×/ = ℙ.wpullback-sq-not (ℙ.mkwpb-sq Pw×/)
         module E×/ = 𝔼.pullback-sq-not (𝔼.mkpb-sq E×/)
-        module rc×/ = PC.rc E×/.ul
+        module rc×/ = PC.rcov-of E×/.ul
         module w×/rc = ℙ.wpullback-of-not (PC.cover-of-pullback-is-weak-pullback.fw×/g (𝔼.mkpb-of E×/))
       med-ar : || ℙ.Hom w×/rc.ul V ||
       med-ar = Pw×/.w⟨ w×/rc.wπ/₁ , w×/rc.wπ/₂ ⟩[ w×/rc.w×/sqpf ]
@@ -484,8 +487,8 @@ module projective-cover-on-reg-cat-props {𝔼 : ecategory} (𝔼isreg : is-regu
 
   module Peq-from-Obj (A : 𝔼.Obj) where
     module rc where
-      open PC.rc A public
-      open PC.rp Ob public
+      open PC.rcov-of A public
+      open PC.rprj Ob public
     private
       kpA : 𝔼.pullback-of rc.ar rc.ar
       kpA = r𝔼.pb-of rc.ar rc.ar
@@ -501,8 +504,8 @@ module projective-cover-on-reg-cat-props {𝔼 : ecategory} (𝔼isreg : is-regu
       open 𝔼.is-coeq iscoeq public
       open 𝔼.is-eq-rel (𝔼.is-kerp+τpb→is-eqr (record { ispbsq = ×/ispbsq }) (r𝔼.pb-of π/₂ π/₁)) public
     module rcK where
-      open PC.rc exs.ul public
-      open PC.rp Ob public
+      open PC.rcov-of exs.ul public
+      open PC.rprj Ob public
     private
       %0A %1A : || ℙ.Hom rcK.Ob rc.Ob ||
       %0A = PC.full-ar (exs.π/₁ 𝔼.∘ rcK.ar)
@@ -567,7 +570,7 @@ module projective-cover-on-reg-cat-props {𝔼 : ecategory} (𝔼isreg : is-regu
             τwpb = fwlℙ.wpb-of %1A %0A
             module τwpb where
               open ℙ.wpullback-of τwpb public
-              open PC.rp ul public
+              open PC.rprj ul public
             τaux-pf : rc.ar 𝔼.∘ PC.ₐ (%0A ℙ.∘ τwpb.wπ/₁) 𝔼.~ rc.ar 𝔼.∘ PC.ₐ (%1A ℙ.∘ τwpb.wπ/₂)
             τaux-pf = ~proof
               rc.ar 𝔼.∘ PC.ₐ (%0A ℙ.∘ τwpb.wπ/₁)                ~[ ∘e (PC.∘ax-rf ˢ ⊙ ∘e r PC.full-pf ⊙ assˢ) r ] /
@@ -591,9 +594,9 @@ module projective-cover-on-reg-cat-props {𝔼 : ecategory} (𝔼isreg : is-regu
 
 
   module Peq-mor-from-ar {A B : 𝔼.Obj} (f : || 𝔼.Hom A B ||) where
-    module dom = Peq-from-Obj A
-    module cod = Peq-from-Obj B
     private
+      module dom = Peq-from-Obj A
+      module cod = Peq-from-Obj B
       lo : || ℙ.Hom dom.rc.Ob cod.rc.Ob ||
       lo = PC.full-ar (dom.rc.lift cod.rc.is-repi (f 𝔼.∘ dom.rc.ar))
       hiaux-pf : cod.rc.ar 𝔼.∘ PC.ₐ (lo ℙ.∘ dom.peq.%0) 𝔼.~ cod.rc.ar 𝔼.∘ PC.ₐ (lo ℙ.∘ dom.peq.%1)
@@ -633,6 +636,82 @@ module projective-cover-on-reg-cat-props {𝔼 : ecategory} (𝔼isreg : is-regu
     sqpf = (∘e PC.full-pf r ⊙ dom.rc.lift-tr) ˢ
          where open ecategory-aux-only 𝔼
   -- end Peq-mor-from-ar
+  
+  module Exℙ where
+    open ecategory Ex ℙ [ fwlℙ ] public
+    
+  module PC2Peq-ext {A B : 𝔼.Obj}{f f' : || 𝔼.Hom A B ||}(eqpf : f 𝔼.~ f') where
+    private
+      module peqA where
+        open Peq-from-Obj A public
+        open ℙ.Peq peq public
+      module peqB where
+        open Peq-from-Obj B public
+        open ℙ.Peq peq public
+      module peqf where
+        open Peq-mor-from-ar {A} {B} f public
+        open ℙ.Peq-mor {peqA.peq} {peqB.peq} ar public
+      module peqf'  where
+        open Peq-mor-from-ar {A} {B} f' public
+        open ℙ.Peq-mor {peqA.peq} {peqB.peq} ar public
+    eq : peqf.ar Exℙ.~ peqf'.ar
+    eq = record
+      { hty = PC.full-ar (PC.rprj.lift peqA.Lo peqB.rcK.is-repi
+                                       peqB.exs.⟨ PC.ₐ peqf.lo , PC.ₐ peqf'.lo
+                                                ⟩[ hty-pf ])
+      ; hty₀ = PC.faith-pf (PC.cmp _ _ ˢ ⊙ ∘e PC.full-pf PC.full-pf ⊙ assˢ
+                           ⊙ ∘e (PC.rprj.lift-tr peqA.Lo) r ⊙ peqB.exs.×/tr₁ hty-pf)
+      ; hty₁ = PC.faith-pf (PC.cmp _ _ ˢ ⊙ ∘e PC.full-pf PC.full-pf ⊙ assˢ
+                           ⊙ ∘e (PC.rprj.lift-tr peqA.Lo) r ⊙ peqB.exs.×/tr₂ hty-pf)
+      }
+      where open ecategory-aux-only 𝔼
+            hty-pf : peqB.rc.ar 𝔼.∘ PC.ₐ peqf.lo 𝔼.~ peqB.rc.ar 𝔼.∘ PC.ₐ peqf'.lo
+            hty-pf = ~proof peqB.rc.ar 𝔼.∘ PC.ₐ peqf.lo   ~[ peqf.sqpf ˢ ] /
+                            f 𝔼.∘ peqA.rc.ar              ~[ ∘e r eqpf ] /
+                            f' 𝔼.∘ peqA.rc.ar             ~[ peqf'.sqpf ]∎
+                            peqB.rc.ar 𝔼.∘ PC.ₐ peqf'.lo ∎
+  -- end PC2Peq-ext
+    
+  module PC2Peq-id (A : 𝔼.Obj) where
+    private
+      module peqA where
+        open Peq-from-Obj A public
+        open ℙ.Peq peq public
+    eq : Peq-mor-from-ar.ar (𝔼.idar A) Exℙ.~ Exℙ.idar peqA.peq
+    eq = record
+      { hty = peqA.ρ
+      ; hty₀ = PC.faith-pf ((PC.full-pf ⊙ {!!}) ˢ)
+      ; hty₁ = peqA.ρ-ax₁
+      }
+      where open ecategory-aux-only 𝔼
+    {-record
+      { hty = PC.full-ar (PC.rprj.lift peqA.Lo peqB.rcK.is-repi
+                                       peqB.exs.⟨ PC.ₐ peqf.lo , PC.ₐ peqf'.lo
+                                                ⟩[ hty-pf ])
+      ; hty₀ = PC.faith-pf (PC.cmp _ _ ˢ ⊙ ∘e PC.full-pf PC.full-pf ⊙ assˢ
+                           ⊙ ∘e (PC.rprj.lift-tr peqA.Lo) r ⊙ peqB.exs.×/tr₁ hty-pf)
+      ; hty₁ = PC.faith-pf (PC.cmp _ _ ˢ ⊙ ∘e PC.full-pf PC.full-pf ⊙ assˢ
+                           ⊙ ∘e (PC.rprj.lift-tr peqA.Lo) r ⊙ peqB.exs.×/tr₂ hty-pf)
+      }
+      
+            hty-pf : peqB.rc.ar 𝔼.∘ PC.ₐ peqf.lo 𝔼.~ peqB.rc.ar 𝔼.∘ PC.ₐ peqf'.lo
+            hty-pf = ~proof peqB.rc.ar 𝔼.∘ PC.ₐ peqf.lo   ~[ peqf.sqpf ˢ ] /
+                            f 𝔼.∘ peqA.rc.ar              ~[ ∘e r eqpf ] /
+                            f' 𝔼.∘ peqA.rc.ar             ~[ peqf'.sqpf ]∎
+                            peqB.rc.ar 𝔼.∘ PC.ₐ peqf'.lo ∎-}
+  -- end PC2Peq-id
+    
+  PC2Peq : efunctor 𝔼 Ex ℙ [ fwlℙ ]
+  PC2Peq = record
+    { FObj = Peq-from-Obj.peq
+    ; FHom = Peq-mor-from-ar.ar
+    ; isF = record
+          { ext = PC2Peq-ext.eq
+          ; id = λ {A} → {!!} -- record { hty = {!!} ; hty₀ = {!!} ; hty₁ = {!!} }
+          ; cmp = {!!}
+          }
+    }
+  
 -- end projective-cover-on-reg-cat-props
 
 

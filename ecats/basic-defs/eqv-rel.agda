@@ -798,7 +798,7 @@ record { rel-ar = f ; base-ar = f ; cmptb₀ = lid f ⊙ ridˢ f ; cmptb₁ = li
     private
       module kpf {A B : Obj} (f : || Hom A B ||) = pullback-of-not (kp-of f)
       
-    is-kp→is-eqr : {A B K : Obj} {kp₁ kp₂ : || Hom K A ||}
+    is-kp→is-eqr : {A K : Obj} {kp₁ kp₂ : || Hom K A ||}
                         → is-kernel-pair kp₁ kp₂ → is-eq-rel kp₁ kp₂
     is-kp→is-eqr {kp₁ = kp₁} {kp₂} iskp =
       is-kerp+τpb→is-eqr iskp (pb-of kp₂ kp₁)

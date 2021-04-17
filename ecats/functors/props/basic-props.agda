@@ -107,7 +107,7 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
                      → is-left-covering-pb F → is-left-covering-eql F
   pres×-lcpb→lc-eql prdC pres× lcpb = record
     { eqluniv-is-repi = λ {X} {Y} {f} {f'} weqlC eqlD {coveql} tr →
-                      pbuniv-is-repi (ℂwl.weqlof2wpbof ℂ×.×of weqlC) (eql2pb eqlD) tr (assˢ ⊙ ∘e tr r ⊙ F.∘ax-rf)
+                      pbuniv-is-repi (ℂwl.weqlof→wpbof<> ℂ×.×of weqlC) (eql2pb eqlD) tr (assˢ ⊙ ∘e tr r ⊙ F.∘ax-rf)
     }
     where open ecategory-aux-only 𝔻
           module 𝔻l = relations-among-limit-diagrams 𝔻
@@ -119,13 +119,14 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
           F×of X Y = 𝔻.mk×of (pres-×-pf (ℂ×.×isprd {X} {Y}))
           eql2pb : {X Y : ℂ.Obj} {f f' : || ℂ.Hom X Y ||} (eqlD : 𝔻.equaliser-of (F.ₐ f) (F.ₐ f'))
                       → 𝔻.pullback-of (F.ₐ (ℂ×.< f , f' >)) (F.ₐ (ℂ×.Δ Y))
-          eql2pb {_} {Y} eqlD = 𝔻.mkpb-of ( ×/ext-dr (is-eql→is-pb iseql)
-                                                      (F×.ar~<>ˢ (F.∘ax-rf ⊙ F.ext ℂ×.×tr₁) (F.∘ax-rf ⊙ F.ext ℂ×.×tr₂))
-                                                      (F×.ar~<>ˢ (F.∘ax-rf ⊙ F.idax ℂ×.×tr₁) (F.∘ax-rf ⊙ F.idax ℂ×.×tr₂)) )
+          eql2pb {_} {Y} {f} {f'} eqlD = 𝔻.mkpb-of ( ×/ext-dr (is-eql→is-pb iseql)
+                                                               (F×.ar~<>ˢ (F.∘ax-rf ⊙ F.ext ℂ×.×tr₁) (F.∘ax-rf ⊙ F.ext ℂ×.×tr₂))
+                                                               (F×.ar~<>ˢ (F.∘ax-rf ⊙ F.idax ℂ×.×tr₁) (F.∘ax-rf ⊙ F.idax ℂ×.×tr₂)) )
                               where open pullback-props 𝔻
                                     module F× = 𝔻.product-of-not (F×of Y Y)
                                     open 𝔻.equaliser-of eqlD
-                                    open 𝔻l.equaliser↔pullback-of-diag (F×of Y Y) eqleq
+                                    open 𝔻l.equaliser↔pullback-of-diag (F×of Y Y) eqleq {F.ₐ f 𝔻.∘ eqlar}
+                                                                         (F×.<>ar~<>ar lidˢ (lidgenˢ (eqleq ˢ)))
 
 
 

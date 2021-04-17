@@ -98,3 +98,100 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
   ↑ex-tr 𝔼isex islcov = tr-iso
                        where open ↑ex-commut 𝔼isex islcov
 -- end exact-compl-universal-commut
+
+
+
+
+
+-- -- OLD
+
+-- {-
+--     module quot-of-free-peq-is-idar (freepeq : ℂ.Peq) (isfree : ℂ.Peq.%0 freepeq ℂ.~ ℂ.Peq.%1 freepeq) where
+--       module free where
+--         open ℂ.Peq freepeq public
+--         open F↑ex-ob freepeq public
+--       imgfree-is-free : free.eqr.r₁ 𝔼.~ free.eqr.r₂
+--       imgfree-is-free = epi-pf (~proof free.eqr.r₁ 𝔼.∘ free.img.C         ~[ free.img.imgF%tr₁ ] /
+--                                        F.ₐ free.%0                         ~[ F.ext isfree ] /
+--                                        F.ₐ free.%1                         ~[ free.img.imgF%tr₂ ˢ ]∎
+--                                        free.eqr.r₂ 𝔼.∘ free.img.C ∎)
+--                       where open ecategory-aux-only 𝔼
+--                             open 𝔼.is-epic (𝔼.repi-is-epic free.img.C-is-repi)
+--       idar-coeq : 𝔼.is-coeq free.eqr.r₁ free.eqr.r₂ (𝔼.idar (F.ₒ free.Lo))
+--       idar-coeq = record
+--         { eq = lidgen (lidgenˢ imgfree-is-free)
+--         ; univ = λ f pf → f
+--         ; univ-eq = λ {_} {f} pf → rid
+--         ; uniq = 𝔼.iso-is-epic (𝔼.idar-is-iso (F.ₒ free.Lo))
+--         }
+--         where open ecategory-aux-only 𝔼
+--       q-is-iso : 𝔼.is-iso free.q.ar
+--       q-is-iso = uq-of-coeq-ar-iso free.q.iscoeq
+--                  where open 𝔼.uniq-of-coequalisers idar-coeq
+--     -- end quot-of-free-peq-is-idar
+-- -}
+
+--     module quot-of-canfree-peq-is-idar (X : ℂ.Obj) where
+--       module free where
+--         open ℂ.Peq (ℂ.freePeq X) public
+--         open F↑ex-ob (ℂ.freePeq X) public
+--       imgfree-is-free : free.eqr.r₁ 𝔼.~ free.eqr.r₂
+--       imgfree-is-free = epi-pf (~proof free.eqr.r₁ 𝔼.∘ free.img.C         ~[ free.img.imgF%tr₁ ] /
+--                                        F.ₐ free.%0                         ~[ r ] /
+--                                        F.ₐ free.%1                         ~[ free.img.imgF%tr₂ ˢ ]∎
+--                                        free.eqr.r₂ 𝔼.∘ free.img.C ∎)
+--                       where open ecategory-aux-only 𝔼
+--                             open 𝔼.is-epic (𝔼.repi-is-epic free.img.C-is-repi)
+--       idar-coeq : 𝔼.is-coeq free.eqr.r₁ free.eqr.r₂ (𝔼.idar (F.ₒ free.Lo))
+--       idar-coeq = record
+--         { eq = lidgen (lidgenˢ imgfree-is-free)
+--         ; univ = λ f pf → f
+--         ; univ-eq = λ {_} {f} pf → rid
+--         ; uniq = 𝔼.iso-is-epic (𝔼.idar-is-iso (F.ₒ free.Lo))
+--         }
+--         where open ecategory-aux-only 𝔼
+--       q-is-iso : 𝔼.is-iso free.q.ar
+--       q-is-iso = uq-of-coeq-ar-iso free.q.iscoeq
+--                  where open 𝔼.uniq-of-coequalisers idar-coeq
+
+--       iso : F.ₒ X 𝔼.≅ₒ free.q.Ob -- F↑ex-ob.q.Ob (Γex.ₒ X) --F↑ex.ₒ (Γex.ₒ X)
+--       iso = record
+--         { a12 = free.q.ar
+--         ; a21 = uq-of-coeq-ar⁻¹ free.q.iscoeq
+--         ; isop = uq-of-coeq-isopair free.q.iscoeq
+--         }
+--         where open 𝔼.uniq-of-coequalisers idar-coeq
+
+--     -- end quot-of-canfree-peq-is-idar
+
+
+--     module qiso (X : ℂ.Obj) where
+--       --open 𝔼.is-iso (quot-of-canfree-peq-is-idar.q-is-iso X) public -- (Γex.ₒ X) (ecategory-aux-only.r ℂ)
+--       open 𝔼._≅ₒ_ (quot-of-canfree-peq-is-idar.iso X) public
+--       open ℂ.Peq (ℂ.freePeq X) public
+--       open F↑ex-ob (ℂ.freePeq X) public
+
+--     tr-red : natural-transformation (↑ex 𝔼isex Flcov ○ Γex ℂ [ hasfwl ]) F
+--     tr-red = record
+--       { fnc = λ {X} → {!qiso.a21 X!}
+--       ; nat = {!!}
+--       }
+
+--     check : (X : ℂ.Obj) → || 𝔼.Hom (F.ₒ (ℂ.Peq.Lo (Γex.ₒ X))) (F↑ex-ob.q.Ob (ℂ.freePeq X)) ||
+--     check X = {!qiso.q.ar X!}
+
+--     tr-exp : natural-transformation F (↑ex 𝔼isex Flcov ○ Γex ℂ [ hasfwl ])
+--     tr-exp = record
+--       { fnc = λ {X} → {!!} 𝔼.∘ check X
+--       ; nat = {!efunctor.ₒ {ℂ} {𝔼} (F.↑ex ○ Γex ℂ [ hasfwl ]) X!}
+--       }
+
+-- {-
+-- 𝔼.coeq-of.Ob
+-- (ex𝔼.eqr-has-coeq {F.FObj X}
+--  (F.eqrel-from-peq-via-left-covering.eqrel/ (ℂ.freePeq X)))
+
+-- 𝔼.coeq-of.Ob
+-- (ex𝔼.eqr-has-coeq {F.FObj X}
+--  (F.eqrel-from-peq-via-left-covering.eqrel/ (ℂ.freePeq X)))
+-- -}
