@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-props.exact-ecat where
 
@@ -133,8 +129,8 @@ module exact-cat-props-only {𝔼 : ecategory} (isex : is-exact 𝔼) where
   -- Exact is regular
   --------------------
   
-  exact-is-regular : is-regular 𝔼
-  exact-is-regular = record
+  is-reg : is-regular 𝔼
+  is-reg = record
     { hasfl = ex𝔼.hasfl
     ; hasrmf = record { rmf-of = rmfactof }
     ; repi-pbof-stable = ex𝔼.repi-pbof-stable
@@ -563,7 +559,7 @@ module exact-cat-props-only {𝔼 : ecategory} (isex : is-exact 𝔼) where
 
 module exact-cat-props {𝔼 : ecategory} (ex : is-exact 𝔼) where
   open exact-cat-props-only ex public
-  open regular-cat-props exact-is-regular public
+  open regular-cat-props is-reg public
 -- end exact-cat-prop
 
 
@@ -578,6 +574,6 @@ module exact-cat-d&p {𝔼 : ecategory} (ex : is-exact 𝔼) where
 --------------------------------
 
 exact2reg : {𝔼 : ecategory} → is-exact 𝔼 → is-regular 𝔼
-exact2reg excat = exact-is-regular
+exact2reg excat = is-reg
                 where open exact-cat-props excat
 

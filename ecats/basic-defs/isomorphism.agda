@@ -1,9 +1,6 @@
  
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-defs.isomorphism where
 
@@ -30,7 +27,47 @@ module iso-defs (ℂ : ecategory) where
     ; idcod = iddom
     }
     where open is-iso-pair isop
+
+  inv-uq-r :  {a b : Obj} {f : || Hom a b ||} {invf invf' : || Hom b a ||}
+               → is-iso-pair f invf → is-iso-pair f invf' → invf ~ invf'
+  inv-uq-r {f = f} {invf} {invf'} isop isop' = ~proof
+    invf               ~[ ridggˢ r isop'.idcod ] /
+    invf ∘ f ∘ invf'   ~[ ass ⊙ lidgg r isop.iddom ]∎
+    invf' ∎
+    where open ecategory-aux-only ℂ
+          module isop = is-iso-pair isop
+          module isop' = is-iso-pair isop'
+
+  inv-uq :  {a b : Obj} {f f' : || Hom a b ||} {invf invf' : || Hom b a ||}
+               → is-iso-pair f invf → is-iso-pair f' invf'
+                 → f ~ f' → invf ~ invf'
+  inv-uq {f = f} {f'} {invf} {invf'} isop isop' pf = ~proof
+    invf               ~[ ridggˢ r isop'.idcod ] /
+    invf ∘ f' ∘ invf'  ~[ ∘e (∘e r (pf ˢ)) r ] /
+    invf ∘ f ∘ invf'   ~[ ass ⊙ lidgg r isop.iddom ]∎
+    invf' ∎
+    where open ecategory-aux-only ℂ
+          module isop = is-iso-pair isop
+          module isop' = is-iso-pair isop'
     
+  idar-is-isopair : (a : Obj) → is-iso-pair (idar a) (idar a)
+  idar-is-isopair a = record
+    { iddom = lidax (idar a)
+    ; idcod = lidax (idar a)
+    }
+
+  isopair-cmp : {a b c : Obj}{f : || Hom a b ||}{invf : || Hom b a ||}
+                {g : || Hom b c ||}{invg : || Hom c b ||}
+                  → is-iso-pair f invf → is-iso-pair g invg
+                    → is-iso-pair (g ∘ f) (invf ∘ invg)
+  isopair-cmp {f = f} {invf} {g} {invg} isopf isopg = record
+    { iddom = assˢ ⊙ ∘e (ass ⊙ lidgg r g.iddom) r ⊙ f.iddom
+    ; idcod = assˢ ⊙ ∘e (ass ⊙ lidgg r f.idcod) r ⊙ g.idcod
+    }
+    where open ecategory-aux-only ℂ
+          module f = is-iso-pair isopf
+          module g = is-iso-pair isopg
+
 
   record is-iso {a b : Obj} (f : || Hom a b ||) : Set where
     constructor mkis-iso
@@ -56,15 +93,15 @@ module iso-defs (ℂ : ecategory) where
                                        ; idcod = ∘e r pf ⊙ idcod
                                        }
 
-{-
-  inverses : {a b : Obj} → (f : || Hom a b ||) → (f⁻¹ : || Hom b a ||) → Set
-  inverses {a} {b} f f⁻¹ = prod (< Hom a a > f⁻¹ ∘ f ~ idar a)
-                                (< Hom b b > f ∘ f⁻¹ ~ idar b)
--}
-{-
-  _≅ₒ_ : (a b : Obj) → Set
-  a ≅ₒ b = Σ (prod || Hom a b || || Hom b a ||) (λ ff → inverses (prj1 ff) (prj2 ff) )
--}
+  idar-is-iso : (a : Obj) → is-iso (idar a)
+  idar-is-iso a = mkis-iso (idar-is-isopair a)
+  
+  iso-cmp : {a b c : Obj}{f : || Hom a b ||}{g : || Hom b c ||}
+                  → is-iso f → is-iso g → is-iso (g ∘ f)
+  iso-cmp isof isog = mkis-iso (isopair-cmp f.isisopair g.isisopair)
+                    where module f = is-iso isof
+                          module g = is-iso isog
+
 
   infix 0 _≅ₒ_ 
   record _≅ₒ_ (a b : Obj) : Set where
@@ -74,6 +111,20 @@ module iso-defs (ℂ : ecategory) where
       {a21} : || Hom b a ||
       isop : is-iso-pair a12 a21
     open is-iso-pair isop public
+
+  iso-trdom : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
+              {g : || Hom b c ||} {h : || Hom a  c ||}
+                → g ∘ f ~ h → h ∘ f' ~ g
+  iso-trdom isop pf = ∘e r (pf ˢ) ⊙ ass ˢ ⊙ ridgg r idcod
+                    where open is-iso-pair isop
+                          open ecategory-aux-only ℂ
+
+  iso-trcod : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
+              {g : || Hom c a ||} {h : || Hom c b ||}
+                → f ∘ g ~ h → f' ∘ h ~ g
+  iso-trcod isop pf = ∘e (pf ˢ) r ⊙ ass ⊙ lidgg r iddom
+                    where open is-iso-pair isop
+                          open ecategory-aux-only ℂ
 
 -- end module iso-defs
 

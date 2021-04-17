@@ -48,9 +48,10 @@ record large-ecategory : Set₂ where
 -- locally small ecategory
 
 record ecategory : Set₂ where
+  constructor mkecat
   field
-    Obj : Set₁
-    Hom : Obj → Obj → setoid {lzero}
+    {Obj} : Set₁
+    {Hom} : Obj → Obj → setoid {lzero}
     isecat : is-ecategory {lsuc lzero} {lzero} Obj Hom
   open is-ecategory isecat public
 

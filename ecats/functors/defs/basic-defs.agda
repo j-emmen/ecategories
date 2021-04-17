@@ -3,8 +3,6 @@
 
 {-# OPTIONS --without-K #-}
 
--- Agda version 2.5.4.1
-
 module ecats.functors.defs.basic-defs where
 
 open import ecats.basic-defs.ecat-def&not
