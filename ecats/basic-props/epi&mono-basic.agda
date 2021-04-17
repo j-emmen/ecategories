@@ -761,3 +761,4 @@ module epis&monos-basic-props (ℂ : ecategory) where
                                      q ∘ r'₂          ~[ ∘e (tr2 ˢ) r ⊙ ass ]∎
                                      (q ∘ r₂) ∘ e ∎)
 
+-- end epis&monos-basic-props
