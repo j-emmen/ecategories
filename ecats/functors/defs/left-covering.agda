@@ -8,8 +8,8 @@
 module ecats.functors.defs.left-covering where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
+open import ecats.basic-defs.commut-shapes
+open import ecats.basic-defs.epi&mono
 open import ecats.finite-limits.defs&not
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
@@ -29,7 +29,7 @@ module left-covering-defs (ℂ 𝔻 : ecategory) where
       open ecategory 𝔻 public
       open comm-shapes 𝔻 public
       open finite-limits 𝔻 public
-      open epis&monos-defs 𝔻 public
+      open epi&mono-defs 𝔻 public
     module wpbof = ℂ.wpullback-of
     module wpbsq = ℂ.wpullback-sq
     module pbof = 𝔻.pullback-of

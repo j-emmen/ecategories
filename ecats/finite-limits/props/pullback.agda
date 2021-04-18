@@ -12,6 +12,7 @@ open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.isomorphism
 open import ecats.basic-defs.epi&mono
+open import ecats.basic-props.isomorphism
 open import ecats.finite-limits.d&n-pullback
 open import ecats.finite-limits.d&n-bin-product
 
@@ -23,8 +24,9 @@ open import ecats.finite-limits.d&n-bin-product
 module pullback-props (ℂ : ecategory) where
   open ecategory-aux ℂ
   open iso-defs ℂ
+  open iso-props ℂ
   open iso-transports ℂ 
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
   open comm-shapes ℂ
   open pullback-squares ℂ
   open binary-products ℂ
@@ -490,7 +492,7 @@ module pullback-props (ℂ : ecategory) where
           module d = is-iso disiso
           module u = is-iso uisiso
           inv-sq : d.invf ∘ right ~ left ∘ u.invf
-          inv-sq = invIsNat u.isisopair d.isisopair sq-pf
+          inv-sq = iso-sq u.isisopair d.isisopair sq-pf
 
 
   -- pullback from product projections

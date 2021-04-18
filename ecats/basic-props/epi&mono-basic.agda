@@ -1,42 +1,26 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-props.epi&mono-basic where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.isomorphism
 open import ecats.finite-limits.defs&not
 
 
 -- Some properties of monos and {regular,strong,extremal,...} epis involving no limits
 
-module epis&monos-basic-props (ℂ : ecategory) where
+module epi&mono-props-basic (ℂ : ecategory) where
   open ecategory-aux ℂ
   open arrows-defs ℂ
+  open iso-props ℂ
   open iso-transports ℂ
-  open binary-products ℂ
-  open wequaliser-defs ℂ
-  open equaliser-defs ℂ
-  open wpullback-squares ℂ
-  open pullback-squares ℂ
-  open bow-defs ℂ
   private
     module sp/ = span/
     module sp = span
     module sq/ = square/cosp
     module sq = comm-square
-    module pbof = pullback-of
-    module pbsq = pb-square
-    module ×of = product-of
-    module prd = bin-product
-    module eqlof = equaliser-of
-    module weqlof = wequaliser-of
-    module wpbof = wpullback-of
-    module bwof = bow-of
     
 
   mono-is-congr : is-ecat-congr ℂ is-monic
@@ -77,18 +61,7 @@ module epis&monos-basic-props (ℂ : ecategory) where
                                          m' ∘ m ∘ g    ~[ ∘e pf r ] /
                                          m' ∘ m ∘ g'   ~[ ass ⊙ ∘e r pftr ]∎
                                          m'' ∘ g' ∎
-                
-  
-  mono-pb-stable : {A B C : Obj} {m : || Hom A B ||} {f : || Hom C B ||} (pbof : pullback-of f m)
-                      → is-monic m → is-monic (pbof.π/₁ pbof)
-  mono-pb-stable pbof pfm = record
-    { mono-pf = λ {D} {g} {g'} pfc → ×/uq pfc (mono-pf (ass ⊙ ∘e r (×/sqpf ˢ) ⊙ assˢ
-                                                         ⊙ ∘e pfc r ⊙ ass ⊙ ∘e r ×/sqpf ⊙ assˢ))
-    }
-    where open pullback-of pbof
-          open is-monic pfm
-                
-  
+
 
 
   jointly-monic-sym : {O1 O2 : Obj} {jmsp : span/ O1 O2}
@@ -136,186 +109,6 @@ module epis&monos-basic-props (ℂ : ecategory) where
     where open is-jointly-monic/ jmsp
           open is-monic m₁m renaming (mono-pf to m₁pf)
           open is-monic m₂m renaming (mono-pf to m₂pf)
-
-    
-  isjm/→<>monic : {O1 O2 : Obj} {jmsp : span/ O1 O2} (isjm/ : is-jointly-monic/ jmsp) (×sp : product-of O1 O2)
-                      → is-monic (×of.<_,_> ×sp (sp/.a1 jmsp) (sp/.a2 jmsp))
-                      --< sp/.a1 jmsp , sp/.a2 jmsp >[ mk× (×of.×isprd ×sp) ]
---                  {×sp : span/ O1 O2} (is× : is-product (mkspan-c ×sp))
-  isjm/→<>monic {jmsp = jmsp} isjm ×sp = record
-    { mono-pf = λ {A} {g} {g'} pf<> → jm-pf (~proof jm.a1 ∘ g                     ~[ ∘e r (×tr₁ˢ {g = jm.a2}) ⊙ assˢ ] /
-                                                     π₁ ∘ < jm.a1 , jm.a2 > ∘ g    ~[ ∘e pf<> r ] /
-                                                     π₁ ∘ < jm.a1 , jm.a2 > ∘ g'   ~[ ass ⊙ ∘e r ×tr₁ ]∎
-                                                     jm.a1 ∘ g' ∎)
-                                             (~proof jm.a2 ∘ g                     ~[ ∘e r (×tr₂ˢ {f = jm.a1}) ⊙ assˢ ] /
-                                                     π₂ ∘ < jm.a1 , jm.a2 > ∘ g    ~[ ∘e pf<> r ] /
-                                                     π₂ ∘ < jm.a1 , jm.a2 > ∘ g'   ~[ ass ⊙ ∘e r ×tr₂ ]∎
-                                                     jm.a2 ∘ g' ∎)
-    }
-    where open is-jointly-monic/ isjm
-          open product-of-not ×sp
-          module jm = span/ jmsp
-    
-
-  <>monic→isjm/-sp : {O1 O2 : Obj} {sp/ : span/ O1 O2} (×sp : product-of O1 O2)
-                         → is-monic (×of.<_,_> ×sp (sp/.a1 sp/) (sp/.a2 sp/)) → is-jointly-monic/ sp/
-  <>monic→isjm/-sp {sp/ = spjm} ×sp ism = record
-    { jm-pf = λ {C} {h} {h'} pf1 pf2 → mono-pf (<>ar~<> pf1 pf2 ⊙ <>distˢ h')
-    }
-    where open is-monic ism
-          open product-of-not ×sp
-
-
-  <>monic→isjm/-ar : {O1 O2 : Obj} (×sp : product-of O1 O2)
-                      {A : Obj} {f : || Hom A (×of.O12 ×sp) ||}
-                         → is-monic f → is-jointly-monic/ (mkspan/ (×of.π₁ ×sp ∘ f) (×of.π₂ ×sp ∘ f))
-  <>monic→isjm/-ar ×sp {f = f} ism = record
-    { jm-pf = λ {C} {h} {h'} pf1 pf2 → ism.mono-pf (×sp.×uq (ass ⊙ pf1 ⊙ assˢ) (ass ⊙ pf2 ⊙ assˢ))
-    }
-    where module ×sp = product-of-not ×sp
-          module ism = is-monic ism
-
-
-  <>monic→isjm/ : {O1 O2 : Obj} {sp/ : span/ O1 O2} (×sp : product-of O1 O2)
-                   {f : || Hom (sp/.O12 sp/) (×of.O12 ×sp) ||}
-                     → ×of.π₁ ×sp ∘ f ~ sp/.a1 sp/ → ×of.π₂ ×sp ∘ f ~ sp/.a2 sp/ → is-monic f
-                       → is-jointly-monic/ sp/
-  <>monic→isjm/ {sp/ = spjm} ×sp {f} tr1 tr2 ism = record
-    { jm-pf = λ {C} {h} {h'} pf1 pf2 → mono-pf (×uq (ass ⊙ ∘e r tr1 ⊙ pf1 ⊙ ∘e r (tr1 ˢ) ⊙ assˢ)
-                                                     (ass ⊙ ∘e r tr2 ⊙ pf2 ⊙ ∘e r (tr2 ˢ) ⊙ assˢ))
-    }
-    where open is-monic ism
-          open product-of-not ×sp
-
-
-  πs-are-jointly-monic/ : (prdsp : bin-product) → is-jointly-monic/ (mkspan/ (prd.π₁ prdsp) (prd.π₂ prdsp))
-  πs-are-jointly-monic/ prdsp = record
-    { jm-pf = ×uq
-    }
-    where open bin-product prdsp    
-
-
-  π/s-are-jointly-monic/ : (pbsq : pb-square) → is-jointly-monic/ (mkspan/ (pbsq.π/₁ pbsq) (pbsq.π/₂ pbsq))
-  π/s-are-jointly-monic/ pbsq = record
-    { jm-pf = ×/uq
-    }
-    where open pb-square pbsq
-
-
-  <π/s>-is-monic : (pbsq : pb-square) (×sp : product-of (pbsq.dl pbsq) (pbsq.ur pbsq))
-                         → is-monic (×of.<_,_> ×sp (pbsq.π/₁ pbsq) (pbsq.π/₂ pbsq))
-  <π/s>-is-monic pbsq ×sp = isjm/→<>monic (π/s-are-jointly-monic/ pbsq) ×sp
-
-
-  π/₁~π/₂→mono : {A B : Obj} {f : || Hom A B ||} (pb : pullback-of f f)
-  --{span : square/cosp f f} → is-pb-square (mksq span)
-                        → pbof.π/₁ pb ~ pbof.π/₂ pb → is-monic f
-  π/₁~π/₂→mono {A} {B} {f} pb pfeq = record
-    { mono-pf = λ {_} {g} {g'} pf → ~proof g                         ~[ ×/tr₁ pf ˢ ] /
-                                            π/₁ ∘ ⟨ g , g' ⟩[ pf ]   ~[ ∘e r pfeq ] /
-                                            π/₂ ∘ ⟨ g , g' ⟩[ pf ]   ~[ ×/tr₂ pf ]∎
-                                            g' ∎
-    }
-    where open pullback-of pb
-
-
-  π//₁~π//₂→jm/ :  {O1 O2 : Obj} {sp : span/ O1 O2} (bwofsp : bow-of sp sp)
-                      → bwof.π//₁ bwofsp ~ bwof.π//₂ bwofsp → is-jointly-monic/ sp
-  π//₁~π//₂→jm/ {sp = sp} bwofsp π//₁~π//₂ = record
-    { jm-pf = λ {_} {h} {h'} pf1 pf2 → 
-            ~proof h                                 ~[ tr₁ pf1 pf2 ˢ ] /
-                   π//₁ ∘ ⟨ h , h' ⟩[ pf1 , pf2 ]     ~[ ∘e r π//₁~π//₂ ] /
-                   π//₂ ∘ ⟨ h , h' ⟩[ pf1 , pf2 ]     ~[ tr₂ pf1 pf2 ]∎
-                   h' ∎
-    }
-    where open bow-of bwofsp
-
-
-  -- same as above but with pb and eql instead
-  jm/-via-pb+eq : {O1 O2 : Obj} {sp : span/ O1 O2} (kpO1 : pullback-of (sp/.a1 sp) (sp/.a1 sp))
-                  (eqlO2 : equaliser-of (sp/.a2 sp ∘ pbof.π/₁ kpO1) (sp/.a2 sp ∘ pbof.π/₂ kpO1))
-                    → pbof.π/₁ kpO1 ∘ eqlof.eqlar eqlO2 ~ pbof.π/₂ kpO1 ∘ eqlof.eqlar eqlO2
-                      → is-jointly-monic/ sp
-  jm/-via-pb+eq {sp = sp} kpO1 eqlO2 pf = record
-    { jm-pf = λ {_} {h} {h'} pf1 pf2 → 
-            ~proof h                                                         ~[ ×/tr₁ pf1 ˢ ⊙ ∘e (eqltr (|eql-pf pf1 pf2) ˢ) r ] /
-                   π/₁ ∘ eqlar ∘ ⟨ h , h' ⟩[ pf1 ] |eql[ |eql-pf pf1 pf2 ]    ~[ ass ⊙ ∘e r pf ⊙ assˢ ] /
-                   π/₂ ∘ eqlar ∘ ⟨ h , h' ⟩[ pf1 ] |eql[ |eql-pf pf1 pf2 ]    ~[ ∘e (eqltr (|eql-pf pf1 pf2)) r ⊙ ×/tr₂ pf1 ]∎
-                   h' ∎
-    }
-    where open span/ sp
-          open equaliser-of eqlO2
-          open pullback-of-not kpO1
-          |eql-pf : {A : Obj} {h h' : || Hom A O12 ||} (pf1 : a1 ∘ h ~ a1 ∘ h')
-                       → a2 ∘ h ~ a2 ∘ h' → (a2 ∘ π/₁) ∘ ⟨ h , h' ⟩[ pf1 ] ~ (a2 ∘ π/₂) ∘ ⟨ h , h' ⟩[ pf1 ]
-          |eql-pf pf1 pf2 = assˢ ⊙ ∘e (×/tr₁ pf1) r ⊙ pf2 ⊙ ∘e (×/tr₂ pf1 ˢ) r ⊙ ass
-
-{-
-  -- the following two terms are pointless: one only needs commutativities, no universal property
-
-  jm/-via-pb+eq-conv : {O1 O2 : Obj} {sp : span/ O1 O2} (kpO1 : pullback-of (sp/.a1 sp) (sp/.a1 sp))
-                       (eqlO2 : equaliser-of (sp/.a2 sp ∘ pbof.π/₁ kpO1) (sp/.a2 sp ∘ pbof.π/₂ kpO1))
-                         → is-jointly-monic/ sp
-                           → pbof.π/₁ kpO1 ∘ eqlof.eqlar eqlO2 ~ pbof.π/₂ kpO1 ∘ eqlof.eqlar eqlO2
-  jm/-via-pb+eq-conv kpO1 eqlO2 isjm = jm-pf (ass ⊙ ∘e r ×/sqpf ⊙ assˢ ) (ass ⊙ eqleq ⊙ assˢ)
-                                     where open equaliser-of eqlO2
-                                           open pullback-of-not kpO1
-                                           open is-jointly-monic/ isjm
-
-
-  jm/-via-wpb+weq-conv : {O1 O2 : Obj} {sp : span/ O1 O2} (wkpO1 : wpullback-of (sp/.a1 sp) (sp/.a1 sp))
-                         (weqlO2 : wequaliser-of (sp/.a2 sp ∘ wpbof.wπ/₁ wkpO1) (sp/.a2 sp ∘ wpbof.wπ/₂ wkpO1))
-                           → is-jointly-monic/ sp
-                             → wpbof.wπ/₁ wkpO1 ∘ weqlof.weqlar weqlO2 ~ wpbof.wπ/₂ wkpO1 ∘ weqlof.weqlar weqlO2
-  jm/-via-wpb+weq-conv wkpO1 weqlO2 isjm = jm-pf (ass ⊙ ∘e r w×/sqpf ⊙ assˢ ) (ass ⊙ weqleq ⊙ assˢ)
-                                         where open wequaliser-of weqlO2
-                                               open wpullback-of wkpO1
-                                               open is-jointly-monic/ isjm
--}
-
-  eqlof-is-monic : {A B : Obj} {f g : || Hom A B ||} (eqlof : equaliser-of f g)
-                            → is-monic (eqlof.eqlar eqlof)
-  eqlof-is-monic eqlof = record { mono-pf = eqluq }
-                       where open equaliser-of eqlof
-
-
-  idiskp→mono : {A B : Obj} {m : || Hom A B ||}
-                 {idkp₁ idkp₂ : || Hom A A ||} {kpeq : m ∘ idkp₁ ~ m ∘ idkp₂}
-                   → is-pb-square (mksq (mksq/ kpeq)) → idkp₁ ~ idar A → idkp₂ ~ idar A
-                     → is-monic m
-  idiskp→mono ispb id1 id2 = π/₁~π/₂→mono (mkpb-of ispb) (id1 ⊙ id2 ˢ)
-  
-
-
-  mono→idiskp : {A B : Obj} {m : || Hom A B ||} → is-monic m
-                   → is-pb-square (mksq (mksq/ (rid {f = m} ⊙ ridˢ {f = m})))
-  mono→idiskp ism = record
-    { ⟨_,_⟩[_] = λ h k pf → h
-    ; ×/tr₁ = λ {_} {h} pf → lid
-    ; ×/tr₂ = λ pf → lidgen (mono-pf pf)
-    ; ×/uq = λ {_} {h} {h'} pf₁ pf₂ → lidˢ ⊙ pf₁ ⊙ lid
-    }
-    where open is-monic ism    
-
-
-  idiskpsp→jm/ : {O1 O2 : Obj} {sp/ : span/ O1 O2}
-                  {kpsp₁ kpsp₂ : || Hom (sp/.O12 sp/) (sp/.O12 sp/) ||}
-                  {sqpf₁ : sp/.a1 sp/ ∘ kpsp₁ ~ sp/.a1 sp/ ∘ kpsp₂} {sqpf₂ : sp/.a2 sp/ ∘ kpsp₁ ~ sp/.a2 sp/ ∘ kpsp₂}
-                        → is-bow sqpf₁ sqpf₂ → kpsp₁ ~ idar (sp/.O12 sp/) → kpsp₂ ~ idar (sp/.O12 sp/)
-                          → is-jointly-monic/ sp/
-  idiskpsp→jm/ {sp/ = sp/} isbw pf₁ pf₂ = π//₁~π//₂→jm/ (record { is-bw = isbw }) (pf₁ ⊙ pf₂ ˢ)
-
-
-  jm/→idiskpsp/ : {O1 O2 : Obj} {sp/ : span/ O1 O2}
-                      → is-jointly-monic/ sp/ → is-bow (ridgen (ridˢ {f = sp/.a1 sp/}))
-                                                         (ridgen (ridˢ {f = sp/.a2 sp/}))
-  jm/→idiskpsp/ {sp/ = sp/} isjm/ = record
-    { ⟨_,_⟩[_,_] = λ f₁ f₂ _ _ → f₁
-    ; tr₁ = λ {f₁} {f₂} _ _ → lid
-    ; tr₂ = λ pf₁ pf₂ → lidgen (jm-pf pf₁ pf₂)
-    ; uq = λ {_} {h} {h'} pf₁ pf₂ → lidˢ ⊙ pf₁ ⊙ lid
-    }
-    where open is-jointly-monic/ isjm/
   
                                     
 
@@ -446,9 +239,9 @@ module epis&monos-basic-props (ℂ : ecategory) where
                      q' ∘ r'₂ ∘ rel      ~[ ∘e (iso-com₂ ˢ) r ⊙ ass ]∎
                      (q' ∘ base) ∘ r₂ ∎
       ar⁻¹-pf : (q ∘ Lo≅.⁻¹) ∘ r'₁ ~ (q ∘ Lo≅.⁻¹) ∘ r'₂
-      ar⁻¹-pf = ~proof (q ∘ Lo≅.⁻¹) ∘ r'₁    ~[ assˢ ⊙ ∘e (invIsNat Hi≅.isisopair Lo≅.isisopair iso-com₁) r ] /
+      ar⁻¹-pf = ~proof (q ∘ Lo≅.⁻¹) ∘ r'₁    ~[ assˢ ⊙ ∘e (iso-sq Hi≅.isisopair Lo≅.isisopair iso-com₁) r ] /
                        q ∘ r₁ ∘ Hi≅.⁻¹       ~[ ass ⊙ ∘e r q.eq ⊙ assˢ ] /
-                       q ∘ r₂ ∘ Hi≅.⁻¹       ~[ ∘e (invIsNat Hi≅.isisopair Lo≅.isisopair iso-com₂ ˢ) r ⊙ ass ]∎
+                       q ∘ r₂ ∘ Hi≅.⁻¹       ~[ ∘e (iso-sq Hi≅.isisopair Lo≅.isisopair iso-com₂ ˢ) r ⊙ ass ]∎
                        (q ∘ Lo≅.⁻¹) ∘ r'₂ ∎
       ar : || Hom Q Q' ||
       ar = q.univ (q' ∘ base) ar-pf
@@ -559,18 +352,6 @@ module epis&monos-basic-props (ℂ : ecategory) where
     where open is-cover a13-cov
           open comm-triang tr
 
-  cover-is-epi : has-equalisers ℂ → {A B : Obj} → {cov : || Hom A B ||} → is-cover cov → is-epic cov
-  cover-is-epi hasEql {A} {B} {cov} is-cov = record
-    { epi-pf = λ pf → ridggˢ r (idcod (eqlar-is-iso pf)) ⊙ ass ⊙ ∘e r eqleq ⊙ assˢ
-                       ⊙ ridgg r (idcod (eqlar-is-iso pf)) 
-    }
-    where open is-cover is-cov
-          open has-equalisers hasEql
-          open is-iso
-          eqlar-is-iso : {C : Obj} {g g' : || Hom B C ||}
-                           → g ∘ cov ~ g' ∘ cov → is-iso (eqlar {f = g} {g'})
-          eqlar-is-iso pf = cov-pf (eqltr pf) (record { mono-pf = eqluq })
-
 
   strong-epi-is-cover : {A B : Obj} {f : || Hom A B ||} → is-strong-epi f → is-cover f
   strong-epi-is-cover {A} {B} {f} strepi = record
@@ -585,10 +366,6 @@ module epis&monos-basic-props (ℂ : ecategory) where
     }
     where open is-strong-epi strepi
           open is-monic
-
-
-  strong-epi-is-epi : has-equalisers ℂ → {A B : Obj} → {f : || Hom A B ||} → is-strong-epi f → is-epic f
-  strong-epi-is-epi hasEql fstr = cover-is-epi hasEql (strong-epi-is-cover fstr)
 
 
   repi-is-reg-cov : {A B : Obj} {f : || Hom A B ||} → is-regular-epi f → reg-cover-of B
@@ -758,4 +535,236 @@ module epis&monos-basic-props (ℂ : ecategory) where
                                      q ∘ r'₂          ~[ ∘e (tr2 ˢ) r ⊙ ass ]∎
                                      (q ∘ r₂) ∘ e ∎)
 
--- end epis&monos-basic-props
+-- end epi&mono-props-basic
+
+
+
+
+-- Some properties of monos and {regular,strong,extremal,...} epis involving defs of limits
+
+module epi&mono-props-lim-defs (ℂ : ecategory) where
+  open ecategory-aux ℂ
+  open arrows-defs ℂ
+  open iso-props ℂ
+  --open iso-transports ℂ
+  open epi&mono-props-basic ℂ
+  open binary-products ℂ
+  open wequaliser-defs ℂ
+  open equaliser-defs ℂ
+  open wpullback-squares ℂ
+  open pullback-squares ℂ
+  open bow-defs ℂ
+  private
+    module sp/ = span/
+    module sp = span
+    module sq/ = square/cosp
+    module sq = comm-square
+    module pbof = pullback-of
+    module pbsq = pb-square
+    module ×of = product-of
+    module prd = bin-product
+    module eqlof = equaliser-of
+    module weqlof = wequaliser-of
+    module wpbof = wpullback-of
+    module bwof = bow-of
+
+
+  -------------------------------
+  -- (jointly) monics and limits
+  -------------------------------
+  
+  pbof-mono-is-mono : {A B C : Obj} {m : || Hom A B ||} {f : || Hom C B ||} (pbof : pullback-of f m)
+                      → is-monic m → is-monic (pbof.π/₁ pbof)
+  pbof-mono-is-mono pbof pfm = record
+    { mono-pf = λ {D} {g} {g'} pfc → ×/uq pfc (mono-pf (ass ⊙ ∘e r (×/sqpf ˢ) ⊙ assˢ
+                                                         ⊙ ∘e pfc r ⊙ ass ⊙ ∘e r ×/sqpf ⊙ assˢ))
+    }
+    where open pullback-of pbof
+          open is-monic pfm
+  
+  -- limit projections are (jointly) monic
+  
+  eqlof-is-monic : {A B : Obj} {f g : || Hom A B ||} (eqlof : equaliser-of f g)
+                            → is-monic (eqlof.eqlar eqlof)
+  eqlof-is-monic eqlof = record { mono-pf = eqluq }
+                       where open equaliser-of eqlof
+
+  πs-are-jointly-monic/ : (prdsp : bin-product) → is-jointly-monic/ (mkspan/ (prd.π₁ prdsp) (prd.π₂ prdsp))
+  πs-are-jointly-monic/ prdsp = record
+    { jm-pf = ×uq
+    }
+    where open bin-product prdsp    
+
+
+  π/s-are-jointly-monic/ : (pbsq : pb-square) → is-jointly-monic/ (mkspan/ (pbsq.π/₁ pbsq) (pbsq.π/₂ pbsq))
+  π/s-are-jointly-monic/ pbsq = record
+    { jm-pf = ×/uq
+    }
+    where open pb-square pbsq
+
+
+  -- If limit projections are equal, then (jointly) monic
+  
+  π/₁~π/₂→mono : {A B : Obj} {f : || Hom A B ||} (pb : pullback-of f f)
+  --{span : square/cosp f f} → is-pb-square (mksq span)
+                        → pbof.π/₁ pb ~ pbof.π/₂ pb → is-monic f
+  π/₁~π/₂→mono {A} {B} {f} pb pfeq = record
+    { mono-pf = λ {_} {g} {g'} pf → ~proof g                         ~[ ×/tr₁ pf ˢ ] /
+                                            π/₁ ∘ ⟨ g , g' ⟩[ pf ]   ~[ ∘e r pfeq ] /
+                                            π/₂ ∘ ⟨ g , g' ⟩[ pf ]   ~[ ×/tr₂ pf ]∎
+                                            g' ∎
+    }
+    where open pullback-of pb
+
+
+  π//₁~π//₂→jm/ :  {O1 O2 : Obj} {sp : span/ O1 O2} (bwofsp : bow-of sp sp)
+                      → bwof.π//₁ bwofsp ~ bwof.π//₂ bwofsp → is-jointly-monic/ sp
+  π//₁~π//₂→jm/ {sp = sp} bwofsp π//₁~π//₂ = record
+    { jm-pf = λ {_} {h} {h'} pf1 pf2 → 
+            ~proof h                                 ~[ tr₁ pf1 pf2 ˢ ] /
+                   π//₁ ∘ ⟨ h , h' ⟩[ pf1 , pf2 ]     ~[ ∘e r π//₁~π//₂ ] /
+                   π//₂ ∘ ⟨ h , h' ⟩[ pf1 , pf2 ]     ~[ tr₂ pf1 pf2 ]∎
+                   h' ∎
+    }
+    where open bow-of bwofsp
+
+  -- same as above but with pb and eql instead
+  jm/-via-pb+eq : {O1 O2 : Obj} {sp : span/ O1 O2} (kpO1 : pullback-of (sp/.a1 sp) (sp/.a1 sp))
+                  (eqlO2 : equaliser-of (sp/.a2 sp ∘ pbof.π/₁ kpO1) (sp/.a2 sp ∘ pbof.π/₂ kpO1))
+                    → pbof.π/₁ kpO1 ∘ eqlof.eqlar eqlO2 ~ pbof.π/₂ kpO1 ∘ eqlof.eqlar eqlO2
+                      → is-jointly-monic/ sp
+  jm/-via-pb+eq {sp = sp} kpO1 eqlO2 pf = record
+    { jm-pf = λ {_} {h} {h'} pf1 pf2 → 
+            ~proof h                                                         ~[ ×/tr₁ pf1 ˢ ⊙ ∘e (eqltr (|eql-pf pf1 pf2) ˢ) r ] /
+                   π/₁ ∘ eqlar ∘ ⟨ h , h' ⟩[ pf1 ] |eql[ |eql-pf pf1 pf2 ]    ~[ ass ⊙ ∘e r pf ⊙ assˢ ] /
+                   π/₂ ∘ eqlar ∘ ⟨ h , h' ⟩[ pf1 ] |eql[ |eql-pf pf1 pf2 ]    ~[ ∘e (eqltr (|eql-pf pf1 pf2)) r ⊙ ×/tr₂ pf1 ]∎
+                   h' ∎
+    }
+    where open span/ sp
+          open equaliser-of eqlO2
+          open pullback-of-not kpO1
+          |eql-pf : {A : Obj} {h h' : || Hom A O12 ||} (pf1 : a1 ∘ h ~ a1 ∘ h')
+                       → a2 ∘ h ~ a2 ∘ h' → (a2 ∘ π/₁) ∘ ⟨ h , h' ⟩[ pf1 ] ~ (a2 ∘ π/₂) ∘ ⟨ h , h' ⟩[ pf1 ]
+          |eql-pf pf1 pf2 = assˢ ⊙ ∘e (×/tr₁ pf1) r ⊙ pf2 ⊙ ∘e (×/tr₂ pf1 ˢ) r ⊙ ass
+
+  -- identities are limit projections of monics
+  
+  idiskp→mono : {A B : Obj} {m : || Hom A B ||}
+                 {idkp₁ idkp₂ : || Hom A A ||} {kpeq : m ∘ idkp₁ ~ m ∘ idkp₂}
+                   → is-pb-square (mksq (mksq/ kpeq)) → idkp₁ ~ idar A → idkp₂ ~ idar A
+                     → is-monic m
+  idiskp→mono ispb id1 id2 = π/₁~π/₂→mono (mkpb-of ispb) (id1 ⊙ id2 ˢ)
+  
+
+  mono→idiskp : {A B : Obj} {m : || Hom A B ||} → is-monic m
+                   → is-pb-square (mksq (mksq/ (rid {f = m} ⊙ ridˢ {f = m})))
+  mono→idiskp ism = record
+    { ⟨_,_⟩[_] = λ h k pf → h
+    ; ×/tr₁ = λ {_} {h} pf → lid
+    ; ×/tr₂ = λ pf → lidgen (mono-pf pf)
+    ; ×/uq = λ {_} {h} {h'} pf₁ pf₂ → lidˢ ⊙ pf₁ ⊙ lid
+    }
+    where open is-monic ism    
+
+
+  idiskpsp→jm/ : {O1 O2 : Obj} {sp/ : span/ O1 O2}
+                  {kpsp₁ kpsp₂ : || Hom (sp/.O12 sp/) (sp/.O12 sp/) ||}
+                  {sqpf₁ : sp/.a1 sp/ ∘ kpsp₁ ~ sp/.a1 sp/ ∘ kpsp₂} {sqpf₂ : sp/.a2 sp/ ∘ kpsp₁ ~ sp/.a2 sp/ ∘ kpsp₂}
+                        → is-bow sqpf₁ sqpf₂ → kpsp₁ ~ idar (sp/.O12 sp/) → kpsp₂ ~ idar (sp/.O12 sp/)
+                          → is-jointly-monic/ sp/
+  idiskpsp→jm/ {sp/ = sp/} isbw pf₁ pf₂ = π//₁~π//₂→jm/ (record { is-bw = isbw }) (pf₁ ⊙ pf₂ ˢ)
+
+
+  jm/→idiskpsp/ : {O1 O2 : Obj} {sp/ : span/ O1 O2}
+                      → is-jointly-monic/ sp/ → is-bow (ridgen (ridˢ {f = sp/.a1 sp/}))
+                                                         (ridgen (ridˢ {f = sp/.a2 sp/}))
+  jm/→idiskpsp/ {sp/ = sp/} isjm/ = record
+    { ⟨_,_⟩[_,_] = λ f₁ f₂ _ _ → f₁
+    ; tr₁ = λ {f₁} {f₂} _ _ → lid
+    ; tr₂ = λ pf₁ pf₂ → lidgen (jm-pf pf₁ pf₂)
+    ; uq = λ {_} {h} {h'} pf₁ pf₂ → lidˢ ⊙ pf₁ ⊙ lid
+    }
+    where open is-jointly-monic/ isjm/
+
+ -- jointly monic spans and products
+    
+  isjm/→<>monic : {O1 O2 : Obj} {jmsp : span/ O1 O2} (isjm/ : is-jointly-monic/ jmsp) (×sp : product-of O1 O2)
+                      → is-monic (×of.<_,_> ×sp (sp/.a1 jmsp) (sp/.a2 jmsp))
+  isjm/→<>monic {jmsp = jmsp} isjm ×sp = record
+    { mono-pf = λ {A} {g} {g'} pf<> → jm-pf (~proof jm.a1 ∘ g                     ~[ ∘e r (×tr₁ˢ {g = jm.a2}) ⊙ assˢ ] /
+                                                     π₁ ∘ < jm.a1 , jm.a2 > ∘ g    ~[ ∘e pf<> r ] /
+                                                     π₁ ∘ < jm.a1 , jm.a2 > ∘ g'   ~[ ass ⊙ ∘e r ×tr₁ ]∎
+                                                     jm.a1 ∘ g' ∎)
+                                             (~proof jm.a2 ∘ g                     ~[ ∘e r (×tr₂ˢ {f = jm.a1}) ⊙ assˢ ] /
+                                                     π₂ ∘ < jm.a1 , jm.a2 > ∘ g    ~[ ∘e pf<> r ] /
+                                                     π₂ ∘ < jm.a1 , jm.a2 > ∘ g'   ~[ ass ⊙ ∘e r ×tr₂ ]∎
+                                                     jm.a2 ∘ g' ∎)
+    }
+    where open is-jointly-monic/ isjm
+          open product-of-not ×sp
+          module jm = span/ jmsp
+    
+
+  <>monic→isjm/-sp : {O1 O2 : Obj} {sp/ : span/ O1 O2} (×sp : product-of O1 O2)
+                         → is-monic (×of.<_,_> ×sp (sp/.a1 sp/) (sp/.a2 sp/)) → is-jointly-monic/ sp/
+  <>monic→isjm/-sp {sp/ = spjm} ×sp ism = record
+    { jm-pf = λ {C} {h} {h'} pf1 pf2 → mono-pf (<>ar~<> pf1 pf2 ⊙ <>distˢ h')
+    }
+    where open is-monic ism
+          open product-of-not ×sp
+
+
+  <>monic→isjm/-ar : {O1 O2 : Obj} (×sp : product-of O1 O2)
+                      {A : Obj} {f : || Hom A (×of.O12 ×sp) ||}
+                         → is-monic f → is-jointly-monic/ (mkspan/ (×of.π₁ ×sp ∘ f) (×of.π₂ ×sp ∘ f))
+  <>monic→isjm/-ar ×sp {f = f} ism = record
+    { jm-pf = λ {C} {h} {h'} pf1 pf2 → ism.mono-pf (×sp.×uq (ass ⊙ pf1 ⊙ assˢ) (ass ⊙ pf2 ⊙ assˢ))
+    }
+    where module ×sp = product-of-not ×sp
+          module ism = is-monic ism
+
+
+  <>monic→isjm/ : {O1 O2 : Obj} {sp/ : span/ O1 O2} (×sp : product-of O1 O2)
+                   {f : || Hom (sp/.O12 sp/) (×of.O12 ×sp) ||}
+                     → ×of.π₁ ×sp ∘ f ~ sp/.a1 sp/ → ×of.π₂ ×sp ∘ f ~ sp/.a2 sp/ → is-monic f
+                       → is-jointly-monic/ sp/
+  <>monic→isjm/ {sp/ = spjm} ×sp {f} tr1 tr2 ism = record
+    { jm-pf = λ {C} {h} {h'} pf1 pf2 → mono-pf (×uq (ass ⊙ ∘e r tr1 ⊙ pf1 ⊙ ∘e r (tr1 ˢ) ⊙ assˢ)
+                                                     (ass ⊙ ∘e r tr2 ⊙ pf2 ⊙ ∘e r (tr2 ˢ) ⊙ assˢ))
+    }
+    where open is-monic ism
+          open product-of-not ×sp
+
+
+  <π/s>-is-monic : (pbsq : pb-square) (×sp : product-of (pbsq.dl pbsq) (pbsq.ur pbsq))
+                         → is-monic (×of.<_,_> ×sp (pbsq.π/₁ pbsq) (pbsq.π/₂ pbsq))
+  <π/s>-is-monic pbsq ×sp = isjm/→<>monic (π/s-are-jointly-monic/ pbsq) ×sp
+
+
+
+  -------------------------
+  -- When ℂ has some limit
+  -------------------------
+
+  cover-is-epi : (haseql : has-equalisers ℂ){A B : Obj}{cov : || Hom A B ||}
+                         → is-cover cov → is-epic cov
+  cover-is-epi haseql {A} {B} {cov} is-cov = record
+    { epi-pf = λ pf → ridggˢ r (idcod (eqlar-is-iso pf)) ⊙ ass ⊙ ∘e r eqleq ⊙ assˢ
+                       ⊙ ridgg r (idcod (eqlar-is-iso pf)) 
+    }
+    where open is-cover is-cov
+          open has-equalisers haseql
+          open is-iso
+          eqlar-is-iso : {C : Obj} {g g' : || Hom B C ||}
+                           → g ∘ cov ~ g' ∘ cov → is-iso (eqlar {f = g} {g'})
+          eqlar-is-iso pf = cov-pf (eqltr pf) (record { mono-pf = eqluq })
+
+  strong-epi-is-epi : has-equalisers ℂ → {A B : Obj} → {f : || Hom A B ||} → is-strong-epi f → is-epic f
+  strong-epi-is-epi hasEql fstr = cover-is-epi hasEql (strong-epi-is-cover fstr)
+
+-- end epi&mono-props-lim-defs
+
+
+module epi&mono-props (ℂ : ecategory) where
+  open epi&mono-props-basic ℂ public
+  open epi&mono-props-lim-defs ℂ public

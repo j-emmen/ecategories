@@ -9,6 +9,7 @@ open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.isomorphism
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 
 
 

@@ -1,18 +1,11 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.functors.props.left-covering where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-defs.eqv-rel
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.all
+open import ecats.arrows
+open import ecats.reg&ex
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
@@ -30,8 +23,8 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
     module ℂ where
       open ecategory ℂ public
       open comm-shapes ℂ public
-      open epis&monos-defs ℂ public
-      open epis&monos-props ℂ public
+      open epi&mono-d&p ℂ public
+      --open epis&monos-props ℂ public
       open finite-limits-d&p ℂ public
       open finite-weak-limits-d&p ℂ public
       open limits→weak-limits ℂ public
@@ -39,9 +32,8 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
     module 𝔼 where
       open ecategory 𝔼 public
       open comm-shapes 𝔼 public
-      open iso-defs 𝔼 public
-      open epis&monos-defs 𝔼 public
-      open epis&monos-props 𝔼 public
+      open iso-d&p 𝔼 public
+      open epi&mono-d&p 𝔼 public
       open finite-limits-d&p 𝔼 public
       open finite-weak-limits-d&p 𝔼 public
       open limits→weak-limits 𝔼 public
@@ -643,7 +635,7 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
         where open ecategory-aux-only 𝔼
       covprd-iso : 𝔼.is-iso covprd
       covprd-iso = cov-pf (𝔼.ridax covprd) covprd-mono
-                 where open epis&monos-props 𝔼
+                 where open epi&mono-props-all 𝔼
                        open 𝔼.is-cover (repi-is-cover covprd-repi)
 
       covtrm-kp : 𝔼.pullback-of covtrm covtrm

@@ -1,24 +1,23 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-props.image-fact where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
+open import ecats.basic-defs.arrows
+open import ecats.basic-defs.image-fact
+open import ecats.basic-props.isomorphism
+open import ecats.basic-props.epi&mono-basic
 open import ecats.finite-limits.all
 
-
--- Some properties of monos and {regular,strong,extremal,...} epis
 
 module image-fact-props (ℂ : ecategory) where
   open ecategory-aux ℂ
   open arrows-defs ℂ
+  open iso-props ℂ
   open iso-transports ℂ
+  open epi&mono-props ℂ
+  open image-fact-defs ℂ
   open binary-products ℂ
   open wequaliser-defs ℂ
   open equaliser-defs ℂ
@@ -27,7 +26,6 @@ module image-fact-props (ℂ : ecategory) where
   open pullback-props ℂ
   open bow-defs ℂ
   open wWlim-defs ℂ
-  open epis&monos-props ℂ
   private
     module sp = span/
     --module sp = span
@@ -44,7 +42,7 @@ module image-fact-props (ℂ : ecategory) where
     module imgof = img-fact-of
 
 
-  -- Any image fact is isomorphic to the given one
+  -- Image factorisations of the same arrow are isomorphic
   
   module img-uptoiso {A B : Obj} {f : || Hom A B ||} (imgf imgf' : img-fact-of f)
                      where

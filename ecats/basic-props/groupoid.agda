@@ -7,6 +7,7 @@ open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.isomorphism
 open import ecats.basic-defs.opposite
 open import ecats.basic-defs.groupoid
+open import ecats.basic-props.isomorphism
 open import ecats.functors.defs.id-on-objs
 
 
@@ -14,7 +15,7 @@ module groupoids-are-self-dual {𝔾 : ecategory}(isgpd : is-groupoid 𝔾) wher
   module 𝔾 where
     open ecategory-aux 𝔾 public
     open is-groupoid isgpd public
-    open iso-defs 𝔾 public
+    open isos 𝔾 public
   module 𝔾ᵒ where
     open ecategory (𝔾 ᵒᵖ) using (isecat; _∘_) public
 

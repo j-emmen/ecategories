@@ -1,14 +1,10 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.functors.defs.projective-cover where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
+open import ecats.basic-defs.epi&mono
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
 
@@ -16,7 +12,7 @@ open import ecats.functors.defs.basic-defs
 
 module projective-defs (ℂ : ecategory) where
   open ecategory ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
 
   record is-reg-projective (X : Obj) : Set₁ where
     --open ecategory-aux-only ℂ
@@ -47,7 +43,7 @@ private
   module prj-aux (𝕏 : ecategory) where
     open ecategory 𝕏 public
     open projective-defs 𝕏 public
-    open epis&monos-defs 𝕏 public
+    open epi&mono-defs 𝕏 public
 record is-projective-cover {ℂ ℙ : ecategory} (PC : efunctor ℙ ℂ) : Set₁ where
   private
     module ℂ = prj-aux ℂ

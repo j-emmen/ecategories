@@ -1,19 +1,11 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.functors.props.projective-cover where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-defs.eqv-rel
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.exact-ecat
-open import ecats.basic-props.all
+open import ecats.arrows
+open import ecats.reg&ex
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
@@ -34,8 +26,8 @@ module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
     module ℙ where
       open ecategory ℙ public
       open comm-shapes ℙ public
-      open epis&monos-defs ℙ public
-      open epis&monos-props ℙ public
+      open epi&mono-d&p ℙ public
+      --open epis&monos-props ℙ public
       open kernel-pairs-defs ℙ public
       open finite-limits-d&p ℙ public
       open finite-weak-limits-d&p ℙ public
@@ -45,8 +37,8 @@ module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
       open ecategory ℂ public
       open comm-shapes ℂ public
       open iso-defs ℂ public
-      open epis&monos-defs ℂ public
-      open epis&monos-props ℂ public
+      open epi&mono-d&p ℂ public
+      --open epis&monos-props ℂ public
       open kernel-pairs-defs ℂ public
       open eq-rel-defs ℂ public
       open finite-limits-d&p ℂ public
@@ -297,8 +289,7 @@ module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : i
     module ℙ where
       open ecategory ℙ public
       open comm-shapes ℙ public
-      open epis&monos-defs ℙ public
-      open epis&monos-props ℙ public
+      open epi&mono-d&p ℙ public
       open kernel-pairs-defs ℙ public
       open pseudo-eq-rel-defs ℙ public
       open finite-limits-d&p ℙ public
@@ -308,8 +299,7 @@ module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : i
       open ecategory 𝔼 public
       open comm-shapes 𝔼 public
       open iso-defs 𝔼 public
-      open epis&monos-defs 𝔼 public
-      open epis&monos-props 𝔼 public
+      open epi&mono-d&p 𝔼 public
       open kernel-pairs-defs 𝔼 public
       open eq-rel-defs 𝔼 public
       open finite-limits-d&p 𝔼 public
@@ -492,6 +482,10 @@ pjcov-of-ex-is-lcov : {𝔼 : ecategory} (𝔼isex : is-exact 𝔼) {ℙ : ecate
                       → is-left-covering PC
 pjcov-of-ex-is-lcov 𝔼isex ispjcov = pjcov-of-reg-is-lcov 𝔼isreg ispjcov
                                    where open exact-cat-d&p 𝔼isex using () renaming (is-reg to 𝔼isreg)
+
+
+
+
 
 
 --   -- Peq in ℙ from quasi-exact seq in 𝔼

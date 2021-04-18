@@ -8,7 +8,7 @@
 module ecats.functors.defs.preserving-functor where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
+open import ecats.basic-defs.arrows
 open import ecats.basic-props.epi&mono
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
@@ -83,7 +83,7 @@ record preserves-fin-limits {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set
 private
   module pre-macros (𝕏 : ecategory) where
     open ecategory 𝕏 public
-    open epis&monos-defs 𝕏 public
+    open epi&mono-defs 𝕏 public
 
 record preserves-regular-epis {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private
@@ -100,7 +100,7 @@ private
   module pjm-macros (𝕏 : ecategory) where
     open ecategory 𝕏 public
     open comm-shapes 𝕏 public
-    open epis&monos-defs 𝕏 public
+    open epi&mono-defs 𝕏 public
     
 record preserves-jointly-monic/ {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private
@@ -121,8 +121,8 @@ private
     open ecategory 𝕏 public
     open kernel-pairs-defs 𝕏 public
     open pullback-squares 𝕏 public
-    open epis&monos-defs 𝕏 public
-    open epis&monos-props 𝕏 public
+    open epi&mono-defs 𝕏 public
+    open epi&mono-props-all 𝕏 public
     
 record is-exact-functor {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private

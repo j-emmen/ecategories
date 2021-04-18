@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.functors.props.exact-functor where
 
@@ -14,10 +10,12 @@ open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.kernel-pair
 open import ecats.basic-defs.eqv-rel
 open import ecats.basic-defs.epi&mono
-open import ecats.basic-defs.image-fact
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.all
+open import ecats.reg&ex
+--open import ecats.basic-defs.regular-ecat
+--open import ecats.basic-defs.exact-ecat
+open import ecats.basic-props.epi&mono-basic
+open import ecats.basic-props.epi&mono
+--open import ecats.basic-props.image-fact
 open import ecats.finite-limits.d&n-bin-product
 open import ecats.finite-limits.d&n-pullback
 open import ecats.finite-limits.defs.pullback-is-weak
@@ -37,12 +35,12 @@ module exact-functor-props {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻} (regC 
   private
     module ℂ where
       open ecategory ℂ public
-      open epis&monos-defs ℂ public
+      open epi&mono-defs ℂ public
       open image-fact-defs ℂ public
       open kernel-pairs-defs ℂ public
       open pseudo-eq-rel-defs ℂ public
       open eq-rel-defs ℂ public
-      open epis&monos-props ℂ public
+      open epi&mono-props-all ℂ public
       open image-fact-props ℂ public
       open binary-products ℂ public
       open pullback-squares ℂ public
@@ -54,10 +52,10 @@ module exact-functor-props {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻} (regC 
       open ℂ.has-pb→ker-are-eqr haspb public
     module 𝔻 where
       open ecategory 𝔻 public
-      open epis&monos-defs 𝔻 public
+      open epi&mono-defs 𝔻 public
+      open epi&mono-props 𝔻 public
       open kernel-pairs-defs 𝔻 public
       open eq-rel-defs 𝔻 public
-      open epis&monos-props 𝔻 public
       --open finite-limits-d&p 𝔻 public
     module r𝔻 where
       open is-regular regD public
@@ -85,7 +83,7 @@ module exact-functor-props {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻} (regC 
           kp-is-exC = record { iscoeq = ℂ.repi-is-coeq-of-ker-pair repiC kpf
                              ; iskerpair = kpf.×/ispbsq
                              }
-                             where open ℂ.epis&monos-pullbacks rℂ.haspb
+                             where open ℂ.epi&mono-pullbacks rℂ.haspb
           module Fexsq = 𝔻.is-exact-seq (exF.pres-ex-seq-pf kp-is-exC)
 
 

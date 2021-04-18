@@ -19,7 +19,7 @@ open import ecats.finite-limits.defs&not
 module weak-pullback-props (ℂ : ecategory) where
   open ecategory-aux ℂ
   open iso-defs ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
   open comm-shapes ℂ
   open binary-wproducts ℂ
   open binary-products ℂ

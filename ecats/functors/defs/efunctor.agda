@@ -14,7 +14,8 @@ module efunctor-defs (ℂ 𝔻 : ecategory) where
     module 𝔻 = ecategory 𝔻
 
   record is-functorial {FO : ℂ.Obj → 𝔻.Obj}
-                       (FH : {A B : ℂ.Obj} → || ℂ.Hom A B || → || 𝔻.Hom (FO A) (FO B) ||) : Set₁
+                       (FH : {A B : ℂ.Obj} → || ℂ.Hom A B || → || 𝔻.Hom (FO A) (FO B) ||)
+                       : Set₁
                        where
     field
       ext : {A B : ℂ.Obj} {f f' : || ℂ.Hom A B ||}
@@ -33,8 +34,8 @@ record efunctor (ℂ 𝔻 : ecategory) : Set₁ where
     module 𝔻 = ecategory 𝔻
   field
     FObj : ℂ.Obj → 𝔻.Obj
-    FHom : {A B : ℂ.Obj}
-              → || ℂ.Hom A B || → || 𝔻.Hom (FObj A) (FObj B) ||
+    FHom : {A B : ℂ.Obj} → || ℂ.Hom A B ||
+              → || 𝔻.Hom (FObj A) (FObj B) ||
     isF : is-functorial FHom
   open is-functorial isF public
   ₒ : ℂ.Obj → 𝔻.Obj

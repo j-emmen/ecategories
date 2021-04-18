@@ -19,8 +19,8 @@ open import ecats.finite-limits.defs&not
 module relations-among-limit-diagrams (ℂ : ecategory) where
   open ecategory-aux ℂ
   open comm-shapes ℂ
-  open epis&monos-defs ℂ
-  open epis&monos-basic-props ℂ
+  open epi&mono-defs ℂ
+  open epi&mono-props ℂ
   open finite-limits ℂ
   private
     module sp = span/

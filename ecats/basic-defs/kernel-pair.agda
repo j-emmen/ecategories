@@ -138,7 +138,7 @@ module weak-kernel-pairs-defs (ℂ : ecategory) where
 
 module kernel-pairs-defs (ℂ : ecategory) where
   open ecategory-aux ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
   open comm-shapes ℂ
   open pullback-squares ℂ
   open bow-defs ℂ

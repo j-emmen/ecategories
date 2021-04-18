@@ -1,15 +1,12 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.functors.props.basic-props where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.all
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.epi&mono-basic
+open import ecats.basic-props.isomorphism
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
@@ -24,6 +21,7 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     module macros (𝕏 : ecategory) where
         open ecategory-aux 𝕏 public
         open arrows-defs 𝕏 public
+        open iso-props 𝕏 public
         open finite-limits 𝕏 public
         open finite-weak-limits 𝕏 public
     module ℂ = macros ℂ
@@ -55,7 +53,7 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     { trmuniv-is-repi = λ {X} wtrm {T}  trm cov! → split-epi-is-repi (med!-sepi wtrm trm cov!)
     }
     where open preserves-terminal pres!
-          open epis&monos-props 𝔻
+          open epi&mono-props 𝔻
           med!-sepi : {X : ℂ.Obj} {T : 𝔻.Obj} → ℂ.is-wterminal X → 𝔻.is-terminal T → (cov! : || 𝔻.Hom (F.ₒ X) T ||)
                         → 𝔻.is-split-epi cov!
           med!-sepi {X} {T} wtrm trm cov! = record
@@ -75,7 +73,7 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     { prduniv-is-repi = λ wprdof prdof tr₁ tr₂ → split-epi-is-repi (covprd-sepi wprdof prdof tr₁ tr₂)
     }
     where open preserves-bin-products pres×
-          open epis&monos-props 𝔻
+          open epi&mono-props 𝔻
           open bin-product-props 𝔻
           open product-is-unique-uptoiso
           module ×of = 𝔻.product-of
@@ -214,7 +212,7 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
 
     σ⁻¹nat : natural-transformation IdF (F ○ invF)
     σ⁻¹nat = record { fnc = λ {Y} → σ.⁻¹ Y
-                    ;  nat = λ {Y} {Y'} g → 𝔻.invIsNat (σ.isisopair Y) (σ.isisopair Y') (nat g)
+                    ;  nat = λ {Y} {Y'} g → 𝔻.iso-sq (σ.isisopair Y) (σ.isisopair Y') (nat g)
                     }
                    where open natural-transformation σnat
 
@@ -235,7 +233,7 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
 
     τ⁻¹nat : natural-transformation IdF (invF ○ F)
     τ⁻¹nat = record { fnc = λ {X} → τ⁻¹ X
-                    ; nat = λ {X} {X'} f → ℂ.invIsNat (τ-isopair X) (τ-isopair X') (nat f)
+                    ; nat = λ {X} {X'} f → ℂ.iso-sq (τ-isopair X) (τ-isopair X') (nat f)
                     }
                     where open natural-transformation τnat
 
@@ -257,7 +255,6 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
                             }
                     }
       }
-
   -- end eeqv-is-eqv
 -- end efunctor-props
 

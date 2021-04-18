@@ -25,18 +25,19 @@ infix 3 ||_||
 ||_|| : setoid → Set
 ||_|| X = ||_||std X
 -}
-
-TypeHom : (X Y : Set) → setoid
-TypeHom X Y = record
-  { object = X → Y
-  ; _∼_ = λ f f' → (x : X) → f x == f' x
-  ; istteqrel = record
-    { refl = λ f x → =rf
-    ; sym = λ p x → =sym (p x)
-    ; tra = λ p q x → =tra (p x) (q x)
+module Type-defs where
+  TypeHom : (X Y : Set) → setoid
+  TypeHom X Y = record
+    { object = X → Y
+    ; _∼_ = λ f f' → (x : X) → f x == f' x
+    ; istteqrel = record
+      { refl = λ f x → =rf
+      ; sym = λ p x → =sym (p x)
+      ; tra = λ p q x → =tra (p x) (q x)
+      }
     }
-  }
-                       
+-- end Type-defs
+
 Type : ecategory
 Type = record
          { Obj = Set
@@ -50,83 +51,83 @@ Type = record
                   ; assoc = λ f g h x → =rf
                   }
          }
+         where open Type-defs
 
+private
+  module Type where
+    open ecategory Type public
 open ecategory-aux Type
 open comm-shapes Type
 open iso-defs Type
-open epis&monos-defs Type
-
+open epi&mono-defs Type
 
 
 -- Type is quasi-cartesian
 
-trm-Ty : has-terminal Type
-trm-Ty = record
-  { trmOb = N₁
-  ; istrm = record
-          { ! =  λ _ _ → 0₁
-          ; !uniq = λ f x →  contr= (N₁-isContr) (f x)
-          }
-  }
+module Type-quasi-cartesian where
 
-open surjective-defs {Type} trm-Ty
+  trm-Ty : has-terminal Type
+  trm-Ty = record
+    { trmOb = N₁
+    ; istrm = record
+            { ! =  λ _ _ → 0₁
+            ; !uniq = λ f x →  contr= (N₁-isContr) (f x)
+            }
+    }
 
+  prd-Ty : has-bin-products Type
+  prd-Ty = record
+    { prd-of = λ A B → record
+      { ×sp/ = mkspan/ prj1 prj2
+      ; ×isprd = record
+               { <_,_> = λ f g x → pair (f x) (g x)
+               ; ×tr₁ = r
+               ; ×tr₂ = r
+               ; ×uq =  λ {_} {h} {h'} pf₁ pf₂ x →
+                         =proof h x                               ==[ prdη⁻¹ (h x) ] /
+                                pair (prj1 (h x)) (prj2 (h x))    ==[ =prdchar (pf₁ x) (pf₂ x) ] /
+                                pair (prj1 (h' x)) (prj2 (h' x))  ==[ prdη (h' x) ]∎
+                                h' x                              ∎
+               }
+      }
+    }
 
-prd-Ty : has-bin-products Type
-prd-Ty = record
-  { prd-of = λ A B → record
-    { ×sp/ = mkspan/ prj1 prj2
-    ; ×isprd = record
-             { <_,_> = λ f g x → pair (f x) (g x)
-             ; ×tr₁ = r
-             ; ×tr₂ = r
-             ; ×uq =  λ {_} {h} {h'} pf₁ pf₂ x →
-                       =proof h x                               ==[ prdη⁻¹ (h x) ] /
-                              pair (prj1 (h x)) (prj2 (h x))    ==[ =prdchar (pf₁ x) (pf₂ x) ] /
-                              pair (prj1 (h' x)) (prj2 (h' x))  ==[ prdη (h' x) ]∎
-                              h' x                              ∎
+  weql-Ty : has-weak-equalisers Type
+  weql-Ty = record
+    { weql-of = λ f f' → record
+              { wEql = Σ _ (λ x → f x == f' x)
+              ; weqlar = pj1
+              ; weqleq = pj2
+              ; isweql = record
+                       { _|weql[_] = λ h pf → λ y → h y , pf y
+                       ; weqltr = λ _ _ → =rf
+                       }
+              }
+    }
+
+  wpb-Ty : has-weak-pullbacks Type
+  wpb-Ty = has-prd+weql⇒has-wpb prd-Ty weql-Ty
+
+  -- it may be worth to construct weak bows directly
+
+  wbw-Ty : has-weak-bows Type
+  wbw-Ty = has-weql+wpb⇒has-wbw weql-Ty wpb-Ty
+  {-record
+    { wbw-of = λ sp₁ sp₂ → record
+             { w×//sp = record
+                      { O12 = {!!}
+                      ; a1 = {!!}
+                      ; a2 = {!!}
+                      }
+             ; is-wbw = record
+                      { w×//⟨_,_⟩[_,_] = {!!}
+                      ; w×//tr₁ = {!!}
+                      ; w×//tr₂ = {!!}
+                      }
              }
     }
-  }
-
-
-weql-Ty : has-weak-equalisers Type
-weql-Ty = record
-  { weql-of = λ f f' → record
-            { wEql = Σ _ (λ x → f x == f' x)
-            ; weqlar = pj1
-            ; weqleq = pj2
-            ; isweql = record
-                     { _|weql[_] = λ h pf → λ y → h y , pf y
-                     ; weqltr = λ _ _ → =rf
-                     }
-            }
-  }
-
-
-wpb-Ty : has-weak-pullbacks Type
-wpb-Ty = has-prd+weql⇒has-wpb prd-Ty weql-Ty
-
-
--- it may be worth to construct weak bows directly
-
-wbw-Ty : has-weak-bows Type
-wbw-Ty = has-weql+wpb⇒has-wbw weql-Ty wpb-Ty
-{-record
-  { wbw-of = λ sp₁ sp₂ → record
-           { w×//sp = record
-                    { O12 = {!!}
-                    ; a1 = {!!}
-                    ; a2 = {!!}
-                    }
-           ; is-wbw = record
-                    { w×//⟨_,_⟩[_,_] = {!!}
-                    ; w×//tr₁ = {!!}
-                    ; w×//tr₂ = {!!}
-                    }
-           }
-  }
--}
+  -}
+--end Type-quasi-cartesian
 
 qcrt-Ty : is-quasi-cartesian Type
 qcrt-Ty = record
@@ -136,20 +137,25 @@ qcrt-Ty = record
   ; haswpb = wpb-Ty
   ; haswbw = wbw-Ty
   }
+  where open Type-quasi-cartesian
 
+private
+  module qcTy where
+    open is-quasi-cartesian qcrt-Ty public
+open surjective-defs {Type} qcTy.hastrm
 
 -- Elementality aka conservativity of the global section functor
 
 module Type-is-elemental where
-  glel : {A : Set} → A → || TypeHom N₁ A ||
+  glel : {A : Set} → A → || Type.Hom N₁ A ||
   glel a = λ x → a
-  tyel : {A : Set} → || TypeHom N₁ A || → A
+  tyel : {A : Set} → || Type.Hom N₁ A || → A
   tyel a = a 0₁
-  trmgen : terminal-is-generator trm-Ty
+  trmgen : terminal-is-generator qcTy.hastrm
   trmgen = record { isgen  = λ H x → tyel (H (glel x)) }
 
   -- Every surjective function splits
-  surj-splits : {A B : Set}{f : || TypeHom A B ||}
+  surj-splits : {A B : Set}{f : || Type.Hom A B ||}
                   → is-surjective f → is-split-epi f
   surj-splits {A} {B} {f} issrj = record
     { rinv = λ b → tyel (srj.cntimg (glel b))
@@ -159,9 +165,9 @@ module Type-is-elemental where
   monic-surj-is-iso : {A B : Obj} {f : || Hom A B ||} → is-monic f
                            → is-surjective f → is-iso f
   monic-surj-is-iso mon srj = monic-sepi-is-iso mon (surj-splits srj)
-                            where open epis&monos-basic-props Type using (monic-sepi-is-iso)
+                            where open epi&mono-props-basic Type using (monic-sepi-is-iso)
 -- end Type-is-elemental
-open Type-is-elemental public
+--open Type-is-elemental public
 
 
 
@@ -171,8 +177,10 @@ open Type-is-elemental public
 -- Equalisers imply UIP
 
 module equalisers-imply-UIP (eql : has-equalisers Type) where
-  module Type-eql = has-equalisers eql
+  open Type-is-elemental
   open equaliser-defs Type
+  private
+    module Type-eql = has-equalisers eql
   module eqlofel {A : Set} (a a' : A) = equaliser-of (Type-eql.eql-of (glel a) (glel a'))
   
   UIP-EqRel : {A : Set} → A → A → Set

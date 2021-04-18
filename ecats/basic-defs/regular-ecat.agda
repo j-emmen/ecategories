@@ -58,7 +58,7 @@ record is-regular-img (ℂ : ecategory) : Set₁ where
 
 record is-regular (ℂ : ecategory) : Set₁ where
   open ecategory ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
   open pullback-props ℂ
   field
     hasfl : has-fin-limits ℂ
@@ -72,7 +72,7 @@ record is-regular (ℂ : ecategory) : Set₁ where
 
 record is-regular-kp (ℂ : ecategory) : Set₁ where
   open ecategory ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
   open pullback-defs ℂ
   open pullback-props ℂ
   private

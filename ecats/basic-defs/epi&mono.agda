@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-defs.epi&mono where
 
@@ -13,7 +9,7 @@ open import ecats.basic-defs.isomorphism
 
 
 
-module epis&monos-defs (ℂ : ecategory) where
+module epi&mono-defs (ℂ : ecategory) where
   open ecategory-aux ℂ
   open iso-defs ℂ
   open comm-shapes ℂ
@@ -117,4 +113,4 @@ module epis&monos-defs (ℂ : ecategory) where
       cov : Ob covers X
     open _covers_ cov public
 
- -- end epis&monos-defs
+ -- end epi&mono-defs
