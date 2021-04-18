@@ -3,19 +3,24 @@
 
 module ecats.functors.defs.efunctor where
 
+open import Agda.Primitive
+open import tt-basics.setoids using (setoid)
 open import ecats.basic-defs.ecat-def&not
 
 
 -- E-functors
 
-module efunctor-defs (ℂ 𝔻 : ecategory) where
+module efunctor-defs {ℓ₁ ℓ₂ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂)
+                     {ℓ₃ ℓ₄ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄)
+                     where
   private
-    module ℂ = ecategory ℂ
-    module 𝔻 = ecategory 𝔻
+    module ℂ = ecat ℂ
+    module 𝔻 = ecat 𝔻
 
+-- Note that the universe level of is-functorial does not depend on ℓ₃
   record is-functorial {FO : ℂ.Obj → 𝔻.Obj}
                        (FH : {A B : ℂ.Obj} → || ℂ.Hom A B || → || 𝔻.Hom (FO A) (FO B) ||)
-                       : Set₁
+                       : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
                        where
     field
       ext : {A B : ℂ.Obj} {f f' : || ℂ.Hom A B ||}
@@ -27,11 +32,13 @@ module efunctor-defs (ℂ 𝔻 : ecategory) where
 -- end efunctor-defs
   
 
-record efunctor (ℂ 𝔻 : ecategory) : Set₁ where
-  open efunctor-defs ℂ 𝔻
+record efunctorₗₑᵥ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} (ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂)(𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄)
+                  : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+                  where
   private
-    module ℂ = ecategory ℂ
-    module 𝔻 = ecategory 𝔻
+    module ℂ = ecat ℂ
+    module 𝔻 = ecat 𝔻
+  open efunctor-defs ℂ 𝔻
   field
     FObj : ℂ.Obj → 𝔻.Obj
     FHom : {A B : ℂ.Obj} → || ℂ.Hom A B ||
@@ -46,10 +53,20 @@ record efunctor (ℂ 𝔻 : ecategory) : Set₁ where
   idˢ {A} = id {A} ˢ
           where open ecategory-aux-only 𝔻
 
+module efctr {ℓ₁ ℓ₂ ℓ₃ ℓ₄}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+             = efunctorₗₑᵥ {ℓ₁} {ℓ₂} {ℓ₃} {ℓ₄} {ℂ} {𝔻}
+
+efunctor : (ℂ 𝔻 : ecategory) → Set₁
+efunctor ℂ 𝔻 = efunctorₗₑᵥ ℂ 𝔻
+
+diagram _shaped-diagram-in_ : (ℂ : small-ecategory)(𝔻 : ecategory) → Set₁
+diagram ℂ 𝔻 = efunctorₗₑᵥ ℂ 𝔻
+ℂ shaped-diagram-in 𝔻 = diagram ℂ 𝔻
 
 
-IdF : {ℂ : ecategory} → efunctor ℂ ℂ
-IdF {ℂ} = record
+
+IdFₗₑᵥ : {ℓₒ ℓₕ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ} → efunctorₗₑᵥ ℂ ℂ
+IdFₗₑᵥ {_} {_} {ℂ} = record
   { FObj = λ A → A
   ; FHom = λ f → f
   ; isF = record
@@ -61,8 +78,9 @@ IdF {ℂ} = record
   where open ecategory-aux ℂ
 
 
-efunctor-cmp : {ℂ 𝔻 𝔼 : ecategory} → efunctor 𝔻 𝔼 → efunctor ℂ 𝔻 → efunctor ℂ 𝔼
-efunctor-cmp {ℂ} {𝔻} {𝔼} G F = record
+efunctor-cmpₗₑᵥ : {ℓₒ ℓₕ : Level}{ℂ 𝔻 𝔼 : ecategoryₗₑᵥ ℓₒ ℓₕ}
+                      → efunctorₗₑᵥ 𝔻 𝔼 → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ ℂ 𝔼
+efunctor-cmpₗₑᵥ {_} {_} {ℂ} {𝔻} {𝔼} G F = record
   { FObj = λ A → G.ₒ (F.ₒ A)
   ; FHom = λ {A} {B} f → G.ₐ {F.ₒ A} {F.ₒ B} (F.ₐ {A} {B} f)
   ; isF = record
@@ -72,9 +90,10 @@ efunctor-cmp {ℂ} {𝔻} {𝔼} G F = record
         }
   }
   where module 𝔼 = ecategory-aux 𝔼
-        module F = efunctor F
-        module G = efunctor G
+        module F = efctr F
+        module G = efctr G
 
 infixr 10 _○_
-_○_ : {ℂ 𝔻 𝔼 : ecategory} → efunctor 𝔻 𝔼 → efunctor ℂ 𝔻 → efunctor ℂ 𝔼
-G ○ F = efunctor-cmp G F
+_○_ : {ℓₒ ℓₕ : Level}{ℂ 𝔻 𝔼 : ecategoryₗₑᵥ ℓₒ ℓₕ}
+          → efunctorₗₑᵥ 𝔻 𝔼 → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ ℂ 𝔼
+G ○ F = efunctor-cmpₗₑᵥ G F

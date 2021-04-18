@@ -147,41 +147,36 @@ module ecategory-aux-level {ℓ ℓ' : Level} {Obj : Set ℓ} {Hom : Obj → Obj
 
 
 
-module ecategory-aux-only (ℂ : ecategory) where
-  open ecategory ℂ
+module ecategory-aux-only {ℓₒ ℓₕ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) where
+  open ecat ℂ
   open ecategory-aux-level isecat public
 -- end module ecategory-aux-only
 
 
-module ecategory-aux (ℂ : ecategory) where
-  open ecategory ℂ public
+module ecategory-aux {ℓₒ ℓₕ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) where
+  open ecat ℂ public
   open ecategory-aux-only ℂ public
 -- end module ecategory-aux
 
 
-
-
+{-
 module small-ecategory-aux-only (𝕀 : small-ecategory) where
   open small-ecategory 𝕀
   open ecategory-aux-level isecat public
 -- end module ecategory-aux-only
-
 
 module small-ecategory-aux (𝕀 : small-ecategory) where
   open small-ecategory 𝕀 public
   open small-ecategory-aux-only 𝕀 public
 -- end module ecategory-aux
 
-
-
 module Large-ecategory-aux-only (ℂ : Large-ecategory) where
   open Large-ecategory ℂ
   open ecategory-aux-level isecat public
 -- end module Large-ecategory-aux-only
 
-
 module Large-ecategory-aux (ℂ : Large-ecategory) where
   open Large-ecategory ℂ public
   open Large-ecategory-aux-only ℂ public
 -- end module Large-ecategory-aux
-
+-}

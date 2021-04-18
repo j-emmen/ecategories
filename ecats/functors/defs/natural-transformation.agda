@@ -3,6 +3,7 @@
 
 module ecats.functors.defs.natural-transformation where
 
+open import Agda.Primitive
 open import tt-basics.setoids using (setoid) --hiding (||_||; _⇒_)
 open import ecats.basic-defs.ecat-def&not
 open import ecats.isomorphism
@@ -11,6 +12,38 @@ open import ecats.functors.defs.efunctor-d&n
 ---------------------------
 -- Natural transformations
 ---------------------------
+
+
+module natural-trans-defs {ℓ₁ ℓ₂ : Level}{ObjD : Set ℓ₁}{HomD : ObjD → ObjD → setoid {ℓ₂}}
+                          {isecatD : is-ecategory ObjD HomD}
+                          {ℓ₃ ℓ₄ : Level}{ObjC : Set ℓ₃}{HomC : ObjC → ObjC → setoid {ℓ₄}}
+                          {isecatC : is-ecategory ObjC HomC}
+                          {Fobj Gobj : ObjD → ObjC}{Fhom : {x y : ObjD} → || HomD x y || → || HomC (Fobj x) (Fobj y) ||}
+                          {Ghom : {x y : ObjD} → || HomD x y || → || HomC (Gobj x) (Gobj y) ||}
+                          (isfctrF : efunctor-defs.is-functorial isecatD isecatC Fhom)
+                          (isfctrG : efunctor-defs.is-functorial isecatD isecatC Ghom)
+                          where
+  private
+    module Dom = is-ecategory isecatD
+    module Cod = is-ecategory isecatC
+    module F where
+      open efunctor-defs isecatD isecatC
+      open is-functorial isfctrF public
+      ₒ : ObjD → ObjC
+      ₒ = Fobj
+      ₐ : {A B : ObjD} → || HomD A B || → || HomC (Fobj A) (Fobj B) ||
+      ₐ = Fhom
+    module G where
+      open efunctor-defs isecatD isecatC
+      open is-functorial isfctrG public
+      ₒ : ObjD → ObjC
+      ₒ = Gobj
+      ₐ : {A B : ObjD} → || HomD A B || → || HomC (Gobj A) (Gobj B) ||
+      ₐ = Ghom
+
+  is-natural : (fnc : {A : ObjD} → || HomC (F.ₒ A) (G.ₒ A) ||) → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+  is-natural fnc = {A B : ObjD}(f : || HomD A B ||) → fnc Cod.∘ (F.ₐ f) Cod.~ (G.ₐ f) Cod.∘ fnc
+
 
 record natural-transformation {ℂ 𝔻 : ecategory} (F G : efunctor ℂ 𝔻) : Set₁ where
   private
