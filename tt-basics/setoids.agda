@@ -14,21 +14,27 @@ open import tt-basics.id-type
 
 -- Setoids
 
-record setoid {ℓ : Level} : Set (lsuc ℓ)  where
+record setoid {ℓo ℓr : Level} : Set (lsuc (ℓo ⊔ ℓr))  where
  infix 2 _∼_
  field
-   object : Set ℓ
-   _∼_ : object → object → Set ℓ
+   object : Set ℓo
+   _∼_ : object → object → Set ℓr
    istteqrel : is-tt-eqrel _∼_
  open is-tt-eqrel istteqrel public
+
+{-
+setoid : {ℓ : Level} → Set (lsuc ℓ)
+setoid {ℓ} = setoidₗₑᵥ ℓ ℓ
+module setoid {ℓ : Level}(X : setoid {ℓ}) = setoidₗₑᵥ {ℓ} {ℓ} X
+-}
 
 infix 3 ||_||
 infix 2 <_>_~_
 
-||_|| : {ℓ : Level} → setoid → Set ℓ
+||_|| : {ℓo ℓr : Level} → setoid {ℓo} {ℓr} → Set ℓo
 || X || = setoid.object X
 
-<_>_~_ : {ℓ : Level} (X : setoid) → || X || → || X || → Set ℓ
+<_>_~_ : {ℓo ℓr : Level} (X : setoid {ℓo} {ℓr}) → || X || → || X || → Set ℓr
 < X > a ~ b = setoid._∼_ X a b
 
 
@@ -58,16 +64,16 @@ Freestd X = record
 
 -- Equational reasoning
 
-module setoid-aux {ℓ : Level} (A : setoid {ℓ}) where
+module setoid-aux {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) where
   open setoid A
 
   infix 2 _~_
   infixr 35 _⊙_
   infix 40 _ˢ
 
-  ob : Set ℓ
+  ob : Set ℓo
   ob = object
-  _~_ : ob → ob → Set ℓ
+  _~_ : ob → ob → Set ℓr
   _~_ = _∼_
     
   r : {a : ob} → a ∼ a
@@ -183,7 +189,8 @@ record is-ext-small-prop {X : setoid} (P : || X || → Set) : Set where
   field
     trnsp : {x x' : || X ||} → < X > x ~ x' → P x → P x'
 
-record is-ext-prop {ℓ ℓ' : Level} {X : setoid {ℓ}} (P : || X || → Set ℓ') : Set (ℓ ⊔ ℓ') where
+record is-ext-prop {ℓo ℓr ℓ : Level} {X : setoid {ℓo} {ℓr}} (P : || X || → Set ℓ)
+                   : Set (ℓo ⊔ ℓr  ⊔ ℓ) where
   field
     trnsp : {x x' : || X ||} → < X > x ~ x' → P x → P x'
                  

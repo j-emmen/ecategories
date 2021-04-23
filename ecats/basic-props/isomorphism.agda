@@ -123,92 +123,84 @@ module iso-transports (ℂ : ecategory) where
   open comm-shapes ℂ
   open iso-defs ℂ
   open iso-props ℂ
+  open hom-ext-prop-defs ℂ
 
 -- transport along isomorphisms
 
-  record iso-transportable (Propos : {X Y : Obj} → || Hom X Y || → Set₁) : Set₁ where
+  record iso-transportable (Prp : {X Y : Obj} → || Hom X Y || → Set₁) : Set₁ where
     constructor mkiso-transp
     field
-      congr : is-ecat-congr ℂ Propos
-      on-iso : {X Y : Obj} → (f :  || Hom X Y ||) → is-iso f → Propos f
-    open is-ecat-congr congr public             
+      congr : is-ecat-congr Prp
+      on-iso : {X Y : Obj} → (f :  || Hom X Y ||) → is-iso f → Prp f
+    open is-ecat-congr congr public
 
-
-  module iso-transp (Propos : {X Y : Obj} → || Hom X Y || → Set₁) (trn : iso-transportable Propos) where
-    --open is-ext-prop
-    open is-iso
-    open iso-transportable
+  module iso-transp (Prp : {X Y : Obj} → || Hom X Y || → Set₁)
+                    (trn : iso-transportable Prp)
+                    where
+    --open is-iso
+    open iso-transportable trn
 
     invtr-dom : (tr : comm-triang) → is-iso (comm-triang.a12 tr) → comm-triang
-    invtr-dom tr a12⁻¹ = mktriang (~proof a13 ∘ invf a12⁻¹          ~[ ∘e r (pftr ˢ) ⊙  assˢ ] /
-                                          a23 ∘ a12 ∘ invf a12⁻¹    ~[ ridgg r (idcod a12⁻¹) ]∎
+    invtr-dom tr a12⁻¹ = mktriang (~proof a13 ∘ a12.⁻¹          ~[ ∘e r (pftr ˢ) ⊙  assˢ ] /
+                                          a23 ∘ a12 ∘ a12.⁻¹    ~[ ridgg r a12.idcod ]∎
                                           a23 ∎)
                        where open comm-triang tr
-    {-record
-                           { O1 = O2 ; O2 = O1 ; O3 = O3
-                           ; a13 = a23
-                           ; a12 = invf a12⁻¹
-                           ; a23 = a13
-                           ; pftr = ∘e r (pftr ˢ) ⊙  assˢ ⊙ ridgg r (idcod a12⁻¹)
-                           }
--}
+                             module a12 = is-iso a12⁻¹
 
     invtr-cod : (tr : comm-triang) → is-iso (comm-triang.a23 tr) → comm-triang
-    invtr-cod tr a23⁻¹ = mktriang (~proof invf a23⁻¹ ∘ a13          ~[ ∘e (pftr ˢ) r ] /
-                                          invf a23⁻¹ ∘ a23 ∘ a12    ~[ ass ⊙ lidgg r (iddom a23⁻¹) ]∎
+    invtr-cod tr a23⁻¹ = mktriang (~proof a23.⁻¹ ∘ a13          ~[ ∘e (pftr ˢ) r ] /
+                                          a23.⁻¹ ∘ a23 ∘ a12    ~[ ass ⊙ lidgg r a23.iddom ]∎
                                           a12 ∎)
                        where open comm-triang tr
+                             module a23 = is-iso a23⁻¹
 
     module iso-transp-tr-domrl (tr : comm-triang) where
       open comm-triang tr
-      trnsp-tr-domrl : is-iso a12 → Propos a23 → Propos a13
-      trnsp-tr-domrl a12⁻¹ pf = trnsp trn pftr (∘c trn pf (on-iso trn a12 a12⁻¹)) --
-
+      trnsp-tr-domrl : is-iso a12 → Prp a23 → Prp a13
+      trnsp-tr-domrl a12⁻¹ pf = trnsp pftr (∘c pf (on-iso a12 a12⁻¹))
 
     module iso-transp-tr-domlr (tr : comm-triang) where
       open comm-triang tr
-      trnsp-tr-domlr : is-iso a12 → Propos a13 → Propos a23
+      trnsp-tr-domlr : is-iso a12 → Prp a13 → Prp a23
       trnsp-tr-domlr a12⁻¹ pf = trnsp-tr-domrl (invf-is-iso a12⁻¹) pf
                               where open iso-transp-tr-domrl (invtr-dom tr a12⁻¹)
 
-
     module iso-transp-tr-codrl (tr : comm-triang) where
       open comm-triang tr
-      trnsp-tr-codrl : is-iso a23 → Propos a13 → Propos a12
-      trnsp-tr-codrl a13⁻¹ pf = trnsp trn {x = invf a13⁻¹ ∘ a13}
-                                      (∘e (pftr ˢ) r ⊙ ass ⊙ lidgg r (iddom a13⁻¹))
-                                      (∘c trn (on-iso trn (invf a13⁻¹) (invf-is-iso a13⁻¹)) pf)
-
+      trnsp-tr-codrl : is-iso a23 → Prp a13 → Prp a12
+      trnsp-tr-codrl a13⁻¹ pf = trnsp {x = a13.⁻¹ ∘ a13}
+                                      (∘e (pftr ˢ) r ⊙ ass ⊙ lidgg r a13.iddom)
+                                      (∘c (on-iso a13.⁻¹ (invf-is-iso a13⁻¹)) pf)
+                              where module a13 = is-iso a13⁻¹
 
     module iso-transp-tr-codlr (tr : comm-triang) where
       open comm-triang tr
-      trnsp-tr-codlr : is-iso a23 → Propos a12 → Propos a13
+      trnsp-tr-codlr : is-iso a23 → Prp a12 → Prp a13
       trnsp-tr-codlr a23⁻¹ pf = trnsp-tr-codrl (invf-is-iso a23⁻¹) pf
-                                               where open iso-transp-tr-codrl (invtr-cod tr a23⁻¹)
-  
+                                               where open iso-transp-tr-codrl (invtr-cod tr a23⁻¹)  
 
     module iso-transp-sq-rl (sq : comm-square) where
       open comm-square sq
-      trnsp-sq-rl : is-iso down → is-iso up → Propos right → Propos left
+      trnsp-sq-rl : is-iso down → is-iso up → Prp right → Prp left
       trnsp-sq-rl d⁻¹ u⁻¹ pf = trnsp-tr-codrl d⁻¹ (trnsp-tr-domrl u⁻¹ pf)
-                                              where uptr : comm-triang
-                                                    uptr = record
-                                                             { O1 = ul ; O2 = ur ; O3 = dr
-                                                             ; a13 = right ∘ up
-                                                             ; a12 = up
-                                                             ; a23 = right
-                                                             ; pftr = r
-                                                             }
-                                                    downtr : comm-triang
-                                                    downtr = record
-                                                             { O1 = ul ; O2 = dl ; O3 = dr
-                                                             ; a13 = right ∘ up
-                                                             ; a12 = left
-                                                             ; a23 = down
-                                                             ; pftr = sq-pf
-                                                             }
-                                                    open iso-transp-tr-domrl uptr
-                                                    open iso-transp-tr-codrl downtr
-
+                             where uptr : comm-triang
+                                   uptr = record
+                                            { O1 = ul ; O2 = ur ; O3 = dr
+                                            ; a13 = right ∘ up
+                                            ; a12 = up
+                                            ; a23 = right
+                                            ; pftr = r
+                                            }
+                                   downtr : comm-triang
+                                   downtr = record
+                                            { O1 = ul ; O2 = dl ; O3 = dr
+                                            ; a13 = right ∘ up
+                                            ; a12 = left
+                                            ; a23 = down
+                                            ; pftr = sq-pf
+                                            }
+                                   open iso-transp-tr-domrl uptr
+                                   open iso-transp-tr-codrl downtr
+  
   -- end iso-transports
 -- end isos

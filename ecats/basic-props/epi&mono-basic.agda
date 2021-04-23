@@ -16,6 +16,7 @@ module epi&mono-props-basic (ℂ : ecategory) where
   open arrows-defs ℂ
   open iso-props ℂ
   open iso-transports ℂ
+  open hom-ext-prop-defs ℂ
   private
     module sp/ = span/
     module sp = span
@@ -23,11 +24,24 @@ module epi&mono-props-basic (ℂ : ecategory) where
     module sq = comm-square
     
 
-  mono-is-congr : is-ecat-congr ℂ is-monic
-  mono-is-congr = mkis-ecat-congr
-    (mkis-hom-ext is-monic λ pfeq pfm → record { mono-pf = λ pf → mono-pf pfm (∘e r pfeq ⊙ pf ⊙ ∘e r (pfeq ˢ)) })
-    (record { ∘c = λ gm fm → record { mono-pf = λ pf → mono-pf fm (mono-pf gm (ass ⊙ pf ⊙ assˢ)) } })
+  mono-is-congr : is-ecat-congr is-monic
+  mono-is-congr = record
+    { ext = mkis-hom-ext is-monic monic-ext
+    ; ∘congr = monic-cmp
+    }
     where open is-monic
+          monic-ext : {X Y : Obj}{f f' : || Hom X Y ||}
+                         → f ~ f' → is-monic f → is-monic f'
+          monic-ext f~f' fism = record
+            { mono-pf = λ pf → mono-pf fism (∘e r f~f' ⊙ pf ⊙ ∘e r (f~f' ˢ))
+            }
+          monic-cmp : {A B C : Obj}{m' : || Hom B C ||}{m : || Hom A B ||}
+                         → is-monic m' → is-monic m → is-monic (m' ∘ m)
+          monic-cmp pfm' pfm = record
+            { mono-pf = λ pf → m.mono-pf (m'.mono-pf (ass ⊙ pf ⊙ assˢ))
+            }
+            where module m = is-monic pfm
+                  module m' = is-monic pfm'
 
 {-
   mono-ext : {A B : Obj} {m m' : || Hom A B ||} → m ~ m' → is-monic m → is-monic m'
@@ -137,14 +151,24 @@ module epi&mono-props-basic (ℂ : ecategory) where
 
   
 
-  epi-is-congr : is-ecat-congr ℂ is-epic
-  epi-is-congr = mkis-ecat-congr
-    (mkis-hom-ext is-epic λ pfeq fepi → record
-                     { epi-pf = λ pfm → epi-pf fepi (∘e pfeq r ⊙ pfm ⊙ ∘e (pfeq ˢ) r ) })
-    (record { ∘c = λ gepi fepi → record
-                 { epi-pf = λ pfeq → epi-pf gepi (epi-pf fepi (assˢ ⊙ pfeq ⊙ ass))
-                 } })
+  epi-is-congr : is-ecat-congr is-epic
+  epi-is-congr = record
+    { ext = record { trnsp = epic-ext }
+    ; ∘congr = epic-cmp
+    }
     where open is-epic
+          epic-ext : {X Y : Obj}{f f' : || Hom X Y ||} → f ~ f' → is-epic f → is-epic f'
+          epic-ext f~f' fise = record
+            { epi-pf = λ pfm → epi-pf fise (∘e f~f' r ⊙ pfm ⊙ ∘e (f~f' ˢ) r )
+            }
+          epic-cmp : {X Y Z : Obj} {g : || Hom Y Z ||} {f :  || Hom X Y ||}
+                        → is-epic g → is-epic f → is-epic (g ∘ f)
+          epic-cmp gise fise = record
+            { epi-pf = λ pfeq → g.epi-pf (f.epi-pf (assˢ ⊙ pfeq ⊙ ass))
+            }
+            where module f = is-epic fise
+                  module g = is-epic gise          
+
 
   epi-is-transportable : iso-transportable is-epic
   epi-is-transportable = record
@@ -272,24 +296,28 @@ module epi&mono-props-basic (ℂ : ecategory) where
   -- end uniq-of-coequalisers
 
 
-  strepi-is-congr : is-ecat-congr ℂ is-strong-epi
-  strepi-is-congr = mkis-ecat-congr
-    (mkis-hom-ext is-strong-epi λ {f} {f'} eq fstr → record
+  strepi-is-congr : is-ecat-congr is-strong-epi
+  strepi-is-congr = record
+    { ext = mkis-hom-ext is-strong-epi λ {f} {f'} eq fstr → record
                      { lift = λ pfc pfm → lift fstr (∘e eq r ⊙ pfc) pfm 
                      ; tr-up = λ pfc pfm → ∘e (eq ˢ) r ⊙ tr-up fstr (∘e eq r ⊙ pfc) pfm
                      ; tr-down = λ pfc pfm → tr-down fstr (∘e eq r ⊙ pfc) pfm
-                     })
-    (record { ∘c = λ gstr fstr → record
+                     }
+    ; ∘congr = λ gstr fstr → record
                  { lift = lift-cmp gstr fstr
                  ; tr-up = λ pfc pfm → ass ⊙ ∘e r (tr-up gstr (tr-down fstr (assˢ ⊙ pfc) pfm ˢ) pfm)
                                        ⊙ tr-up fstr (assˢ ⊙ pfc) pfm
                  ; tr-down = λ pfc pfm → tr-down gstr (tr-down fstr (assˢ ⊙ pfc) pfm ˢ) pfm
-                 } })
+                 }
+    }
     where open is-strong-epi
-          lift-cmp : {A B C D D' : Obj} {g : || Hom B C ||} {f : || Hom A B ||} → is-strong-epi g → is-strong-epi f
+          lift-cmp : {A B C D D' : Obj} {g : || Hom B C ||} {f : || Hom A B ||}
+                        → is-strong-epi g → is-strong-epi f
                         → {up : || Hom A D ||} {down : || Hom C D' ||} {m : || Hom D D' ||}
                           → down ∘ g ∘ f ~ m ∘ up → is-monic m → || Hom C D ||
-          lift-cmp gstr fstr pfc pfm = lift gstr {up = lift fstr (assˢ ⊙ pfc) pfm} (tr-down fstr (assˢ ⊙ pfc) pfm ˢ) pfm
+          lift-cmp gstr fstr pfc pfm = lift gstr {up = lift fstr (assˢ ⊙ pfc) pfm}
+                                                 (tr-down fstr (assˢ ⊙ pfc) pfm ˢ)
+                                                 pfm
 
 
     
@@ -320,7 +348,7 @@ module epi&mono-props-basic (ℂ : ecategory) where
           module h = is-iso isiso
 
 
-  regular-epi-is-ext : is-hom-ext ℂ is-regular-epi
+  regular-epi-is-ext : is-hom-ext is-regular-epi
   regular-epi-is-ext = mkis-hom-ext is-regular-epi λ eq repi → record
                      { rel₁ = re.rel₁ repi
                      ; rel₂ = re.rel₂ repi
@@ -332,11 +360,9 @@ module epi&mono-props-basic (ℂ : ecategory) where
                        }
                      }
                      where module re = is-regular-epi
-                           module epicng where
-                             open is-ecat-congr epi-is-congr
-                             open is-hom-ext ext hiding (isext) public
+                           module epicng = is-ecat-congr epi-is-congr
 
-  cover-is-ext : is-hom-ext ℂ is-cover
+  cover-is-ext : is-hom-ext is-cover
   cover-is-ext = mkis-hom-ext is-cover λ eq fc → record
                { cov-pf = λ tr pfm → cov-pf fc (tr ⊙ eq ˢ) pfm
                }

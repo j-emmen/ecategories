@@ -4,7 +4,6 @@
 module ecats.functors.defs.efunctor where
 
 open import Agda.Primitive
-open import tt-basics.setoids using (setoid)
 open import ecats.basic-defs.ecat-def&not
 
 
@@ -56,8 +55,10 @@ record efunctorₗₑᵥ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} (ℂ : ecategoryₗₑᵥ
 module efctr {ℓ₁ ℓ₂ ℓ₃ ℓ₄}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
              = efunctorₗₑᵥ {ℓ₁} {ℓ₂} {ℓ₃} {ℓ₄} {ℂ} {𝔻}
 
-efunctor : (ℂ 𝔻 : ecategory) → Set₁
+efunctor : {ℓo ℓr : Level}(ℂ 𝔻 : ecategoryₗₑᵥ ℓo ℓr) → Set (ℓo ⊔ ℓr)
 efunctor ℂ 𝔻 = efunctorₗₑᵥ ℂ 𝔻
+module efunctor {ℓo ℓr}{ℂ 𝔻 : ecategoryₗₑᵥ ℓo ℓr}(F : efunctor ℂ 𝔻) = efunctorₗₑᵥ F
+
 
 diagram _shaped-diagram-in_ : (ℂ : small-ecategory)(𝔻 : ecategory) → Set₁
 diagram ℂ 𝔻 = efunctorₗₑᵥ ℂ 𝔻
@@ -78,9 +79,11 @@ IdFₗₑᵥ {_} {_} {ℂ} = record
   where open ecategory-aux ℂ
 
 
-efunctor-cmpₗₑᵥ : {ℓₒ ℓₕ : Level}{ℂ 𝔻 𝔼 : ecategoryₗₑᵥ ℓₒ ℓₕ}
+efunctor-cmpₗₑᵥ : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                  {ℓ₅ ℓ₆ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₅ ℓ₆}
+            --{ℓₒ ℓₕ : Level}{ℂ 𝔻 𝔼 : ecategoryₗₑᵥ ℓₒ ℓₕ}
                       → efunctorₗₑᵥ 𝔻 𝔼 → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ ℂ 𝔼
-efunctor-cmpₗₑᵥ {_} {_} {ℂ} {𝔻} {𝔼} G F = record
+efunctor-cmpₗₑᵥ {𝔼 = 𝔼} G F = record
   { FObj = λ A → G.ₒ (F.ₒ A)
   ; FHom = λ {A} {B} f → G.ₐ {F.ₒ A} {F.ₒ B} (F.ₐ {A} {B} f)
   ; isF = record
@@ -94,6 +97,8 @@ efunctor-cmpₗₑᵥ {_} {_} {ℂ} {𝔻} {𝔼} G F = record
         module G = efctr G
 
 infixr 10 _○_
-_○_ : {ℓₒ ℓₕ : Level}{ℂ 𝔻 𝔼 : ecategoryₗₑᵥ ℓₒ ℓₕ}
+_○_ : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+      {ℓ₅ ℓ₆ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₅ ℓ₆}
+--{ℓₒ ℓₕ : Level}{ℂ 𝔻 𝔼 : ecategoryₗₑᵥ ℓₒ ℓₕ}
           → efunctorₗₑᵥ 𝔻 𝔼 → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ ℂ 𝔼
 G ○ F = efunctor-cmpₗₑᵥ G F

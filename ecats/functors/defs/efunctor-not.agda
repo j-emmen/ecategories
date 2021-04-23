@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.functors.defs.efunctor-not where
 
@@ -15,14 +11,15 @@ open import ecats.functors.defs.efunctor
 -- E-functor notation
 
 
-module efunctor-aux-only {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
+module efunctor-aux-only {ℓ₁ ℓ₂ ℓ₃ ℓ₄}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                         (F : efunctorₗₑᵥ ℂ 𝔻) where
   private    
-    module catnot (ℂ : ecategory) where
-      open ecategory ℂ public
+    module catnot {ℓ₁ ℓ₂}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂) where
+      open ecat ℂ public
       open comm-shapes ℂ public
     module ℂ = catnot ℂ
     module 𝔻 = catnot 𝔻
-    module F = efunctor F
+    module F = efctr F
     
   -- apparently only equational reasoning in 𝔻 is needed
   open ecategory-aux-only 𝔻
@@ -82,7 +79,8 @@ module efunctor-aux-only {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
 
 
 
-module efunctor-aux {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
-  open efunctor F public
+module efunctor-aux {ℓ₁ ℓ₂ ℓ₃ ℓ₄}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                    (F : efunctorₗₑᵥ ℂ 𝔻) where
+  open efunctorₗₑᵥ F public
   open efunctor-aux-only F public
 -- end efunctor-aux

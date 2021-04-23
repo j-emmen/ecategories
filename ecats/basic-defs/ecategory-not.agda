@@ -11,9 +11,11 @@ open import ecats.basic-defs.ecategory
 
 -- Notation
 
-module ecategory-aux-level {ℓ ℓ' : Level} {Obj : Set ℓ} {Hom : Obj → Obj → setoid {ℓ'}}
+module ecategory-aux-level {ℓₒ ℓₕ : Level}
+                           {Obj : Set ℓₒ} {Hom : Obj → Obj → setoid {ℓₕ}}
                            (isecat : is-ecategory Obj Hom)
                            where
+--(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ)
   open is-ecategory isecat
   open setoid
 
@@ -141,20 +143,20 @@ module ecategory-aux-level {ℓ ℓ' : Level} {Obj : Set ℓ} {Hom : Obj → Obj
                      → (h ∘ g) ∘ f ~ h' ∘ g' ∘ f'
   assgenˢ pff pfg pfh = assˢ ⊙ (∘e (∘e pff pfg) pfh)
 
--- end module ecategory-aux-level
+-- end ecategory-aux-level
 
 
 
 
 
 module ecategory-aux-only {ℓₒ ℓₕ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) where
-  open ecat ℂ
+  open ecategoryₗₑᵥ ℂ
   open ecategory-aux-level isecat public
 -- end module ecategory-aux-only
 
 
 module ecategory-aux {ℓₒ ℓₕ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) where
-  open ecat ℂ public
+  open ecategoryₗₑᵥ ℂ public
   open ecategory-aux-only ℂ public
 -- end module ecategory-aux
 

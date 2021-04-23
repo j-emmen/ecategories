@@ -16,6 +16,7 @@ module image-fact-props (ℂ : ecategory) where
   open arrows-defs ℂ
   open iso-props ℂ
   open iso-transports ℂ
+  open hom-ext-prop-defs ℂ
   open epi&mono-props ℂ
   open image-fact-defs ℂ
   open binary-products ℂ

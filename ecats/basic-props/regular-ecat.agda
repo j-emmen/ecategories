@@ -20,6 +20,7 @@ module regular-cat-props {ℂ : ecategory} (isreg : is-regular ℂ) where
   open arrows-defs ℂ
   open iso-props ℂ
   open iso-transports ℂ
+  open hom-ext-prop-defs ℂ
   open terminal-defs ℂ
   open binary-products ℂ
   open pullback-squares ℂ
@@ -68,10 +69,13 @@ module regular-cat-props {ℂ : ecategory} (isreg : is-regular ℂ) where
 
   -- is-regular-epi is ecat congruence
 
-  regular-epi-is-congr : is-ecat-congr ℂ is-regular-epi
-  regular-epi-is-congr = mkis-ecat-congr
-    (mkis-hom-ext is-regular-epi λ pfeq frepi → strong-epi-is-regular (trnsp pfeq (repi-is-strong frepi)))
-    (record { ∘c = λ grepi frepi → strong-epi-is-regular (∘c (repi-is-strong grepi) (repi-is-strong frepi)) })
+  regular-epi-is-congr : is-ecat-congr is-regular-epi
+  regular-epi-is-congr = record
+    { ext = mkis-hom-ext is-regular-epi
+                         (λ pfeq frepi → strong-epi-is-regular (trnsp pfeq (repi-is-strong frepi)))
+    ; ∘congr = λ grepi frepi → strong-epi-is-regular (∘c (repi-is-strong grepi)
+                                                          (repi-is-strong frepi))
+    }
     where open is-ecat-congr strepi-is-congr
 
   repi-cmp : {A B C : Obj} {f : || Hom A B ||} {g : || Hom B C ||} {h : || Hom A C ||}
