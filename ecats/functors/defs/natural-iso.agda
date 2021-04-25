@@ -3,6 +3,7 @@
 
 module ecats.functors.defs.natural-iso where
 
+open import Agda.Primitive
 open import tt-basics.setoids using (setoid) --hiding (||_||; _⇒_)
 open import ecats.basic-defs.ecat-def&not
 open import ecats.isomorphism
@@ -14,11 +15,13 @@ open import ecats.functors.defs.natural-transformation
 -- Natural isomorphisms
 ------------------------
 
-record natural-iso {ℂ 𝔻 : ecategory} (F G : efunctor ℂ 𝔻) : Set₁ where
+record natural-iso {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                   (F G : efunctorₗₑᵥ ℂ 𝔻) : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+                   where
   private
-    module ℂ = ecategory ℂ
-    module F = efunctor F
-    module G = efunctor G
+    module ℂ = ecat ℂ
+    module F = efunctorₗₑᵥ F
+    module G = efunctorₗₑᵥ G
   field
     natt : natural-transformation F G
     natt⁻¹ : natural-transformation G F
@@ -32,11 +35,13 @@ record natural-iso {ℂ 𝔻 : ecategory} (F G : efunctor ℂ 𝔻) : Set₁ whe
 
 
 infixr 9 _≅ₐ_
-_≅ₐ_ :  {ℂ 𝔻 : ecategory} (F G : efunctor ℂ 𝔻) → Set₁
+_≅ₐ_ :  {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+        (F G : efunctorₗₑᵥ ℂ 𝔻) → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
 F ≅ₐ G = natural-iso F G
 
-≅ₐrefl : {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻} → F ≅ₐ F
-≅ₐrefl {ℂ} {𝔻} {F} = record
+≅ₐrefl : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+         {F : efunctorₗₑᵥ ℂ 𝔻} → F ≅ₐ F
+≅ₐrefl {𝔻 = 𝔻} {F} = record
   { natt = natt-id
   ; natt⁻¹ = natt-id
   ; isiso = λ {A} → record
@@ -46,7 +51,8 @@ F ≅ₐ G = natural-iso F G
   }
   where open ecategory-aux-only 𝔻
 
-≅ₐsym : {ℂ 𝔻 : ecategory} {F G : efunctor ℂ 𝔻} → F ≅ₐ G → G ≅ₐ F
+≅ₐsym : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+       {F G : efunctorₗₑᵥ ℂ 𝔻} → F ≅ₐ G → G ≅ₐ F
 ≅ₐsym α = record
   { natt = natt⁻¹
   ; natt⁻¹ = natt
@@ -57,9 +63,10 @@ F ≅ₐ G = natural-iso F G
   }
   where open natural-iso α
 
-natiso-vcmp : {ℂ 𝔻 : ecategory} {F G H : efunctor ℂ 𝔻}
+natiso-vcmp : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+              {F G H : efunctorₗₑᵥ ℂ 𝔻}
                   → G ≅ₐ H → F ≅ₐ G → F ≅ₐ H
-natiso-vcmp {ℂ} {𝔻} {F} {G} {H} β α = record
+natiso-vcmp {𝔻 = 𝔻} {F} {G} {H} β α = record
   { natt = natt-vcmp β.natt α.natt
   ; natt⁻¹ = natt-vcmp α.natt⁻¹ β.natt⁻¹
   ; isiso = λ {A} → record
@@ -72,9 +79,11 @@ natiso-vcmp {ℂ} {𝔻} {F} {G} {H} β α = record
         module β = natural-iso β
 
 
-natiso-hcmp : {ℂ 𝔻 𝔼 : ecategory} {F G : efunctor ℂ 𝔻} {H K : efunctor 𝔻 𝔼}
+natiso-hcmp : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+              {ℓ₅ ℓ₆ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₅ ℓ₆}{F G : efunctorₗₑᵥ ℂ 𝔻}
+              {H K : efunctorₗₑᵥ 𝔻 𝔼}
                   → H ≅ₐ K → F ≅ₐ G → H ○ F ≅ₐ K ○ G
-natiso-hcmp {ℂ} {𝔻} {𝔼} {F} {G} {H} {K} β α = record
+natiso-hcmp {𝔼 = 𝔼} {F} {G} {H} {K} β α = record
   { natt = natt-hcmp β.natt α.natt
   ; natt⁻¹ = natt-hcmp β.natt⁻¹ α.natt⁻¹
   ; isiso = λ {A} → record

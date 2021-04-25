@@ -66,8 +66,8 @@ diagram ℂ 𝔻 = efunctorₗₑᵥ ℂ 𝔻
 
 
 
-IdFₗₑᵥ : {ℓₒ ℓₕ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ} → efunctorₗₑᵥ ℂ ℂ
-IdFₗₑᵥ {_} {_} {ℂ} = record
+IdF : {ℓₒ ℓₕ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ} → efunctorₗₑᵥ ℂ ℂ
+IdF {_} {_} {ℂ} = record
   { FObj = λ A → A
   ; FHom = λ f → f
   ; isF = record

@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module tt-basics.setoids where
 
@@ -99,11 +95,13 @@ module setoid-aux {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) where
   /_~[_]_ : (a₁ : ob) {a₂ a₃ : ob} →  a₁ ~ a₂ →  a₂ ~ a₃ →  a₁ ~ a₃
   / a₁ ~[ pf ] pf' = tra pf pf'
 
-  eqreasend : (a a' : ob) → a ~ a' → a ~ a'
+  eqreasend endpoints : (a a' : ob) → a ~ a' → a ~ a'
   eqreasend a a' pf = pf
+  endpoints = eqreasend
 
-  infix 3 eqreasend --_~[_]_∎
+  infix 3 eqreasend endpoints --_~[_]_∎
   syntax eqreasend a a' pf = / a ~[ pf ]∎ a' ∎
+  syntax endpoints a a' pf = a ~[ pf ] a' ∎
 
 -- end setoid-aux
 
