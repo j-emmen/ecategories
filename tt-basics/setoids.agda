@@ -36,7 +36,7 @@ infix 2 <_>_~_
 
 -- Free setoids (small)
 
-==istteqrel : (A : Set) → is-tt-eqrel (_==_ {A = A})
+==istteqrel : {ℓ : Level}(A : Set ℓ) → is-tt-eqrel (_==_ {A = A})
 ==istteqrel A = record
   { refl = λ _ → =rf
   ; sym = _⁻¹ 
@@ -44,14 +44,15 @@ infix 2 <_>_~_
   }
 
 
-Freestd : Set → setoid
+Freestd : {ℓ : Level} → Set ℓ → setoid {ℓ} {ℓ}
 Freestd X = record
   { object = X
   ; _∼_ = _==_
   ; istteqrel = ==istteqrel X
   }
 
-==→~ : (A : setoid) {a a' : || A ||} → a == a' → < A > a ~ a'
+==→~ : {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}){a a' : || A ||}
+           → a == a' → < A > a ~ a'
 ==→~ A {a} = =J (λ x _ → < A > a ~ x) (refl a)
             where open setoid A
 
@@ -108,20 +109,24 @@ module setoid-aux {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) where
 
 -- Setoid functions
 
-record setoidmap (A B : setoid) : Set where
+record setoidmap {ℓo ℓr ℓo' ℓr' : Level}(A : setoid {ℓo} {ℓr})(B : setoid {ℓo'} {ℓr'})
+                 : Set (ℓo ⊔ ℓo' ⊔ ℓr ⊔ ℓr') where
   field
-    op : fun || A || || B ||
+    op : || A || → || B ||
     ext : {x : || A ||} {y : || A ||}  →  (< A > x ~ y) → (< B > op x ~ (op y))
 
-ap : {A B : setoid} → setoidmap A B → || A || → || B ||
+ap : {ℓo ℓr ℓo' ℓr' : Level}{A : setoid {ℓo} {ℓr}}{B : setoid {ℓo'} {ℓr'}}
+         → setoidmap A B → || A || → || B ||
 ap f a = setoidmap.op f a
 
 
-ptw~ : {A B : setoid} → (f g : setoidmap A B) → Set
-ptw~ {A} {B} f g = (x : || A ||) →  < B > ((setoidmap.op f) x) ~ ((setoidmap.op g) x)
+ptw~ : {ℓo ℓr ℓo' ℓr' : Level}{A : setoid {ℓo} {ℓr}}{B : setoid {ℓo'} {ℓr'}}
+           → setoidmap A B → setoidmap A B → Set (ℓo ⊔ ℓr')
+ptw~ {A = A} {B} f g = (x : || A ||) →  < B > ((setoidmap.op f) x) ~ ((setoidmap.op g) x)
 
-ptw~-is-tt-eqrel : {A B : setoid} → is-tt-eqrel (ptw~ {A} {B})
-ptw~-is-tt-eqrel {A} {B} = record
+ptw~-is-tt-eqrel : {ℓo ℓr ℓo' ℓr' : Level}{A : setoid {ℓo} {ℓr}}{B : setoid {ℓo'} {ℓr'}}
+                       → is-tt-eqrel (ptw~ {A = A} {B})
+ptw~-is-tt-eqrel {A = A} {B} = record
   { refl = λ f x → B.refl (ap f x)
   ; sym = λ pf x → B.sym (pf x)
   ; tra = λ pf pf' x → B.tra (pf x) (pf' x)
@@ -129,50 +134,55 @@ ptw~-is-tt-eqrel {A} {B} = record
   where module B = setoid B
 
 
-setoidmaps : (A B : setoid) → setoid
+setoidmaps : {ℓo ℓr ℓo' ℓr' : Level} → setoid {ℓo} {ℓr} → setoid {ℓo'} {ℓr'}
+                 → setoid {ℓo ⊔ ℓo' ⊔ ℓr ⊔ ℓr'} {ℓo ⊔ ℓr'}
 setoidmaps A B = record
   { object = setoidmap A B
-  ; _∼_  =  ptw~ {A} {B}
-  ; istteqrel = ptw~-is-tt-eqrel {A} {B}
+  ; _∼_  =  ptw~ {A = A} {B}
+  ; istteqrel = ptw~-is-tt-eqrel {A = A} {B}
   }
 
 
-_⇒_ : setoid → setoid → setoid
+_⇒_ : {ℓo ℓr ℓo' ℓr' : Level} → setoid {ℓo} {ℓr} → setoid {ℓo'} {ℓr'}
+                 → setoid {ℓo ⊔ ℓo' ⊔ ℓr ⊔ ℓr'} {ℓo ⊔ ℓr'}
 A ⇒ B = setoidmaps A B
 
 
 
-free-stdmap : {X Y : Set} → (X → Y) → setoidmap (Freestd X) (Freestd Y)
+free-stdmap : {ℓ ℓ' : Level}{X : Set ℓ}{Y : Set ℓ'}
+                 → (X → Y) → setoidmap (Freestd X) (Freestd Y)
 free-stdmap f = record
   { op = f
   ; ext = =ap f
   }
 
-free-std-is-min : {X : Set} {A : setoid} (f : X → || A ||)
+free-std-is-min : {ℓ ℓo ℓr : Level}{X : Set ℓ}{A : setoid {ℓo} {ℓr}}(f : X → || A ||)
                      → setoidmap (Freestd X) A
-free-std-is-min {X} {A} f = record
+free-std-is-min {X = X} {A} f = record
   { op = f
   ; ext = λ pf → ==→~ A (=ap f pf)
   }
 
-can-cover : (A : setoid) → setoidmap (Freestd || A ||) A
+can-cover : {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) → setoidmap (Freestd || A ||) A
 can-cover A = free-std-is-min (λ x → x)
 
 
-std-id : {A : setoid} → || A ⇒ A ||
+std-id : {ℓo ℓr : Level}{A : setoid {ℓo} {ℓr}} → || A ⇒ A ||
 std-id {A} = record { op = λ x → x
                     ; ext = λ pf → pf
                     }
 
 
-std-cmp : {A B C : setoid} → || B ⇒ C || → || A ⇒ B || → || A ⇒ C ||
+std-cmp : {ℓo ℓr ℓo' ℓr' ℓo'' ℓr'' : Level}{A : setoid {ℓo} {ℓr}}{B : setoid {ℓo'} {ℓr'}}{C : setoid {ℓo''} {ℓr''}}
+          → || B ⇒ C || → || A ⇒ B || → || A ⇒ C ||
 std-cmp g f = record { op = λ x → op g (op f x)
                      ; ext = λ pf → ext g (ext f pf)
                      }
                      where open setoidmap
 
 
-std-cmp-ext : {A B C : setoid} (g g' : || B ⇒ C ||) (f f' : || A ⇒ B ||)
+std-cmp-ext : {ℓo ℓr ℓo' ℓr' ℓo'' ℓr'' : Level}{A : setoid {ℓo} {ℓr}}{B : setoid {ℓo'} {ℓr'}}
+              {C : setoid {ℓo''} {ℓr''}}(g g' : || B ⇒ C ||)(f f' : || A ⇒ B ||)
                  → < B ⇒ C >  g ~ g' → < A ⇒ B > f ~ f'
                    → < A ⇒ C > std-cmp g f ~ std-cmp g' f'
 std-cmp-ext {C = C} g g' f f' pfg pff x = pfg (op f x) ⊙ ext g' (pff x)
