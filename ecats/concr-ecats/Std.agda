@@ -40,7 +40,7 @@ Std = record
          ; Hom = setoidmaps
          ; isecat = record
                   { _∘_ = std-cmp
-                  ; idar = λ A → std-id {A}
+                  ; idar = λ A → std-id {A = A}
                   ; ∘ext = λ f f' g g' pff pfg → std-cmp-ext g g' f f' pfg pff
                   ; lidax = λ {_} {B} f x → std.r B
                   ; ridax = λ {_} {B} f x → std.r B
@@ -108,7 +108,7 @@ module bin-products-in-Std (A B : Std.Obj) where
   π₁ = record { op = prj1 ; ext = prj1 }
   π₂ : || setoidmaps Ob B ||std
   π₂ = record { op = prj2 ; ext = prj2 }
-  module univ {C : setoid} (f : || setoidmaps C A ||) (g : || setoidmaps C B ||) where
+  module univ {C : Std.Obj} (f : || Std.Hom C A ||) (g : || Std.Hom C B ||) where
     private
       module f = setoidmap f
       module g = setoidmap g
