@@ -49,7 +49,7 @@ module exact-compl-character {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
     module ex𝔼 where
       open exact-cat-d&p ex𝔼 public
     reg𝔼 : is-regular 𝔼
-    reg𝔼 = ex𝔼.exact-is-regular
+    reg𝔼 = ex𝔼.exact-is-regular-img
     module ℙ where
       open ecategory ℙ public
       open comm-shapes ℙ public

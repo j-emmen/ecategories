@@ -18,7 +18,7 @@ open import ecats.functors.defs.left-covering
 
 --------------------------------------------------------------------------
 -- An exact completion of ℂ
--- is a (conservative?) full and faithful ℂ → Ex[ℂ] into Ex[ℂ] exact
+-- is a full and faithful ℂ → Ex[ℂ] into Ex[ℂ] exact
 -- which is initial among left-covering functors ℂ → 𝔼 into 𝔼 exact.
 --------------------------------------------------------------------------
 
