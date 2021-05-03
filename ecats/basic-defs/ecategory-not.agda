@@ -33,15 +33,15 @@ module ecategory-aux-level {ℓₒ ℓₕ : Level}
               --~proof f₁ ~[ pf ] pf' = H.~proof f₁ ~[ pf ] pf'
                                  where module H = setoid-aux (Hom a b)
 
-  theeqproof eqres-end : {a b : Obj} (f f' : || Hom a b ||) → f ~ f' → f ~ f'
+  theeqproof eqreas-end : {a b : Obj} (f f' : || Hom a b ||) → f ~ f' → f ~ f'
   theeqproof = H.eqreasend
             where module H = setoid-aux (Hom _ _)
-  eqres-end = theeqproof
+  eqreas-end = theeqproof
 
   infix 1 theeqproof
   syntax theeqproof f f' pf = f ~[ pf ] f'
-  infix 3 eqres-end --/_~[_]∎_∎
-  syntax eqres-end f f' pf = / f ~[ pf ]∎ f' ∎
+  infix 3 eqreas-end --/_~[_]∎_∎
+  syntax eqreas-end f f' pf = / f ~[ pf ]∎ f' ∎
   
 
   infixr 35 _⊙_

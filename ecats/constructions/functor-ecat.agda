@@ -33,7 +33,7 @@ Fctrₗₑᵥ ℂ 𝔻 = record
 Diagr : (𝕁 : small-ecategory)(ℂ : ecategory) → ecategory
 Diagr 𝕁 ℂ = record
   { Obj = diagram 𝕁 ℂ
-  ; Hom = Nat {ℂ = 𝕁} {𝔻 = ℂ}
+  ; Hom = NatTr {ℂ = 𝕁} {𝔻 = ℂ}
   ; isecat = record
            { _∘_ = natt-vcmp {ℂ = 𝕁} {𝔻 = ℂ}
            ; idar = λ F → natt-id {ℂ = 𝕁} {𝔻 = ℂ} {F}
@@ -52,7 +52,7 @@ Diagr 𝕁 ℂ = record
 Fctr : (ℂ 𝔻 : ecategory) → large-ecategory
 Fctr ℂ 𝔻 = record
   { Obj = efunctor ℂ 𝔻
-  ; Hom = Nat {ℂ = ℂ} {𝔻 = 𝔻}
+  ; Hom = NatTr {ℂ = ℂ} {𝔻 = 𝔻}
   ; isecat = record
            { _∘_ = natt-vcmp {ℂ = ℂ} {𝔻 = 𝔻}
            ; idar = λ F → natt-id {ℂ = ℂ} {𝔻 = 𝔻} {F}

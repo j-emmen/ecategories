@@ -3,7 +3,6 @@
 
 module ecats.constructions.yoneda where
 
-import tt-basics.setoids
 open import ecats.basic-defs.ecat-def&not
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
@@ -26,7 +25,7 @@ Yo ℂ = record
   }
   where open representable-presheaf ℂ
         open ecategory-aux ℂ
-module Yo {ℂ : ecategory} = efunctorₗₑᵥ {ℂ = ℂ} {PSh ℂ} (Yo ℂ)
+private module Yo {ℂ : ecategory} = efunctorₗₑᵥ {ℂ = ℂ} {PSh ℂ} (Yo ℂ)
 
 module yoneda-props (ℂ : ecategory) where
   open ecategory ℂ
@@ -39,47 +38,62 @@ module yoneda-props (ℂ : ecategory) where
     }
     where open ecategory-aux-only ℂ
 
-  module nat-tranf-into-repr {X : Obj}{F : presheaf ℂ}(μ : [─, X ] ⇒ F) where
-    private
-      module X = presheaf [─, X ]
-      module F = presheaf F
-      module μ = psheaf-mor μ
-      module Nat = tt-basics.setoids.setoid-aux (Nat [─, X ] F)
+  module Lemma (F : presheaf ℂ)(X : Obj) where
+      open import tt-basics.setoids using (setoid; setoidmap; std-id; std-cmp; ptw~)
+      private
+        module [─,X] = presheaf [─, X ]
+        module F = presheaf F
+        module FX = F.ₒ X
 
-    yoneda-el : || F.ₒ X ||
-    yoneda-el = μ.ap {X} (idar X)
+      yo-el : [─, X ] ⇒ F → || F.ₒ X ||
+      yo-el μ = μ.ap {X} (idar X)
+                  where module μ = psheaf-mor μ
 
-    yoneda-el-nat : natural-transformation [─, X ] F
-    yoneda-el-nat = record
-      { fnc =  fnc
-      ; nat = λ f a → F.ₐ.ap (a ∘ f) yoneda-el      ~[ F.∘ax-rfˢ yoneda-el ]
-                       F.ₐ.ap f (F.ₐ.ap a yoneda-el)  ∎
-      }
-      where module tmp {Z : Obj} = tt-basics.setoids.setoid-aux (F.ₒ Z)
-            open tmp using (endpoints)
-            fnc : {Z : Obj} → || Std.Hom (Hom Z X) (F.ₒ Z) ||
-            fnc {Z} = record
-              { op = λ z → F.ₐ.ap z yoneda-el
-              ; ext = λ pf → F.ext pf yoneda-el
+      yo-fnc : (x : || F.ₒ X ||){A : Obj} → || Std.Hom (Hom A X) (F.ₒ A) ||
+      yo-fnc x {A} = record
+                   { op = λ a → F.ₐ.ap a x
+                   ; ext = λ {a} {a'} pfeq → F.ext pfeq x
+                   }
+                         
+      yo-natt : || F.ₒ X || → [─, X ] ⇒ F
+      yo-natt x = record
+                { fnc = yo-fnc x
+                ; nat =  λ f a → F.cmpˢ a f x
+                }
+
+      -- Note that (NatTr [─, X ] F) : Set 1ₗₑᵥ, so setoidmap below cannot be replaced by Std.Hom
+      natt2el : setoidmap (NatTr [─, X ] F) (F.ₒ X)
+      natt2el = record
+              { op = yo-el
+              ; ext = λ pfeq → pfeq X (idar X)
               }
-    private module yn = psheaf-mor yoneda-el-nat
-            
-    yoneda-eq-aux : {Z : Obj} → μ.fnc {Z} Std.~ yn.fnc {Z}
-    yoneda-eq-aux {Z} = λ z → ~proof
-      μ.ap z                      ~[ μ.ext lidˢ ] /
-      μ.ap (X.ₐ.ap z (idar X))    ~[ μ.nat z (idar X) ]∎
-      F.ₐ.ap z (μ.ap (idar X)) ∎
-                      where open tt-basics.setoids.setoid-aux (F.ₒ Z)
-                            open ecategory-aux-only ℂ using (lidˢ)
-    
-    yoneda-eq : yoneda-el-nat Nat.~ μ
-    yoneda-eq = λ Z → Std._ˢ {_} {_} {μ.fnc {Z}} {yn.fnc {Z}} (yoneda-eq-aux {Z})
-  -- end nat-tranf-into-repr
+
+      el2natt : setoidmap (F.ₒ X) (NatTr [─, X ] F)
+      el2natt = record
+              { op = yo-natt
+              ; ext = λ pfeq A a → F.ₐ.ext a pfeq
+              }
+
+      id-el : ptw~ (std-cmp natt2el el2natt) (std-id {A = F.ₒ X})
+      id-el x = F.ₐ.ap (idar X) x  ~[ F.id x ]  x ∎
+              where open FX using (endpoints)
+
+      id-natt : ptw~ (std-cmp el2natt natt2el) (std-id {A = NatTr [─, X ] F})
+      id-natt μ A a = ~proof
+                    F.ₐ.ap a (μ.ap (idar X))       ~[ μ.nat a (idar X) ˢ ] /
+                    μ.ap (idar X ∘ a)              ~[ μ.ext ℂ.lid ]∎
+                    μ.ap {A} a ∎
+                    where module μ = psheaf-mor μ
+                          module FA = F.ₒ A
+                          open FA using (_ˢ; ~proof_~[_]_; eqreasend; /_~[_]_)
+                          module ℂ = ecategory-aux-only ℂ                                    
+  -- end Lemma
 
   Yo-full : is-full (Yo ℂ)
   Yo-full = record
-    { full-ar = yoneda-el
-    ; full-pf = λ {X} {Y} {μ} → yoneda-eq μ
+    { full-ar = λ {X} {Y} → yo-el [─, Y ] X
+    ; full-pf = λ {X} {Y} {μ} → id-natt [─, Y ] X μ
     }
-    where open nat-tranf-into-repr
+    where open Lemma
+
 -- end yoneda-props

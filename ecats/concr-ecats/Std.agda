@@ -15,7 +15,6 @@ open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.arrows
 open import ecats.basic-defs.exact-ecat
 open import ecats.basic-props.epi&mono
---open import ecats.basic-props.exact-ecat
 open import ecats.finite-limits.defs&not
 open import ecats.finite-limits.props.relations-among-limits
 open import ecats.finite-limits.props.pullback
@@ -48,6 +47,12 @@ Std = record
                   }
          }
          where module std (A : setoid {lzero}) = setoid-aux A
+
+
+module StdObj (A : ecat.Obj Std) where
+  open setoid A public
+  open setoid-aux A public
+module StdHom {A B : ecat.Obj Std}(f : || ecat.Hom Std A B ||) = setoidmap f renaming (op to ap)
 
 
 private

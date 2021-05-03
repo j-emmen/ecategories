@@ -50,7 +50,11 @@ record efunctorₗₑᵥ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} (ℂ : ecategoryₗₑᵥ
   ₐ = FHom
   idˢ : {A : ℂ.Obj} → 𝔻.idar (FObj A) 𝔻.~ FHom (ℂ.idar A)
   idˢ {A} = id {A} ˢ
-          where open ecategory-aux-only 𝔻
+          where open ecategory-aux-only 𝔻 using (_ˢ)
+  cmpˢ : {A B C : ℂ.Obj}(f : || ℂ.Hom A B ||)(g : || ℂ.Hom B C ||)
+            → ₐ (g ℂ.∘ f) 𝔻.~ ₐ g 𝔻.∘ ₐ f
+  cmpˢ f g = cmp f g ˢ
+           where open ecategory-aux-only 𝔻 using (_ˢ)
 
 module efctr {ℓ₁ ℓ₂ ℓ₃ ℓ₄}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
              = efunctorₗₑᵥ {ℓ₁} {ℓ₂} {ℓ₃} {ℓ₄} {ℂ} {𝔻}

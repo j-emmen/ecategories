@@ -48,10 +48,10 @@ _⇒_ : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ �
 F ⇒ G = natural-transformation F G
 
 
-Nat : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+NatTr : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
       (F G : efunctorₗₑᵥ ℂ 𝔻)
         → setoid {ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄} {ℓ₁ ⊔ ℓ₄}
-Nat {ℂ = ℂ} {𝔻 = 𝔻} F G = record
+NatTr {ℂ = ℂ} {𝔻 = 𝔻} F G = record
   { object = natural-transformation F G
   ; _∼_ = λ μ ν → ∀ X → fnc μ {X}  𝔻.~ fnc ν {X}
   ; istteqrel = record
