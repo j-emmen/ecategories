@@ -1,5 +1,3 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
 
@@ -17,7 +15,8 @@ open import ecats.functors.defs.natural-iso
 -- Adjunctions
 
 record adjunction {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-                  (L : efunctorₗₑᵥ ℂ 𝔻) (R : efunctorₗₑᵥ 𝔻 ℂ) : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+                  (L : efunctorₗₑᵥ ℂ 𝔻) (R : efunctorₗₑᵥ 𝔻 ℂ)
+                  : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
                   where
   private
     module ℂ = ecat ℂ
@@ -36,24 +35,24 @@ record adjunction {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃
 infix 3 _⊣_
 
 _⊣_ : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-      (L : efunctorₗₑᵥ ℂ 𝔻)(R : efunctorₗₑᵥ 𝔻 ℂ) → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+          → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ 𝔻 ℂ → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
 L ⊣ R = adjunction L R
 
 
 -- Equivalences
 
-record is-equivalence-pair {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}
-                           {ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-                           (F : efunctorₗₑᵥ ℂ 𝔻) (G : efunctorₗₑᵥ 𝔻 ℂ) : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+record is-equivalence-pair {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                           (F : efunctorₗₑᵥ ℂ 𝔻) (G : efunctorₗₑᵥ 𝔻 ℂ)
+                           : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
                            where
   field
     ι1 : natural-iso (F ○ G) IdF
     ι2 : natural-iso (G ○ F) IdF
 
 
-record is-equivalence {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}
-                      {ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-                      (F : efunctorₗₑᵥ ℂ 𝔻) : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+record is-equivalence {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                      (F : efunctorₗₑᵥ ℂ 𝔻)
+                      : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
                       where
   field
     invF : efunctorₗₑᵥ 𝔻 ℂ
@@ -61,12 +60,11 @@ record is-equivalence {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}
   open is-equivalence-pair iseqv public
 
 
+-- Other kind of functors
 
--- Other properties of funtors
-
-record is-full {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}
-               {ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-               (F : efunctorₗₑᵥ ℂ 𝔻) : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+record is-full {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+               (F : efunctorₗₑᵥ ℂ 𝔻)
+               : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
                where
   private
     module ℂ = ecat ℂ
@@ -90,9 +88,9 @@ record is-full {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}
               where open ecategory-aux-only 𝔻
 
 
-record is-faithful {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}
-                   {ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-                   (F : efunctorₗₑᵥ ℂ 𝔻) : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+record is-faithful {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                   (F : efunctorₗₑᵥ ℂ 𝔻)
+                   : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
                    where
   private
     module ℂ = ecat ℂ
@@ -103,9 +101,9 @@ record is-faithful {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}
                   → F.ₐ f 𝔻.~ F.ₐ g → f ℂ.~ g
 
 
-record is-ess-surjective-ob {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}
-                            {ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-                            (F : efunctorₗₑᵥ ℂ 𝔻) : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+record is-ess-surjective-ob {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                            (F : efunctorₗₑᵥ ℂ 𝔻)
+                            : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
                             where
   private
     module ℂ = ecat ℂ
@@ -118,12 +116,62 @@ record is-ess-surjective-ob {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ�
     iso : (Y : 𝔻.Obj) → is-iso (ar Y)
 
 
+private
+  module cat-iso {ℓₒ ℓₕ}(𝕏 : ecategoryₗₑᵥ ℓₒ ℓₕ) where
+    open ecat 𝕏 public
+    open iso-defs 𝕏 public
+
+
+record is-conservative {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                       (F : efunctorₗₑᵥ ℂ 𝔻)
+                       : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+                       where
+  private
+    module ℂ = cat-iso ℂ
+    module 𝔻 = cat-iso 𝔻
+    module F = efunctorₗₑᵥ F
+  field
+    refl-iso : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → 𝔻.is-iso (F.ₐ f) → ℂ.is-iso f
+
+f&f-is-conservative : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                      {F : efunctorₗₑᵥ ℂ 𝔻} → is-full F → is-faithful F
+                        → is-conservative F
+f&f-is-conservative {ℂ = ℂ} {𝔻 = 𝔻} {F} isfull isfaith = record
+  { refl-iso = λ isiso → record
+             { invf = inv isiso
+             ; isisopair = isop isiso
+             }
+  }
+  where module ℂ = cat-iso ℂ
+        module 𝔻 = cat-iso 𝔻
+        module F where
+          open efunctor-aux F public
+          open is-full isfull public
+          open is-faithful isfaith public
+        inv : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||}
+                 → 𝔻.is-iso (F.ₐ f) → || ℂ.Hom B A ||
+        inv isiso = F.full-ar Ff.⁻¹
+                  where module Ff = 𝔻.is-iso isiso
+        Finv~invF : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||}(isiso : 𝔻.is-iso (F.ₐ f))
+                       → F.ₐ (inv isiso) 𝔻.~ 𝔻.is-iso.invf isiso
+        Finv~invF isiso = F.full-pf
+        isop : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||}(isiso : 𝔻.is-iso (F.ₐ f))
+                  → ℂ.is-iso-pair f (inv isiso)
+        isop {A} {B} {f = f} isiso = record
+          { iddom = F.faith-pf (F.cmpˢ f (inv isiso) ⊙ (∘e r (Finv~invF isiso) ⊙ Ff.iddom ⊙ F.idˢ))
+          ; idcod = F.faith-pf (~proof F.ₐ (f ℂ.∘ inv isiso)      ~[ F.cmpˢ (inv isiso) f ] /
+                                       F.ₐ f 𝔻.∘ F.ₐ (inv isiso)  ~[ ∘e (Finv~invF isiso) r ] /
+                                       F.ₐ f 𝔻.∘ Ff.⁻¹            ~[ Ff.idcod ⊙ F.idˢ ]∎
+                                       F.ₐ (ℂ.idar B) ∎)
+          }
+          where open ecategory-aux-only 𝔻
+                module Ff = 𝔻.is-iso isiso
 
 -- Essential equivalences
 
-record is-ess-equivalence {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}
-                          {ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-                          (F : efunctorₗₑᵥ ℂ 𝔻) : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+record is-ess-equivalence {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+                          (F : efunctorₗₑᵥ ℂ 𝔻)
+                          : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
                           where
   private
     module ℂ = ecat ℂ

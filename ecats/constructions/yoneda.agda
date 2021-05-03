@@ -96,4 +96,7 @@ module yoneda-props (ℂ : ecategory) where
     }
     where open Lemma
 
+  Yo-conserv : is-conservative (Yo ℂ)
+  Yo-conserv = f&f-is-conservative Yo-full Yo-faith
+
 -- end yoneda-props

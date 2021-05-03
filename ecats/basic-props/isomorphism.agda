@@ -23,15 +23,20 @@ module iso-props (ℂ : ecategory) where
   invf-is-iso {f = f} f⁻¹ = mkis-iso (inv-iso-pair isisopair)
                           where open is-iso f⁻¹
 
+  linvr-uq :  {a b : Obj} {f : || Hom a b ||} {linvf rinvf : || Hom b a ||}
+                 → linvf ∘ f ~ idar a → f ∘ rinvf ~ idar b
+                   → linvf ~ rinvf
+  linvr-uq {f = f} {linvf} {rinvf} iddom idcod = ~proof
+    linvf               ~[ ridggˢ r idcod ] /
+    linvf ∘ f ∘ rinvf   ~[ ass ⊙ lidgg r iddom ]∎
+    rinvf ∎
+    where open ecategory-aux-only ℂ
+
   inv-uq-r :  {a b : Obj} {f : || Hom a b ||} {invf invf' : || Hom b a ||}
                → is-iso-pair f invf → is-iso-pair f invf' → invf ~ invf'
-  inv-uq-r {f = f} {invf} {invf'} isop isop' = ~proof
-    invf               ~[ ridggˢ r isop'.idcod ] /
-    invf ∘ f ∘ invf'   ~[ ass ⊙ lidgg r isop.iddom ]∎
-    invf' ∎
-    where open ecategory-aux-only ℂ
-          module isop = is-iso-pair isop
-          module isop' = is-iso-pair isop'
+  inv-uq-r isop isop' = linvr-uq isop.iddom isop'.idcod
+                      where module isop = is-iso-pair isop
+                            module isop' = is-iso-pair isop'
 
   inv-uq :  {a b : Obj} {f f' : || Hom a b ||} {invf invf' : || Hom b a ||}
                → is-iso-pair f invf → is-iso-pair f' invf'
