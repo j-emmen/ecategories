@@ -140,6 +140,10 @@ p ■ q = =tra p q
            → p₁ == p₂ → p₁ ■ p == p₂ ■ p
 ■extr p = =ap (λ u → u ■ p)
 
+■ext : {ℓ : Level}{A : Set ℓ}{a₁ a₂ a₃ : A}(p₁ {p₂} : a₁ == a₂)({p₁'} p₂' :  a₂ == a₃)
+           → p₁ == p₂ → p₁' == p₂' → p₁ ■ p₁' == p₂ ■ p₂'
+■ext p₁ p₂' pf pf' = (■extl p₁ pf') ■ (■extr p₂' pf)
+
 
 ■idlg : {ℓ : Level}{A : Set ℓ}{a₁ a₂ a₃ : A}{p₁ : a₁ == a₁}{p₂ : a₁ == a₂}{p₃ : a₁ == a₂}
          → p₁ == =rf → p₁ ■ p₂ == p₃ → p₂ == p₃

@@ -11,10 +11,10 @@ open import ecats.functors.defs.efunctor
 -- E-functor notation
 
 
-module efunctor-aux-only {ℓ₁ ℓ₂ ℓ₃ ℓ₄}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+module efunctor-aux-only {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
                          (F : efunctorₗₑᵥ ℂ 𝔻) where
   private    
-    module catnot {ℓ₁ ℓ₂}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂) where
+    module catnot {ℓ₁ ℓ₂ ℓ₃}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
       open ecat ℂ public
       open comm-shapes ℂ public
     module ℂ = catnot ℂ
@@ -79,7 +79,7 @@ module efunctor-aux-only {ℓ₁ ℓ₂ ℓ₃ ℓ₄}{ℂ : ecategoryₗₑᵥ 
 
 
 
-module efunctor-aux {ℓ₁ ℓ₂ ℓ₃ ℓ₄}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+module efunctor-aux {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
                     (F : efunctorₗₑᵥ ℂ 𝔻) where
   open efunctorₗₑᵥ F public
   open efunctor-aux-only F public

@@ -14,11 +14,13 @@ infix 3 ||_||
 ||_|| : {ℓo ℓr : Level} → setoid {ℓo} {ℓr} → Set ℓo
 ||_|| X = ||_||std X
 
-record is-ecategory {ℓ ℓ' : Level} (Obj : Set ℓ) (Hom : Obj → Obj → setoid {ℓ'} {ℓ'}) : Set (ℓ ⊔ ℓ')
+record is-ecategory {ℓₒ ℓₕ ℓ~ : Level}(Obj : Set ℓₒ)
+                    (Hom : Obj → Obj → setoid {ℓₕ} {ℓ~})
+                    : Set (ℓₒ ⊔ ℓₕ ⊔ ℓ~)
                     where
   -- notation
   infix 2 _~_
-  _~_ : {a b : Obj} → (f f' : || Hom a b ||) → Set ℓ'
+  _~_ : {a b : Obj} → (f f' : || Hom a b ||) → Set ℓ~
   f ~ f' = < Hom _ _ > f ~ f'
   infixr 5 _∘_
   field
@@ -31,14 +33,12 @@ record is-ecategory {ℓ ℓ' : Level} (Obj : Set ℓ) (Hom : Obj → Obj → se
     assoc : {a b c d : Obj} → (f : || Hom a b ||) → (g : || Hom b c ||) → (h : || Hom c d ||)
                → h ∘ (g ∘ f) ~ (h ∘ g) ∘ f
 
-record ecategoryₗₑᵥ (ℓₒ ℓₕ : Level) : Set (lsuc (ℓₒ ⊔ ℓₕ)) where
+record ecategoryₗₑᵥ (ℓₒ ℓₕ ℓ~ : Level) : Set (lsuc (ℓₒ ⊔ ℓₕ ⊔ ℓ~)) where
   field
     Obj : Set ℓₒ
-    Hom : Obj → Obj → setoid {ℓₕ} {ℓₕ}
+    Hom : Obj → Obj → setoid {ℓₕ} {ℓ~}
     isecat : is-ecategory Obj Hom
   open is-ecategory isecat public
-
-module ecat {ℓₒ ℓₕ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) = ecategoryₗₑᵥ {ℓₒ} {ℓₕ} ℂ
 
 0ₗₑᵥ 1ₗₑᵥ 2ₗₑᵥ : Level
 0ₗₑᵥ = lzero
@@ -46,73 +46,26 @@ module ecat {ℓₒ ℓₕ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) = ec
 2ₗₑᵥ = lsuc 1ₗₑᵥ
 
 ecategory : Set₂
-ecategory = ecategoryₗₑᵥ 1ₗₑᵥ 0ₗₑᵥ
-module ecategory (ℂ : ecategory) = ecategoryₗₑᵥ {1ₗₑᵥ} {0ₗₑᵥ} ℂ
+ecategory = ecategoryₗₑᵥ 1ₗₑᵥ 0ₗₑᵥ 0ₗₑᵥ
+module ecategory (ℂ : ecategory) = ecategoryₗₑᵥ {1ₗₑᵥ} {0ₗₑᵥ} {0ₗₑᵥ} ℂ
 
 small-ecategory : Set₁
-small-ecategory = ecategoryₗₑᵥ 0ₗₑᵥ 0ₗₑᵥ
-module small-ecategory (ℂ : small-ecategory)= ecategoryₗₑᵥ {0ₗₑᵥ} {0ₗₑᵥ} ℂ
+small-ecategory = ecategoryₗₑᵥ 0ₗₑᵥ 0ₗₑᵥ 0ₗₑᵥ
+module small-ecategory (ℂ : small-ecategory)= ecategoryₗₑᵥ {0ₗₑᵥ} {0ₗₑᵥ} {0ₗₑᵥ} ℂ
 
 large-ecategory : Set₂
-large-ecategory = ecategoryₗₑᵥ 1ₗₑᵥ 1ₗₑᵥ
-module large-ecategory (ℂ : large-ecategory) = ecategoryₗₑᵥ {1ₗₑᵥ} {1ₗₑᵥ} ℂ
+large-ecategory = ecategoryₗₑᵥ 1ₗₑᵥ 1ₗₑᵥ 1ₗₑᵥ
+module large-ecategory (ℂ : large-ecategory) = ecategoryₗₑᵥ {1ₗₑᵥ} {1ₗₑᵥ} {1ₗₑᵥ} ℂ
 
 Large-ecategory : Set₃
-Large-ecategory = ecategoryₗₑᵥ 2ₗₑᵥ 1ₗₑᵥ
-module Large-ecategory (ℂ : Large-ecategory) = ecategoryₗₑᵥ {2ₗₑᵥ} {1ₗₑᵥ} ℂ
+Large-ecategory = ecategoryₗₑᵥ 2ₗₑᵥ 1ₗₑᵥ 1ₗₑᵥ
+module Large-ecategory (ℂ : Large-ecategory) = ecategoryₗₑᵥ {2ₗₑᵥ} {1ₗₑᵥ} {1ₗₑᵥ} ℂ
 
 
-{-
-record ecategory : Set₂ where
-  constructor mkecat
-  field
-    {Obj} : Set 1ₗₑᵥ
-    {Hom} : Obj → Obj → setoid {0ₗₑᵥ}
-    isecat : is-ecategory Obj Hom
-  open is-ecategory isecat public
-
-record large-ecategory : Set₂ where
-  field
-    Obj : Set₁
-    Hom : Obj → Obj → setoid {lsuc lzero}
-    isecat : is-ecategory {lsuc lzero} {lsuc lzero} Obj Hom
-  open is-ecategory isecat public
-
--- locally small ecategory
-
-record ecategory : Set₂ where
-  constructor mkecat
-  field
-    {Obj} : Set₁
-    {Hom} : Obj → Obj → setoid {lzero}
-    isecat : is-ecategory {lsuc lzero} {lzero} Obj Hom
-  open is-ecategory isecat public
-
-
--- small ecategory
-
-record small-ecategory : Set₁ where
-  field
-    Obj : Set
-    Hom : Obj → Obj → setoid {lzero}
-    isecat : is-ecategory {lzero} {lzero} Obj Hom
-  open is-ecategory isecat public
-
--- Large ecategory
-
-record Large-ecategory : Set₃ where
-  field
-    Obj : Set₂
-    Hom : Obj → Obj → setoid {lsuc lzero}
-    isecat : is-ecategory {lsuc (lsuc lzero)} {lsuc lzero} Obj Hom
-  open is-ecategory isecat public
--}
-
-
-module hom-ext-prop-defs {ℓₒ ℓₕ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) where
+module hom-ext-prop-defs {ℓₒ ℓₕ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~) where
   open ecategoryₗₑᵥ ℂ
   is-hom-ext : {ℓ : Level}(Prp : {X Y : Obj} → || Hom X Y || → Set ℓ)
-                  → Set (ℓₒ ⊔ ℓₕ ⊔ ℓ)
+                  → Set (ℓₒ ⊔ ℓₕ ⊔ ℓ~ ⊔ ℓ)
   is-hom-ext Prp = {X Y : Obj} → is-ext-prop {X = Hom X Y} Prp
   module is-hom-ext {ℓ : Level}{Prp : {X Y : Obj} → || Hom X Y || → Set ℓ}
                     (ext : is-hom-ext Prp) {X} {Y}
@@ -130,7 +83,7 @@ module hom-ext-prop-defs {ℓₒ ℓₕ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ
                         → Prp g → Prp f → Prp (g ∘ f)
 
   record is-ecat-congr {ℓ : Level}(Prp : {X Y : Obj} → || Hom X Y || → Set ℓ)
-                       : Set (ℓₒ ⊔ ℓₕ ⊔ ℓ)
+                       : Set (ℓₒ ⊔ ℓₕ ⊔ ℓ~ ⊔ ℓ)
                        where
     --constructor mkis-ecat-congr
     field

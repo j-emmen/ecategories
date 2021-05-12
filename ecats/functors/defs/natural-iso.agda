@@ -15,8 +15,8 @@ open import ecats.functors.defs.natural-transformation
 -- Natural isomorphisms
 ------------------------
 
-record natural-iso {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-                   (F G : efunctorₗₑᵥ ℂ 𝔻) : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+record natural-iso {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                   (F G : efunctorₗₑᵥ ℂ 𝔻) : Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
                    where
   private
     module ℂ = ecat ℂ
@@ -35,11 +35,11 @@ record natural-iso {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ�
 
 
 infixr 9 _≅ₐ_
-_≅ₐ_ :  {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-        (F G : efunctorₗₑᵥ ℂ 𝔻) → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+_≅ₐ_ :  {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+        (F G : efunctorₗₑᵥ ℂ 𝔻) → Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
 F ≅ₐ G = natural-iso F G
 
-≅ₐrefl : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+≅ₐrefl : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
          {F : efunctorₗₑᵥ ℂ 𝔻} → F ≅ₐ F
 ≅ₐrefl {𝔻 = 𝔻} {F} = record
   { natt = natt-id
@@ -51,7 +51,7 @@ F ≅ₐ G = natural-iso F G
   }
   where open ecategory-aux-only 𝔻
 
-≅ₐsym : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+≅ₐsym : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
        {F G : efunctorₗₑᵥ ℂ 𝔻} → F ≅ₐ G → G ≅ₐ F
 ≅ₐsym α = record
   { natt = natt⁻¹
@@ -63,7 +63,7 @@ F ≅ₐ G = natural-iso F G
   }
   where open natural-iso α
 
-natiso-vcmp : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+natiso-vcmp : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
               {F G H : efunctorₗₑᵥ ℂ 𝔻}
                   → G ≅ₐ H → F ≅ₐ G → F ≅ₐ H
 natiso-vcmp {𝔻 = 𝔻} {F} {G} {H} β α = record
@@ -79,8 +79,8 @@ natiso-vcmp {𝔻 = 𝔻} {F} {G} {H} β α = record
         module β = natural-iso β
 
 
-natiso-hcmp : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-              {ℓ₅ ℓ₆ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₅ ℓ₆}{F G : efunctorₗₑᵥ ℂ 𝔻}
+natiso-hcmp : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+              {ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}{F G : efunctorₗₑᵥ ℂ 𝔻}
               {H K : efunctorₗₑᵥ 𝔻 𝔼}
                   → H ≅ₐ K → F ≅ₐ G → H ○ F ≅ₐ K ○ G
 natiso-hcmp {𝔼 = 𝔼} {F} {G} {H} {K} β α = record

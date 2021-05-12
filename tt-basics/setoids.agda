@@ -166,6 +166,50 @@ free-std-is-min {X = X} {A} f = record
 can-cover : {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) → setoidmap (Freestd || A ||) A
 can-cover A = free-std-is-min (λ x → x)
 
+sub-setoid : {ℓ ℓo ℓr : Level}{X : Set ℓ}(A : setoid {ℓo} {ℓr})(f : X → || A ||)
+                → setoid {ℓ} {ℓr}
+sub-setoid {X = X} A f = record
+  { object = X
+  ; _∼_ = λ x x' → (f x) A.∼ (f x')
+  ; istteqrel = tt-eqrel-stable f A.istteqrel
+  }
+  where module A = setoid A
+
+prod-std : {ℓo₁ ℓr₁ : Level}(A : setoid {ℓo₁} {ℓr₁}){ℓo₂ ℓr₂ : Level}(B : setoid {ℓo₂} {ℓr₂})
+                → setoid {ℓo₁ ⊔ ℓo₂} {ℓr₁ ⊔ ℓr₂}
+prod-std A B = record
+  { object = prod || A || || B ||
+  ; _∼_ = λ z₁ z₂ → prod ((prj1 z₁) A.∼ prj1 z₂) ((prj2 z₁) B.∼ (prj2 z₂))
+  ; istteqrel = record
+              { refl = λ z → pair (A.refl (prj1 z)) (B.refl (prj2 z))
+              ; sym = λ pf → pair (A.sym (prj1 pf)) (B.sym (prj2 pf))
+              ; tra = λ pf₁ pf₂ → pair (A.tra (prj1 pf₁) (prj1 pf₂)) (B.tra (prj2 pf₁) (prj2 pf₂))
+              }
+  }
+  where module A = setoid A
+        module B = setoid B
+
+codisc-std : {ℓ : Level} → Set ℓ → setoid {ℓ} {lzero}
+codisc-std A = record
+  { object = A
+  ; _∼_ = λ _ _ → N₁
+  ; istteqrel = record
+              { refl = λ _ → 0₁
+              ; sym = λ _ → 0₁
+              ; tra = λ _ _ → 0₁
+              }
+  }
+
+disc-std : {ℓ : Level} → Set ℓ → setoid {ℓ} {ℓ}
+disc-std A = record
+  { object = A
+  ; _∼_ = λ x y → x == y
+  ; istteqrel = record
+              { refl = λ _ → =rf
+              ; sym = =sym
+              ; tra = =tra
+              }
+  }
 
 std-id : {ℓo ℓr : Level}{A : setoid {ℓo} {ℓr}} → || A ⇒ A ||
 std-id {A} = record { op = λ x → x

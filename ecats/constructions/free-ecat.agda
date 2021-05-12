@@ -10,9 +10,9 @@ open import tt-basics.setoids renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
 --open import ecats.concr-ecats.Std
 
-module free-ecat-defs {ℓₒ ℓₕ : Level}{V : Set ℓₒ}(E : V → V → Set ℓₕ) where
+module free-ecat-defs {ℓₒ ℓₕ : Level}{V : Set ℓₒ}(E : V → V → setoid {ℓₕ} {ℓₕ}) where
 
-
+{-
   record non-empty-fin-path (v₁ v₂ : V) : Set (ℓₒ ⊔ ℓₕ) where
     field
       length : N
@@ -21,20 +21,33 @@ module free-ecat-defs {ℓₒ ℓₕ : Level}{V : Set ℓₒ}(E : V → V → Se
     v' i = sumEl {C = λ _ → V} (λ x → {!x!}) (λ _ → v₁) i
     field
       e : (i : Fin (s length)) → {!!} --E (v (Fin-emb {length} i)) (v (Fin-s {length} i))
+-}
 
-
-  record fin-path (v₁ v₂ : V) : Set (ℓₒ ⊔ ℓₕ) where
+  data fin-path : Set (ℓₒ ⊔ ℓₕ) where
+    
+  
+  record fin-path : Set (ℓₒ ⊔ ℓₕ) where
     field
       length : N
       v : (i : Fin (s length)) → V
-      e : (i : Fin length) → E (v (Fin-emb {length} i)) (v (Fin-s {length} i))
+      e : (i : Fin length) → || E (v (Fin-emb {length} i)) (v (Fin-s {length} i)) ||
 
-  empty-path : (v : V) → fin-path v v
+
+  dom cod : fin-path → V
+  dom p = p.v (Fin-O {p.length})
+        where module p = fin-path p
+  cod p = p.v (Fin-max {p.length})
+        where module p = fin-path p
+
+  record FPath (v₁ v₂ : V) : setoid {ℓₕ} {ℓₕ} where
+    field
+      p : fin-path
+      d :
+      c :
+  
+  empty-path : (v : V) → fin-path
   empty-path v = record
     { length = O
     ; v = λ _ → v
     ; e = λ ()
     }
-
-  --dom : fin-path → V
-  --dom = {!!}

@@ -9,17 +9,17 @@ open import ecats.basic-defs.ecat-def&not
 
 -- E-functors
 
-module efunctor-defs {ℓ₁ ℓ₂ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂)
-                     {ℓ₃ ℓ₄ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄)
+module efunctor-defs {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~)
+                     {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~)
                      where
   private
     module ℂ = ecat ℂ
     module 𝔻 = ecat 𝔻
 
--- Note that the universe level of is-functorial does not depend on ℓ₃
+-- Note that the universe level of is-functorial does not depend on ℓ₂ₒ
   record is-functorial {FO : ℂ.Obj → 𝔻.Obj}
                        (FH : {A B : ℂ.Obj} → || ℂ.Hom A B || → || 𝔻.Hom (FO A) (FO B) ||)
-                       : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+                       : Set (ℂ.ℓₐₗₗ ⊔ 𝔻.ℓ~)
                        where
     field
       ext : {A B : ℂ.Obj} {f f' : || ℂ.Hom A B ||}
@@ -31,8 +31,8 @@ module efunctor-defs {ℓ₁ ℓ₂ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ
 -- end efunctor-defs
   
 
-record efunctorₗₑᵥ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} (ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂)(𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄)
-                  : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+record efunctorₗₑᵥ {ℓ₁ₒ ℓ₁ₕ ℓ₁~ ℓ₂ₒ ℓ₂ₕ ℓ₂~}(ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~)(𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~)
+                  : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
                   where
   private
     module ℂ = ecat ℂ
@@ -56,22 +56,23 @@ record efunctorₗₑᵥ {ℓ₁ ℓ₂ ℓ₃ ℓ₄} (ℂ : ecategoryₗₑᵥ
   cmpˢ f g = cmp f g ˢ
            where open ecategory-aux-only 𝔻 using (_ˢ)
 
-module efctr {ℓ₁ ℓ₂ ℓ₃ ℓ₄}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-             = efunctorₗₑᵥ {ℓ₁} {ℓ₂} {ℓ₃} {ℓ₄} {ℂ} {𝔻}
+module efctr {ℓ₁ₒ ℓ₁ₕ ℓ₁~ ℓ₂ₒ ℓ₂ₕ ℓ₂~}{ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}{𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
+             = efunctorₗₑᵥ {ℓ₁ₒ} {ℓ₁ₕ} {ℓ₁~} {ℓ₂ₒ} {ℓ₂ₕ} {ℓ₂~} {ℂ} {𝔻}
 
-efunctor : {ℓo ℓr : Level}(ℂ 𝔻 : ecategoryₗₑᵥ ℓo ℓr) → Set (ℓo ⊔ ℓr)
+efunctor : {ℓₒ ℓₕ ℓ~ : Level}(ℂ 𝔻 : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~) → Set (ℓₒ ⊔ ℓₕ ⊔ ℓ~)
 efunctor ℂ 𝔻 = efunctorₗₑᵥ ℂ 𝔻
-module efunctor {ℓo ℓr}{ℂ 𝔻 : ecategoryₗₑᵥ ℓo ℓr}(F : efunctor ℂ 𝔻) = efunctorₗₑᵥ F
+module efunctor {ℓₒ ℓₕ ℓ~}{ℂ 𝔻 : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~}(F : efunctor ℂ 𝔻) = efunctorₗₑᵥ F
 
 
 diagram _shaped-diagram-in_ : (ℂ : small-ecategory)(𝔻 : ecategory) → Set₁
 diagram ℂ 𝔻 = efunctorₗₑᵥ ℂ 𝔻
 ℂ shaped-diagram-in 𝔻 = diagram ℂ 𝔻
+module diagram {ℂ : small-ecategory}{𝔻 : ecategory}(F : diagram ℂ 𝔻)
+               = efunctorₗₑᵥ F
 
 
-
-IdF : {ℓₒ ℓₕ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ} → efunctorₗₑᵥ ℂ ℂ
-IdF {_} {_} {ℂ} = record
+IdF : {ℓₒ ℓₕ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~} → efunctorₗₑᵥ ℂ ℂ
+IdF {ℂ = ℂ} = record
   { FObj = λ A → A
   ; FHom = λ f → f
   ; isF = record
@@ -83,9 +84,9 @@ IdF {_} {_} {ℂ} = record
   where open ecategory-aux ℂ
 
 
-efunctor-cmpₗₑᵥ : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-                  {ℓ₅ ℓ₆ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₅ ℓ₆}
-            --{ℓₒ ℓₕ : Level}{ℂ 𝔻 𝔼 : ecategoryₗₑᵥ ℓₒ ℓₕ}
+efunctor-cmpₗₑᵥ : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
+                 {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
+                 {ℓ₃ₒ ℓ₃ₕ ℓ₃~ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₕ ℓ₃~}
                       → efunctorₗₑᵥ 𝔻 𝔼 → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ ℂ 𝔼
 efunctor-cmpₗₑᵥ {𝔼 = 𝔼} G F = record
   { FObj = λ A → G.ₒ (F.ₒ A)
@@ -101,8 +102,8 @@ efunctor-cmpₗₑᵥ {𝔼 = 𝔼} G F = record
         module G = efctr G
 
 infixr 10 _○_
-_○_ : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-      {ℓ₅ ℓ₆ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₅ ℓ₆}
---{ℓₒ ℓₕ : Level}{ℂ 𝔻 𝔼 : ecategoryₗₑᵥ ℓₒ ℓₕ}
+_○_ : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
+       {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
+       {ℓ₃ₒ ℓ₃ₕ ℓ₃~ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₕ ℓ₃~}
           → efunctorₗₑᵥ 𝔻 𝔼 → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ ℂ 𝔼
 G ○ F = efunctor-cmpₗₑᵥ G F

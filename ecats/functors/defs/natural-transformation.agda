@@ -14,8 +14,8 @@ open import ecats.functors.defs.efunctor-d&n
 ---------------------------
 
 
-module natural-trans-defs {ℓ₁ ℓ₂ : Level}{D : ecategoryₗₑᵥ ℓ₁ ℓ₂}
-                          {ℓ₃ ℓ₄ : Level}{C : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+module natural-trans-defs {ℓ₁ ℓ₂ ℓ₃ : Level}{D : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}
+                          {ℓ₄ ℓ₅ ℓ₆ : Level}{C : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
                           {F G : efunctorₗₑᵥ D C}
                           where
   private
@@ -24,12 +24,13 @@ module natural-trans-defs {ℓ₁ ℓ₂ : Level}{D : ecategoryₗₑᵥ ℓ₁ 
     module F = efunctorₗₑᵥ F
     module G = efunctorₗₑᵥ G
     
-  is-natural : (fnc : {A : Dom.Obj} → || Cod.Hom (F.ₒ A) (G.ₒ A) ||) → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
-  is-natural fnc = {A B : Dom.Obj}(f : || Dom.Hom A B ||) → fnc Cod.∘ (F.ₐ f) Cod.~ (G.ₐ f) Cod.∘ fnc
+  is-natural : (fnc : {A : Dom.Obj} → || Cod.Hom (F.ₒ A) (G.ₒ A) ||) → Set (Dom.ℓₙₒ~ ⊔ Cod.ℓ~)
+  is-natural fnc = {A B : Dom.Obj}(f : || Dom.Hom A B ||)
+                          → fnc Cod.∘ (F.ₐ f) Cod.~ (G.ₐ f) Cod.∘ fnc
 
 
-record natural-transformation {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-                              (F G : efunctorₗₑᵥ ℂ 𝔻) : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+record natural-transformation {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                              (F G : efunctorₗₑᵥ ℂ 𝔻) : Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
                               where
   private
     module ℂ = ecat ℂ
@@ -42,15 +43,15 @@ record natural-transformation {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ �
              → fnc 𝔻.∘ (F.ₐ f) 𝔻.~ (G.ₐ f) 𝔻.∘ fnc
 
 infixr 8 _⇒_
-_⇒_ : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+_⇒_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
         (F G : efunctorₗₑᵥ ℂ 𝔻)
-           → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+           → Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
 F ⇒ G = natural-transformation F G
 
 
-NatTr : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-      (F G : efunctorₗₑᵥ ℂ 𝔻)
-        → setoid {ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄} {ℓ₁ ⊔ ℓ₄}
+NatTr : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+        (F G : efunctorₗₑᵥ ℂ 𝔻)
+           → setoid {ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻} {ecat.ℓₒ ℂ ⊔ ecat.ℓ~ 𝔻}
 NatTr {ℂ = ℂ} {𝔻 = 𝔻} F G = record
   { object = natural-transformation F G
   ; _∼_ = λ μ ν → ∀ X → fnc μ {X}  𝔻.~ fnc ν {X}
@@ -64,7 +65,7 @@ NatTr {ℂ = ℂ} {𝔻 = 𝔻} F G = record
         open natural-transformation
 
 
-natt-id : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+natt-id : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
           {F : efunctorₗₑᵥ ℂ 𝔻}
             → F ⇒ F
 natt-id {ℂ = ℂ} {𝔻 = 𝔻} {F} = record
@@ -75,7 +76,7 @@ natt-id {ℂ = ℂ} {𝔻 = 𝔻} {F} = record
                       module F = efctr F
                       open ecategory-aux-only 𝔻
 
-natt-vcmp : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+natt-vcmp : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
             {F G H : efunctorₗₑᵥ ℂ 𝔻}
                → G ⇒ H → F ⇒ G → F ⇒ H
 natt-vcmp {ℂ = ℂ} {𝔻 = 𝔻} {F} {G} {H} β α = record
@@ -88,8 +89,8 @@ natt-vcmp {ℂ = ℂ} {𝔻 = 𝔻} {F} {G} {H} β α = record
         open ecategory-aux-only 𝔻
 
 
-natt-hcmp : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-            {ℓ₅ ℓ₆ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₅ ℓ₆}{F G : efunctorₗₑᵥ ℂ 𝔻}{H K : efunctorₗₑᵥ 𝔻 𝔼}
+natt-hcmp : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+            {ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}{F G : efunctorₗₑᵥ ℂ 𝔻}{H K : efunctorₗₑᵥ 𝔻 𝔼}
                → H ⇒ K → F ⇒ G → H ○ F ⇒ K ○ G
 natt-hcmp {𝔼 = 𝔼} {F} {G} {H} {K} β α = record
   { fnc = λ {A} → β.fnc {G.ₒ A} 𝔼.∘ H.ₐ (α.fnc {A})

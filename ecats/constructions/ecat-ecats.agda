@@ -3,6 +3,7 @@
 
 module ecats.constructions.ecat-ecats where
 
+open import Agda.Primitive
 open import tt-basics.basics using (is-tt-eqrel)
 open import tt-basics.setoids using (setoid) --hiding (||_||)
 open import ecats.basic-defs.ecat-def&not
@@ -12,26 +13,56 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
 
 
----------------------------------------------------------------------
--- Large category of efunctors between two locally small ecategories
----------------------------------------------------------------------
+-------------------------------------------------
+-- Category of efunctors between two ecategories
+-------------------------------------------------
 
-Fctr : (ℂ 𝔻 : ecategory) → large-ecategory
-Fctr ℂ 𝔻 = record
-  { Obj = efunctor ℂ 𝔻
-  ; Hom = Nat {ℂ} {𝔻}
+Fctrₗₑᵥ : {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃){ℓ₄ ℓ₅ ℓ₆ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆)
+            → ecategoryₗₑᵥ (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
+                           (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
+                           (ecat.ℓₒ ℂ ⊔ ecat.ℓ~ 𝔻)
+Fctrₗₑᵥ ℂ 𝔻 = record
+  { Obj = efunctorₗₑᵥ ℂ 𝔻
+  ; Hom = NatTr {ℂ = ℂ} {𝔻 = 𝔻}
   ; isecat = record
-           { _∘_ = natt-vcmp {ℂ} {𝔻}
-           ; idar = λ F → natt-id {ℂ} {𝔻} {F}
+           { _∘_ = natt-vcmp {ℂ = ℂ} {𝔻 = 𝔻}
+           ; idar = λ F → natt-id {ℂ = ℂ} {𝔻 = 𝔻} {F}
            ; ∘ext = λ _ _ _ _ pff pfg X → 𝔻.∘ext _ _ _ _ (pff X) (pfg X)
            ; lidax = λ f X → 𝔻.lidax (fnc f {X})
            ; ridax = λ f X → 𝔻.ridax (fnc f {X})
            ; assoc = λ f g h X → 𝔻.assoc (fnc f {X}) (fnc g) (fnc h)
            }
   }
-  where module 𝔻 = ecategory 𝔻
+  where module 𝔻 = ecat 𝔻
         open natural-transformation
 
+-------------------------------------------------------------
+-- Small category of efunctors between two small ecategories
+-------------------------------------------------------------
+
+smallFctr : (ℂ 𝔻 : small-ecategory) → small-ecategory
+smallFctr ℂ 𝔻 = Fctrₗₑᵥ ℂ 𝔻
+
+-------------------------------------------------------------
+-- Locally small category of small ecategories and efunctors
+-------------------------------------------------------------
+
+
+Cat : ecategory
+Cat = record
+  { Obj = small-ecategory
+  ; Hom = {!!}
+  ; isecat = {!!}
+  }
+
+
+
+---------------------------------------------------------------------
+-- Large category of efunctors between two locally small ecategories
+---------------------------------------------------------------------
+
+Fctr : (ℂ 𝔻 : ecategory) → large-ecategory
+Fctr ℂ 𝔻 = Fctrₗₑᵥ ℂ 𝔻
 
 -------------------------------------------------------------
 -- Setoid of efunctors between two locally small ecategories
@@ -42,9 +73,9 @@ FctrStd ℂ 𝔻 = record
   { object =  efunctor ℂ 𝔻
   ; _∼_ = λ F G → F ≅ₐ G
   ; istteqrel = record
-              { refl = λ F → ≅ₐrefl {ℂ} {𝔻} {F}
-              ; sym = ≅ₐsym {ℂ} {𝔻}
-              ; tra = λ m n → natiso-vcmp {ℂ} {𝔻} n m
+              { refl = λ F → ≅ₐrefl {ℂ = ℂ} {𝔻 = 𝔻} {F}
+              ; sym = ≅ₐsym {ℂ = ℂ} {𝔻 = 𝔻}
+              ; tra = λ m n → natiso-vcmp {ℂ = ℂ} {𝔻 = 𝔻} n m
               }
   }
 
@@ -143,19 +174,24 @@ FctrStd ℂ 𝔻 = record
 -- Very large category of locally small ecategories and efunctors
 ------------------------------------------------------------------
 
-Cat : Large-ecategory
-Cat = record
+CAT : Large-ecategory
+CAT = record
   { Obj = ecategory
   ; Hom = FctrStd
   ; isecat = record
            { _∘_ = _○_
-           ; idar = λ ℂ → IdF {ℂ}
+           ; idar = λ ℂ → IdF {ℂ = ℂ}
            ; ∘ext = λ F F' G G' eqF eqG → natiso-hcmp eqG eqF
            ; lidax = λ F → ○lid {F = F}
            ; ridax = λ F → ○rid {F = F}
            ; assoc = λ F G H → ○ass {F = F} {G} {H}
            }
   }
+
+-- There is no discrete-forget adjunction between Cat and Set₁ since
+-- discrete cats have type ecategoryₗₑᵥ ℓ ℓ 0ₗₑᵥ
+
+
 
 
 -- -- Large E-category of locally small E-ecategories

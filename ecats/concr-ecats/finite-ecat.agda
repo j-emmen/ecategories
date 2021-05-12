@@ -32,4 +32,4 @@ open import ecats.concr-ecats.Std
     𝟚Hom (inr x) (inr x₁) = Freestd N₁
     cmp : {a b c : sum N₁ N₁} → || 𝟚Hom b c || → || 𝟚Hom a b ||
              → || 𝟚Hom a c ||
-    cmp = g f = ?
+    cmp g f = {!!}

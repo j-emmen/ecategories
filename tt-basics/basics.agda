@@ -38,11 +38,11 @@ Nrec d e (s n) = e n (Nrec d e n)
 
 -- disjoint sums
 
-data sum (A B : Set) : Set where
+data sum {i j} (A : Set i)(B : Set j) : Set (i ⊔ j) where
     inl : A → sum A B
     inr : B → sum A B
 
-sumEl : {A B : Set} → {C : sum A B → Set}
+sumEl : {i j k : Level}{A : Set i}{B : Set j}{C : sum A B → Set k}
            → ((a : A) → C (inl a)) → ((b : B) → C (inr b)) → (c : sum A B) → C c
 sumEl d e (inl a) = d a
 sumEl d e (inr b) = e b
@@ -71,6 +71,30 @@ Fin0rec = N₀rec
 Finsrec : {n : N} → {C : Fin (s n) → Set} → ((i : Fin n) → C (inl i)) → (C (inr 0₁)) → (i : Fin (s n)) → C i
 Finsrec {n} {C} d e = sumEl {C = C} d (N₁rec e)
 
+Fin-emb : {n : N} → Fin n → Fin (s n)
+Fin-emb {n} = inl
+
+Fin-O : {n : N} → Fin (s n)
+Fin-O {O} = inr 0₁
+Fin-O {s n} = inl (Fin-O {n})
+
+Fin-max : {n : N} → Fin (s n)
+Fin-max {n} = inr 0₁
+
+Fin-s : {n : N} → Fin n → Fin (s n)
+Fin-s {s n} (inl x) = inl (Fin-s {n} x)
+Fin-s {s n} (inr x) = Fin-max {s n}
+
+{-
+Fin-s-Cod : (n : N)(x : Fin (s n)) → Set
+Fin-s-Cod n (inl x) = Fin (s n)
+Fin-s-Cod n (inr x) = Fin (s (s n))
+
+Fin-s : {n : N}(x : Fin (s n)) → Fin-s-Cod n x
+Fin-s {O} (inr x) = inr x
+Fin-s {s n} (inl x) = {!inl (Fin-s {n} x) !}
+Fin-s {s n} (inr x) = inr x
+-}
 
 -- disjoint sum of a family of types
 
@@ -88,13 +112,13 @@ pj2 (a , b) = b
 
 -- binary product
 
-data prod (A : Set) (B : Set) : Set where
+data prod {i j} (A : Set i) (B : Set j) : Set (i ⊔ j) where
    pair : A → B → prod A B
 
-prj1 : {A : Set} → {B : Set}  → prod A B → A
+prj1 : ∀ {i j} {A : Set i} → {B : Set j}  → prod A B → A
 prj1 (pair a b) = a
 
-prj2 : {A : Set} → {B : Set}  → prod A B → B
+prj2 : ∀ {i j} {A : Set i} → {B : Set j}  → prod A B → B
 prj2 (pair a b) = b
 
 
@@ -181,3 +205,13 @@ record is-tt-eqrel {ℓo ℓr : Level} {A : Set ℓo} (R : A → A → Set ℓr)
     refl : (x : A) → R x x
     sym : {x₁ x₂ : A} → R x₁ x₂ → R x₂ x₁
     tra : {x₁ x₂ x₃ : A} → R x₁ x₂ → R x₂ x₃ → R x₁ x₃
+
+tt-eqrel-stable :  {ℓ ℓo ℓr : Level}{A' : Set ℓ}{A : Set ℓo}(f : A' → A)
+                   {R : A → A → Set ℓr}(tteqrel : is-tt-eqrel R)
+                     → is-tt-eqrel (λ x₁ x₂ → R (f x₁) (f x₂))
+tt-eqrel-stable {A' = A'} {A} f {R} tteqrel = record
+  { refl = λ x → R.refl (f x)
+  ; sym = λ {x₁} {x₂} → R.sym {f x₁} {f x₂}
+  ; tra = λ {x₁} {x₂} {x₃} → R.tra {f x₁} {f x₂} {f x₃}
+  }
+  where module R = is-tt-eqrel tteqrel

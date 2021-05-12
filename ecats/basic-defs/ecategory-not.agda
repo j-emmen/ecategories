@@ -11,11 +11,26 @@ open import ecats.basic-defs.ecategory
 
 -- Notation
 
-module ecategory-aux-level {ℓₒ ℓₕ : Level}
-                           {Obj : Set ℓₒ} {Hom : Obj → Obj → setoid {ℓₕ}}
+module ecat-levels {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+    ℓₒ ℓₐᵣᵣ ℓ~ ℓₕₒₘ ℓₐₗₗ : Level
+    ℓₒ = ℓ₁
+    ℓₐᵣᵣ = ℓ₂
+    ℓ~ = ℓ₃
+    ℓₕₒₘ = ℓₐᵣᵣ ⊔ ℓ~
+    ℓₙₒ~ = ℓₒ ⊔ ℓₐᵣᵣ
+    ℓₐₗₗ = ℓₒ ⊔ ℓₕₒₘ
+-- end ecat-levels
+
+module ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+  open ecategoryₗₑᵥ ℂ public
+  open ecat-levels ℂ public
+--end ecat
+
+
+module ecategory-aux-level {ℓₒ ℓₕ ℓ~ : Level}
+                           {Obj : Set ℓₒ} {Hom : Obj → Obj → setoid {ℓₕ} {ℓ~}}
                            (isecat : is-ecategory Obj Hom)
                            where
---(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ)
   open is-ecategory isecat
   open setoid
 
@@ -149,14 +164,14 @@ module ecategory-aux-level {ℓₒ ℓₕ : Level}
 
 
 
-module ecategory-aux-only {ℓₒ ℓₕ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) where
-  open ecategoryₗₑᵥ ℂ
+module ecategory-aux-only {ℓₒ ℓₕ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~) where
+  open ecategoryₗₑᵥ ℂ using (isecat)
   open ecategory-aux-level isecat public
 -- end module ecategory-aux-only
 
 
-module ecategory-aux {ℓₒ ℓₕ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) where
-  open ecategoryₗₑᵥ ℂ public
+module ecategory-aux {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+  open ecat ℂ public
   open ecategory-aux-only ℂ public
 -- end module ecategory-aux
 

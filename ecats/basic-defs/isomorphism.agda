@@ -5,15 +5,15 @@ module ecats.basic-defs.isomorphism where
 
 open import ecats.basic-defs.ecat-def&not
 
-module iso-defs {ℓₒ ℓₕ}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) where
+module iso-defs {ℓ₁ ℓ₂ ℓ₃}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
   open ecat ℂ
 
-  record is-iso-pair {a b : Obj} (f : || Hom a b ||) (invf : || Hom b a ||) : Set ℓₕ where
+  record is-iso-pair {a b : Obj} (f : || Hom a b ||) (invf : || Hom b a ||) : Set ℓ~ where
     field
       iddom : invf ∘ f ~ idar a
       idcod : f ∘ invf ~ idar b
 
-  record is-iso {a b : Obj} (f : || Hom a b ||) : Set ℓₕ where
+  record is-iso {a b : Obj} (f : || Hom a b ||) : Set ℓₕₒₘ where
     constructor mkis-iso
     field
       {invf} : || Hom b a ||
@@ -23,7 +23,7 @@ module iso-defs {ℓₒ ℓₕ}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ) where
     ⁻¹ = invf
 
   infix 0 _≅ₒ_ 
-  record _≅ₒ_ (a b : Obj) : Set ℓₕ where
+  record _≅ₒ_ (a b : Obj) : Set ℓₕₒₘ where
     constructor mk≅
     field
       {a12} : || Hom a b ||
