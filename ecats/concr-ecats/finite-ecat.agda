@@ -114,6 +114,8 @@ module 𝔽inCat (n : N) where
 𝟘 = 𝔽inCat O
 𝟙 = 𝔽inCat (s O)
 𝟚 = 𝔽inCat (s (s O))
+𝟛 = 𝔽inCat (s (s (s O)))
+𝟜 = 𝔽inCat (s (s (s (s O))))
 
 module ωCat-data where
   Hom : N → N → setoid {0ₗₑᵥ} {0ₗₑᵥ}
@@ -161,6 +163,8 @@ module ω where
   open ecategory-aux ω public
   open ωCat-data using (suc; ispreorder) public
 
+
+-- embedding of finite preorders into ω
 
 Ι : (n : N) → efunctor (𝔽inCat n) ω
 Ι n = record
