@@ -1,10 +1,6 @@
 
 {-# OPTIONS --without-K #-}
 
-
-
--- This module defines the category of small setoids and proves some of its properties
-
 module ecats.concr-ecats.Std where
 
 open import Agda.Primitive
@@ -18,42 +14,10 @@ open import ecats.basic-props.epi&mono
 open import ecats.finite-limits.defs&not
 open import ecats.finite-limits.props.relations-among-limits
 open import ecats.finite-limits.props.pullback
-
-
 open import ecats.concr-ecats.Type
-private
-  module Type where
-    open ecategory-aux Type public
-    open Type-is-elemental public
-    open comm-shapes Type public
-    open wpullback-squares Type public
-    open pseudo-eq-rel-defs Type public
-    --open elementality-in-Type public
-  
+open import ecats.concr-ecats.Std-lev using (Std) public
 
-
-                       
-Std : ecategory
-Std = record
-         { Obj = setoid {lzero}
-         ; Hom = setoidmaps
-         ; isecat = record
-                  { _∘_ = std-cmp
-                  ; idar = λ A → std-id {A = A}
-                  ; ∘ext = λ f f' g g' pff pfg → std-cmp-ext g g' f f' pfg pff
-                  ; lidax = λ {_} {B} f x → std.r B
-                  ; ridax = λ {_} {B} f x → std.r B
-                  ; assoc = λ {_} {_} {_} {D} f g h x → std.r D
-                  }
-         }
-         where module std (A : setoid {lzero}) = setoid-aux A
-
-
-module StdObj (A : ecat.Obj Std) where
-  open setoid A public
-  open setoid-aux A public
-module StdHom {A B : ecat.Obj Std}(f : || ecat.Hom Std A B ||) = setoidmap f renaming (op to ap)
-
+-- This module proves some properties of the category of small setoids Std
 
 private
   trm-Std : has-terminal Std
@@ -66,8 +30,14 @@ private
             }
     }
 
-
 private
+  module Type where
+    open ecategory-aux Type public
+    open Type-is-elemental public
+    open comm-shapes Type public
+    open wpullback-squares Type public
+    open pseudo-eq-rel-defs Type public
+    --open elementality-in-Type public
   module Std where
     open ecategory-aux Std public
     open arrows-defs Std public
@@ -80,6 +50,7 @@ private
     tyel : {A : setoid} → || Hom (Freestd N₁) A || → || A ||std
     tyel a = a.op 0₁
            where module a = setoidmap a
+
 
 
 module surjective-Std {A B : Std.Obj} {f : || Std.Hom A B ||} (issurj : Std.is-surjective f) where
@@ -564,5 +535,3 @@ ex-Std = record
   ; eqr-has-coeq = coeq-of-eqv-rel-in-Std.coeqof
   ; eqr-is-eff = eqv-rel-is-kernerl-pair.iskp
   }
-
-
