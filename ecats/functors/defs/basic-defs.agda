@@ -3,7 +3,6 @@
 
 module ecats.functors.defs.basic-defs where
 
-open import Agda.Primitive
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.isomorphism
 open import ecats.functors.defs.efunctor-d&n
@@ -11,48 +10,22 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
 
 
-
--- Adjunctions
-
-record adjunction {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-                  (L : efunctorₗₑᵥ ℂ 𝔻) (R : efunctorₗₑᵥ 𝔻 ℂ)
-                  : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
-                  where
-  private
-    module ℂ = ecat ℂ
-    module 𝔻 = ecat 𝔻
-    module L = efunctorₗₑᵥ L
-    module R = efunctorₗₑᵥ R
-  field
-    η : natural-transformation IdF (R ○ L)
-    ε : natural-transformation (L ○ R) IdF
-  open natural-transformation ε renaming (fnc to ε-f; nat to ε-n)
-  open natural-transformation η renaming (fnc to η-f; nat to η-n)
-  field
-    trid₁ : {X : ℂ.Obj} → ε-f 𝔻.∘ (L.ₐ η-f) 𝔻.~ 𝔻.idar (L.ₒ X)
-    trid₂ : {A : 𝔻.Obj} → η-f ℂ.∘ (R.ₐ ε-f) ℂ.~ ℂ.idar (R.ₒ (L.ₒ (R.ₒ A)))
-
-infix 3 _⊣_
-
-_⊣_ : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
-          → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ 𝔻 ℂ → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
-L ⊣ R = adjunction L R
-
-
 -- Equivalences
 
-record is-equivalence-pair {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+record is-equivalence-pair {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                           {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                            (F : efunctorₗₑᵥ ℂ 𝔻) (G : efunctorₗₑᵥ 𝔻 ℂ)
-                           : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+                           : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
                            where
   field
     ι1 : natural-iso (F ○ G) IdF
     ι2 : natural-iso (G ○ F) IdF
 
 
-record is-equivalence {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+record is-equivalence {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                      {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                       (F : efunctorₗₑᵥ ℂ 𝔻)
-                      : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+                      : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
                       where
   field
     invF : efunctorₗₑᵥ 𝔻 ℂ
@@ -60,11 +33,24 @@ record is-equivalence {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{�
   open is-equivalence-pair iseqv public
 
 
+infix 10 _≡ᶜᵃᵗ_
+record _≡ᶜᵃᵗ_ {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁)
+             {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}(𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂)
+             : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻) where
+  field
+    a12 : efunctorₗₑᵥ ℂ 𝔻
+    a21 : efunctorₗₑᵥ 𝔻 ℂ
+    iseqvpair : is-equivalence-pair a12 a21
+  open is-equivalence-pair iseqvpair public
+    
+               
+
 -- Other kind of functors
 
-record is-full {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+record is-full {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+               {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                (F : efunctorₗₑᵥ ℂ 𝔻)
-               : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+               : Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
                where
   private
     module ℂ = ecat ℂ
@@ -88,9 +74,10 @@ record is-full {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ �
               where open ecategory-aux-only 𝔻
 
 
-record is-faithful {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+record is-faithful {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                   {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                    (F : efunctorₗₑᵥ ℂ 𝔻)
-                   : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₄)
+                   : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓ~ 𝔻)
                    where
   private
     module ℂ = ecat ℂ
@@ -101,9 +88,10 @@ record is-faithful {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ�
                   → F.ₐ f 𝔻.~ F.ₐ g → f ℂ.~ g
 
 
-record is-ess-surjective-ob {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+record is-ess-surjective-ob {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                            {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                             (F : efunctorₗₑᵥ ℂ 𝔻)
-                            : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+                            : Set (ecat.ℓₒ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
                             where
   private
     module ℂ = ecat ℂ
@@ -117,14 +105,14 @@ record is-ess-surjective-ob {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ�
 
 
 private
-  module cat-iso {ℓₒ ℓₕ}(𝕏 : ecategoryₗₑᵥ ℓₒ ℓₕ) where
+  module cat-iso {ℓₒ ℓₐ ℓ~ : Level}(𝕏 : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
     open ecat 𝕏 public
     open iso-defs 𝕏 public
 
-
-record is-conservative {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+record is-conservative {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                       {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                        (F : efunctorₗₑᵥ ℂ 𝔻)
-                       : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+                       : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
                        where
   private
     module ℂ = cat-iso ℂ
@@ -133,7 +121,8 @@ record is-conservative {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{�
   field
     refl-iso : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → 𝔻.is-iso (F.ₐ f) → ℂ.is-iso f
 
-f&f-is-conservative : {ℓ₁ ℓ₂ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+f&f-is-conservative : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                      {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                       {F : efunctorₗₑᵥ ℂ 𝔻} → is-full F → is-faithful F
                         → is-conservative F
 f&f-is-conservative {ℂ = ℂ} {𝔻 = 𝔻} {F} isfull isfaith = record
@@ -167,11 +156,47 @@ f&f-is-conservative {ℂ = ℂ} {𝔻 = 𝔻} {F} isfull isfaith = record
           where open ecategory-aux-only 𝔻
                 module Ff = 𝔻.is-iso isiso
 
+
+f&f-creates-isos : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                   {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                   {F : efunctorₗₑᵥ ℂ 𝔻} → is-full F → is-faithful F → {X Y : ecat.Obj ℂ}
+                     → cat-iso._≅ₒ_ 𝔻 (efctr.ₒ F X)  (efctr.ₒ F Y) → cat-iso._≅ₒ_ ℂ X Y
+f&f-creates-isos {ℂ = ℂ} {𝔻 = 𝔻} {F} isfull isfaith {X} {Y} isoF = record
+  { a12 = a12
+  ; a21 = a21
+  ; isop = record
+         { iddom = F.faith-pf (~proof F.ₐ (a21 ℂ.∘ a12)        ~[ F.cmpˢ a12 a21 ] /
+                                      F.ₐ a21 𝔻.∘ F.ₐ a12      ~[ ∘e F.full-pf F.full-pf ] /
+                                      ni.a21 𝔻.∘ ni.a12       ~[ ni.iddom ⊙ F.idˢ {X} ]∎
+                                      F.ₐ (ℂ.idar X) ∎)
+         ; idcod = F.faith-pf (~proof F.ₐ (a12 ℂ.∘ a21)        ~[ F.cmpˢ a21 a12 ] /
+                                      F.ₐ a12 𝔻.∘ F.ₐ a21      ~[ ∘e F.full-pf F.full-pf ] /
+                                      ni.a12 𝔻.∘ ni.a21       ~[ ni.idcod ⊙ F.idˢ {Y} ]∎
+                                      F.ₐ (ℂ.idar Y) ∎)
+         }
+  }
+  where open ecategory-aux-only 𝔻
+        module ℂ = cat-iso ℂ
+        module 𝔻 = cat-iso 𝔻
+        module F where
+          open efunctor-aux F public
+          open is-full isfull public
+          open is-faithful isfaith public
+        module ni = 𝔻._≅ₒ_ isoF
+        a12 : || ℂ.Hom X Y ||
+        a12 = F.full-ar ni.a12
+        a21 : || ℂ.Hom Y X ||
+        a21 = F.full-ar ni.a21
+
+
+
+
 -- Essential equivalences
 
-record is-ess-equivalence {ℓ₁ ℓ₂}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂}{ℓ₃ ℓ₄}{𝔻 : ecategoryₗₑᵥ ℓ₃ ℓ₄}
+record is-ess-equivalence {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                          {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                           (F : efunctorₗₑᵥ ℂ 𝔻)
-                          : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃ ⊔ ℓ₄)
+                          : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
                           where
   private
     module ℂ = ecat ℂ

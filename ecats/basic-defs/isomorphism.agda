@@ -24,11 +24,18 @@ module iso-defs {ℓ₁ ℓ₂ ℓ₃}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ �
 
   infix 0 _≅ₒ_ 
   record _≅ₒ_ (a b : Obj) : Set ℓₕₒₘ where
-    constructor mk≅
+    --constructor mk≅
     field
-      {a12} : || Hom a b ||
-      {a21} : || Hom b a ||
+      a12 : || Hom a b ||
+      a21 : || Hom b a ||
       isop : is-iso-pair a12 a21
     open is-iso-pair isop public
 
+  mk≅ : {a b : Obj}{a12 : || Hom a b ||}{a21 : || Hom b a ||}
+           → is-iso-pair a12 a21 → a ≅ₒ b
+  mk≅ {a12 = a12} {a21} isop = record
+    { a12 = a12
+    ; a21 = a21
+    ; isop = isop
+    }
 -- end module iso-defs

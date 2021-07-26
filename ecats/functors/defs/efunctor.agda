@@ -3,7 +3,6 @@
 
 module ecats.functors.defs.efunctor where
 
-open import Agda.Primitive
 open import ecats.basic-defs.ecat-def&not
 
 
@@ -64,10 +63,14 @@ efunctor ℂ 𝔻 = efunctorₗₑᵥ ℂ 𝔻
 module efunctor {ℓₒ ℓₕ ℓ~}{ℂ 𝔻 : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~}(F : efunctor ℂ 𝔻) = efunctorₗₑᵥ F
 
 
-diagram _shaped-diagram-in_ : (ℂ : small-ecategory)(𝔻 : ecategory) → Set₁
-diagram ℂ 𝔻 = efunctorₗₑᵥ ℂ 𝔻
-ℂ shaped-diagram-in 𝔻 = diagram ℂ 𝔻
-module diagram {ℂ : small-ecategory}{𝔻 : ecategory}(F : diagram ℂ 𝔻)
+infix 60 diagram-in_of-shape_ _diag-in_
+diagram-in_of-shape_ : {ℓₒ ℓₕ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~)(𝕀 : small-ecategory)
+                           → Set (0ₗₑᵥ ⊔ ℓₒ ⊔ ℓₕ ⊔ ℓ~)
+diagram-in ℂ of-shape 𝕀 = efunctorₗₑᵥ 𝕀 ℂ
+_diag-in_ : (𝕀 : small-ecategory){ℓₒ ℓₕ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~)
+               → Set (ℓₒ ⊔ ℓₕ ⊔ ℓ~)
+𝕀 diag-in ℂ = diagram-in ℂ of-shape 𝕀
+module diagram {𝕀 : small-ecategory}{ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}(F : 𝕀 diag-in ℂ)
                = efunctorₗₑᵥ F
 
 
@@ -101,9 +104,23 @@ efunctor-cmpₗₑᵥ {𝔼 = 𝔼} G F = record
         module F = efctr F
         module G = efctr G
 
-infixr 10 _○_
+infixr 70 _○_
 _○_ : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
        {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
        {ℓ₃ₒ ℓ₃ₕ ℓ₃~ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₕ ℓ₃~}
           → efunctorₗₑᵥ 𝔻 𝔼 → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ ℂ 𝔼
 G ○ F = efunctor-cmpₗₑᵥ G F
+
+cnstF :  {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~)
+         {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~)
+              → ecat.Obj 𝔻 → efunctorₗₑᵥ ℂ 𝔻
+cnstF ℂ 𝔻 Y = record
+  { FObj = λ _ → Y
+  ; FHom = λ _ → 𝔻.idar Y
+  ; isF = record
+        { ext = λ _ → 𝔻.r
+        ; id = λ {_} → 𝔻.r
+        ; cmp = λ _ _ → 𝔻.rid
+        }
+  }
+  where module 𝔻 = ecategory-aux 𝔻

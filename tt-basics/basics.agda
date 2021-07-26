@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module tt-basics.basics where
 
@@ -14,14 +10,14 @@ open import Agda.Primitive
 
 data N₀ : Set where
 
-N₀rec : {C : N₀ → Set} (c : N₀) → C c
+N₀rec : {ℓ : Level}{C : N₀ → Set ℓ} (c : N₀) → C c
 N₀rec ()
 
 
 data  N₁ : Set where
   0₁ : N₁
 
-N₁rec : {C : N₁ → Set} → C 0₁ → (c : N₁) → C c
+N₁rec : {ℓ : Level}{C : N₁ → Set ℓ} → C 0₁ → (c : N₁) → C c
 N₁rec d 0₁ = d
 
 
@@ -47,6 +43,17 @@ sumEl : {i j k : Level}{A : Set i}{B : Set j}{C : sum A B → Set k}
 sumEl d e (inl a) = d a
 sumEl d e (inr b) = e b
 
+infix 50 _+_ _+ₕ_
+_+_ : {i j : Level} (A : Set i)(B : Set j) → Set (i ⊔ j)
+A + B = sum A B
+
+_+ₕ_ : {i j i' j' : Level}{A : Set i}{A' : Set i'}{B : Set j}{B' : Set j'}
+          → (A → B) → (A' → B')
+            → A + A' → B + B'
+(f +ₕ g) (inl a) = inl (f a)
+(f +ₕ g) (inr a') = inr (g a')
+--f +ₕ g = sumEl (λ a → inl (f a)) λ a' → inr (g a')
+
 
 -- inductive finite types
 
@@ -54,9 +61,11 @@ data Finᵢ : N → Set where
   f0 : {n : N} → Finᵢ (s n)
   finj : {n : N} → Finᵢ n → Finᵢ (s n)
 
-Finᵢ0rec : {C : Finᵢ O → Set} (i : Finᵢ O) → C i
+Finᵢ0rec : {ℓ : Level} {C : Finᵢ O → Set ℓ} (i : Finᵢ O) → C i
 Finᵢ0rec ()
-Finᵢsrec : {n : N} → {C : Finᵢ (s n) → Set} → (C f0) → ((i : Finᵢ n) → C (finj i)) → (i : Finᵢ (s n)) → C i
+Finᵢsrec : {ℓ : Level}{n : N}{C : Finᵢ (s n) → Set ℓ}
+              → (C f0) → ((i : Finᵢ n) → C (finj i))
+                → (i : Finᵢ (s n)) → C i
 Finᵢsrec c0 cinj f0 = c0
 Finᵢsrec c0 cinj (finj i) = cinj i
 
@@ -64,37 +73,85 @@ Finᵢsrec c0 cinj (finj i) = cinj i
 -- defined finite types
 
 Fin : N → Set
-Fin = Nrec N₀ (λ m F → sum F N₁)
+Fin = Nrec N₀ (λ m F → F + N₁)
 
-Fin0rec : {C : Fin O → Set} (i : Fin O) → C i
+Fin0rec : {ℓ : Level}{C : Fin O → Set ℓ} (i : Fin O) → C i
 Fin0rec = N₀rec
-Finsrec : {n : N} → {C : Fin (s n) → Set} → ((i : Fin n) → C (inl i)) → (C (inr 0₁)) → (i : Fin (s n)) → C i
-Finsrec {n} {C} d e = sumEl {C = C} d (N₁rec e)
+Finsrec : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
+             → ((i : Fin n) → C (inl i)) → (C (inr 0₁))
+               → (i : Fin (s n)) → C i
+Finsrec n {C} d e = sumEl {C = C} d (N₁rec e)
 
-Fin-emb : {n : N} → Fin n → Fin (s n)
-Fin-emb {n} = inl
+FinsInd : {ℓ : Level}(n : N){C : Fin (s (s n)) → Set ℓ}
+             → (ind : (c : C (inr 0₁))(f : (i : Fin (s n)) → C (inl i))
+                         → (i : Fin (s (s n))) → C i)
+               → (c : C (inr 0₁)) (f : (i : Fin (s n)) → C (inl i))
+                 → (i : Fin (s (s n))) → C i
+FinsInd n {C} ind c f = ind c f
+--sumEl {C = C} {!!} (N₁rec c)
 
-Fin-O : {n : N} → Fin (s n)
-Fin-O {O} = inr 0₁
-Fin-O {s n} = inl (Fin-O {n})
+Fin-emb : (n : N) → Fin n → Fin (s n)
+Fin-emb n = inl
 
-Fin-max : {n : N} → Fin (s n)
-Fin-max {n} = inr 0₁
+Fin-min : (n : N) → Fin (s n)
+Fin-min O = inr 0₁
+Fin-min (s n) = inl (Fin-min n)
 
-Fin-s : {n : N} → Fin n → Fin (s n)
-Fin-s {s n} (inl x) = inl (Fin-s {n} x)
-Fin-s {s n} (inr x) = Fin-max {s n}
+Fin-max : (n : N) → Fin (s n)
+Fin-max n = inr 0₁
+
+Fin-suc : (n : N) → Fin n → Fin (s n)
+Fin-suc (s n) (inl x) = inl (Fin-suc n x)
+Fin-suc (s n) (inr x) = Fin-max (s n)
+
+shiftr : (n : N) → Fin (s n) → Fin (s n)
+shiftr n (inl x) = Fin-suc n x
+shiftr n (inr x) = Fin-min n
 
 {-
-Fin-s-Cod : (n : N)(x : Fin (s n)) → Set
-Fin-s-Cod n (inl x) = Fin (s n)
-Fin-s-Cod n (inr x) = Fin (s (s n))
+shiftl : (n : N) → Fin (s (s n)) → Fin (s (s n))
+shiftl n (inl x) = {!!}
+-- looks like the only way is by induction on n
+shiftl n (inr x) = Fin-emb (s n) (Fin-max n)
 
-Fin-s : {n : N}(x : Fin (s n)) → Fin-s-Cod n x
-Fin-s {O} (inr x) = inr x
-Fin-s {s n} (inl x) = {!inl (Fin-s {n} x) !}
-Fin-s {s n} (inr x) = inr x
+
+Fin' : N → Set
+Fin' n = N₁ + (Nrec N₀ (λ m F → F + N₁) n)
+
+Fin'-emb : (n : N) → Fin' n → Fin' (s n)
+Fin'-emb n = (λ x → x) +ₕ inl
+
+Fin'-min : (n : N) → Fin' n
+Fin'-min n = inl 0₁
+
+Fin'-max : (n : N) → Fin' (s n)
+Fin'-max n = inr (inr 0₁)
+
+Fin'-suc : (n : N) → Fin' n → Fin' (s n)
+Fin'-suc n x = {!!}
+
+shift'r : (n : N) → Fin' n → Fin' n
+shift'r n = {!!}
 -}
+
+
+-- Extending a section from 'Fin n' to 'Fin (s n)' on the right.
+Fin-insr : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
+              → ((i : Fin n) → C (Fin-emb n i)) → C (Fin-max n)
+                → (i : Fin (s n)) → C i
+Fin-insr n {C} f cₘ (inl x) = f x
+Fin-insr n {C} f cₘ (inr 0₁) = cₘ
+
+-- Extending a section from 'Fin n' to 'Fin (s n)' on the left.
+Fin-insl : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
+              → ((i : Fin n) → C (Fin-suc n i)) → C (Fin-min n)
+                → (i : Fin (s n)) → C i
+Fin-insl O {C} f c₀ (inr 0₁) = c₀
+Fin-insl (s n) {C} f c₀ (inl x) = Fin-insl n {λ i → C (inl i)}
+                                           (λ i → f (Fin-emb n i)) c₀ x
+Fin-insl (s n) {C} f c₀ (inr 0₁) = f (Fin-max n)
+-- 'Fin-insl f c Fin-min' reduces to 'c₀' only when 'n' is a numeral.
+
 
 -- disjoint sum of a family of types
 

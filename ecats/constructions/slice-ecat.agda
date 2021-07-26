@@ -8,7 +8,7 @@ open import tt-basics.setoids hiding (||_||)
 open import ecats.basic-defs.ecat-def&not
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
-
+open import ecats.constructions.opposite
 
 
 
@@ -88,44 +88,46 @@ module slice-ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁
   module ₐ {a b : Obj} = ||/Hom|| {a} {b}
 
 
-module funct-slice-ecat-defs {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{𝕃 : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℝ : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
-                             (F : efunctorₗₑᵥ 𝕃 ℝ)
+
+
+module funct-slice-ecat-defs {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                             (F : efunctorₗₑᵥ ℂ 𝔻)(Y : ecat.Obj 𝔻)
                              where
   private
-    module 𝕃 = ecategory-aux 𝕃
-    module ℝ = ecategory-aux ℝ
+    module ℂ = ecategory-aux ℂ
+    module 𝔻 = ecategory-aux 𝔻
     module F = efunctor-aux F
 
-  record Obj/ (R : ℝ.Obj) : Set (𝕃.ℓₒ ⊔ ℝ.ℓₐᵣᵣ) where
+  record Obj/ : Set (ℂ.ℓₒ ⊔ 𝔻.ℓₐᵣᵣ) where
     field
-      L : 𝕃.Obj
-      ar : || ℝ.Hom (F.ₒ L) R ||
+      L : ℂ.Obj
+      ar : || 𝔻.Hom (F.ₒ L) Y ||
 
-  record ||/Hom|| {R : ℝ.Obj}(A B : Obj/ R) : Set (𝕃.ℓₐᵣᵣ ⊔ ℝ.ℓ~) where
+  record ||Hom/|| (A B : Obj/) : Set (ℂ.ℓₐᵣᵣ ⊔ 𝔻.ℓ~) where
     private
       module A = Obj/ A
       module B = Obj/ B
     field
-      arL : || 𝕃.Hom A.L B.L ||
-      tr : B.ar ℝ.∘ F.ₐ arL ℝ.~ A.ar
+      arL : || ℂ.Hom A.L B.L ||
+      tr : B.ar 𝔻.∘ F.ₐ arL 𝔻.~ A.ar
 
-  /Hom : {R : ℝ.Obj} → Obj/ R → Obj/ R → setoid {𝕃.ℓₐᵣᵣ ⊔ ℝ.ℓ~} {𝕃.ℓ~}
-  /Hom {R} A B = sub-setoid (𝕃.Hom A.L B.L) (||/Hom||.arL {R} {A} {B})
+  Hom/ :  Obj/ → Obj/ → setoid {ℂ.ℓₐᵣᵣ ⊔ 𝔻.ℓ~} {ℂ.ℓ~}
+  Hom/ A B = sub-setoid (ℂ.Hom A.L B.L) (||Hom/||.arL {A} {B})
                where module A = Obj/ A
                      module B = Obj/ B
 
-  /idar :  {R : ℝ.Obj}(A : Obj/ R) → ||/Hom|| A A
-  /idar {R} A = record
-    { arL = 𝕃.idar A.L
-    ; tr = ℝ.ridgg ℝ.r F.id
+  idar/ :  (A : Obj/) → ||Hom/|| A A
+  idar/ A = record
+    { arL = ℂ.idar A.L
+    ; tr = 𝔻.ridgg 𝔻.r F.id
     }
     where module A = Obj/ A
   
-  /cmp :  {R : ℝ.Obj}{A B C : Obj/ R}
-             → ||/Hom|| B C → ||/Hom|| A B → ||/Hom|| A C
-  /cmp {R} {A} {B} {C} g f = record
-    { arL = g.arL 𝕃.∘ f.arL
-    ; tr = ~proof C.ar ∘  F.ₐ (g.arL 𝕃.∘ f.arL)    ~[ ∘e (F.cmpˢ f.arL g.arL) r ] /
+  cmp/ :  {A B C : Obj/}
+             → ||Hom/|| B C → ||Hom/|| A B → ||Hom/|| A C
+  cmp/ {A} {B} {C} g f = record
+    { arL = g.arL ℂ.∘ f.arL
+    ; tr = ~proof C.ar ∘  F.ₐ (g.arL ℂ.∘ f.arL)    ~[ ∘e (F.cmpˢ f.arL g.arL) r ] /
                    C.ar ∘ F.ₐ g.arL ∘ F.ₐ f.arL     ~[ ass ⊙ ∘e r g.tr ] /
                    B.ar ∘ F.ₐ f.arL                 ~[ f.tr ]∎
                    A.ar ∎
@@ -133,40 +135,133 @@ module funct-slice-ecat-defs {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}
     where module A = Obj/ A
           module B = Obj/ B
           module C = Obj/ C
-          module f = ||/Hom|| f
-          module g = ||/Hom|| g
-          open ecategory-aux ℝ  
+          module f = ||Hom/|| f
+          module g = ||Hom/|| g
+          open ecategory-aux 𝔻  
 -- end funct-slice-ecat-defs
 
 
-funct-slice-ecat : {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{𝕃 : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℝ : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
-                   (F : efunctorₗₑᵥ 𝕃 ℝ)
-                     → ecat.Obj ℝ → ecategoryₗₑᵥ (ℓ₁ ⊔ ℓ₅) (ℓ₂ ⊔ ℓ₆) ℓ₃
-funct-slice-ecat {𝕃 = 𝕃} {ℝ} F X = record
-  { Obj = Obj/ X
-  ; Hom = /Hom {X}
+funct-slice-ecat : {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                   (F : efunctorₗₑᵥ ℂ 𝔻) → ecat.Obj 𝔻
+                     → ecategoryₗₑᵥ (ecat.ℓₒ ℂ ⊔ ecat.ℓₐᵣᵣ 𝔻) (ecat.ℓₐᵣᵣ ℂ ⊔ ecat.ℓ~ 𝔻) (ecat.ℓ~ ℂ)
+funct-slice-ecat {ℂ = ℂ} {𝔻} F Y = record
+  { Obj = Obj/
+  ; Hom = Hom/
+  ; isecat = record
+           { _∘_ = cmp/
+           ; idar = idar/
+           ; ∘ext = λ _ _ _ _ → ℂ.∘e
+           ; lidax = λ _ → ℂ.lid
+           ; ridax = λ _ → ℂ.rid
+           ; assoc = λ _ _ _ → ℂ.ass
+           }
+  }
+  where module ℂ = ecategory-aux ℂ
+        open funct-slice-ecat-defs F Y
+
+infix 2 _↓ₒ_
+_↓ₒ_ : {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+       (F : efunctorₗₑᵥ ℂ 𝔻) → ecat.Obj 𝔻
+          → ecategoryₗₑᵥ (ecat.ℓₒ ℂ ⊔ ecat.ℓₐᵣᵣ 𝔻) (ecat.ℓₐᵣᵣ ℂ ⊔ ecat.ℓ~ 𝔻) (ecat.ℓ~ ℂ)
+F ↓ₒ Y = funct-slice-ecat F Y
+
+
+module funct-slice-ecat {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                        (F : efunctorₗₑᵥ ℂ 𝔻)(Y : ecat.Obj 𝔻) where
+  open ecat (F ↓ₒ Y) using (Obj; Hom)
+  open funct-slice-ecat-defs F Y
+  module ₒ = Obj/
+  module ₐ {A B : Obj}(f : || Hom A B ||) = ||Hom/|| {A} {B} f
+
+
+-- the slice under a functor between locally small categories is locally small
+funct-slice-ecat-lc : {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻) → ecat.Obj 𝔻
+                     → ecategory
+funct-slice-ecat-lc = funct-slice-ecat
+
+
+
+
+
+module slice-funct-ecat-defs {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                             (F : efunctorₗₑᵥ ℂ 𝔻)(Y : ecat.Obj 𝔻)
+                             where
+  private
+    module ℂ = ecategory-aux ℂ
+    module 𝔻 = ecategory-aux 𝔻
+    module F = efunctor-aux F
+
+  record /Obj : Set (ℂ.ℓₒ ⊔ 𝔻.ℓₐᵣᵣ) where
+    field
+      R : ℂ.Obj
+      ar : || 𝔻.Hom Y (F.ₒ R) ||
+
+  record ||/Hom|| (A B : /Obj) : Set (ℂ.ℓₐᵣᵣ ⊔ 𝔻.ℓ~) where
+    private
+      module A = /Obj A
+      module B = /Obj B
+    field
+      arR : || ℂ.Hom A.R B.R ||
+      tr : F.ₐ arR 𝔻.∘ A.ar 𝔻.~ B.ar
+
+  /Hom : /Obj → /Obj → setoid {ℂ.ℓₐᵣᵣ ⊔ 𝔻.ℓ~} {ℂ.ℓ~}
+  /Hom A B = sub-setoid (ℂ.Hom A.R B.R) (||/Hom||.arR {A} {B})
+               where module A = /Obj A
+                     module B = /Obj B
+
+  /idar : (A : /Obj) → ||/Hom|| A A
+  /idar A = record
+    { arR = ℂ.idar A.R
+    ; tr = 𝔻.lidgg 𝔻.r F.id
+    }
+    where module A = /Obj A
+  
+  /cmp : {A B C : /Obj}
+             → ||/Hom|| B C → ||/Hom|| A B → ||/Hom|| A C
+  /cmp {A} {B} {C} g f = record
+    { arR = g.arR ℂ.∘ f.arR
+    ; tr = ~proof F.ₐ (g.arR ℂ.∘ f.arR) ∘ A.ar    ~[ ∘e r (F.cmpˢ f.arR g.arR) ⊙ assˢ ] /
+                  F.ₐ g.arR ∘ F.ₐ f.arR ∘ A.ar     ~[ ∘e f.tr r ] /
+                  F.ₐ g.arR ∘ B.ar                 ~[ g.tr ]∎
+                  C.ar ∎
+    }
+    where module A = /Obj A
+          module B = /Obj B
+          module C = /Obj C
+          module f = ||/Hom|| f
+          module g = ||/Hom|| g
+          open ecategory-aux 𝔻  
+-- end slice-funct-ecat-defs
+
+
+slice-funct-ecat : {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                   (F : efunctorₗₑᵥ ℂ 𝔻) → ecat.Obj 𝔻
+                     → ecategoryₗₑᵥ (ecat.ℓₒ ℂ ⊔ ecat.ℓₐᵣᵣ 𝔻) (ecat.ℓₐᵣᵣ ℂ ⊔ ecat.ℓ~ 𝔻) (ecat.ℓ~ ℂ)
+slice-funct-ecat {ℂ = ℂ} {𝔻} F Y = record
+  { Obj = /Obj
+  ; Hom = /Hom
   ; isecat = record
            { _∘_ = /cmp
            ; idar = /idar
-           ; ∘ext = λ _ _ _ _ → 𝕃.∘e
-           ; lidax = λ _ → 𝕃.lid
-           ; ridax = λ _ → 𝕃.rid
-           ; assoc = λ _ _ _ → 𝕃.ass
+           ; ∘ext = λ _ _ _ _ → ℂ.∘e
+           ; lidax = λ _ → ℂ.lid
+           ; ridax = λ _ → ℂ.rid
+           ; assoc = λ _ _ _ → ℂ.ass
            }
   }
-  where module 𝕃 = ecategory-aux 𝕃
-        open funct-slice-ecat-defs F
+  where module ℂ = ecategory-aux ℂ
+        open slice-funct-ecat-defs F Y
 
-infix 2 _//_
-_//_ : {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{𝕃 : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℝ : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
-       (F : efunctorₗₑᵥ 𝕃 ℝ)
-          → ecat.Obj ℝ → ecategoryₗₑᵥ (ecat.ℓₒ 𝕃 ⊔ ecat.ℓₐᵣᵣ ℝ) (ecat.ℓₐᵣᵣ 𝕃 ⊔ ecat.ℓ~ ℝ) (ecat.ℓ~ 𝕃)
-F // R = funct-slice-ecat F R
+infix 2 _ₒ↓_
+_ₒ↓_ : {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+       (Y : ecat.Obj 𝔻)(F : efunctorₗₑᵥ ℂ 𝔻)
+          → ecategoryₗₑᵥ (ecat.ℓₒ ℂ ⊔ ecat.ℓₐᵣᵣ 𝔻) (ecat.ℓₐᵣᵣ ℂ ⊔ ecat.ℓ~ 𝔻) (ecat.ℓ~ ℂ)
+Y ₒ↓ F = slice-funct-ecat F Y
 
 
-module funct-slice-ecat {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{𝕃 : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℝ : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
-                        (F : efunctorₗₑᵥ 𝕃 ℝ)(R : ecat.Obj ℝ) where
-  open ecat (F // R)
-  open funct-slice-ecat-defs F
-  module ₒ = Obj/ {R}
-  module ₐ {a b : Obj} = ||/Hom|| {R} {a} {b}
+module slice-funct-ecat {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                        (F : efunctorₗₑᵥ ℂ 𝔻)(Y : ecat.Obj 𝔻) where
+  open ecat (Y ₒ↓ F) using (Obj; Hom)
+  open slice-funct-ecat-defs F Y
+  module ₒ = /Obj
+  module ₐ {A B : Obj}(f : || Hom A B ||) = ||/Hom|| {A} {B} f

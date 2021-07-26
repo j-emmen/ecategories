@@ -4,7 +4,7 @@
 module ecats.basic-defs.ecategory where
 
 
-open import Agda.Primitive
+open import Agda.Primitive using (Level; _⊔_) renaming (lzero to 0ₗₑᵥ; lsuc to sucₗₑᵥ) public
 open import tt-basics.setoids renaming (||_|| to ||_||std)
 
 
@@ -14,13 +14,13 @@ infix 3 ||_||
 ||_|| : {ℓo ℓr : Level} → setoid {ℓo} {ℓr} → Set ℓo
 ||_|| X = ||_||std X
 
-record is-ecategory {ℓₒ ℓₕ ℓ~ : Level}(Obj : Set ℓₒ)
-                    (Hom : Obj → Obj → setoid {ℓₕ} {ℓ~})
-                    : Set (ℓₒ ⊔ ℓₕ ⊔ ℓ~)
+record is-ecategory {ℓ₁ ℓ₂ ℓ₃ : Level}(Obj : Set ℓ₁)
+                    (Hom : Obj → Obj → setoid {ℓ₂} {ℓ₃})
+                    : Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃)
                     where
   -- notation
   infix 2 _~_
-  _~_ : {a b : Obj} → (f f' : || Hom a b ||) → Set ℓ~
+  _~_ : {a b : Obj} → (f f' : || Hom a b ||) → Set ℓ₃
   f ~ f' = < Hom _ _ > f ~ f'
   infixr 5 _∘_
   field
@@ -32,18 +32,24 @@ record is-ecategory {ℓₒ ℓₕ ℓ~ : Level}(Obj : Set ℓₒ)
     ridax : {a b : Obj} → (f : || Hom a b ||) → f ∘ idar a ~ f
     assoc : {a b c d : Obj} → (f : || Hom a b ||) → (g : || Hom b c ||) → (h : || Hom c d ||)
                → h ∘ (g ∘ f) ~ (h ∘ g) ∘ f
+  ℓₒ ℓₐᵣᵣ ℓ~ ℓₕₒₘ ℓₙₒ~ ℓₐₗₗ : Level
+  ℓₒ = ℓ₁
+  ℓₐᵣᵣ = ℓ₂
+  ℓ~ = ℓ₃
+  ℓₕₒₘ = ℓₐᵣᵣ ⊔ ℓ~
+  ℓₙₒ~ = ℓₒ ⊔ ℓₐᵣᵣ
+  ℓₐₗₗ = ℓₒ ⊔ ℓₕₒₘ
 
-record ecategoryₗₑᵥ (ℓₒ ℓₕ ℓ~ : Level) : Set (lsuc (ℓₒ ⊔ ℓₕ ⊔ ℓ~)) where
+record ecategoryₗₑᵥ (ℓ₁ ℓ₂ ℓ₃ : Level) : Set (sucₗₑᵥ (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃)) where
   field
-    Obj : Set ℓₒ
-    Hom : Obj → Obj → setoid {ℓₕ} {ℓ~}
+    Obj : Set ℓ₁
+    Hom : Obj → Obj → setoid {ℓ₂} {ℓ₃}
     isecat : is-ecategory Obj Hom
   open is-ecategory isecat public
 
-0ₗₑᵥ 1ₗₑᵥ 2ₗₑᵥ : Level
-0ₗₑᵥ = lzero
-1ₗₑᵥ = lsuc 0ₗₑᵥ
-2ₗₑᵥ = lsuc 1ₗₑᵥ
+1ₗₑᵥ 2ₗₑᵥ : Level
+1ₗₑᵥ = sucₗₑᵥ 0ₗₑᵥ
+2ₗₑᵥ = sucₗₑᵥ 1ₗₑᵥ
 
 ecategory : Set₂
 ecategory = ecategoryₗₑᵥ 1ₗₑᵥ 0ₗₑᵥ 0ₗₑᵥ
@@ -62,10 +68,10 @@ Large-ecategory = ecategoryₗₑᵥ 2ₗₑᵥ 1ₗₑᵥ 1ₗₑᵥ
 module Large-ecategory (ℂ : Large-ecategory) = ecategoryₗₑᵥ {2ₗₑᵥ} {1ₗₑᵥ} {1ₗₑᵥ} ℂ
 
 
-module hom-ext-prop-defs {ℓₒ ℓₕ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~) where
+module hom-ext-prop-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
   open ecategoryₗₑᵥ ℂ
   is-hom-ext : {ℓ : Level}(Prp : {X Y : Obj} → || Hom X Y || → Set ℓ)
-                  → Set (ℓₒ ⊔ ℓₕ ⊔ ℓ~ ⊔ ℓ)
+                  → Set (ℓₐₗₗ ⊔ ℓ)
   is-hom-ext Prp = {X Y : Obj} → is-ext-prop {X = Hom X Y} Prp
   module is-hom-ext {ℓ : Level}{Prp : {X Y : Obj} → || Hom X Y || → Set ℓ}
                     (ext : is-hom-ext Prp) {X} {Y}
@@ -78,12 +84,12 @@ module hom-ext-prop-defs {ℓₒ ℓₕ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ �
   mkis-hom-ext Prp trnsp {X} {Y} = record { trnsp = trnsp {X} {Y} }
 
   is-cmp-congr : {ℓ : Level}(Prp : {X Y : Obj} → || Hom X Y || → Set ℓ)
-                      → Set (ℓₒ ⊔ ℓₕ ⊔ ℓ)
+                      → Set (ℓₙₒ~ ⊔ ℓ)
   is-cmp-congr Prp = {X Y Z : Obj} {g : || Hom Y Z ||} {f :  || Hom X Y ||}
                         → Prp g → Prp f → Prp (g ∘ f)
 
   record is-ecat-congr {ℓ : Level}(Prp : {X Y : Obj} → || Hom X Y || → Set ℓ)
-                       : Set (ℓₒ ⊔ ℓₕ ⊔ ℓ~ ⊔ ℓ)
+                       : Set (ℓₐₗₗ ⊔ ℓ)
                        where
     --constructor mkis-ecat-congr
     field

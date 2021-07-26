@@ -3,10 +3,9 @@
 
 module ecats.functors.defs.natural-transformation where
 
-open import Agda.Primitive
 open import tt-basics.setoids using (setoid) --hiding (||_||; _⇒_)
 open import ecats.basic-defs.ecat-def&not
-open import ecats.isomorphism
+--open import ecats.isomorphism
 open import ecats.functors.defs.efunctor-d&n
 
 ---------------------------
@@ -16,7 +15,7 @@ open import ecats.functors.defs.efunctor-d&n
 
 module natural-trans-defs {ℓ₁ ℓ₂ ℓ₃ : Level}{D : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}
                           {ℓ₄ ℓ₅ ℓ₆ : Level}{C : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
-                          {F G : efunctorₗₑᵥ D C}
+                          (F G : efunctorₗₑᵥ D C)
                           where
   private
     module Dom = ecat D
@@ -27,7 +26,7 @@ module natural-trans-defs {ℓ₁ ℓ₂ ℓ₃ : Level}{D : ecategoryₗₑᵥ 
   is-natural : (fnc : {A : Dom.Obj} → || Cod.Hom (F.ₒ A) (G.ₒ A) ||) → Set (Dom.ℓₙₒ~ ⊔ Cod.ℓ~)
   is-natural fnc = {A B : Dom.Obj}(f : || Dom.Hom A B ||)
                           → fnc Cod.∘ (F.ₐ f) Cod.~ (G.ₐ f) Cod.∘ fnc
-
+-- end natural-trans-defs
 
 record natural-transformation {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
                               (F G : efunctorₗₑᵥ ℂ 𝔻) : Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
@@ -42,7 +41,7 @@ record natural-transformation {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ �
     nat : {A B : ℂ.Obj} → (f : || ℂ.Hom A B ||)
              → fnc 𝔻.∘ (F.ₐ f) 𝔻.~ (G.ₐ f) 𝔻.∘ fnc
 
-infixr 8 _⇒_
+infixr 60 _⇒_
 _⇒_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
         (F G : efunctorₗₑᵥ ℂ 𝔻)
            → Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)

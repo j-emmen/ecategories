@@ -8,7 +8,6 @@ open import ecats.basic-defs.ecat-def&not
 
 module comm-shapes {ℓ₁ ℓ₂ ℓ₃}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
   open ecategoryₗₑᵥ ℂ
-  open ecat-levels ℂ
 
   record span/ (O1 O2 : Obj) : Set ℓₙₒ~ where
     constructor mkspan/

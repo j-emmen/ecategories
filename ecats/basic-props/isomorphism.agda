@@ -7,8 +7,8 @@ open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.isomorphism
 
-module iso-props (ℂ : ecategory) where
-  open ecategory ℂ
+module iso-props {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+  open ecat ℂ
   open iso-defs ℂ
 
   inv-iso-pair : {a b : Obj} {f : || Hom a b ||} {invf : || Hom b a ||}

@@ -11,8 +11,11 @@ open import ecats.basic-defs.ecategory
 
 -- Notation
 
+-- It seems it is more useful to have these levels defined within 'is-ecategory'
+-- so that we let Agda compute them for us
+{-
 module ecat-levels {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
-    ℓₒ ℓₐᵣᵣ ℓ~ ℓₕₒₘ ℓₐₗₗ : Level
+    ℓₒ ℓₐᵣᵣ ℓ~ ℓₕₒₘ ℓₙₒ~ ℓₐₗₗ : Level
     ℓₒ = ℓ₁
     ℓₐᵣᵣ = ℓ₂
     ℓ~ = ℓ₃
@@ -20,15 +23,16 @@ module ecat-levels {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ�
     ℓₙₒ~ = ℓₒ ⊔ ℓₐᵣᵣ
     ℓₐₗₗ = ℓₒ ⊔ ℓₕₒₘ
 -- end ecat-levels
+-}
 
 module ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
   open ecategoryₗₑᵥ ℂ public
-  open ecat-levels ℂ public
+  --open ecat-levels ℂ public
 --end ecat
 
 
-module ecategory-aux-level {ℓₒ ℓₕ ℓ~ : Level}
-                           {Obj : Set ℓₒ} {Hom : Obj → Obj → setoid {ℓₕ} {ℓ~}}
+module ecategory-aux-level {ℓ₁ ℓ₂ ℓ₃ : Level}
+                           {Obj : Set ℓ₁} {Hom : Obj → Obj → setoid {ℓ₂} {ℓ₃}}
                            (isecat : is-ecategory Obj Hom)
                            where
   open is-ecategory isecat
@@ -164,7 +168,7 @@ module ecategory-aux-level {ℓₒ ℓₕ ℓ~ : Level}
 
 
 
-module ecategory-aux-only {ℓₒ ℓₕ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~) where
+module ecategory-aux-only {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
   open ecategoryₗₑᵥ ℂ using (isecat)
   open ecategory-aux-level isecat public
 -- end module ecategory-aux-only
