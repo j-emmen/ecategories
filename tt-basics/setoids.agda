@@ -117,6 +117,8 @@ codisc-std A = record
               }
   }
 
+{-
+-- already defined above as Freestd
 disc-std : {ℓ : Level} → Set ℓ → setoid {ℓ} {ℓ}
 disc-std A = record
   { object = A
@@ -127,6 +129,7 @@ disc-std A = record
               ; tra = =tra
               }
   }
+-}
 
 sub-setoid : {ℓ ℓo ℓr : Level}{X : Set ℓ}(A : setoid {ℓo} {ℓr})(f : X → || A ||)
                 → setoid {ℓ} {ℓr}
@@ -303,6 +306,8 @@ record is-ext-prop {ℓo ℓr ℓ : Level} {X : setoid {ℓo} {ℓr}} (P : || X 
   field
     trnsp : {x x' : || X ||} → < X > x ~ x' → P x → P x'
                  
+-- Finite setoids
 
-
+Finstd : N → setoid {lzero} {lzero}
+Finstd n = Freestd (Fin n)
 

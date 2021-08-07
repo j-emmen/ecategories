@@ -7,7 +7,7 @@ open import tt-basics.basics
 open import tt-basics.id-type
 open import tt-basics.setoids renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
-open import ecats.concr-ecats.Std
+open import ecats.concr-ecats.Std-lev
 open import ecats.functors.defs.efunctor
 
 
@@ -178,8 +178,8 @@ module ω where
     }
     where frgt : (n : N) → Fin n → N
           frgt (s n) (inl x) = frgt n x
-          --frgt (s n) (inr x) = s n -- this one maps e.g. 'inr : Fin 1' to 's O : N'
           frgt (s n) (inr x) = n -- this one maps e.g. 'inr : Fin 1' to 'O : N'
+          
           frgt-ar : (n : N)(i : Fin n) → || ωCat-data.Hom (frgt n i) n ||
           frgt-ar (s n) (inl x) = ω._∘_ {a = frgt n x} (ω.suc n) (frgt-ar n x)
           frgt-ar (s n) (inr x) = ω.suc n
@@ -188,4 +188,3 @@ module ω where
           fctr (s n) {inl x} {inl x₁} ij = fctr n ij
           fctr (s n) {inl x} {inr x₁} ij = frgt-ar n x
           fctr (s n) {inr x} {inr x₁} ij = ω.idar n
-          

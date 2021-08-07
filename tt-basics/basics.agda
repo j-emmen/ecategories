@@ -75,46 +75,58 @@ Finᵢsrec c0 cinj (finj i) = cinj i
 Fin : N → Set
 Fin = Nrec N₀ (λ m F → F + N₁)
 
+Fin-emb : (n : N) → Fin n → Fin (s n)
+Fin-emb n = inl
+
+-- greatest element
+Fin-max : (n : N) → Fin (s n)
+Fin-max n = inr 0₁
+
+-- least element
+Fin-min : (n : N) → Fin (s n)
+Fin-min O = Fin-max O
+Fin-min (s n) = Fin-emb (s n) (Fin-min n)
+
 Fin0rec : {ℓ : Level}{C : Fin O → Set ℓ} (i : Fin O) → C i
 Fin0rec = N₀rec
 Finsrec : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
-             → ((i : Fin n) → C (inl i)) → (C (inr 0₁))
+             → ((i : Fin n) → C (Fin-emb n i)) → (C (Fin-max n))
                → (i : Fin (s n)) → C i
 Finsrec n {C} d e = sumEl {C = C} d (N₁rec e)
 
+{-
 FinsInd : {ℓ : Level}(n : N){C : Fin (s (s n)) → Set ℓ}
              → (ind : (c : C (inr 0₁))(f : (i : Fin (s n)) → C (inl i))
                          → (i : Fin (s (s n))) → C i)
                → (c : C (inr 0₁)) (f : (i : Fin (s n)) → C (inl i))
                  → (i : Fin (s (s n))) → C i
 FinsInd n {C} ind c f = ind c f
---sumEl {C = C} {!!} (N₁rec c)
+-}
 
-Fin-emb : (n : N) → Fin n → Fin (s n)
-Fin-emb n = inl
+Fin-embN : (n : N) → Fin n → N
+Fin-embN O = N₀rec
+Fin-embN (s n) = Finsrec n (Fin-embN n) (s n)
 
-Fin-min : (n : N) → Fin (s n)
-Fin-min O = inr 0₁
-Fin-min (s n) = inl (Fin-min n)
-
-Fin-max : (n : N) → Fin (s n)
-Fin-max n = inr 0₁
-
+-- successor embedding: k |--> k+1
 Fin-suc : (n : N) → Fin n → Fin (s n)
 Fin-suc (s n) (inl x) = inl (Fin-suc n x)
 Fin-suc (s n) (inr x) = Fin-max (s n)
 
+-- shifts right: k |--> k+1 (mod (s n))
 shiftr : (n : N) → Fin (s n) → Fin (s n)
-shiftr n (inl x) = Fin-suc n x
-shiftr n (inr x) = Fin-min n
+shiftr n = Finsrec n {λ _ → Fin (s n)} (Fin-suc n) (Fin-min n)
+-- (inl x) = Fin-suc n x
+-- shiftr n (inr x) = Fin-min n
+
+
+
+shiftl : (n : N) → Fin (s n) → Fin (s n)
+shiftl n (inl x) = Fin-suc n x
+shiftl n (inr x) = Fin-min n
+--shiftl O x = x
+--shiftl (s n) x = Finsrec (s n) (λ i → Fin-suc (s n) (shiftl n i) ) (Fin-min (s n)) x
 
 {-
-shiftl : (n : N) → Fin (s (s n)) → Fin (s (s n))
-shiftl n (inl x) = {!!}
--- looks like the only way is by induction on n
-shiftl n (inr x) = Fin-emb (s n) (Fin-max n)
-
-
 Fin' : N → Set
 Fin' n = N₁ + (Nrec N₀ (λ m F → F + N₁) n)
 
@@ -139,8 +151,7 @@ shift'r n = {!!}
 Fin-insr : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
               → ((i : Fin n) → C (Fin-emb n i)) → C (Fin-max n)
                 → (i : Fin (s n)) → C i
-Fin-insr n {C} f cₘ (inl x) = f x
-Fin-insr n {C} f cₘ (inr 0₁) = cₘ
+Fin-insr = Finsrec
 
 -- Extending a section from 'Fin n' to 'Fin (s n)' on the left.
 Fin-insl : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
@@ -150,8 +161,14 @@ Fin-insl O {C} f c₀ (inr 0₁) = c₀
 Fin-insl (s n) {C} f c₀ (inl x) = Fin-insl n {λ i → C (inl i)}
                                            (λ i → f (Fin-emb n i)) c₀ x
 Fin-insl (s n) {C} f c₀ (inr 0₁) = f (Fin-max n)
--- 'Fin-insl f c Fin-min' reduces to 'c₀' only when 'n' is a numeral.
-
+-- 'Fin-insl n f c Fin-min' reduces to 'c₀' only when 'n' is a numeral.
+{-
+Fin-insl n {C} f c₀ = Finsrec n {C'} f c₀ ?
+                    where C' : Fin (s n) → Set _
+                          C' y = C (shiftl n y)
+                          lr : (i : Fin (s n)) → C (shiftl n (shiftr n i)) → C i
+                          lr i c = {!!}
+-}
 
 -- disjoint sum of a family of types
 
