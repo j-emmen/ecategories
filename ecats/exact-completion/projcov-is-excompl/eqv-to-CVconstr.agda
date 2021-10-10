@@ -12,6 +12,7 @@ open import ecats.basic-props.exact-ecat
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
+open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.projective-cover
 open import ecats.functors.defs.left-covering
 open import ecats.functors.props.basic-props
@@ -371,9 +372,32 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
 
   PC↑ex-is-eqv : is-equivalence PC↑ex.fctr
   PC↑ex-is-eqv = ess-equiv-is-equiv PC↑ex-eequiv
+  module PC↑ex-is-eqv where
+    open is-equivalence PC↑ex-is-eqv public
+    private module Cat = Large-ecategory-aux Cat
+    tr-inv : invF ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
+    tr-inv = natiso-vcmp {ℙ} {Ex ℙ [ fwlℙ ]}
+                         {invF ○ PC} {invF ○ PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]}
+                         ( natiso-vcmp {F = invF ○ PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {(invF ○ PC↑ex.fctr) ○ CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]}
+                                        (natiso-vcmp {F = (invF ○ PC↑ex.fctr) ○ CVex ℙ [ fwlℙ ]} {IdF ○ CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]}
+                                                     (○lid {F = CVex ℙ [ fwlℙ ]})
+                                                     (natiso-hcmp {F = CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]} {invF ○ PC↑ex.fctr} {IdF {Ex ℙ [ fwlℙ ]}}
+                                                                  {!ι2!} (≅ₐrefl {F = CVex ℙ [ fwlℙ ]})))
+                                        (○ass {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {invF}) )
+                         ( natiso-hcmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]}
+                                       {PC} {PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {invF} {invF}
+                                       (≅ₐrefl {F = invF}) (≅ₐsym (CVex.unv.tr ex𝔼 PC.islcov)) )
 
---  PC↑ex-inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
---  PC↑ex-inv = invF
---            where open is-equivalence PC↑ex-is-eqv
+{-
+    tr-inv = ~proof efunctor-cmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]} invF PC  --invF ○ PC
+                                  ~[ {!∘e (CVex.unv.tr ex𝔼 PC.islcov ˢ) r!} ] /
+                    
+                    efunctor-cmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]} invF
+                                 (efunctor-cmp {ℙ} {Ex ℙ [ fwlℙ ]} {𝔼} PC↑ex.fctr CVex ℙ [ fwlℙ ])
+                                  ~[ {!ass ⊙ lidgg r ?!} ]∎
+                    CVex ℙ [ fwlℙ ] ∎
+           where open Large-ecategory-aux-only Cat
+                 -- open large-ecategory-aux (Fctr ℙ (Ex ℙ [ fwlℙ ]))
+-}
 
 -- end projcov-of-exact-is-eqv-to-CVconstr

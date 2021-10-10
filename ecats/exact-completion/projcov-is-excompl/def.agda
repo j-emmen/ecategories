@@ -12,7 +12,9 @@ open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.left-covering
 open import ecats.functors.defs.projective-cover
 open import ecats.functors.props.projective-cover
+open import ecats.exact-completion.def
 open import ecats.exact-completion.CVconstruction
+open import ecats.exact-completion.CVconstr-is-excompl
 open import ecats.exact-completion.projcov-is-excompl.eqrel-from-peq
 open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
 open import ecats.constructions.ecat-eqrel
@@ -28,13 +30,17 @@ module exact-compl-universal-def {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
     module ex𝔼 where
       open is-exact ex𝔼 public
       open exact-cat-props-only ex𝔼 public
+  fwlℙ : has-fin-weak-limits ℙ
+  fwlℙ = proj-cov-has-wlim pjcPC (ex𝔼.hasfl)
 
   ↑ex : {𝔻 : ecategory}(exD : is-exact 𝔻){F : efunctor ℙ 𝔻}(Flcov : is-left-covering F)
            → efunctor 𝔼 𝔻
-  ↑ex exD Flcov = QER exD ○ Rel reg𝔻 Flcov ○ is-equivalence.invF PC↑ex-is-eqv
-                where open eqrel-from-peq-funct ex𝔼.is-reg pjcPC using (Rel)
-                      open exact-cat-props-only exD using () renaming (is-reg to reg𝔻)
+  ↑ex exD Flcov = CVex.unv.fctr exD Flcov ○ PC↑ex-is-eqv.invF
+  --QER exD ○ Rel reg𝔻 Flcov ○ is-equivalence.invF PC↑ex-is-eqv
+                where --open eqrel-from-peq-funct ex𝔼.is-reg pjcPC using (Rel)
+                      --open exact-cat-props-only exD using () renaming (is-reg to reg𝔻)
                       open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 pjcPC using (PC↑ex-is-eqv)
+                      module CVex = is-exwlex-completion (CVconstr-is-excompl fwlℙ)
 
   syntax ↑ex exE {F} Flcov = F ↑ex[ exE , Flcov ]
 

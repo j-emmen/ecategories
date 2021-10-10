@@ -1,11 +1,7 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
 
--- Agda version 2.5.4.1
-
-module ecats.exact-completion.embedding.universal-property.commut where
+module ecats.exact-completion.projcov-is-excompl.commut where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.regular-ecat
@@ -16,14 +12,35 @@ open import ecats.constructions.ecat-eqrel
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.left-covering
+open import ecats.functors.defs.projective-cover
+open import ecats.functors.props.projective-cover
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.embedding.universal-property.def
+open import ecats.exact-completion.projcov-is-excompl.eqrel-from-peq
+open import ecats.exact-completion.projcov-is-excompl.def
+--open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
+open import ecats.constructions.ecat-eqrel
 
 
 
 
--- Commutativity of the functor Ex ℂ [ hasfwl ] → 𝔼 induced by a left covering ℂ → 𝔼 into 𝔼 exact.
+-- Commutativity of the functor 𝔼 → 𝔻 induced by a left covering ℙ → 𝔻 into 𝔻 exact.
 
+
+module exact-compl-universal-comm {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
+                                  {ℙ : ecategory}{PC : efunctor ℙ 𝔼}(pjcPC : is-projective-cover PC)
+                                  where  
+  private
+    module ex𝔼 where
+      open is-exact ex𝔼 public
+      open exact-cat-props-only ex𝔼 public
+    fwlℙ : has-fin-weak-limits ℙ
+    fwlℙ = proj-cov-has-wlim pjcPC (ex𝔼.hasfl)
+    reg𝔼 : is-regular 𝔼
+    reg𝔼 = ex𝔼.is-reg
+  open exact-compl-universal-def ex𝔼 pjcPC
+  open eqrel-from-peq-funct reg𝔼 pjcPC --using (Rel) 
+
+{-
 module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
   private
     module ℂ = ecategory ℂ
@@ -32,25 +49,29 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
     Γex = Γex ℂ [ hasfwl ]
     module Γex = efunctor-aux Γex
   open exact-compl-universal-def hasfwl
-  
-  module ↑ex-commut {𝔼 : ecategory} (𝔼isex : is-exact 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F) where
+-}
+
+{-
+  module ↑ex-commut {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
+                    {F : efunctor ℙ 𝔻}(Flcov : is-left-covering F)
+                    where
     private
-      module 𝔼 = ecategory 𝔼
-      module ex𝔼 = exact-cat-d&p 𝔼isex
-      module ER𝔼 = ecategory (EqRel 𝔼)
+      module 𝔻 = ecategory 𝔻
+      module ex𝔻 = exact-cat-d&p ex𝔻
+      module ER𝔻 = ecategory (EqRel 𝔻)
       module F = efunctor-aux F
-      reg𝔼 : is-regular 𝔼
-      reg𝔼 = ex𝔼.exact-is-regular
-      module F↑ex = efunctor-aux (↑ex 𝔼isex Flcov)
-      module F↑exΓex = efunctor-aux (↑ex 𝔼isex Flcov ○ Γex ℂ [ hasfwl ])
-      FRel : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
-      FRel = Rel reg𝔼 Flcov
-      FRel-sq : natural-iso (FRel ○ Γex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
-      FRel-sq = Rel-sq reg𝔼 Flcov
-      module Q = efunctor-aux (QER 𝔼isex)
-      module Δ = efunctor-aux (ΔER 𝔼)
-      module RΓ≅ΔF = natural-iso FRel-sq
-      module QΔ≅Id = natural-iso (ex-retr-EqR 𝔼isex)
+      reg𝔻 : is-regular 𝔻
+      reg𝔻 = ex𝔻.is-reg
+      module F↑ex = efunctor-aux (↑ex ex𝔻 Flcov)
+      module F↑exPC = efunctor-aux (↑ex ex𝔻 Flcov ○ PC)
+      --FRel : efunctor Ex ℙ [ fwlℙ ] (EqRel 𝔻)
+      --FRel = Rel reg𝔻 Flcov
+      --FRel-sq : natural-iso (Rel reg𝔻 Flcov ○ CVex ℙ [ fwlℙ ]) (ΔER 𝔻 ○ F)
+      --FRel-sq = {!Rel-sq {𝔻} reg𝔻 {F} Flcov!}
+      module Q = efunctor-aux (QER ex𝔻)
+      module Δ = efunctor-aux (ΔER 𝔻)
+      module RΓ≅ΔF = natural-iso (Rel-sq {𝔻} reg𝔻 {F} Flcov)--FRel-sq
+      module QΔ≅Id = natural-iso (ex-retr-EqR ex𝔻)
 
     red : natural-transformation (↑ex 𝔼isex Flcov ○ Γex ℂ [ hasfwl ]) F
     red = record
@@ -91,12 +112,12 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
                  module red = natural-transformation red
                  module exp = natural-transformation exp
   -- end ↑ex-commut
+-}
 
-  ↑ex-tr : {𝔼 : ecategory} (𝔼isex : is-exact 𝔼)  
-              {F : efunctor ℂ 𝔼} (islcov : is-left-covering F)
-                → natural-iso (↑ex 𝔼isex islcov ○ Γex ℂ [ hasfwl ]) F
-  ↑ex-tr 𝔼isex islcov = tr-iso
-                       where open ↑ex-commut 𝔼isex islcov
+  ↑ex-tr : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
+              → natural-iso (↑ex ex𝔻 lcovF ○ PC) F
+  ↑ex-tr 𝔼isex islcov = {!!} --tr-iso
+                       --where open ↑ex-commut 𝔼isex islcov
 -- end exact-compl-universal-commut
 
 
