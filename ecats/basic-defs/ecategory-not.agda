@@ -152,7 +152,7 @@ module ecategory-aux-level {ℓ ℓ' : Level} {Obj : Set ℓ} {Hom : Obj → Obj
 
 
 module ecategory-aux-only (ℂ : ecategory) where
-  open ecategory ℂ
+  open ecategory ℂ using (isecat)
   open ecategory-aux-level isecat public
 -- end module ecategory-aux-only
 
@@ -166,7 +166,7 @@ module ecategory-aux (ℂ : ecategory) where
 
 
 module small-ecategory-aux-only (𝕀 : small-ecategory) where
-  open small-ecategory 𝕀
+  open small-ecategory 𝕀 using (isecat)
   open ecategory-aux-level isecat public
 -- end module ecategory-aux-only
 
@@ -177,9 +177,20 @@ module small-ecategory-aux (𝕀 : small-ecategory) where
 -- end module ecategory-aux
 
 
+module large-ecategory-aux-only (ℂ : large-ecategory) where
+  open large-ecategory ℂ using (isecat)
+  open ecategory-aux-level isecat public
+-- end module large-ecategory-aux-only
+
+
+module large-ecategory-aux (ℂ : large-ecategory) where
+  open large-ecategory ℂ public
+  open large-ecategory-aux-only ℂ public
+-- end module large-ecategory-aux
+
 
 module Large-ecategory-aux-only (ℂ : Large-ecategory) where
-  open Large-ecategory ℂ
+  open Large-ecategory ℂ using (isecat)
   open ecategory-aux-level isecat public
 -- end module Large-ecategory-aux-only
 
