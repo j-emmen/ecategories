@@ -22,6 +22,7 @@ open import ecats.functors.defs.left-covering
 -- which is initial among left-covering functors ℂ → 𝔼 into 𝔼 exact.
 --------------------------------------------------------------------------
 
+{-
 module exwlex-universal-prop-data {ℂ 𝔼 : ecategory}(F : efunctor ℂ 𝔼)
                                   {𝔻 : ecategory}(G : efunctor ℂ 𝔻)
                                   where
@@ -56,6 +57,7 @@ module exwlex-universal-prop-data {ℂ 𝔼 : ecategory}(F : efunctor ℂ 𝔼)
               = natural-iso (uq exE trE)-}
 
 -- end exwlex-universal-prop-data
+-}
 
 record exwlex-universal-prop {ℂ 𝔼 : ecategory}--(hasfwl : has-fin-weak-limits ℂ)(isex : is-exact 𝔼)
                              (emb : efunctor ℂ 𝔼)--(islcov : is-left-covering emb)
@@ -83,7 +85,7 @@ record exwlex-universal-prop {ℂ 𝔼 : ecategory}--(hasfwl : has-fin-weak-limi
 record is-exwlex-completion {ℂ : ecategory}(hasfwl : has-fin-weak-limits ℂ)
                             {Exℂ : ecategory}(emb : efunctor ℂ Exℂ)
                             : Set₂ where
-  open exwlex-universal-prop-data emb
+  --open exwlex-universal-prop-data emb
   field
     cat-ex : is-exact Exℂ
     emb-full : is-full emb
