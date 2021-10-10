@@ -61,6 +61,7 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
       islcov : is-left-covering PC
       islcov = pjcov-of-reg-is-lcov reg𝔼 pjcPC
 
+    -- the exact completion of ℙ
     module Exℙ where
       open ecategory Ex ℙ [ fwlℙ ] public
       open iso-defs Ex ℙ [ fwlℙ ] public
@@ -70,12 +71,13 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
     module CVex where
       open efunctor-aux CVex ℙ [ fwlℙ ] public
       open is-exwlex-completion (CVconstr-is-excompl fwlℙ) public
-    module PC↑ex where --= efunctor-aux (CVex.fnct ex𝔼 PC.islcov)
-      --fnct : efunctor Ex ℙ [ fwlℙ ] 𝔼
-      --fnct = CVex.unv.fctr ex𝔼 PC.islcov
+
+    -- the canonical functor Exℙ → 𝔼 induced by PC
+    module PC↑ex where
       open CVex.unv ex𝔼 PC.islcov using (fctr) public
       open efunctor-aux fctr public
-    
+
+    -- The equivalence relation in 𝔼 induced by a peq in ℙ...
     module CRF (R : Exℙ.Obj) where
       open eqrel-from-peq-funct fwlℙ
       open eqrel-from-peq-via-left-covering reg𝔼 PC.islcov
@@ -91,6 +93,8 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
         module tmpAr {A B : Exℙ.Obj} (f : || Exℙ.Hom A B ||) = 𝔼.eqrel-mor (ₐ f)
       open tmpOb public
       open tmpAr public
+
+    -- ... and its quotient
     Q/PC↑ex : (A : Exℙ.Obj) → 𝔼.coeq-of (PCRel.r₁ A) (PCRel.r₂ A)
     Q/PC↑ex A = ex𝔼.eqr-has-coeq (PCRel.eqrelover A)
     module Q/PC↑ex (A : Exℙ.Obj) where
@@ -99,7 +103,6 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
       repi = record { coeq = iscoeq }
       open 𝔼.is-exact-seq (ex𝔼.ex-seq (PCRel.eqrelover A))
       module kp = 𝔼.pullback-of-not (𝔼.mkpb-of iskerpair)
-
     qQ/PC↑ex : (A : Exℙ.Obj) → 𝔼.is-coeq (PC.ₐ (ℙ.peq.%0 A)) (PC.ₐ (ℙ.peq.%1 A)) (Q/PC↑ex.ar A)
     qQ/PC↑ex A = 𝔼.epi/coeq-so-coeq (𝔼.repi-is-epic C-is-repi) rmfF%tr₁ rmfF%tr₂ (Q/PC↑ex.iscoeq A)
                where open CRF A
@@ -233,6 +236,7 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
   -- peq in ℙ from quasi-exact seq in 𝔼
   private
     module peq-from-Obj (A : 𝔼.Obj) where
+      -- cover of A
       module rc where
         open PC.rcov-of A public
         open PC.rprj Ob public
@@ -250,6 +254,7 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
         open 𝔼.pullback-of-not kpA public
         open 𝔼.is-coeq iscoeq public
         open 𝔼.is-eq-rel (𝔼.is-kerp+τpb→is-eqr (record { ispbsq = ×/ispbsq }) (ex𝔼.pb-of π/₂ π/₁)) public
+      -- cover of the  kernel pair on A
       module rcK where
         open PC.rcov-of exs.ul public
         open PC.rprj Ob public
@@ -367,14 +372,8 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
   PC↑ex-is-eqv : is-equivalence PC↑ex.fctr
   PC↑ex-is-eqv = ess-equiv-is-equiv PC↑ex-eequiv
 
--- end projcov-of-exact-is-eqv-to-CVconstr
+--  PC↑ex-inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
+--  PC↑ex-inv = invF
+--            where open is-equivalence PC↑ex-is-eqv
 
-{-
-pjcov-of-exact-eqv-CV : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼){ℙ : ecategory}
-                        {PC : efunctor ℙ 𝔼} (pjcPC : is-projective-cover PC)
-  → is-equivalence (is-exwlex-completion.fnct (CVconstr-is-excompl
-                                                      (proj-cov-has-wlim pjcPC (is-exact.hasfl ex𝔼)))
-                                               ex𝔼 (pjcov-of-ex-is-lcov ex𝔼 pjcPC))
-pjcov-of-exact-eqv-CV ex𝔼 pjcPC = {!PC↑ex-is-eqv!}
-                                 where open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 pjcPC
--}
+-- end projcov-of-exact-is-eqv-to-CVconstr

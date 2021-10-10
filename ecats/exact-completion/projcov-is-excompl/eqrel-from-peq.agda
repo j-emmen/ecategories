@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.projcov-is-excompl.eqrel-from-peq where
 
@@ -20,7 +16,7 @@ open import ecats.functors.defs.projective-cover
 open import ecats.functors.defs.left-covering
 open import ecats.functors.props.projective-cover
 open import ecats.functors.props.left-covering
---open import ecats.exact-completion.CVconstruction
+open import ecats.exact-completion.CVconstruction
 
 
 
@@ -267,7 +263,13 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
     --eqr/ A = F.eqrel-from-peq-via-left-covering.eqrel/ A
 
     private
-      module CRF% (A : Exℙ.Obj) where
+      Exℙ : ecategory
+      Exℙ = Ex ℙ [ fwlℙ ]
+      module Exℙ where
+        open ecategory Exℙ public
+
+    private
+      module CRF% (A : ℙ.peq) where
         open eqrel-as-repi-mono-fact A public -- hiding (eqrel/)
         open rmfF% public
         open CF% public
@@ -341,7 +343,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 
 
   Rel :  {𝔹 : ecategory} (reg𝔹 : is-regular 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F)
-               → efunctor Ex ℙ [ hasfwl ] (EqRel 𝔹)
+                         → efunctor Ex ℙ [ fwlℙ ] (EqRel 𝔹)
   Rel {𝔹} reg𝔹 {F} Flcov = record
     { FObj = eqr
     ; FHom = eqr-ar
@@ -359,6 +361,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
   module Rel-on-free  {𝔹 : ecategory} (reg𝔹 : is-regular 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F) where
     private
       module 𝔹 = ecategory 𝔹
+      module Exℙ = ecategory (Ex ℙ [ fwlℙ ])
       module F = efunctor-aux F
       module I = efunctor-aux (Rel reg𝔹 Flcov)
       module ΔER = efunctor-aux (ΔER 𝔹)
@@ -400,7 +403,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 -}
     -- end CRF%-is-iso
 
-    eqrelΔ2Δ : natural-transformation (Rel reg𝔹 Flcov ○ Γex ℙ [ hasfwl ]) (ΔER 𝔹 ○ F)
+    eqrelΔ2Δ : natural-transformation ((Rel reg𝔹 Flcov) ○ (CVex ℙ [ fwlℙ ])) (ΔER 𝔹 ○ F)
     eqrelΔ2Δ = record
         { fnc = λ {X} → record
               { base-ar = 𝔹.idar (F.ₒ X)
@@ -419,7 +422,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
         where open ecategory-aux-only 𝔹
               open ecategory-aux-only ℙ using () renaming (r to rℙ)
 
-    Δ2eqrelΔ : natural-transformation (ΔER 𝔹 ○ F) (Rel reg𝔹 Flcov ○ Γex ℙ [ hasfwl ])
+    Δ2eqrelΔ : natural-transformation (ΔER 𝔹 ○ F) (Rel reg𝔹 Flcov ○ CVex ℙ [ fwlℙ ])
     Δ2eqrelΔ = record
         { fnc = λ {X} → record
               { base-ar = 𝔹.idar (F.ₒ  X)
@@ -440,7 +443,7 @@ module eqrel-from-peq-funct {𝔸 : ecategory}(reg𝔸 : is-regular 𝔸)
 
 
   Rel-sq : {𝔹 : ecategory} (reg𝔹 : is-regular 𝔹) {F : efunctor ℙ 𝔹} (Flcov : is-left-covering F)
-                 → natural-iso (Rel reg𝔹 Flcov ○ Γex ℙ [ hasfwl ]) (ΔER 𝔹 ○ F)
+                 → natural-iso (Rel reg𝔹 Flcov ○ CVex ℙ [ fwlℙ ]) (ΔER 𝔹 ○ F)
   Rel-sq {𝔹} reg𝔹 {F} Flcov = record
     { natt = eqrelΔ2Δ
     ; natt⁻¹ = Δ2eqrelΔ

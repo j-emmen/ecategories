@@ -10,7 +10,7 @@ open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.projective-cover
 open import ecats.functors.props.projective-cover
 open import ecats.exact-completion.def
---open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
+open import ecats.exact-completion.projcov-is-excompl.def
 
 -----------------------------------------------------------------
 -- A projective cover ℙ → 𝔼 of 𝔼 exact is the exact completion
@@ -26,6 +26,12 @@ projcov-is-excompl ex𝔼 pjcPC = record
   ; emb-full = pjc.isfull
   ; emb-faith = pjc.isfaith
   ; emb-lcov = pjcov-of-reg-is-lcov (exact2reg ex𝔼) pjcPC
-  ; emb-init = record { is-un = {!!} }
+  ; emb-unv = λ ex𝔻 lcovF → record
+            { fctr = ↑ex  ex𝔻 lcovF
+            ; tr = {!!}
+            ; ex = {!!}
+            ; uq = {!!}
+            }
   }
   where module pjc = is-projective-cover pjcPC
+        open exact-compl-universal-def ex𝔼 pjcPC

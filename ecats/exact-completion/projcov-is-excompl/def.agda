@@ -1,11 +1,7 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
 
--- Agda version 2.5.4.1
-
-module ecats.exact-completion.embedding.universal-property.def where
+module ecats.exact-completion.projcov-is-excompl.def where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.exact-ecat
@@ -14,24 +10,31 @@ open import ecats.finite-limits.defs.collective
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.left-covering
+open import ecats.functors.defs.projective-cover
+open import ecats.functors.props.projective-cover
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.embedding.universal-property.eqrel-from-peq
+open import ecats.exact-completion.projcov-is-excompl.eqrel-from-peq
+open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
 open import ecats.constructions.ecat-eqrel
 
 
 
--- Definition of the functor 𝔼 → 𝔻 induced by a left covering ℂ → 𝔻 into 𝔻 exact.
+-- Definition of the functor 𝔼 → 𝔻 induced by a left covering ℙ → 𝔻 into 𝔻 exact.
 
 module exact-compl-universal-def {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
-                                 {ℙ : ecategory}{PC : efunctor ℙ 𝔼}(pjcpc : is-projective-cover PC)
-                                 where
-  open eqrel-from-peq-funct hasfwl public
+                                 {ℙ : ecategory}{PC : efunctor ℙ 𝔼}(pjcPC : is-projective-cover PC)
+                                 where  
+  private
+    module ex𝔼 where
+      open is-exact ex𝔼 public
+      open exact-cat-props-only ex𝔼 public
 
-  ↑ex : {𝔼 : ecategory} (exE : is-exact 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
-           → efunctor Ex ℂ [ hasfwl ] 𝔼
-  ↑ex exE Flcov = QER exE ○ Rel exact-is-regular Flcov
-                where open exact-cat-props exE using (exact-is-regular)
-
+  ↑ex : {𝔻 : ecategory}(exD : is-exact 𝔻){F : efunctor ℙ 𝔻}(Flcov : is-left-covering F)
+           → efunctor 𝔼 𝔻
+  ↑ex exD Flcov = QER exD ○ Rel reg𝔻 Flcov ○ is-equivalence.invF PC↑ex-is-eqv
+                where open eqrel-from-peq-funct ex𝔼.is-reg pjcPC using (Rel)
+                      open exact-cat-props-only exD using () renaming (is-reg to reg𝔻)
+                      open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 pjcPC using (PC↑ex-is-eqv)
 
   syntax ↑ex exE {F} Flcov = F ↑ex[ exE , Flcov ]
 
