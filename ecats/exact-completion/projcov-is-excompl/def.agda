@@ -15,7 +15,7 @@ open import ecats.functors.props.projective-cover
 open import ecats.exact-completion.def
 open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.CVconstr-is-excompl
-open import ecats.exact-completion.projcov-is-excompl.eqrel-from-peq
+--open import ecats.exact-completion.projcov-is-excompl.eqrel-from-peq
 open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
 open import ecats.constructions.ecat-eqrel
 
@@ -30,8 +30,8 @@ module exact-compl-universal-def {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
     module ex𝔼 where
       open is-exact ex𝔼 public
       open exact-cat-props-only ex𝔼 public
-  fwlℙ : has-fin-weak-limits ℙ
-  fwlℙ = proj-cov-has-wlim pjcPC (ex𝔼.hasfl)
+    fwlℙ : has-fin-weak-limits ℙ
+    fwlℙ = proj-cov-has-wlim pjcPC (ex𝔼.hasfl)
 
   ↑ex : {𝔻 : ecategory}(exD : is-exact 𝔻){F : efunctor ℙ 𝔻}(Flcov : is-left-covering F)
            → efunctor 𝔼 𝔻

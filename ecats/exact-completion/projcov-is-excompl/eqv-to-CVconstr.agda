@@ -1,5 +1,5 @@
 
-{-# OPTIONS --without-K  #-}
+{-# OPTIONS --without-K --show-implicit  #-}
 
 module ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr where
 
@@ -376,7 +376,10 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
     open is-equivalence PC↑ex-is-eqv public
     private module Cat = Large-ecategory-aux Cat
     tr-inv : invF ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
-    tr-inv = natiso-vcmp {ℙ} {Ex ℙ [ fwlℙ ]}
+    tr-inv = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {invF} {PC} iseqv (CVex.unv.tr ex𝔼 PC.islcov)
+
+{-
+natiso-vcmp {ℙ} {Ex ℙ [ fwlℙ ]}
                          {invF ○ PC} {invF ○ PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]}
                          ( natiso-vcmp {F = invF ○ PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {(invF ○ PC↑ex.fctr) ○ CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]}
                                         (natiso-vcmp {F = (invF ○ PC↑ex.fctr) ○ CVex ℙ [ fwlℙ ]} {IdF ○ CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]}
@@ -387,6 +390,7 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
                          ( natiso-hcmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]}
                                        {PC} {PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {invF} {invF}
                                        (≅ₐrefl {F = invF}) (≅ₐsym (CVex.unv.tr ex𝔼 PC.islcov)) )
+-}
 
 {-
     tr-inv = ~proof efunctor-cmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]} invF PC  --invF ○ PC

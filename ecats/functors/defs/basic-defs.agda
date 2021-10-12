@@ -48,6 +48,16 @@ record is-equivalence {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ wh
   open is-equivalence-pair iseqv public
 
 
+eqv-tr : {𝔸 𝔹 ℂ : ecategory}{F : efunctor 𝔸 𝔹}
+         {G : efunctor 𝔹 ℂ}{invG : efunctor ℂ 𝔹}{H : efunctor 𝔸 ℂ}
+            → is-equivalence-pair G invG → G ○ F ≅ₐ H → invG ○ H ≅ₐ F
+eqv-tr {F = F} {G} {invG} {H} eqvG tr =
+  natiso-vcmp ○lid
+              (natiso-vcmp (natiso-hcmp ι2 ≅ₐrefl)
+                           (natiso-vcmp (○ass {F = F} {G} {invG})
+                                        (natiso-hcmp (≅ₐrefl {F = invG}) (≅ₐsym tr))))
+               where open is-equivalence-pair eqvG
+
 
 -- Other properties of funtors
 

@@ -14,21 +14,24 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.left-covering
 open import ecats.functors.defs.projective-cover
 open import ecats.functors.props.projective-cover
+open import ecats.exact-completion.def
 open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.projcov-is-excompl.eqrel-from-peq
+open import ecats.exact-completion.CVconstr-is-excompl
+--open import ecats.exact-completion.projcov-is-excompl.eqrel-from-peq
 open import ecats.exact-completion.projcov-is-excompl.def
---open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
-open import ecats.constructions.ecat-eqrel
+open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
+--open import ecats.constructions.ecat-eqrel
 
 
 
 
--- Commutativity of the functor 𝔼 → 𝔻 induced by a left covering ℙ → 𝔻 into 𝔻 exact.
+-- Commutativity of the functor ↑ex F : 𝔼 → 𝔻 induced by a left covering F : ℙ → 𝔻 into 𝔻 exact.
 
 
 module exact-compl-universal-comm {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
                                   {ℙ : ecategory}{PC : efunctor ℙ 𝔼}(pjcPC : is-projective-cover PC)
                                   where  
+  open exact-compl-universal-def ex𝔼 pjcPC
   private
     module ex𝔼 where
       open is-exact ex𝔼 public
@@ -37,8 +40,20 @@ module exact-compl-universal-comm {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
     fwlℙ = proj-cov-has-wlim pjcPC (ex𝔼.hasfl)
     reg𝔼 : is-regular 𝔼
     reg𝔼 = ex𝔼.is-reg
-  open exact-compl-universal-def ex𝔼 pjcPC
-  open eqrel-from-peq-funct reg𝔼 pjcPC --using (Rel) 
+    module CVex where
+      open efunctor-aux CVex ℙ [ fwlℙ ] public
+      open is-exwlex-completion (CVconstr-is-excompl fwlℙ) public
+    module PC where
+      open efunctor-aux PC public
+      open is-projective-cover pjcPC public
+      islcov : is-left-covering PC
+      islcov = pjcov-of-reg-is-lcov reg𝔼 pjcPC
+    module ↑PC where
+      open efunctor-aux (↑ex ex𝔼 PC.islcov) public
+      open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 pjcPC using (PC↑ex-is-eqv)
+      open PC↑ex-is-eqv public 
+  --open eqrel-from-peq-funct reg𝔼 pjcPC --using (Rel)
+
 
 {-
 module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
@@ -115,8 +130,16 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
 -}
 
   ↑ex-tr : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
-              → natural-iso (↑ex ex𝔻 lcovF ○ PC) F
-  ↑ex-tr 𝔼isex islcov = {!!} --tr-iso
+              → ↑ex ex𝔻 lcovF ○ PC ≅ₐ F
+  ↑ex-tr ex𝔻 {F} lcovF = {!natiso-vcmp {F = (↑F.fctr ○ ↑PC.invF) ○ PC} {↑F.fctr ○ ↑PC.invF ○ PC} {↑F.fctr ○ CVex ℙ [ fwlℙ ]}
+                                       (natiso-hcmp (≅ₐrefl {F = ↑F.fctr}) ↑PC.tr-inv)
+                                       (≅ₐsym (○ass {F = PC} {↑PC.invF} {↑F.fctr})) !}
+                        where module ↑F = CVex.unv ex𝔻 lcovF
+  ck : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
+          → Set
+  ck ex𝔻 {F} lcovF = {!!}
+                        where module ↑F = CVex.unv ex𝔻 lcovF
+                      --tr-iso
                        --where open ↑ex-commut 𝔼isex islcov
 -- end exact-compl-universal-commut
 

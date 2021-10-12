@@ -168,6 +168,12 @@ natiso-hcmp {ℂ} {𝔻} {𝔼} {F} {G} {H} {K} β α = record
   }
   where open natural-iso α
 
+
+nat-iso-tr : {𝔸 𝔹 ℂ : ecategory}{F : efunctor 𝔸 𝔹}{G G' : efunctor 𝔹 ℂ}{H : efunctor 𝔸 ℂ}
+                  → G ≅ₐ G' → G ○ F ≅ₐ H → G' ○ F ≅ₐ H
+nat-iso-tr G~G' tr = natiso-vcmp tr (natiso-hcmp (≅ₐsym G~G') ≅ₐrefl)
+
+
 -------------------------------------------------------------
 -- Setoid of efunctors between two locally small ecategories
 -------------------------------------------------------------
@@ -314,3 +320,5 @@ Cat = record
            ; assoc = λ F G H → ○ass {F = F} {G} {H}
            }
   }
+
+             
