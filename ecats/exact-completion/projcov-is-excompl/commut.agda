@@ -29,15 +29,15 @@ open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
 
 
 module exact-compl-universal-comm {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
-                                  {ℙ : ecategory}{PC : efunctor ℙ 𝔼}(pjcPC : is-projective-cover PC)
+                                  {ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
+                                  {PC : efunctor ℙ 𝔼}(pjcPC : is-projective-cover PC)
                                   where  
-  open exact-compl-universal-def ex𝔼 pjcPC
   private
     module ex𝔼 where
       open is-exact ex𝔼 public
       open exact-cat-props-only ex𝔼 public
-    fwlℙ : has-fin-weak-limits ℙ
-    fwlℙ = proj-cov-has-wlim pjcPC (ex𝔼.hasfl)
+    --fwlℙ : has-fin-weak-limits ℙ
+    --fwlℙ = proj-cov-has-wlim pjcPC (ex𝔼.hasfl)
     reg𝔼 : is-regular 𝔼
     reg𝔼 = ex𝔼.is-reg
     module CVex where
@@ -48,12 +48,31 @@ module exact-compl-universal-comm {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
       open is-projective-cover pjcPC public
       islcov : is-left-covering PC
       islcov = pjcov-of-reg-is-lcov reg𝔼 pjcPC
+  open exact-compl-universal-def ex𝔼 fwlℙ pjcPC
+  private
     module ↑PC where
       open efunctor-aux (↑ex ex𝔼 PC.islcov) public
-      open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 pjcPC using (PC↑ex-is-eqv)
-      open PC↑ex-is-eqv public 
+      open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 fwlℙ pjcPC using (PC↑ex-is-eqv)
+      open PC↑ex-is-eqv public
   --open eqrel-from-peq-funct reg𝔼 pjcPC --using (Rel)
 
+  ↑ex-tr : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
+              → F ↑ex[ ex𝔻 , lcovF ] ○ PC ≅ₐ F
+  ↑ex-tr {𝔻}ex𝔻 {F} lcovF =
+    natiso-vcmp {F = F ↑ex[ ex𝔻 , lcovF ] ○ PC} {↑F.fctr ○ CVex ℙ [ fwlℙ ]} {F}
+      ↑F.tr
+      ( natiso-vcmp
+          {F = (↑F.fctr ○ ↑PC.invF) ○ PC} {↑F.fctr ○ ↑PC.invF ○ PC} {↑F.fctr ○ CVex ℙ [ fwlℙ ]}
+          (natiso-hcmp {F = ↑PC.invF ○ PC} {CVex ℙ [ fwlℙ ]} {↑F.fctr} {↑F.fctr}
+                       (≅ₐrefl {F = ↑F.fctr}) {!!})
+          (≅ₐsym {F = ↑F.fctr ○ ↑PC.invF ○ PC} {(↑F.fctr ○ ↑PC.invF) ○ PC}
+                 (○ass {F = PC} {↑PC.invF} {↑F.fctr})) )
+                            where module ↑F = CVex.unv ex𝔻 lcovF
+                              -- ↑PC.tr-inv
+  ck : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
+          → Set
+  ck {𝔻} ex𝔻 {F} lcovF = {!!}
+                        where module ↑F = CVex.unv ex𝔻 lcovF
 
 {-
 module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
@@ -129,18 +148,6 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
   -- end ↑ex-commut
 -}
 
-  ↑ex-tr : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
-              → ↑ex ex𝔻 lcovF ○ PC ≅ₐ F
-  ↑ex-tr ex𝔻 {F} lcovF = {!natiso-vcmp {F = (↑F.fctr ○ ↑PC.invF) ○ PC} {↑F.fctr ○ ↑PC.invF ○ PC} {↑F.fctr ○ CVex ℙ [ fwlℙ ]}
-                                       (natiso-hcmp (≅ₐrefl {F = ↑F.fctr}) ↑PC.tr-inv)
-                                       (≅ₐsym (○ass {F = PC} {↑PC.invF} {↑F.fctr})) !}
-                        where module ↑F = CVex.unv ex𝔻 lcovF
-  ck : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
-          → Set
-  ck ex𝔻 {F} lcovF = {!!}
-                        where module ↑F = CVex.unv ex𝔻 lcovF
-                      --tr-iso
-                       --where open ↑ex-commut 𝔼isex islcov
 -- end exact-compl-universal-commut
 
 

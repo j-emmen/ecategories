@@ -28,8 +28,9 @@ open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-prope
 -- the CVconstruction on ℙ as a category with weak finite limits
 ------------------------------------------------------------------
 
-module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼){ℙ : ecategory}
-                                           {PC : efunctor ℙ 𝔼} (pjcPC : is-projective-cover PC)
+module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
+                                           {ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
+                                           {PC : efunctor ℙ 𝔼}(pjcPC : is-projective-cover PC)
                                            where
   private
     module 𝔼 where
@@ -51,8 +52,8 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory} (ex𝔼 : is-exact
       open ecategory ℙ public
       open pseudo-eq-rel-defs ℙ public
       open finite-weak-limits-d&p ℙ public
-    fwlℙ : has-fin-weak-limits ℙ
-    fwlℙ = proj-cov-has-wlim pjcPC ex𝔼.hasfl
+    --fwlℙ : has-fin-weak-limits ℙ
+    --fwlℙ = proj-cov-has-wlim pjcPC ex𝔼.hasfl
     module fwlℙ where
       open has-fin-weak-limits fwlℙ public
       open has-weak-pullbacks haswpb using (wpb-of) public
