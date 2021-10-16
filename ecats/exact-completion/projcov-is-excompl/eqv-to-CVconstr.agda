@@ -1,5 +1,5 @@
 
-{-# OPTIONS --without-K --show-implicit  #-}
+{-# OPTIONS --without-K --show-implicit #-}
 
 module ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr where
 
@@ -30,7 +30,8 @@ open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-prope
 
 module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
                                            {ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
-                                           {PC : efunctor ℙ 𝔼}(pjcPC : is-projective-cover PC)
+                                           {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)
+                                           (pjcPC : is-projective-cover PC)
                                            where
   private
     module 𝔼 where
@@ -57,12 +58,13 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 
     module fwlℙ where
       open has-fin-weak-limits fwlℙ public
       open has-weak-pullbacks haswpb using (wpb-of) public
-    module PC where
-      open efunctor-aux PC public
-      open is-projective-cover pjcPC public
-      islcov : is-left-covering PC
-      islcov = pjcov-of-reg-is-lcov reg𝔼 pjcPC
+  module PC where
+    open efunctor-aux PC public
+    open is-projective-cover pjcPC public
+    --islcov : is-left-covering PC
+    --islcov = pjcov-of-reg-is-lcov reg𝔼 pjcPC
 
+  private
     -- the exact completion of ℙ
     module Exℙ where
       open ecategory Ex ℙ [ fwlℙ ] public
@@ -76,17 +78,17 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 
 
     -- the canonical functor Exℙ → 𝔼 induced by PC
     module PC↑ex where
-      open CVex.unv ex𝔼 PC.islcov using (fctr) public
+      open CVex.unv ex𝔼 lcovPC using (fctr) public
       open efunctor-aux fctr public
 
     -- The equivalence relation in 𝔼 induced by a peq in ℙ...
     module CRF (R : Exℙ.Obj) where
       open eqrel-from-peq-funct fwlℙ
-      open eqrel-from-peq-via-left-covering reg𝔼 PC.islcov
+      open eqrel-from-peq-via-left-covering reg𝔼 lcovPC
       open eqrel-as-repi-mono-fact R public
       open rmfF% using (C; C-is-repi) public
     PCRel : efunctor Ex ℙ [ fwlℙ ] (EqRel 𝔼)
-    PCRel = Rel reg𝔼 PC.islcov
+    PCRel = Rel reg𝔼 lcovPC
          where open eqrel-from-peq-funct fwlℙ
     module PCRel where
       open efunctor-aux PCRel public
@@ -373,11 +375,27 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 
 
   PC↑ex-is-eqv : is-equivalence PC↑ex.fctr
   PC↑ex-is-eqv = ess-equiv-is-equiv PC↑ex-eequiv
+
   module PC↑ex-is-eqv where
-    open is-equivalence PC↑ex-is-eqv public
-    private module Cat = Large-ecategory-aux Cat
-    tr-inv : invF ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
-    tr-inv = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {invF} {PC} iseqv (CVex.unv.tr ex𝔼 PC.islcov)
+    open is-equivalence PC↑ex-is-eqv --public
+    -- declaring inv explicitly speeds up typechecking of tr-inv
+    inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
+    inv = invF
+    open is-equivalence-pair iseqv public
+    tr-inv : inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
+    tr-inv = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {inv} {PC} iseqv (CVex.unv.tr ex𝔼 lcovPC)
+
+-- end projcov-of-exact-is-eqv-to-CVconstr
+
+
+
+{-
+exact-compl-functor {ℙ} fwlℙ
+
+efunctor-cmp {exact-compl-cat ℙ fwlℙ} {EqRel 𝔼} {𝔼} (QER {𝔼} ex𝔼)
+(eqrel-from-peq-funct.Rel {ℙ} fwlℙ {𝔼} ex𝔼.is-reg {PC} lcovPC)
+---
+-}
 
 {-
 natiso-vcmp {ℙ} {Ex ℙ [ fwlℙ ]}
@@ -390,12 +408,12 @@ natiso-vcmp {ℙ} {Ex ℙ [ fwlℙ ]}
                                         (○ass {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {invF}) )
                          ( natiso-hcmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]}
                                        {PC} {PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {invF} {invF}
-                                       (≅ₐrefl {F = invF}) (≅ₐsym (CVex.unv.tr ex𝔼 PC.islcov)) )
+                                       (≅ₐrefl {F = invF}) (≅ₐsym (CVex.unv.tr ex𝔼 lcovPC)) )
 -}
 
 {-
     tr-inv = ~proof efunctor-cmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]} invF PC  --invF ○ PC
-                                  ~[ {!∘e (CVex.unv.tr ex𝔼 PC.islcov ˢ) r!} ] /
+                                  ~[ {!∘e (CVex.unv.tr ex𝔼 lcovPC ˢ) r!} ] /
                     
                     efunctor-cmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]} invF
                                  (efunctor-cmp {ℙ} {Ex ℙ [ fwlℙ ]} {𝔼} PC↑ex.fctr CVex ℙ [ fwlℙ ])
@@ -405,4 +423,22 @@ natiso-vcmp {ℙ} {Ex ℙ [ fwlℙ ]}
                  -- open large-ecategory-aux (Fctr ℙ (Ex ℙ [ fwlℙ ]))
 -}
 
--- end projcov-of-exact-is-eqv-to-CVconstr
+{-
+unv-into-projcov-is-eqv : {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
+                          {ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
+                          {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)
+                          (pjcPC : is-projective-cover PC)
+              → is-equivalence ( is-exwlex-completion.unv.fctr (CVconstr-is-excompl fwlℙ)
+                                                                ex𝔼
+                                                                lcovPC )
+unv-into-projcov-is-eqv {𝔼} ex𝔼 {ℙ} fwlℙ {PC} lcovPC pjcPC = PC↑ex-is-eqv -- PC↑ex-is-eqv
+                                        where open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 fwlℙ lcovPC pjcPC
+-}
+
+-- projective-cover-of-reg-cat-is-left-cov.PC-is-left-cov
+--  (exact-cat-props-only.is-reg ex𝔼) pjcPC
+
+-- projective-cover-of-reg-cat-is-left-cov.PC-is-left-cov
+--  (exact-cat-props-only.is-reg ex𝔼) pjcPC
+
+-- pjcov-of-reg-is-lcov (exact-cat-d&p.is-reg ex𝔼) pjcPC

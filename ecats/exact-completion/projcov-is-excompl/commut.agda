@@ -1,5 +1,5 @@
 
-{-# OPTIONS --without-K #-}
+{-# OPTIONS --without-K --show-implicit #-}
 
 module ecats.exact-completion.projcov-is-excompl.commut where
 
@@ -10,6 +10,7 @@ open import ecats.basic-props.exact-ecat
 open import ecats.finite-limits.defs.collective
 open import ecats.constructions.ecat-eqrel
 open import ecats.functors.defs.efunctor-d&n
+open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.left-covering
 open import ecats.functors.defs.projective-cover
@@ -17,10 +18,8 @@ open import ecats.functors.props.projective-cover
 open import ecats.exact-completion.def
 open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.CVconstr-is-excompl
---open import ecats.exact-completion.projcov-is-excompl.eqrel-from-peq
 open import ecats.exact-completion.projcov-is-excompl.def
 open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
---open import ecats.constructions.ecat-eqrel
 
 
 
@@ -30,7 +29,8 @@ open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
 
 module exact-compl-universal-comm {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
                                   {ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
-                                  {PC : efunctor ℙ 𝔼}(pjcPC : is-projective-cover PC)
+                                  {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)
+                                  (pjcPC : is-projective-cover PC)
                                   where  
   private
     module ex𝔼 where
@@ -46,15 +46,14 @@ module exact-compl-universal-comm {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
     module PC where
       open efunctor-aux PC public
       open is-projective-cover pjcPC public
-      islcov : is-left-covering PC
-      islcov = pjcov-of-reg-is-lcov reg𝔼 pjcPC
-  open exact-compl-universal-def ex𝔼 fwlℙ pjcPC
+      --islcov : is-left-covering PC
+      --islcov = pjcov-of-reg-is-lcov reg𝔼 pjcPC
+  open exact-compl-universal-def ex𝔼 fwlℙ lcovPC pjcPC
   private
     module ↑PC where
-      open efunctor-aux (↑ex ex𝔼 PC.islcov) public
-      open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 fwlℙ pjcPC using (PC↑ex-is-eqv)
+      open efunctor-aux (↑ex ex𝔼 lcovPC) public
+      open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 fwlℙ lcovPC pjcPC using (PC↑ex-is-eqv)
       open PC↑ex-is-eqv public
-  --open eqrel-from-peq-funct reg𝔼 pjcPC --using (Rel)
 
   ↑ex-tr : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
               → F ↑ex[ ex𝔻 , lcovF ] ○ PC ≅ₐ F
@@ -62,17 +61,13 @@ module exact-compl-universal-comm {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
     natiso-vcmp {F = F ↑ex[ ex𝔻 , lcovF ] ○ PC} {↑F.fctr ○ CVex ℙ [ fwlℙ ]} {F}
       ↑F.tr
       ( natiso-vcmp
-          {F = (↑F.fctr ○ ↑PC.invF) ○ PC} {↑F.fctr ○ ↑PC.invF ○ PC} {↑F.fctr ○ CVex ℙ [ fwlℙ ]}
-          (natiso-hcmp {F = ↑PC.invF ○ PC} {CVex ℙ [ fwlℙ ]} {↑F.fctr} {↑F.fctr}
-                       (≅ₐrefl {F = ↑F.fctr}) {!!})
-          (≅ₐsym {F = ↑F.fctr ○ ↑PC.invF ○ PC} {(↑F.fctr ○ ↑PC.invF) ○ PC}
-                 (○ass {F = PC} {↑PC.invF} {↑F.fctr})) )
+          --{F = (↑F.fctr ○ ↑PC.inv) ○ PC} {↑F.fctr ○ ↑PC.inv ○ PC} {↑F.fctr ○ CVex ℙ [ fwlℙ ]}
+          (natiso-hcmp --{F = ↑PC.inv ○ PC} {CVex ℙ [ fwlℙ ]} {↑F.fctr} {↑F.fctr}
+                       (≅ₐrefl {F = ↑F.fctr}) ↑PC.tr-inv)
+          (≅ₐsym --{F = ↑F.fctr ○ ↑PC.inv ○ PC} {(↑F.fctr ○ ↑PC.inv) ○ PC}
+                 (○ass {F = PC} {↑PC.inv} {↑F.fctr})) )
                             where module ↑F = CVex.unv ex𝔻 lcovF
-                              -- ↑PC.tr-inv
-  ck : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
-          → Set
-  ck {𝔻} ex𝔻 {F} lcovF = {!!}
-                        where module ↑F = CVex.unv ex𝔻 lcovF
+-- end exact-compl-universal-commut
 
 {-
 module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
@@ -147,8 +142,6 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
                  module exp = natural-transformation exp
   -- end ↑ex-commut
 -}
-
--- end exact-compl-universal-commut
 
 
 
