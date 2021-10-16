@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.functors.props.exact-functor where
 
