@@ -15,7 +15,30 @@ module pullback-defs (ℂ : ecategory) where
   open ecategory-aux ℂ
   open comm-shapes ℂ
   --open wpbsquare-defs ℂ
-  
+
+  record is-pullback {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
+                     {P : Obj}{p : || Hom P A ||}{q : || Hom P B ||}
+                     (sqpf : a ∘ p ~ b ∘ q) : Set₁ where
+    field
+      ⟨_,_⟩[_] : {C : Obj}(h : || Hom C A ||)(k : || Hom C B ||)
+                    → a ∘ h ~ b ∘ k → || Hom C P ||
+      ×/tr₁ : {C : Obj}{h : || Hom C A ||}{k : || Hom C B ||}(pf : a ∘ h ~ b ∘ k)
+                  → p ∘ ⟨ h , k ⟩[ pf ] ~ h
+      ×/tr₂ : {C : Obj}{h : || Hom C A ||}{k : || Hom C B ||}(pf : a ∘ h ~ b ∘ k)
+                  → q ∘ ⟨ h , k ⟩[ pf ] ~ k
+      ×/uq : {C : Obj}{h h' : || Hom C P ||}
+                → p ∘ h ~ p ∘ h' → q ∘ h ~ q ∘ h' → h ~ h'
+
+
+  record is-pullback-of {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
+                        (sq/ : square/cosp a b) : Set₁ where
+    constructor mkis-pb-of
+    open square/cosp sq/
+    field
+      ispb : is-pullback sq-pf
+    open is-pullback ispb public
+
+
   record is-pb-square (sq : comm-square) : Set₁ where
     open comm-square sq
     field
@@ -26,7 +49,7 @@ module pullback-defs (ℂ : ecategory) where
       ×/tr₂ : {C : Obj} {h : || Hom C dl ||} {k : || Hom C ur ||} (pf : down ∘ h ~ right ∘ k)
                   → up ∘ ⟨ h , k ⟩[ pf ] ~ k
       ×/uq : {C : Obj} → {h h' : || Hom C ul ||} → left ∘ h ~ left ∘ h' → up ∘ h ~ up ∘ h'
-                    → h ~ h'           
+                    → h ~ h'
 {-    field
       wpbsq : is-wpb-square sq
     open is-wpb-square wpbsq public renaming (ul-w/ to ul/; ur-w/ to ur/; dl-w/ to dl/; dr-w/ to dr/;

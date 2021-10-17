@@ -1,5 +1,5 @@
 
-{-# OPTIONS --without-K #-}
+{-# OPTIONS --without-K --show-implicit #-}
 
 module ecats.finite-limits.props.pullback where
 
@@ -33,17 +33,50 @@ module pullback-props (ℂ : ecategory) where
 
   -- pullback extensionality
 
-  ×/sqpf-irr : {I A B P : Obj} {a : || Hom A I ||}{b : || Hom B I ||} {p₁ : || Hom P A ||} {p₂ : || Hom P B ||}
-               (pf pf' : a ∘ p₁ ~ b ∘ p₂)
-                 → is-pb-square (mksq (mksq/ pf)) → is-pb-square (mksq (mksq/ pf'))
-  ×/sqpf-irr {a = a} {b} {p₁} {p₂} pf pf' ispb = record
+  ×/sqpf-irr : {I A B P : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
+               {p : || Hom P A ||}{q : || Hom P B ||}{pf : a ∘ p ~ b ∘ q}
+                 → is-pullback pf  → (pf' : a ∘ p ~ b ∘ q) → is-pullback pf'
+  ×/sqpf-irr ispb pf' = record
+    { ⟨_,_⟩[_] = ⟨_,_⟩[_]
+    ; ×/tr₁ = ×/tr₁
+    ; ×/tr₂ = ×/tr₂
+    ; ×/uq = ×/uq
+    }
+    where open is-pullback ispb
+
+
+  ×/sqpf-irr-of : {I A B P : Obj}{a : || Hom A I ||}{b : || Hom B I ||}{sq/ : square/cosp a b}
+                     → is-pullback-of sq/ → (pf' : a ∘ sq/ₙ.left sq/ ~ b ∘ sq/ₙ.up sq/)
+                       → is-pullback-of (mksq/ pf')
+  ×/sqpf-irr-of {a = a} {b} {sq/} ispbof pf' = record
+    { ispb = record
+           { ⟨_,_⟩[_] = ⟨_,_⟩[_]
+           ; ×/tr₁ = ×/tr₁
+           ; ×/tr₂ = ×/tr₂
+           ; ×/uq = ×/uq
+           }
+    }
+    where open is-pullback-of ispbof
+    -- Agda complains that pf != pf' when trying to use ×/sqpf-irr
+{-
+          module sq/ = sq/ₙ sq/
+          module ispbof = is-pullback-of ispbof
+          ispb' : is-pullback pf'
+          ispb' = ×/sqpf-irr {pf = sq/.sq-pf} ispbof.ispb pf'
+          module ispb' = is-pullback ispb'
+-}
+
+
+  ×/sqpf-irr-sq : {I A B P : Obj}{a : || Hom A I ||}{b : || Hom B I ||}{p₁ : || Hom P A ||}{p₂ : || Hom P B ||}
+                  (pf pf' : a ∘ p₁ ~ b ∘ p₂)
+                    → is-pb-square (mksq (mksq/ pf)) → is-pb-square (mksq (mksq/ pf'))
+  ×/sqpf-irr-sq {a = a} {b} {p₁} {p₂} pf pf' ispb = record
     { ⟨_,_⟩[_] = pbpf.⟨_,_⟩[_]
     ; ×/tr₁ = pbpf.×/tr₁
     ; ×/tr₂ = pbpf.×/tr₂
     ; ×/uq = pbpf.×/uq
     }
     where module pbpf = pullback-sq-not (mkpb-sq ispb)
-
 
   ×/ext-dr : {I A B : Obj} {a a' : || Hom A I ||}{b b' : || Hom B I ||} {sq/ : square/cosp a b}
              (pbsq/ : is-pb-square (mksq sq/)) (pfa : a ~ a') (pfb : b ~ b')
@@ -451,7 +484,7 @@ module pullback-props (ℂ : ecategory) where
     }
     
   triv-pbsqˢ : {A I : Obj} (a : || Hom A I ||) → is-pb-square (mksq (mksq/ (ridgen (lidˢ {f = a}))))
-  triv-pbsqˢ a = ×/sqpf-irr (trsqˢ.sq-pf) (ridgen lidˢ) (diag-sym-pb-sq trpb.×/ispbsq)
+  triv-pbsqˢ a = ×/sqpf-irr-sq (trsqˢ.sq-pf) (ridgen lidˢ) (diag-sym-pb-sq trpb.×/ispbsq)
                where module trpb = pullback-of-not (mkpb-of (triv-pbsq a))
                      module trsqˢ = comm-square (diag-sym-square (mksq trpb.×/sq/))
 
