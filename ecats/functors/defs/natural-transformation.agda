@@ -83,7 +83,6 @@ natt-hcmp {𝔼 = 𝔼} {F} {G} {H} {K} β α = record
         module β = natural-transformation β
         open ecategory-aux-only 𝔼
 
-
 ------------------------
 -- Natural isomorphisms
 ------------------------
@@ -99,9 +98,8 @@ record natural-iso {ℂ 𝔻 : ecategory} (F G : efunctor ℂ 𝔻) : Set₁ whe
     natt⁻¹ : natural-transformation G F
   open natural-transformation natt public --renaming (fnc; nat to nat)
   open natural-transformation natt⁻¹ renaming (fnc to fnc⁻¹; nat to nat⁻¹) public
-  {-private
-    module natt = natural-transformation natt
-    module natt⁻¹ = natural-transformation natt⁻¹-}
+  module natt = natural-transformation natt
+  module natt⁻¹ = natural-transformation natt⁻¹
   open iso-defs 𝔻
   field
     isiso : {A : ℂ.Obj} → is-iso-pair (fnc {A}) (fnc⁻¹ {A})
