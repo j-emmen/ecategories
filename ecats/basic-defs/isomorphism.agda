@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-defs.isomorphism where
 
@@ -22,6 +18,15 @@ module iso-defs (ℂ : ecategory) where
       iddom : invf ∘ f ~ idar a
       idcod : f ∘ invf ~ idar b
 
+  inv-uq : {a b : Obj}{f : || Hom a b ||}{g g' : || Hom b a ||}
+              → is-iso-pair f g → is-iso-pair f g' → g ~ g'
+  inv-uq {f = f} {g} {g'} isop isop' = ~proof g           ~[ ridggˢ r g'.idcod ] /
+                                              g ∘ f ∘ g'   ~[ ass ⊙ lidgg r g.iddom ]∎
+                                              g' ∎
+                                     where open ecategory-aux-only ℂ
+                                           module g = is-iso-pair isop
+                                           module g' = is-iso-pair isop'
+
 
   inv-iso-pair : {a b : Obj} {f : || Hom a b ||} {invf : || Hom b a ||}
                     → is-iso-pair f invf → is-iso-pair invf f
@@ -30,6 +35,38 @@ module iso-defs (ℂ : ecategory) where
     ; idcod = iddom
     }
     where open is-iso-pair isop
+
+  iso-pair-ext : {a b : Obj}{f g : || Hom a b ||}{f' g' : || Hom b a ||}
+                    → is-iso-pair f f' → g ~ f → g' ~ f' → is-iso-pair g g'
+  iso-pair-ext isop eq eq' = record
+    { iddom = ∘e eq eq' ⊙ f.iddom
+    ; idcod = ∘e eq' eq ⊙ f.idcod
+    }
+    where module f = is-iso-pair isop
+          open ecategory-aux-only ℂ
+
+  iso-pair-cmp : {a b c : Obj}{f : || Hom a b ||}{f' : || Hom b a ||}
+                 {g : || Hom b c ||}{g' : || Hom c b ||}
+                    → is-iso-pair f f' → is-iso-pair g g'
+                      → is-iso-pair (g ∘ f) (f' ∘ g')
+  iso-pair-cmp isopf isopg = record
+    { iddom = assˢ ⊙ ∘e (ass ⊙ lidgg r g.iddom) r ⊙ f.iddom
+    ; idcod = assˢ ⊙ ∘e (ass ⊙ lidgg r f.idcod) r ⊙ g.idcod
+    }
+    where module f = is-iso-pair isopf
+          module g = is-iso-pair isopg
+          open ecategory-aux-only ℂ
+
+  iso-pair-tricmp : {a b c d : Obj}{f : || Hom a b ||}{f' : || Hom b a ||}
+                    {g : || Hom b c ||}{g' : || Hom c b ||}
+                    {h : || Hom c d ||}{h' : || Hom d c ||}
+                    → is-iso-pair f f' → is-iso-pair g g' → is-iso-pair h h'
+                      → is-iso-pair (h ∘ g ∘ f) (f' ∘ g' ∘ h')
+  iso-pair-tricmp isopf isopg isoph = iso-pair-ext (iso-pair-cmp (iso-pair-cmp isopf isopg) isoph) r ass
+    where module f = is-iso-pair isopf
+          module g = is-iso-pair isopg
+          module h = is-iso-pair isoph
+          open ecategory-aux-only ℂ
     
 
   record is-iso {a b : Obj} (f : || Hom a b ||) : Set where
@@ -55,7 +92,7 @@ module iso-defs (ℂ : ecategory) where
                                        { iddom = ∘e pf r ⊙ iddom
                                        ; idcod = ∘e r pf ⊙ idcod
                                        }
-
+  
 {-
   inverses : {a b : Obj} → (f : || Hom a b ||) → (f⁻¹ : || Hom b a ||) → Set
   inverses {a} {b} f f⁻¹ = prod (< Hom a a > f⁻¹ ∘ f ~ idar a)
