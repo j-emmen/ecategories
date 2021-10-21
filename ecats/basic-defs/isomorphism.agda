@@ -27,6 +27,17 @@ module iso-defs (ℂ : ecategory) where
                                            module g = is-iso-pair isop
                                            module g' = is-iso-pair isop'
 
+  inv-uqg : {a b : Obj}{f f' : || Hom a b ||}{g g' : || Hom b a ||}
+               → is-iso-pair f g → is-iso-pair f' g' → f ~ f' → g ~ g'
+  inv-uqg {f = f} {f'} {g} {g'} isop isop' eq = ~proof
+                                              g            ~[ ridggˢ r g'.idcod ] /
+                                              g ∘ f' ∘ g'   ~[ ∘e (∘e r (eq ˢ)) r  ] /
+                                              g ∘ f ∘ g'    ~[ ass ⊙ lidgg r g.iddom ]∎
+                                              g' ∎
+                                              where open ecategory-aux-only ℂ
+                                                    module g = is-iso-pair isop
+                                                    module g' = is-iso-pair isop'
+
 
   inv-iso-pair : {a b : Obj} {f : || Hom a b ||} {invf : || Hom b a ||}
                     → is-iso-pair f invf → is-iso-pair invf f
