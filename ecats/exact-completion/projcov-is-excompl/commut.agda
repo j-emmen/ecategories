@@ -38,8 +38,8 @@ module exact-compl-universal-comm {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
       open exact-cat-props-only ex𝔼 public
     --fwlℙ : has-fin-weak-limits ℙ
     --fwlℙ = proj-cov-has-wlim pjcPC (ex𝔼.hasfl)
-    reg𝔼 : is-regular 𝔼
-    reg𝔼 = ex𝔼.is-reg
+    --reg𝔼 : is-regular 𝔼
+    --reg𝔼 = ex𝔼.is-reg
     module CVex where
       open efunctor-aux CVex ℙ [ fwlℙ ] public
       open is-exwlex-completion (CVconstr-is-excompl fwlℙ) public

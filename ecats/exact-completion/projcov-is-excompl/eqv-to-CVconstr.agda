@@ -373,17 +373,17 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 
     ; isesurjobj = PC↑ex-ess-surj-obs
     }
 
-  PC↑ex-is-eqv : is-equivalence PC↑ex.fctr
-  PC↑ex-is-eqv = ess-equiv-is-equiv PC↑ex-eequiv
+  PC↑ex-is-eqv : is-adj-equivalence PC↑ex.fctr
+  PC↑ex-is-eqv = esseqv-is-adjeqv PC↑ex-eequiv
 
   module PC↑ex-is-eqv where
-    open is-equivalence PC↑ex-is-eqv --public
+    open is-adj-equivalence PC↑ex-is-eqv using (invF)
     -- declaring inv explicitly speeds up typechecking of tr-inv
     inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
     inv = invF
-    open is-equivalence-pair iseqv public
+    open is-adj-equivalence PC↑ex-is-eqv hiding (invF) public
     tr-inv : inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
-    tr-inv = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {inv} {PC} iseqv (CVex.unv.tr ex𝔼 lcovPC)
+    tr-inv = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {inv} {PC} (adjeqvp2eqvp isadjeqvp) (CVex.unv.tr ex𝔼 lcovPC)
 
 -- end projcov-of-exact-is-eqv-to-CVconstr
 
