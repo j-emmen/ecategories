@@ -31,7 +31,7 @@ module proj-cover-universal-is-exact {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
     module CVex where
       open is-exwlex-completion (CVconstr-is-excompl fwlℙ) public
     module CV↑PC where
-      open CVex.emb-unv ex𝔼 lcovPC public
+      --open CVex.emb-unv ex𝔼 lcovPC public
       open pjc-eqv-CV ex𝔼 fwlℙ lcovPC pjcPC public
       module inv = equivalence-props inv fctr
 

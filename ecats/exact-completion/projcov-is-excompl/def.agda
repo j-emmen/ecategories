@@ -30,10 +30,9 @@ module proj-cover-universal-def {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
   open is-exwlex-completion (CVconstr-is-excompl fwlℙ) using (emb-unv)
   ↑ex : {𝔻 : ecategory}(exD : is-exact 𝔻){F : efunctor ℙ 𝔻}(Flcov : is-left-covering F)
            → efunctor 𝔼 𝔻
-  ↑ex exD Flcov = fctr ○ PC↑ex-inv
+  ↑ex exD Flcov = fctr ○ inv
                 where open emb-unv exD Flcov using (fctr)
-                      open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 fwlℙ lcovPC pjcPC
-                                                               using (PC↑ex-inv)
+                      open pjc-eqv-CV ex𝔼 fwlℙ lcovPC pjcPC using (inv)
                       --module PC↑ex-is-eqv = is-equivalence PC↑ex-is-eqv
   --QER exD ○ Rel reg𝔻 Flcov ○ is-equivalence.invF PC↑ex-is-eqv
     --open eqrel-from-peq-funct ex𝔼.is-reg pjcPC using (Rel)

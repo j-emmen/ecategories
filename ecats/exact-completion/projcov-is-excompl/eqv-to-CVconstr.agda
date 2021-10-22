@@ -28,11 +28,11 @@ open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-prope
 -- the CVconstruction on ℙ as a category with weak finite limits
 ------------------------------------------------------------------
 
-module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
-                                           {ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
-                                           {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)
-                                           (pjcPC : is-projective-cover PC)
-                                           where
+module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
+                                               {ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
+                                               {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)
+                                               (pjcPC : is-projective-cover PC)
+                                               where
   private
     module 𝔼 where
       open ecategory 𝔼 public
@@ -369,19 +369,6 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 
     ; isesurjobj = PC↑ex-ess-surj-obs
     }
 
-  PC↑ex-inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
-  PC↑ex-inv = invF
-            where open esseqv-is-adjeqv PC↑ex-eequiv
-  
-  PC↑ex-is-eqvp : is-adj-equivalence-pair PC↑ex.fctr PC↑ex-inv
-  PC↑ex-is-eqvp = adjeqv
-                where open esseqv-is-adjeqv PC↑ex-eequiv
-
-  PC↑ex-inv-tr : PC↑ex-inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
-  PC↑ex-inv-tr = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {PC↑ex-inv} {PC}
-                        (adjeqvp2eqvp PC↑ex-is-eqvp)
-                        (CVex.emb-unv.tr ex𝔼 lcovPC)
-
 --   module PC↑ex-is-eqv where
 --     open is-adj-equivalence PC↑ex-is-eqv using (invF)
 --     -- declaring inv explicitly speeds up typechecking of tr-inv
@@ -391,29 +378,33 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 
 --     tr-inv : inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
 --     tr-inv = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {inv} {PC} (adjeqvp2eqvp isadjeqvp) (CVex.unv.tr ex𝔼 lcovPC)
 
--- end projcov-of-exact-is-eqv-to-CVconstr
+-- end projcov-of-exact-is-ess-eqv-to-CVconstr
 
 
 module pjc-eqv-CV {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼){ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
                   {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)(pjcPC : is-projective-cover PC)
                   where
-  open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 fwlℙ lcovPC pjcPC
-       using () renaming (PC↑ex-inv to inv; PC↑ex-is-eqvp to isaeqvp; PC↑ex-inv-tr to inv-tr)
-       public
-  {- it seems that adding these definitions instead makes type-checking more difficult 
-private
-    module CVex where
-      open efunctor-aux CVex ℙ [ fwlℙ ] public
-      open is-exwlex-completion (CVconstr-is-excompl fwlℙ) public
+  open projcov-of-exact-is-ess-eqv-to-CVconstr ex𝔼 fwlℙ lcovPC pjcPC
+  open esseqv-is-adjeqv PC↑ex-eequiv
+--                    renaming (PC↑ex-inv to inv; PC↑ex-is-eqvp to isaeqvp; PC↑ex-inv-tr to inv-tr)
+--                    public
+  private
+    module CVex = is-exwlex-completion (CVconstr-is-excompl fwlℙ)
     -- the canonical functor Exℙ → 𝔼 induced by PC
-    module PC↑ex where
-      open CVex.emb-unv ex𝔼 lcovPC using (fctr) public
-      open efunctor-aux fctr public
+    --module PC↑ex = CVex.emb-unv ex𝔼 lcovPC using (fctr)
+
+  open is-exwlex-completion.emb-unv (CVconstr-is-excompl fwlℙ) ex𝔼 lcovPC public --using (fctr)
+
   inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
-  inv = PC↑ex-inv  
-  isaeqvp : is-adj-equivalence-pair PC↑ex.fctr inv
-  isaeqvp = PC↑ex-is-eqvp
-  inv-tr : PC↑ex-inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
-  inv-tr = PC↑ex-inv-tr-}
+  inv = invF
+  
+  isaeqvp : is-adj-equivalence-pair fctr inv
+  isaeqvp = adjeqv
+
+  inv-tr : inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
+  inv-tr = eqv-tr {F = CVex ℙ [ fwlℙ ]} {fctr} {inv} {PC}
+                  (adjeqvp2eqvp isaeqvp)
+                  (CVex.emb-unv.tr ex𝔼 lcovPC)
+  
   open is-adj-equivalence-pair isaeqvp public
 -- end pjc-eqv-CV
