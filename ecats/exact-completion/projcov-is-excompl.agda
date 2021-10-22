@@ -9,7 +9,6 @@ open import ecats.finite-limits.defs.collective
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.left-covering
 open import ecats.functors.defs.projective-cover
---open import ecats.functors.props.projective-cover
 open import ecats.exact-completion.def
 open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
 open import ecats.exact-completion.projcov-is-excompl.def
