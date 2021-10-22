@@ -386,13 +386,6 @@ module pjc-eqv-CV {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼){ℙ : ecategory}(fw
                   where
   open projcov-of-exact-is-ess-eqv-to-CVconstr ex𝔼 fwlℙ lcovPC pjcPC
   open esseqv-is-adjeqv PC↑ex-eequiv
---                    renaming (PC↑ex-inv to inv; PC↑ex-is-eqvp to isaeqvp; PC↑ex-inv-tr to inv-tr)
---                    public
-  private
-    module CVex = is-exwlex-completion (CVconstr-is-excompl fwlℙ)
-    -- the canonical functor Exℙ → 𝔼 induced by PC
-    --module PC↑ex = CVex.emb-unv ex𝔼 lcovPC using (fctr)
-
   open is-exwlex-completion.emb-unv (CVconstr-is-excompl fwlℙ) ex𝔼 lcovPC public --using (fctr)
 
   inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
@@ -400,11 +393,10 @@ module pjc-eqv-CV {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼){ℙ : ecategory}(fw
   
   isaeqvp : is-adj-equivalence-pair fctr inv
   isaeqvp = adjeqv
+  --open is-adj-equivalence-pair isaeqvp public
 
   inv-tr : inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
   inv-tr = eqv-tr {F = CVex ℙ [ fwlℙ ]} {fctr} {inv} {PC}
                   (adjeqvp2eqvp isaeqvp)
-                  (CVex.emb-unv.tr ex𝔼 lcovPC)
-  
-  open is-adj-equivalence-pair isaeqvp public
--- end pjc-eqv-CV
+                  tr
+  -- end pjc-eqv-CV

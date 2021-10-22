@@ -46,7 +46,11 @@ record is-equivalence-pair {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) (G : e
     ι2 : natural-iso (G ○ F) IdF
   module ι1 = natural-iso ι1
   module ι2 = natural-iso ι2
-
+  ι1⁻¹ : IdF ≅ₐ F ○ G
+  ι1⁻¹ = ≅ₐsym ι1
+  ι2⁻¹ :  IdF ≅ₐ G ○ F
+  ι2⁻¹ = ≅ₐsym ι2
+  
 inv-is-eqv : {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}{G : efunctor 𝔻 ℂ}
                   → is-equivalence-pair F G → is-equivalence-pair G F
 inv-is-eqv eqv = record
@@ -69,6 +73,10 @@ record is-adj-equivalence-pair {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G :
     ι2 : natural-iso (G ○ F) IdF
   module ι1 = natural-iso ι1
   module ι2 = natural-iso ι2
+  ι1⁻¹ : IdF ≅ₐ F ○ G
+  ι1⁻¹ = ≅ₐsym ι1
+  ι2⁻¹ :  IdF ≅ₐ G ○ F
+  ι2⁻¹ = ≅ₐsym ι2
   field
     trid₁ : {X : ℂ.Obj} → ι1.fnc {F.ₒ X} 𝔻.∘ F.ₐ ι2.fnc⁻¹ 𝔻.~ 𝔻.idar (F.ₒ X)
     trid₂ : {Y : 𝔻.Obj} → G.ₐ ι1.fnc ℂ.∘ ι2.fnc⁻¹ {G.ₒ Y} ℂ.~ ℂ.idar (G.ₒ Y)

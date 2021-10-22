@@ -108,11 +108,11 @@ module efunctor-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻) where
 -- end efunctor-props
 
 
--- Equivalences are essential equivalences
+-- Adjoint equivalences are essential equivalences
 
-adj-equiv-is-ess-equiv : {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻}
+adjeqv-is-esseqv : {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻}
                         → is-adj-equivalence F → is-ess-equivalence F
-adj-equiv-is-ess-equiv {F = F} adjeqv = record
+adjeqv-is-esseqv {F = F} adjeqv = record
   { isfull = eqv-is-full adjeqv
   ; isfaithful = eqv-is-faith (adjeqv2eqv adjeqv)
   ; isesurjobj = eqv-is-ess-surj-ob (adjeqv2eqv adjeqv)
@@ -120,9 +120,9 @@ adj-equiv-is-ess-equiv {F = F} adjeqv = record
   where open efunctor-props F
 
 
--- Essential equivalences are equivalences
+-- Essential equivalences are adjoint equivalences
 
-module eeqv-is-eqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-ess-equivalence F) where
+module esseqv-is-adjeqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-ess-equivalence F) where
   open is-ess-equivalence eeqv
   open is-full isfull
   open is-faithful isfaithful
@@ -130,8 +130,6 @@ module eeqv-is-eqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-ess-e
     module macros (𝕏 : ecategory) where
         open ecategory 𝕏 public
         open arrows-defs 𝕏 public
-        --open finite-limits 𝕏 public
-        --open finite-weak-limits 𝕏 public
     module ℂ = macros ℂ
     module 𝔻 = macros 𝔻
     module F = efunctor-aux F
@@ -141,9 +139,7 @@ module eeqv-is-eqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-ess-e
   invFₒ = essrj.ob
   γ : (Y : 𝔻.Obj) → || 𝔻.Hom (F.ₒ (invFₒ Y)) Y ||
   γ = essrj.ar
-  private
-    module γ (Y : 𝔻.Obj) = 𝔻.is-iso (essrj.iso Y)
-  --open γ-tmp renaming (invf to γ⁻¹; isisopair to γ-isopair; iddom to γ⁻¹γ=id; idcod to γγ⁻¹=id)
+  private module γ (Y : 𝔻.Obj) = 𝔻.is-iso (essrj.iso Y)
 
   invFₐ : {Y Y' : 𝔻.Obj} → || 𝔻.Hom Y Y' || → || ℂ.Hom (invFₒ Y) (invFₒ Y') ||
   invFₐ {Y} {Y'} g = full-ar (γ.⁻¹ Y' 𝔻.∘ g 𝔻.∘ γ Y)
@@ -223,9 +219,20 @@ module eeqv-is-eqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-ess-e
                   }
                   where open natural-transformation δnat
 
+  trid₁ : {X : ℂ.Obj} → γ (F.ₒ X) 𝔻.∘ F.ₐ (δ⁻¹ X) 𝔻.~ 𝔻.idar (F.ₒ X)
+  trid₁ {X} = ~proof γ (F.ₒ X) 𝔻.∘ F.ₐ (δ⁻¹ X)     ~[ ∘e full-pf r ] /
+                     γ (F.ₒ X) 𝔻.∘ γ.⁻¹ (F.ₒ X)    ~[ γ.idcod (F.ₒ X) ]∎
+                     𝔻.idar (F.ₒ X) ∎
+            where open ecategory-aux-only 𝔻
+  trid₂ : {Y : 𝔻.Obj} → invFₐ (γ Y) ℂ.∘ δ⁻¹ (invFₒ Y) ℂ.~ ℂ.idar (invFₒ Y)
+  trid₂ {Y} = faith-pf (~proof
+    F.ₐ (invFₐ (γ Y) ℂ.∘ δ⁻¹ (invFₒ Y))           ~[ F.∘ax-rfˢ ⊙ (∘e full-pf (full-pf ⊙ ass) ⊙ assˢ) ] /
+    (γ.⁻¹ Y 𝔻.∘ γ Y) 𝔻.∘ γ (F.ₒ (invFₒ Y)) 𝔻.∘ γ.⁻¹ (F.ₒ (invFₒ Y))  ~[ lidgg (γ.idcod (F.ₒ (invFₒ Y))) (γ.iddom Y) ⊙ F.idˢ ]∎
+    F.ₐ (ℂ.idar (invFₒ Y)) ∎)
+    where open ecategory-aux-only 𝔻
 
-  eqv : is-equivalence-pair F invF
-  eqv = record
+  adjeqv : is-adj-equivalence-pair F invF
+  adjeqv = record
     { ι1 = record { natt = γnat
                   ; natt⁻¹ = γ⁻¹nat
                   ; isiso = record
@@ -240,16 +247,20 @@ module eeqv-is-eqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-ess-e
                           ; idcod = δδ⁻¹=id _
                           }
                   }
+    ; trid₁ = trid₁
+    ; trid₂ = trid₂
     }
+    where
+
 -- end eeqv-is-eqv
 
-ess-equiv-is-equiv : {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻}
-                        → is-ess-equivalence F → is-equivalence F
-ess-equiv-is-equiv {F = F} eeqv = record
+esseqv-is-adjeqv : {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻}
+                        → is-ess-equivalence F → is-adj-equivalence F
+esseqv-is-adjeqv {F = F} eeqv = record
   { invF = invF
-  ; iseqvp = eqv
+  ; isadjeqvp = adjeqv
   }
-  where open eeqv-is-eqv eeqv
+  where open esseqv-is-adjeqv eeqv
 
 
 
@@ -644,8 +655,8 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
     }
     where open eqv-pres-reg-epis adjeqv
 
-  exact : is-adj-equivalence-pair F G → is-exact-functor F
-  exact adjeqv = record
+  isexact : is-adj-equivalence-pair F G → is-exact-functor F
+  isexact adjeqv = record
     { presfl = pres-fin-lim adjeqv
     ; presrepi = pres-repi adjeqv
     }
