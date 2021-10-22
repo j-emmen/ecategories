@@ -15,7 +15,6 @@ open import ecats.functors.props.projective-cover
 open import ecats.exact-completion.def
 open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.CVconstr-is-excompl
---open import ecats.exact-completion.projcov-is-excompl.eqrel-from-peq
 open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
 open import ecats.constructions.ecat-eqrel
 
@@ -23,24 +22,18 @@ open import ecats.constructions.ecat-eqrel
 
 -- Definition of the functor 𝔼 → 𝔻 induced by a left covering ℙ → 𝔻 into 𝔻 exact.
 
-module exact-compl-universal-def {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
-                                 {ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
-                                 {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)
-                                 (pjcPC : is-projective-cover PC)
-                                 where  
-  private
-    module ex𝔼 where
-      open is-exact ex𝔼 public
-      open exact-cat-props-only ex𝔼 public
-    --fwlℙ : has-fin-weak-limits ℙ
-    --fwlℙ = proj-cov-has-wlim pjcPC (ex𝔼.hasfl)
-
+module proj-cover-universal-def {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
+                                {ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
+                                {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)
+                                (pjcPC : is-projective-cover PC)
+                                where  
+  open is-exwlex-completion (CVconstr-is-excompl fwlℙ) using (emb-unv)
   ↑ex : {𝔻 : ecategory}(exD : is-exact 𝔻){F : efunctor ℙ 𝔻}(Flcov : is-left-covering F)
            → efunctor 𝔼 𝔻
-  ↑ex exD Flcov = CVex.unv.fctr exD Flcov ○ PC↑ex-is-eqv.inv
-                where module CVex = is-exwlex-completion (CVconstr-is-excompl fwlℙ)
+  ↑ex exD Flcov = fctr ○ PC↑ex-inv
+                where open emb-unv exD Flcov using (fctr)
                       open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 fwlℙ lcovPC pjcPC
-                                                               using (PC↑ex-is-eqv)
+                                                               using (PC↑ex-inv)
                       --module PC↑ex-is-eqv = is-equivalence PC↑ex-is-eqv
   --QER exD ○ Rel reg𝔻 Flcov ○ is-equivalence.invF PC↑ex-is-eqv
     --open eqrel-from-peq-funct ex𝔼.is-reg pjcPC using (Rel)
@@ -48,7 +41,7 @@ module exact-compl-universal-def {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
 
   syntax ↑ex exE {F} Flcov = F ↑ex[ exE , Flcov ]
 
--- end exact-compl-universal-def
+-- end proj-cover-universal-def
 
 
 

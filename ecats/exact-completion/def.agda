@@ -18,6 +18,41 @@ open import ecats.functors.defs.left-covering
 -- which is initial among left-covering functors ℂ → 𝔼 into 𝔼 exact.
 --------------------------------------------------------------------------
 
+
+record exwlex-universal-prop {ℂ 𝔼 : ecategory}(emb : efunctor ℂ 𝔼)
+                             {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
+                             {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)
+                             : Set₂ where
+  field
+    fctr : efunctor 𝔼 𝔻
+    tr : fctr ○ emb ≅ₐ F
+    ex : is-exact-functor fctr
+    uq : {G : efunctor 𝔼 𝔻}(exG : is-exact-functor G)(trG : G ○ emb ≅ₐ F)
+            → G ≅ₐ fctr
+
+
+record is-exwlex-completion {ℂ : ecategory}(hasfwl : has-fin-weak-limits ℂ)
+                            {Exℂ : ecategory}(emb : efunctor ℂ Exℂ)
+                            : Set₂ where
+  field
+    cat-ex : is-exact Exℂ
+    emb-full : is-full emb
+    emb-faith : is-faithful emb
+    emb-lcov : is-left-covering emb
+    emb-unv : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
+              {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)
+                → exwlex-universal-prop emb ex𝔻 lcovF
+  open is-full emb-full renaming (full-ar to emb-full-ar; full-pf to emb-full-pf) public
+  open is-faithful emb-faith renaming (faith-pf to emb-faith-pf)public
+  module emb-unv {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
+                 {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)
+                 = exwlex-universal-prop (emb-unv ex𝔻 lcovF)
+
+syntax is-exwlex-completion {ℂ} hasfwl emb = emb is-exact-completion-of ℂ [ hasfwl ]
+
+
+
+
 {-
 module exwlex-universal-prop-data {ℂ 𝔼 : ecategory}(F : efunctor ℂ 𝔼)
                                   {𝔻 : ecategory}(G : efunctor ℂ 𝔻)
@@ -54,19 +89,6 @@ module exwlex-universal-prop-data {ℂ 𝔼 : ecategory}(F : efunctor ℂ 𝔼)
 
 -- end exwlex-universal-prop-data
 -}
-
-record exwlex-universal-prop {ℂ 𝔼 : ecategory}--(hasfwl : has-fin-weak-limits ℂ)(isex : is-exact 𝔼)
-                             (emb : efunctor ℂ 𝔼)--(islcov : is-left-covering emb)
-                             {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
-                             {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)
-                             : Set₂ where
-  --open exwlex-universal-prop-data F
-  field
-    fctr : efunctor 𝔼 𝔻
-    tr : fctr ○ emb ≅ₐ F
-    ex : is-exact-functor fctr
-    uq : {G : efunctor 𝔼 𝔻}(exG : is-exact-functor G)(trG : G ○ emb ≅ₐ F)
-            → G ≅ₐ fctr
 {-
     univ : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
            {G : efunctor ℂ 𝔻}(lcovG : is-left-covering G)
@@ -77,37 +99,4 @@ record exwlex-universal-prop {ℂ 𝔼 : ecategory}--(hasfwl : has-fin-weak-limi
 -}
   --open univ public
 
-
-record is-exwlex-completion {ℂ : ecategory}(hasfwl : has-fin-weak-limits ℂ)
-                            {Exℂ : ecategory}(emb : efunctor ℂ Exℂ)
-                            : Set₂ where
-  --open exwlex-universal-prop-data emb
-  field
-    cat-ex : is-exact Exℂ
-    emb-full : is-full emb
-    emb-faith : is-faithful emb
-    emb-lcov : is-left-covering emb
-    {-unv-prop : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
-               {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)
-                 → is-unique-ex+tr F (unv-fctr ex𝔻 lcovF)-}
-    emb-unv : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
-              {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)
-                → exwlex-universal-prop emb ex𝔻 lcovF
-  open is-full emb-full public
-  open is-faithful emb-faith public
-  --open exwlex-universal-prop emb-init public
-  module unv {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
-             {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)
-             = exwlex-universal-prop (emb-unv ex𝔻 lcovF)
-  module check {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
-               {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)
-               where
-    fctr : efunctor Exℂ 𝔻
-    fctr = unv.fctr ex𝔻 lcovF
-    tr : fctr ○ emb ≅ₐ F
-    tr = unv.tr ex𝔻 lcovF
-  --open univ public
-
-syntax is-exwlex-completion {ℂ} hasfwl emb = emb is-exact-completion-of ℂ [ hasfwl ]
-    
 

@@ -26,22 +26,21 @@ module proj-cover-universal-is-exact {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
                                      {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)
                                      (pjcPC : is-projective-cover PC)
                                      where
-  open exact-compl-universal-def ex𝔼 fwlℙ lcovPC pjcPC
+  open proj-cover-universal-def ex𝔼 fwlℙ lcovPC pjcPC
   private
     module CVex where
       open is-exwlex-completion (CVconstr-is-excompl fwlℙ) public
     module CV↑PC where
-      open CVex.unv ex𝔼 lcovPC public
-      open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 fwlℙ lcovPC pjcPC using (PC↑ex-is-eqv)
-      open PC↑ex-is-eqv public
+      open CVex.emb-unv ex𝔼 lcovPC public
+      open pjc-eqv-CV ex𝔼 fwlℙ lcovPC pjcPC public
       module inv = equivalence-props inv fctr
 
   ↑ex-is-exact :{𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
                    → is-exact-functor (F ↑ex[ ex𝔻 , lcovF ])
   ↑ex-is-exact ex𝔻 lcovF = exact-cmp {F = CV↑PC.inv} {CV↑F.fctr}
-                                      (CV↑PC.inv.isexact (inv-is-adjeqv CV↑PC.isadjeqvp))
+                                      (CV↑PC.inv.isexact (inv-is-adjeqv CV↑PC.isaeqvp))
                                       CV↑F.ex
                           where module CV↑F where
-                                  open CVex.unv ex𝔻 lcovF public
+                                  open CVex.emb-unv ex𝔻 lcovF public
                                   open efunctor-aux fctr public
 -- end proj-cover-universal-is-exact

@@ -53,16 +53,12 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 
       open ecategory ℙ public
       open pseudo-eq-rel-defs ℙ public
       open finite-weak-limits-d&p ℙ public
-    --fwlℙ : has-fin-weak-limits ℙ
-    --fwlℙ = proj-cov-has-wlim pjcPC ex𝔼.hasfl
     module fwlℙ where
       open has-fin-weak-limits fwlℙ public
       open has-weak-pullbacks haswpb using (wpb-of) public
   module PC where
     open efunctor-aux PC public
     open is-projective-cover pjcPC public
-    --islcov : is-left-covering PC
-    --islcov = pjcov-of-reg-is-lcov reg𝔼 pjcPC
 
   private
     -- the exact completion of ℙ
@@ -78,7 +74,7 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 
 
     -- the canonical functor Exℙ → 𝔼 induced by PC
     module PC↑ex where
-      open CVex.unv ex𝔼 lcovPC using (fctr) public
+      open CVex.emb-unv ex𝔼 lcovPC using (fctr) public
       open efunctor-aux fctr public
 
     -- The equivalence relation in 𝔼 induced by a peq in ℙ...
@@ -373,72 +369,51 @@ module projcov-of-exact-is-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-exact 
     ; isesurjobj = PC↑ex-ess-surj-obs
     }
 
-  PC↑ex-is-eqv : is-adj-equivalence PC↑ex.fctr
-  PC↑ex-is-eqv = esseqv-is-adjeqv PC↑ex-eequiv
+  PC↑ex-inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
+  PC↑ex-inv = invF
+            where open esseqv-is-adjeqv PC↑ex-eequiv
+  
+  PC↑ex-is-eqvp : is-adj-equivalence-pair PC↑ex.fctr PC↑ex-inv
+  PC↑ex-is-eqvp = adjeqv
+                where open esseqv-is-adjeqv PC↑ex-eequiv
 
-  module PC↑ex-is-eqv where
-    open is-adj-equivalence PC↑ex-is-eqv using (invF)
-    -- declaring inv explicitly speeds up typechecking of tr-inv
-    inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
-    inv = invF
-    open is-adj-equivalence PC↑ex-is-eqv hiding (invF) public
-    tr-inv : inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
-    tr-inv = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {inv} {PC} (adjeqvp2eqvp isadjeqvp) (CVex.unv.tr ex𝔼 lcovPC)
+  PC↑ex-inv-tr : PC↑ex-inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
+  PC↑ex-inv-tr = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {PC↑ex-inv} {PC}
+                        (adjeqvp2eqvp PC↑ex-is-eqvp)
+                        (CVex.emb-unv.tr ex𝔼 lcovPC)
+
+--   module PC↑ex-is-eqv where
+--     open is-adj-equivalence PC↑ex-is-eqv using (invF)
+--     -- declaring inv explicitly speeds up typechecking of tr-inv
+--     inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
+--     inv = invF
+--     open is-adj-equivalence PC↑ex-is-eqv hiding (invF) public
+--     tr-inv : inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
+--     tr-inv = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {inv} {PC} (adjeqvp2eqvp isadjeqvp) (CVex.unv.tr ex𝔼 lcovPC)
 
 -- end projcov-of-exact-is-eqv-to-CVconstr
 
 
-
-{-
-exact-compl-functor {ℙ} fwlℙ
-
-efunctor-cmp {exact-compl-cat ℙ fwlℙ} {EqRel 𝔼} {𝔼} (QER {𝔼} ex𝔼)
-(eqrel-from-peq-funct.Rel {ℙ} fwlℙ {𝔼} ex𝔼.is-reg {PC} lcovPC)
----
--}
-
-{-
-natiso-vcmp {ℙ} {Ex ℙ [ fwlℙ ]}
-                         {invF ○ PC} {invF ○ PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]}
-                         ( natiso-vcmp {F = invF ○ PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {(invF ○ PC↑ex.fctr) ○ CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]}
-                                        (natiso-vcmp {F = (invF ○ PC↑ex.fctr) ○ CVex ℙ [ fwlℙ ]} {IdF ○ CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]}
-                                                     (○lid {F = CVex ℙ [ fwlℙ ]})
-                                                     (natiso-hcmp {F = CVex ℙ [ fwlℙ ]} {CVex ℙ [ fwlℙ ]} {invF ○ PC↑ex.fctr} {IdF {Ex ℙ [ fwlℙ ]}}
-                                                                  {!ι2!} (≅ₐrefl {F = CVex ℙ [ fwlℙ ]})))
-                                        (○ass {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {invF}) )
-                         ( natiso-hcmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]}
-                                       {PC} {PC↑ex.fctr ○ CVex ℙ [ fwlℙ ]} {invF} {invF}
-                                       (≅ₐrefl {F = invF}) (≅ₐsym (CVex.unv.tr ex𝔼 lcovPC)) )
--}
-
-{-
-    tr-inv = ~proof efunctor-cmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]} invF PC  --invF ○ PC
-                                  ~[ {!∘e (CVex.unv.tr ex𝔼 lcovPC ˢ) r!} ] /
-                    
-                    efunctor-cmp {ℙ} {𝔼} {Ex ℙ [ fwlℙ ]} invF
-                                 (efunctor-cmp {ℙ} {Ex ℙ [ fwlℙ ]} {𝔼} PC↑ex.fctr CVex ℙ [ fwlℙ ])
-                                  ~[ {!ass ⊙ lidgg r ?!} ]∎
-                    CVex ℙ [ fwlℙ ] ∎
-           where open Large-ecategory-aux-only Cat
-                 -- open large-ecategory-aux (Fctr ℙ (Ex ℙ [ fwlℙ ]))
--}
-
-{-
-unv-into-projcov-is-eqv : {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
-                          {ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
-                          {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)
-                          (pjcPC : is-projective-cover PC)
-              → is-equivalence ( is-exwlex-completion.unv.fctr (CVconstr-is-excompl fwlℙ)
-                                                                ex𝔼
-                                                                lcovPC )
-unv-into-projcov-is-eqv {𝔼} ex𝔼 {ℙ} fwlℙ {PC} lcovPC pjcPC = PC↑ex-is-eqv -- PC↑ex-is-eqv
-                                        where open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 fwlℙ lcovPC pjcPC
--}
-
--- projective-cover-of-reg-cat-is-left-cov.PC-is-left-cov
---  (exact-cat-props-only.is-reg ex𝔼) pjcPC
-
--- projective-cover-of-reg-cat-is-left-cov.PC-is-left-cov
---  (exact-cat-props-only.is-reg ex𝔼) pjcPC
-
--- pjcov-of-reg-is-lcov (exact-cat-d&p.is-reg ex𝔼) pjcPC
+module pjc-eqv-CV {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼){ℙ : ecategory}(fwlℙ : has-fin-weak-limits ℙ)
+                  {PC : efunctor ℙ 𝔼}(lcovPC : is-left-covering PC)(pjcPC : is-projective-cover PC)
+                  where
+  open projcov-of-exact-is-eqv-to-CVconstr ex𝔼 fwlℙ lcovPC pjcPC
+       using () renaming (PC↑ex-inv to inv; PC↑ex-is-eqvp to isaeqvp; PC↑ex-inv-tr to inv-tr)
+       public
+  {- it seems that adding these definitions instead makes type-checking more difficult 
+private
+    module CVex where
+      open efunctor-aux CVex ℙ [ fwlℙ ] public
+      open is-exwlex-completion (CVconstr-is-excompl fwlℙ) public
+    -- the canonical functor Exℙ → 𝔼 induced by PC
+    module PC↑ex where
+      open CVex.emb-unv ex𝔼 lcovPC using (fctr) public
+      open efunctor-aux fctr public
+  inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
+  inv = PC↑ex-inv  
+  isaeqvp : is-adj-equivalence-pair PC↑ex.fctr inv
+  isaeqvp = PC↑ex-is-eqvp
+  inv-tr : PC↑ex-inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
+  inv-tr = PC↑ex-inv-tr-}
+  open is-adj-equivalence-pair isaeqvp public
+-- end pjc-eqv-CV
