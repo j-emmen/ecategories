@@ -14,7 +14,6 @@ open import ecats.basic-defs.commut-shapes
 module pullback-defs (ℂ : ecategory) where
   open ecategory-aux ℂ
   open comm-shapes ℂ
-  --open wpbsquare-defs ℂ
 
   record is-pullback {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
                      {P : Obj}{p : || Hom P A ||}{q : || Hom P B ||}
@@ -50,18 +49,26 @@ module pullback-defs (ℂ : ecategory) where
                   → up ∘ ⟨ h , k ⟩[ pf ] ~ k
       ×/uq : {C : Obj} → {h h' : || Hom C ul ||} → left ∘ h ~ left ∘ h' → up ∘ h ~ up ∘ h'
                     → h ~ h'
-{-    field
-      wpbsq : is-wpb-square sq
-    open is-wpb-square wpbsq public renaming (ul-w/ to ul/; ur-w/ to ur/; dl-w/ to dl/; dr-w/ to dr/;
-                                             left-w/ to left/; down-w/ to down/; up-w/ to up/; right-w/ to right/;
-                                             wpbpfsq to pbpfsq;
-                                             wpbuniv to pbuniv; wpbaxcommuniv1 to pbaxcommuniv1;
-                                             wpbaxcommuniv2 to pbaxcommuniv2)
-    field
-      pbaxuniq : {A : Obj} → (h h' : || Hom A ul/ ||) → left/ ∘ h ~ left/ ∘ h' → up/ ∘ h ~ up/ ∘ h'
-                    → h ~ h'
--}
 
+  pb-sq2is : {sq : comm-square} → is-pb-square sq → is-pullback (comm-square.sq-pf sq)
+  pb-sq2is ispbsq = record
+    { ⟨_,_⟩[_] = ⟨_,_⟩[_]
+    ; ×/tr₁ = ×/tr₁
+    ; ×/tr₂ = ×/tr₂
+    ; ×/uq = ×/uq
+    }
+    where open is-pb-square ispbsq
+
+  pb-is2sq : {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
+             {P : Obj}{p : || Hom P A ||}{q : || Hom P B ||}{sqpf : a ∘ p ~ b ∘ q}
+               → is-pullback sqpf → is-pb-square (mksq (mksq/ sqpf))
+  pb-is2sq ispb = record
+    { ⟨_,_⟩[_] = ⟨_,_⟩[_]
+    ; ×/tr₁ = ×/tr₁
+    ; ×/tr₂ = ×/tr₂
+    ; ×/uq = ×/uq
+    }
+    where open is-pullback ispb
 
 
   record pb-square : Set₁ where
@@ -71,30 +78,30 @@ module pullback-defs (ℂ : ecategory) where
       ×/ispbsq : is-pb-square ×/sq
     open comm-square ×/sq renaming (left to π/₁; up to π/₂; sq-pf to ×/sqpf) public
     open is-pb-square ×/ispbsq public
-{-
-    open comm-square sq
-    dr/ = dr
-    dl/ = dl
-    ur/ = ur
-    ul/ = ul
-    down/ = down
-    left/ = left
-    up/ = up
-    right/ = right
-
-  mkpbsq : {sq : comm-square} → is-pb-square sq → pb-square
-  mkpbsq {sq} sqispb  = record { sq = sq
-                               ; sq-is-pb = sqispb }
--}
 
 
-  record pullback-of {I A B : Obj} (a : || Hom A I ||) (b : || Hom B I ||) : Set₁ where
+  record pullback-of {I A B : Obj}(a : || Hom A I ||)(b : || Hom B I ||) : Set₁ where
     constructor mkpb-of
     field
       {×/sq/} : square/cosp a b
       ×/ispbsq : is-pb-square (mksq ×/sq/)
     open square/cosp ×/sq/ renaming (left to π/₁; up to π/₂; sq-pf to ×/sqpf) public
     open is-pb-square ×/ispbsq public
+
+  pbof-sq2is : {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
+               (pbof : pullback-of a b) → is-pullback-of (pullback-of.×/sq/ pbof)
+  pbof-sq2is pbof = record
+    { ispb = pb-sq2is ×/ispbsq
+    }
+    where open pullback-of pbof using (×/ispbsq)
+
+  pbof-is2sq : {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}{sq/ : square/cosp a b}
+                  → is-pullback-of sq/ → pullback-of a b
+  pbof-is2sq {sq/ = sq/} ispbof = record
+    { ×/sq/ = sq/
+    ; ×/ispbsq = pb-is2sq ispb
+    }
+    where open is-pullback-of ispbof using (ispb)
     
 
 {-

@@ -45,7 +45,7 @@ module pullback-props (ℂ : ecategory) where
     where open is-pullback ispb
 
 
-  ×/sqpf-irr-of : {I A B P : Obj}{a : || Hom A I ||}{b : || Hom B I ||}{sq/ : square/cosp a b}
+  ×/sqpf-irr-of : {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}{sq/ : square/cosp a b}
                      → is-pullback-of sq/ → (pf' : a ∘ sq/ₙ.left sq/ ~ b ∘ sq/ₙ.up sq/)
                        → is-pullback-of (mksq/ pf')
   ×/sqpf-irr-of {a = a} {b} {sq/} ispbof pf' = record
