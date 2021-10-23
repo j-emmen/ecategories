@@ -16,7 +16,7 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.projective-cover
 open import ecats.functors.defs.left-covering
 open import ecats.functors.props.basic-props
-open import ecats.functors.props.projective-cover
+--open import ecats.functors.props.projective-cover
 open import ecats.constructions.ecat-eqrel
 open import ecats.exact-completion.def
 open import ecats.exact-completion.CVconstruction

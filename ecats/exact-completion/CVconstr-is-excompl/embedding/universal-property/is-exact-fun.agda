@@ -139,7 +139,7 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
     F↑ex-is-exact : is-exact-functor F↑ex
     F↑ex-is-exact = record
       { presfl = F↑ex-pres-flim
-      ; presre = F↑ex-pres-repi
+      ; presrepi = F↑ex-pres-repi
       }
 
   -- end extension-is-exact

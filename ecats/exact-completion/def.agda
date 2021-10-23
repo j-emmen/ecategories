@@ -42,8 +42,8 @@ record is-exwlex-completion {ℂ : ecategory}(hasfwl : has-fin-weak-limits ℂ)
     emb-unv : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
               {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)
                 → exwlex-universal-prop emb ex𝔻 lcovF
-  open is-full emb-full renaming (full-ar to emb-full-ar; full-pf to emb-full-pf) public
-  open is-faithful emb-faith renaming (faith-pf to emb-faith-pf)public
+  module full = is-full emb-full --renaming (full-ar to emb-full-ar; full-pf to emb-full-pf) public
+  module faith = is-faithful emb-faith --renaming (faith-pf to emb-faith-pf)public
   module emb-unv {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
                  {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)
                  = exwlex-universal-prop (emb-unv ex𝔻 lcovF)
