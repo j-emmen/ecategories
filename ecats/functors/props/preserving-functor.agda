@@ -13,7 +13,6 @@ open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.preserving-functor
 
 
-
 pres-term-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor ℂ 𝔻}
                    → preserves-terminal F → preserves-terminal G
                      → preserves-terminal (G ○ F)

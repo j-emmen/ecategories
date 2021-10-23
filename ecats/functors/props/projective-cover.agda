@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.functors.props.projective-cover where
 
@@ -22,14 +18,165 @@ open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.projective-cover
 open import ecats.functors.defs.left-covering
 open import ecats.functors.props.left-covering
-open import ecats.exact-completion.CVconstruction
+open import ecats.functors.props.basic-props
+open import ecats.functors.props.preserving-functor
 
 
 -- Properties of projective covers into finitely complete categories
 
-module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
-                              {ℙ : ecategory} {PC : efunctor ℙ ℂ} (ispjcov : is-projective-cover PC)
+
+
+module projective-cover-props {ℂ : ecategory}{ℙ : ecategory}
+                              {PC : efunctor ℙ ℂ}(ispjcov : is-projective-cover PC)
                               where
+  private
+    module ℙ = ecategory ℙ
+    module ℂ where
+      open ecategory ℂ public
+      open iso-defs ℂ public
+      open epis&monos-defs ℂ public
+      open epis&monos-props ℂ public
+    module PC where
+      open efunctor-aux PC public
+      open is-projective-cover ispjcov public
+
+
+-- Projective covers are invariant under natural iso
+
+  iso-pjc : {F : efunctor ℙ ℂ} → PC ≅ₐ F → is-projective-cover F
+  iso-pjc {F} α = record
+    { isfull = full-ext PC.isfull α
+    ; isfaith = faith-ext PC.isfaith α
+    ; img-proj = λ X → record
+               { lift = λ repi g → PC.rprj.lift X repi (g ℂ.∘ α.fnc)  ℂ.∘ α.fnc⁻¹
+               ; lift-tr = lifttr X
+               }
+    ; reg-cov-obj = PC.rcov-of.Ob
+    ; is-reg-cov = λ A → record
+                 { ar = PC.rcov-of.ar A ℂ.∘ α.fnc⁻¹
+                 ; is-repi = isrepi A
+                 }
+    }
+    where module F = efunctor-props F
+          module α = natural-iso α
+          lifttr : (X : ℙ.Obj){A B : ℂ.Obj}{f : || ℂ.Hom A B ||}
+                   {repi : ℂ.is-regular-epi f}{g : || ℂ.Hom (F.ₒ X) B ||}
+                     → f ℂ.∘ PC.rprj.lift X repi (g ℂ.∘ α.fnc) ℂ.∘ α.fnc⁻¹ ℂ.~ g
+          lifttr X {f = f} {repi} {g} = ~proof
+            f ℂ.∘ PC.rprj.lift X repi (g ℂ.∘ α.fnc) ℂ.∘ α.fnc⁻¹  ~[ ass ⊙ ∘e r (PC.rprj.lift-tr X) ] /
+            (g ℂ.∘ α.fnc) ℂ.∘ α.fnc⁻¹                            ~[ assˢ ⊙ ridgg r α.idcod ]∎
+            g ∎
+                                      where open ecategory-aux-only ℂ
+          isrepi : (A : ℂ.Obj) → ℂ.is-regular-epi (PC.rcov-of.ar A ℂ.∘ α.fnc⁻¹)
+          isrepi A = ℂ.iso-to-repi-is-repi-dom (ℂ.mkis-iso α.isiso)
+                                               (assˢ ⊙ ridgg r α.iddom)
+                                               (PC.rcov-of.is-repi A)
+                   where open ecategory-aux-only ℂ
+
+
+
+-- Projective covers are invariant under equivalence
+
+  module adj-eqv-preserves-proj-ob {𝔻 : ecategory}{F : efunctor ℂ 𝔻}
+                                   (isaeqv : is-adj-equivalence F)
+                                   (X : ℙ.Obj)
+                                   where
+    private
+      module 𝔻 where
+        open ecategory 𝔻 public
+        open epis&monos-defs 𝔻 public
+      module F where
+        open efunctor-props F public
+        open is-adj-equivalence isaeqv public
+        module inv where
+          open efunctor-aux inv public
+          open equivalence-props inv F public
+          open preserves-regular-epis (pres-repi (inv-is-adjeqv isadjeqvp)) public
+      module F○PC = efunctor-aux (F ○ PC)
+
+    lift : {A B : 𝔻.Obj}{f : || 𝔻.Hom A B ||}
+           (repi : 𝔻.is-regular-epi f)(g : || 𝔻.Hom (F○PC.ₒ X) B ||)
+             → || 𝔻.Hom (F○PC.ₒ X) A ||
+    lift {f = f}  repi g = F.ι1.fnc 𝔻.∘ F.ₐ (PC.rprj.lift X {_} {_} {F.inv.ₐ f}
+                                                          (F.inv.pres-repi-pf repi)
+                                                          (F.inv.ₐ g ℂ.∘ F.ι2.fnc⁻¹))
+    tr : {A B : 𝔻.Obj} {f : || 𝔻.Hom A B ||}
+         {repi : 𝔻.is-regular-epi f} {g : || 𝔻.Hom (F○PC.ₒ X) B ||}
+           → f 𝔻.∘ lift repi g 𝔻.~ g
+    tr {f = f} {repi} {g} = ~proof
+      f 𝔻.∘ lift repi g                                   ~[ ass ⊙ ∘e r (F.ι1.natt.nat f ˢ) ⊙ assˢ ] /
+      F.ι1.fnc 𝔻.∘ F.ₐ (F.inv.ₐ f) 𝔻.∘ F.ₐ (PC.rprj.lift X {_} {_} {F.inv.ₐ f}
+                                                         (F.inv.pres-repi-pf repi)
+                                                         (F.inv.ₐ g ℂ.∘ F.ι2.fnc⁻¹))
+                                                           ~[ ∘e (F.∘∘ (PC.rprj.lift-tr X)) r ] /
+      F.ι1.fnc 𝔻.∘ F.ₐ (F.inv.ₐ g) 𝔻.∘ F.ₐ F.ι2.fnc⁻¹      ~[ ass ⊙ ∘e r (F.ι1.natt.nat g) ⊙ assˢ ] /
+      g 𝔻.∘ F.ι1.fnc 𝔻.∘ F.ₐ F.ι2.fnc⁻¹                   ~[ ridgg r F.trid₁ ]∎
+      g ∎
+                          where open ecategory-aux-only 𝔻
+  -- end adj-eqv-preserves-proj-ob
+
+
+  module adj-eqv-preserves-exist-cover {𝔻 : ecategory}{F : efunctor ℂ 𝔻}
+                                       (isaeqv : is-adj-equivalence F)
+                                       where
+    private
+      module 𝔻 where
+        open ecategory 𝔻 public
+        open iso-defs 𝔻 public
+        open epis&monos-defs 𝔻 public
+        open epis&monos-props 𝔻 public
+      module F where
+        open efunctor-props F public
+        open is-adj-equivalence isaeqv public
+        module props where
+          open equivalence-props F inv public
+          open preserves-regular-epis (pres-repi isadjeqvp) public
+        module inv where
+          open efunctor-aux inv public
+          open equivalence-props inv F public
+          open preserves-regular-epis (pres-repi (inv-is-adjeqv isadjeqvp)) public
+      module F○PC = efunctor-aux (F ○ PC)
+
+    cov-ob : 𝔻.Obj → ℙ.Obj
+    cov-ob B = PC.rcov-of.Ob (F.inv.ₒ B)
+
+    isreg :  (B : 𝔻.Obj) → F○PC.ₒ (cov-ob B) 𝔻.covers B
+    isreg B = record
+      { ar = F.ι1.fnc 𝔻.∘ F.ₐ (PC.rcov-of.ar (F.inv.ₒ B))
+      ; is-repi = 𝔻.iso-to-repi-is-repi-cod (𝔻.mkis-iso F.ι1.isiso)
+                                             r
+                                             (F.props.pres-repi-pf (PC.rcov-of.is-repi (F.inv.ₒ B)))
+      }
+      where open ecategory-aux-only 𝔻
+  -- end adj-eqv-preserves-exist-cover
+
+
+
+  eqv-pjc : {𝔻 : ecategory}{F : efunctor ℂ 𝔻}
+              → is-adj-equivalence F → is-projective-cover (F ○ PC)
+  eqv-pjc {𝔻} {F} isaeqv = record
+    { isfull = full-cmp PC.isfull (F.eqv-is-full isaeqv)
+    ; isfaith = faith-cmp PC.isfaith (F.eqv-is-faith (adjeqv2eqv isaeqv))
+    ; img-proj = λ X → record
+               { lift = lift X
+               ; lift-tr = λ {_} {_} {_} {repi} {g} → tr X {repi = repi} {g}
+               }
+    ; reg-cov-obj = cov-ob
+    ; is-reg-cov = isreg
+    }
+    where open adj-eqv-preserves-proj-ob isaeqv
+          open adj-eqv-preserves-exist-cover isaeqv
+          module F = efunctor-props F
+
+-- end projective-cover-props
+
+
+
+-- The domain of a projective cover of a category with finite limits has finite weak limits
+
+module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
+                                {ℙ : ecategory} {PC : efunctor ℙ ℂ} (ispjcov : is-projective-cover PC)
+                                where
   private
     module ℙ where
       open ecategory ℙ public
@@ -61,6 +208,8 @@ module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
     module PC where
       open efunctor-aux PC public
       open is-projective-cover ispjcov public
+      open full public
+      open faith public
 
 
   -- Covers of limits in ℂ are weak limits in ℙ
@@ -276,19 +425,19 @@ module projective-cover-props {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
     ; haswpb = dom-has-weak-pullbacks
     ; haswbw = has-weql+wpb⇒has-wbw dom-has-weak-equalisers dom-has-weak-pullbacks
     }
--- end projective-cover-props
+-- end prj-cover-of-lex-is-wlex
 
 
 proj-cov-has-wlim : {ℂ : ecategory} {ℙ : ecategory} {PC : efunctor ℙ ℂ}
                     (ispjcov : is-projective-cover PC)
                       → has-fin-limits ℂ → has-fin-weak-limits ℙ
 proj-cov-has-wlim ispjcov hasfl = dom-has-fin-weak-limits
-                                where open projective-cover-props hasfl ispjcov
+                                where open prj-cover-of-lex-is-wlex hasfl ispjcov
                               
 
 
 
--- Properties of projective covers into regular categories
+-- Projective cover into a regular category is left covering
 
 module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : is-regular 𝔼)
                                                {ℙ : ecategory} {PC : efunctor ℙ 𝔼} (ispjcov : is-projective-cover PC)
@@ -333,7 +482,9 @@ module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : i
     module PC where
       open efunctor-aux PC public
       open is-projective-cover ispjcov public
-      open projective-cover-props r𝔼.hasfl ispjcov public
+      open prj-cover-of-lex-is-wlex r𝔼.hasfl ispjcov public
+      open full public
+      open faith public
 
   module PC-is-left-cov-trm  {PT : ℙ.Obj} (PT-pf : ℙ.is-wterminal PT)
                              {CT : 𝔼.Obj} (CT-pf : 𝔼.is-terminal CT)
@@ -436,11 +587,6 @@ module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : i
                             {Eeqpf : PC.ₐ x 𝔼.∘ p₁ 𝔼.~ PC.ₐ y 𝔼.∘ p₂} (E×/ : 𝔼.is-pb-square (𝔼.mksq (𝔼.mksq/ Eeqpf)))
                             {cov×/ : || 𝔼.Hom (PC.ₒ V) P ||}
                             (cov×/-tr₁ : p₁ 𝔼.∘ cov×/ 𝔼.~ PC.ₐ Pp₁) (cov×/-tr₂ : p₂ 𝔼.∘ cov×/ 𝔼.~ PC.ₐ Pp₂)                           
-{-                            {X Y : ℙ.Obj} {V : ℙ.Obj} {Pp₁ : || ℙ.Hom V X ||} {Pp₂ : || ℙ.Hom V Y ||}
-                            (Pw× : ℙ.is-wproduct (ℙ.mkspan Pp₁ Pp₂))
-                            {P : 𝔼.Obj} {Ep₁ : || 𝔼.Hom P (PC.ₒ X) ||} {Ep₂ : || 𝔼.Hom P (PC.ₒ Y) ||}
-                            (E× : 𝔼.is-product (𝔼.mkspan Ep₁ Ep₂)) {cov× : || 𝔼.Hom (PC.ₒ V) P ||}
-                            (cov×-tr₁ : Ep₁ 𝔼.∘ cov× 𝔼.~ PC.ₐ Pp₁) (cov×-tr₂ : Ep₂ 𝔼.∘ cov× 𝔼.~ PC.ₐ Pp₂)-}
                             where
     private
       module Pw×/ = ℙ.wpullback-sq-not (ℙ.mkwpb-sq Pw×/)

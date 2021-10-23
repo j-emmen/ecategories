@@ -67,7 +67,7 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
                (g ℂ.∘ ι2.fnc) ℂ.∘ ι2.fnc⁻¹ {X}        ~[ assˢ ⊙ ridgg r ι2.idcod ]∎
                g ∎
     }
-    where open is-equivalence eqv renaming (invF to G)
+    where open is-equivalence eqv renaming (inv to G)
           module G = efunctor-aux G
           module G○F = efunctor-aux (G ○ F)
           open ecategory-aux-only ℂ
@@ -83,7 +83,7 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
               ι1.fnc 𝔻.∘ ι1.fnc⁻¹ 𝔻.∘ g                       ~[ ass ⊙ lidgg r ι1.idcod ]∎
               g ∎
     }
-    where open is-adj-equivalence adjeqv renaming (invF to G)
+    where open is-adj-equivalence adjeqv renaming (inv to G)
           module G = efunctor-aux G
           module F○G = efunctor-aux (F ○ G)
           open ecategory-aux-only 𝔻
@@ -95,7 +95,7 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     ; ar = λ Y → ι1.fnc {Y}
     ; iso = λ Y → 𝔻.mkis-iso (ι1.isiso {Y})
     }
-    where open is-equivalence eqv renaming (invF to G)
+    where open is-equivalence eqv renaming (inv to G)
           module G = efunctor-aux G
           module F○G = efunctor-aux (F ○ G)
 
@@ -257,7 +257,7 @@ module esseqv-is-adjeqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-
 esseqv-is-adjeqv : {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻}
                         → is-ess-equivalence F → is-adj-equivalence F
 esseqv-is-adjeqv {F = F} eeqv = record
-  { invF = invF
+  { inv = invF
   ; isadjeqvp = adjeqv
   }
   where open esseqv-is-adjeqv eeqv
@@ -457,7 +457,7 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
         ι2.fnc⁻¹ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'   ~[ ass ⊙ lidgg r ι2.iddom ]∎
         G.ₐ h' ∎)
         where Geqv : is-equivalence G
-              Geqv = record { invF = F ; iseqvp = inv-is-eqv (adjeqvp2eqvp adjeqv) }
+              Geqv = record { inv = F ; iseqvp = inv-is-eqv (adjeqvp2eqvp adjeqv) }
               module Gfaith = is-faithful (G.eqv-is-faith Geqv) renaming (faith-pf to pf)
               open ecategory-aux-only ℂ
               aux₁ : ×sp.π₁ ℂ.∘  ι2.fnc ℂ.∘ G.ₐ h ℂ.~ ×sp.π₁ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'
@@ -535,7 +535,7 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
         ι2.fnc⁻¹ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'   ~[ ass ⊙ lidgg r ι2.iddom ]∎
         G.ₐ h' ∎)
         where Geqv : is-equivalence G
-              Geqv = record { invF = F ; iseqvp = inv-is-eqv (adjeqvp2eqvp adjeqv) }
+              Geqv = record { inv = F ; iseqvp = inv-is-eqv (adjeqvp2eqvp adjeqv) }
               module Gfaith = is-faithful (G.eqv-is-faith Geqv) renaming (faith-pf to pf)
               open ecategory-aux-only ℂ
               aux₁ : ×/sq.π/₁ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h ℂ.~ ×/sq.π/₁ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'
@@ -608,7 +608,7 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
       G.ₐ g ℂ.∘ G.ₐ ι1.fnc ℂ.∘ G○F.ₐ (ι2.fnc⁻¹ {A})     ~[ ridgg r (G.∘ax trid₁ ⊙ G.id) ]∎
       G.ₐ g ∎)
                   where Geqv : is-equivalence G
-                        Geqv = record { invF = F ; iseqvp = inv-is-eqv (adjeqvp2eqvp adjeqv) }
+                        Geqv = record { inv = F ; iseqvp = inv-is-eqv (adjeqvp2eqvp adjeqv) }
                         module Gfaith = is-faithful (G.eqv-is-faith Geqv) renaming (faith-pf to pf)
                         open ecategory-aux-only ℂ
                         open ecategory-aux-only 𝔻 using () renaming (assˢ to 𝔻assˢ)
@@ -621,7 +621,7 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
       (G.ₐ g' ℂ.∘ ι2.fnc⁻¹) ℂ.∘ ι2.fnc     ~[ assˢ ⊙ ridgg r ι2.iddom ]∎
       G.ₐ g' ∎)
                           where Geqv : is-equivalence G
-                                Geqv = record { invF = F ; iseqvp = inv-is-eqv (adjeqvp2eqvp adjeqv) }
+                                Geqv = record { inv = F ; iseqvp = inv-is-eqv (adjeqvp2eqvp adjeqv) }
                                 module Gfaith = is-faithful (G.eqv-is-faith Geqv) renaming (faith-pf to pf)
                                 open ecategory-aux-only ℂ
                                 --open ecategory-aux-only  using () renaming (assˢ to 𝔻assˢ; _ˢ to _ˢ𝔻)

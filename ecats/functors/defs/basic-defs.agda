@@ -150,26 +150,41 @@ eqv-tr {F = F} {G} {invG} {H} eqvG tr =
 
 record is-equivalence {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   field
-    invF : efunctor 𝔻 ℂ
-    iseqvp : is-equivalence-pair F invF
+    inv : efunctor 𝔻 ℂ
+    iseqvp : is-equivalence-pair F inv
   open is-equivalence-pair iseqvp public
 
 record is-adj-equivalence {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻) : Set₁ where
   field
-    invF : efunctor 𝔻 ℂ
-    isadjeqvp : is-adj-equivalence-pair F invF --iseqvp
+    inv : efunctor 𝔻 ℂ
+    isadjeqvp : is-adj-equivalence-pair F inv --iseqvp
   open is-adj-equivalence-pair isadjeqvp public
 
 
 adjeqv2eqv : {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}
                 → is-adj-equivalence F → is-equivalence F
 adjeqv2eqv adjeqv = record
-  { invF = invF
+  { inv = inv
   ; iseqvp = adjeqvp2eqvp isadjeqvp
   }
   where open is-adj-equivalence adjeqv
 
-
+{-
+adjeqv-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor ℂ 𝔻}
+               → is-adj-equivalence F → is-adj-equivalence G
+                 → is-adj-equivalence (G ○ F)
+adjeqv-cmp aeqvF aeqvG = record
+  { inv = F.inv ○ G.inv
+  ; isadjeqvp = record
+              { ι1 = {!!}
+              ; ι2 = {!!}
+              ; trid₁ = {!!}
+              ; trid₂ = {!!}
+              }
+  }
+  where module F = is-adj-equivalence aeqvF
+        module G = is-adj-equivalence aeqvG
+-}
 
 
 -- Other properties of funtors
@@ -196,6 +211,38 @@ record is-full {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   full-pfgˢ pf = full-pfg pf ˢ
               where open ecategory-aux-only 𝔻
 
+full-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor ℂ 𝔻}
+               → is-full F → is-full G → is-full (G ○ F)
+full-cmp {𝔻 = 𝔻} {F} {G} fullF fullG = record
+  { full-ar = λ k → F.full-ar (G.full-ar k)
+  ; full-pf = λ {_} {_} {k} → G.ext F.full-pf ⊙ G.full-pf
+  }
+  where module F = is-full fullF
+        module G where
+          open efunctor-aux G public
+          open is-full fullG public
+        open ecategory-aux-only 𝔻 using (_⊙_)
+
+full-ext : {ℂ 𝔻 : ecategory}{F G : efunctor ℂ 𝔻}
+               → is-full F → F ≅ₐ G → is-full G
+full-ext {ℂ} {𝔻} {F} {G} fullF α = record
+  { full-ar = λ g → F.full-ar (α.fnc⁻¹ ∘ g ∘ α.fnc)
+  ; full-pf = λ {X} {Y} {g} → ~proof
+            G.ₐ (F.full-ar (α.fnc⁻¹ ∘ g ∘ α.fnc))                     ~[ α.C2Dₗ ] /
+            (α.fnc ∘ F.ₐ (F.full-ar (α.fnc⁻¹ ∘ g ∘ α.fnc))) ∘ α.fnc⁻¹  ~[ ∘e r (∘e  F.full-pf r) ] /
+            (α.fnc ∘ (α.fnc⁻¹ ∘ g ∘ α.fnc)) ∘ α.fnc⁻¹                  ~[ ∘e r ass ⊙ assˢ ⊙ ∘e assˢ r ] /
+            (α.fnc ∘ α.fnc⁻¹) ∘ g ∘ α.fnc ∘ α.fnc⁻¹                ~[ lidgg (ridgg r α.idcod) α.idcod ]∎
+            g ∎
+  }
+  where module F where
+          open is-full fullF public
+          open efunctor-aux F public
+        module G = efunctor-aux G
+        module α = natural-iso α
+        open ecategory-aux 𝔻
+
+  
+
 
 record is-faithful {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private
@@ -205,6 +252,31 @@ record is-faithful {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   field
     faith-pf : {X Y : ℂ.Obj} {f g : || ℂ.Hom X Y ||}
                   → F.ₐ f 𝔻.~ F.ₐ g → f ℂ.~ g
+
+faith-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor ℂ 𝔻}
+               → is-faithful F → is-faithful G
+                 → is-faithful (G ○ F)
+faith-cmp faithF faithG = record
+  { faith-pf = λ pf → F.faith-pf (G.faith-pf pf)
+  }
+  where module F = is-faithful faithF
+        module G = is-faithful faithG
+
+faith-ext : {ℂ 𝔻 : ecategory}{F G : efunctor ℂ 𝔻}
+               → is-faithful F → F ≅ₐ G → is-faithful G
+faith-ext {ℂ} {𝔻} {F} {G} faithF α = record
+  { faith-pf = λ {_} {_} {f} {g}  pf → F.faith-pf (~proof
+             F.ₐ f                   ~[ α.D2Cᵣ ] /
+             α.fnc⁻¹ ∘ G.ₐ f ∘ α.fnc  ~[ ∘e (∘e r pf) r ] /
+             α.fnc⁻¹ ∘ G.ₐ g ∘ α.fnc  ~[  α.D2Cᵣˢ ]∎
+             F.ₐ g ∎)
+  }
+  where module F where
+          open is-faithful faithF public
+          open efunctor-aux F public
+        module G = efunctor-aux G
+        module α = natural-iso α
+        open ecategory-aux 𝔻
 
 
 record is-ess-surjective-ob {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where

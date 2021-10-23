@@ -105,6 +105,23 @@ record natural-iso {ℂ 𝔻 : ecategory} (F G : efunctor ℂ 𝔻) : Set₁ whe
     isiso : {A : ℂ.Obj} → is-iso-pair (fnc {A}) (fnc⁻¹ {A})
   module isop {A : ℂ.Obj} = is-iso-pair (isiso {A})
   open isop public
+  open ecategory-aux-only 𝔻
+  D2Cᵣ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → F.ₐ f 𝔻.~ fnc⁻¹ 𝔻.∘ G.ₐ f 𝔻.∘ fnc
+  D2Cᵣ {f = f} = lidggˢ r iddom ⊙ assˢ ⊙ ∘e (natt.nat f) r 
+  D2Cᵣˢ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → fnc⁻¹ 𝔻.∘ G.ₐ f 𝔻.∘ fnc 𝔻.~ F.ₐ f
+  D2Cᵣˢ {f = f} = ∘e (natt.nat f ˢ) r ⊙ ass ⊙ lidgg r iddom 
+  D2Cₗ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → F.ₐ f 𝔻.~ (fnc⁻¹ 𝔻.∘ G.ₐ f) 𝔻.∘ fnc
+  D2Cₗ {f = f} = ridggˢ r iddom ⊙ ass ⊙ ∘e r (natt⁻¹.nat f ˢ)
+  D2Cₗˢ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → (fnc⁻¹ 𝔻.∘ G.ₐ f) 𝔻.∘ fnc 𝔻.~ F.ₐ f
+  D2Cₗˢ {f = f} = ∘e r (natt⁻¹.nat f) ⊙ assˢ ⊙ ridgg r iddom 
+  C2Dᵣ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → G.ₐ f 𝔻.~ fnc 𝔻.∘ F.ₐ f 𝔻.∘ fnc⁻¹
+  C2Dᵣ {f = f} = lidggˢ r idcod ⊙ assˢ ⊙ ∘e (natt⁻¹.nat f) r 
+  C2Dᵣˢ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → fnc 𝔻.∘ F.ₐ f 𝔻.∘ fnc⁻¹ 𝔻.~ G.ₐ f
+  C2Dᵣˢ {f = f} = ∘e (natt⁻¹.nat f ˢ) r ⊙ ass ⊙ lidgg r idcod 
+  C2Dₗ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → G.ₐ f 𝔻.~ (fnc 𝔻.∘ F.ₐ f) 𝔻.∘ fnc⁻¹
+  C2Dₗ {f = f} = ridggˢ r idcod ⊙ ass ⊙ ∘e r (natt.nat f ˢ)
+  C2Dₗˢ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → (fnc 𝔻.∘ F.ₐ f) 𝔻.∘ fnc⁻¹ 𝔻.~ G.ₐ f
+  C2Dₗˢ {f = f} = ∘e r (natt.nat f) ⊙ assˢ ⊙ ridgg r idcod 
 
 
 infixr 9 _≅ₐ_
