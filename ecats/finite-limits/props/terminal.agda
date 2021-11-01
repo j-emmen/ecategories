@@ -20,12 +20,22 @@ module terminal-props (ℂ : ecategory) where
   open pullback-squares ℂ
   private
     module pbof = pullback-of-not
+    module trm = is-terminal
+
+  !uq-isop : {T T' : Obj}(trmT : is-terminal T)(trmT' : is-terminal T')
+                → is-iso-pair (trm.! trmT' T) (trm.! trmT T')
+  !uq-isop {T} {T'} !T !T' = record
+    { iddom = !T.!uqg
+    ; idcod = !T'.!uqg
+    }
+    where module !T = is-terminal !T
+          module !T' = is-terminal !T'
 
   !uq-iso : {T T' : Obj} → is-terminal T → is-terminal T' → T ≅ₒ T'
   !uq-iso {T} {T'} !T !T' = record
     { a12 = !T'.! T
     ; a21 = !T.! T'
-    ; isop = record { iddom = !T.!uqg ; idcod = !T'.!uqg }
+    ; isop = !uq-isop !T !T' --record { iddom = !T.!uqg ; idcod = !T'.!uqg }
     }
     where module !T = is-terminal !T
           module !T' = is-terminal !T'

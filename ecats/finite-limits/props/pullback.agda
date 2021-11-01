@@ -1,5 +1,5 @@
 
-{-# OPTIONS --without-K --show-implicit #-}
+{-# OPTIONS --without-K #-}
 
 module ecats.finite-limits.props.pullback where
 
@@ -65,7 +65,7 @@ module pullback-props (ℂ : ecategory) where
           ispb' = ×/sqpf-irr {pf = sq/.sq-pf} ispbof.ispb pf'
           module ispb' = is-pullback ispb'
 -}
-
+    
 
   ×/sqpf-irr-sq : {I A B P : Obj}{a : || Hom A I ||}{b : || Hom B I ||}{p₁ : || Hom P A ||}{p₂ : || Hom P B ||}
                   (pf pf' : a ∘ p₁ ~ b ∘ p₂)
@@ -126,35 +126,58 @@ module pullback-props (ℂ : ecategory) where
 
 
   -- pb squares on same cospan are isomorphic
-  
-  pbs-iso-ar : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+
+  pbs-unv12 : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
                   → || Hom (pbofₙ.ul pb1) (pbofₙ.ul pb2) ||
-  pbs-iso-ar pb1 pb2 = pb2.⟨ pb1.π/₁ , pb1.π/₂ ⟩[ pb1.×/sqpf ]
-                     where module pb1 = pullback-of pb1
-                           module pb2 = pullback-of pb2
-                           
+  pbs-unv12 pb1 pb2 = pb2.⟨ pb1.π/₁ , pb1.π/₂ ⟩[ pb1.×/sqpf ]
+                    where module pb1 = pullback-of pb1
+                          module pb2 = pullback-of pb2
 
-  pbs-iso-inv : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
-                   → || Hom (pbofₙ.ul pb2) (pbofₙ.ul pb1) ||
-  pbs-iso-inv pb1 pb2 = pb1.⟨ pb2.π/₁ , pb2.π/₂ ⟩[ pb2.×/sqpf ]
-                      where module pb1 = pullback-of pb1
-                            module pb2 = pullback-of pb2
+  pbs-unv21 : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+                  → || Hom (pbofₙ.ul pb2) (pbofₙ.ul pb1) ||
+  pbs-unv21 pb1 pb2 = pb1.⟨ pb2.π/₁ , pb2.π/₂ ⟩[ pb2.×/sqpf ]
+                    where module pb1 = pullback-of pb1
+                          module pb2 = pullback-of pb2
 
-
-  pbs-iso : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
-               → is-iso (pbs-iso-ar pb1 pb2)
-  pbs-iso pb1 pb2 = record
-    { invf = pbs-iso-inv pb1 pb2
-    ; isisopair = record
-            { iddom = pb1.×/uq (ass ⊙  ∘e r (pb1.×/tr₁ pb2.×/sqpf) ⊙ ridggˢ (pb2.×/tr₁ pb1.×/sqpf) r)
-                               (ass ⊙  ∘e r (pb1.×/tr₂ pb2.×/sqpf) ⊙ ridggˢ (pb2.×/tr₂ pb1.×/sqpf) r)
-            ; idcod = pb2.×/uq (ass ⊙  ∘e r (pb2.×/tr₁ pb1.×/sqpf) ⊙ ridggˢ (pb1.×/tr₁ pb2.×/sqpf) r)
-                               (ass ⊙  ∘e r (pb2.×/tr₂ pb1.×/sqpf) ⊙ ridggˢ (pb1.×/tr₂ pb2.×/sqpf) r)
-            }
+  pbs-unvar-is-isop : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+                      {uar12 : || Hom (pbofₙ.ul pb1) (pbofₙ.ul pb2) ||}{uar21 : || Hom (pbofₙ.ul pb2) (pbofₙ.ul pb1) ||}
+                        → pbofₙ.π/₁ pb2 ∘ uar12 ~ pbofₙ.π/₁ pb1 → pbofₙ.π/₂ pb2 ∘ uar12 ~ pbofₙ.π/₂ pb1
+                        → pbofₙ.π/₁ pb1 ∘ uar21 ~ pbofₙ.π/₁ pb2 → pbofₙ.π/₂ pb1 ∘ uar21 ~ pbofₙ.π/₂ pb2
+                          → is-iso-pair uar12 uar21
+  pbs-unvar-is-isop pb1 pb2 {uar12} {uar21} 12tr₁ 12tr₂ 21tr₁ 21tr₂ = record
+    { iddom = pb1.×/uq (ass ⊙  ∘e r 21tr₁ ⊙ ridggˢ 12tr₁ r)
+                       (ass ⊙  ∘e r 21tr₂ ⊙ ridggˢ 12tr₂ r)
+    ; idcod = pb2.×/uq (ass ⊙  ∘e r 12tr₁ ⊙ ridggˢ 21tr₁ r)
+                               (ass ⊙  ∘e r 12tr₂ ⊙ ridggˢ 21tr₂ r)
     }
     where module pb1 = pullback-of pb1
           module pb2 = pullback-of pb2
 
+  pbs-unvar-is-iso : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+                     {uar : || Hom (pbofₙ.ul pb1) (pbofₙ.ul pb2) ||}
+                       → pbofₙ.π/₁ pb2 ∘ uar ~ pbofₙ.π/₁ pb1 → pbofₙ.π/₂ pb2 ∘ uar ~ pbofₙ.π/₂ pb1
+                         → is-iso uar
+  pbs-unvar-is-iso pb1 pb2 {uar} tr₁ tr₂ = record
+    { invf = pbs-unv21 pb1 pb2
+    ; isisopair = pbs-unvar-is-isop pb1 pb2 tr₁ tr₂ (pb1.×/tr₁ pb2.×/sqpf) (pb1.×/tr₂ pb2.×/sqpf)
+    }
+    where module pb1 = pullback-of pb1
+          module pb2 = pullback-of pb2
+
+  pbs-unv-is-isop : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+                       → is-iso-pair (pbs-unv12 pb1 pb2) (pbs-unv21 pb1 pb2)
+  pbs-unv-is-isop pb1 pb2 = pbs-unvar-is-isop pb1 pb2
+                                              (pb2.×/tr₁ pb1.×/sqpf) (pb2.×/tr₂ pb1.×/sqpf)
+                                              (pb1.×/tr₁ pb2.×/sqpf) (pb1.×/tr₂ pb2.×/sqpf)
+                          where module pb1 = pullback-of pb1
+                                module pb2 = pullback-of pb2
+
+  pbs-unv-is-iso : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+                       → is-iso (pbs-unv12 pb1 pb2)
+  pbs-unv-is-iso pb1 pb2 = record
+    { invf = pbs-unv21 pb1 pb2
+    ; isisopair = pbs-unv-is-isop pb1 pb2
+    }
 
 
   -- span isomorphic to a pb is pb

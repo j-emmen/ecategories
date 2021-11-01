@@ -25,7 +25,7 @@ module bin-product-props (ℂ : ecategory) where
     private
       module ×1 = product-of-not ×1
       module ×2 = product-of-not ×2
-    
+
     ×uq-ar : || Hom ×1.O12 ×2.O12 ||
     ×uq-ar = ×2.< ×1.π₁ , ×1.π₂ >
 
@@ -48,7 +48,5 @@ module bin-product-props (ℂ : ecategory) where
     ×-iso-gen : {f : || Hom ×1.O12 ×2.O12 ||} → ×2.π₁ ∘ f ~ ×1.π₁ → ×2.π₂ ∘ f ~ ×1.π₂
                    → is-iso f
     ×-iso-gen pf₁ pf₂ = iso-ext ×uq-ar-iso (×2.ar~<> pf₁ pf₂)
-
   -- end product-is-unique-uptoiso
-
 -- end bin-product-props
