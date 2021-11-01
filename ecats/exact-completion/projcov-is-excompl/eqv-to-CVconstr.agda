@@ -129,20 +129,20 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
           module rpH = PC.rprj Hi
           module Q = Q/PC↑ex S
         lo : || ℙ.Hom R.Lo S.Lo ||
-        lo = PC.full-ar (R.rpL.lift S.Q.repi (g 𝔼.∘ R.Q.ar))
+        lo = PC.full.ar (R.rpL.lift S.Q.repi (g 𝔼.∘ R.Q.ar))
         hiaux-pf : S.Q.ar 𝔼.∘ PC.ₐ (lo ℙ.∘ R.%0) 𝔼.~ S.Q.ar 𝔼.∘ PC.ₐ (lo ℙ.∘ R.%1)
         hiaux-pf = ~proof
           S.Q.ar 𝔼.∘ PC.ₐ (lo ℙ.∘ R.%0)
-                 ~[ ∘e (PC.∘ax-rf ˢ ⊙ ∘e (R.RMF.rmfF%tr₁ ˢ) PC.full-pf) r ⊙ ass ⊙ ∘e r R.rpL.lift-tr ⊙ assˢ ] /
+                 ~[ ∘e (PC.∘ax-rf ˢ ⊙ ∘e (R.RMF.rmfF%tr₁ ˢ) PC.full.pf) r ⊙ ass ⊙ ∘e r R.rpL.lift-tr ⊙ assˢ ] /
           g 𝔼.∘ R.Q.ar 𝔼.∘ R.Q.kp.π/₁ 𝔼.∘ R.RMF.C              ~[ ∘e (ass ⊙ ∘e r R.Q.kp.×/sqpf ⊙ assˢ) r ] /
           g 𝔼.∘ R.Q.ar 𝔼.∘ R.Q.kp.π/₂ 𝔼.∘ R.RMF.C
-            ~[ (ass ⊙ ∘e r (R.rpL.lift-tr ˢ)) ⊙ assˢ ⊙ ∘e (∘e R.RMF.rmfF%tr₂ (PC.full-pf ˢ) ⊙ PC.∘ax-rf) r ]∎
+            ~[ (ass ⊙ ∘e r (R.rpL.lift-tr ˢ)) ⊙ assˢ ⊙ ∘e (∘e R.RMF.rmfF%tr₂ (PC.full.pf ˢ) ⊙ PC.∘ax-rf) r ]∎
           S.Q.ar 𝔼.∘ PC.ₐ (lo ℙ.∘ R.%1) ∎
                  where open ecategory-aux-only 𝔼
         hiaux : || 𝔼.Hom (PC.ₒ R.Hi) S.Q.kp.ul ||
         hiaux = S.Q.kp.⟨ PC.ₐ (lo ℙ.∘ R.%0) , PC.ₐ (lo ℙ.∘ R.%1) ⟩[ hiaux-pf ]
         hi : || ℙ.Hom R.Hi S.Hi ||
-        hi = PC.full-ar (R.rpH.lift S.RMF.C-is-repi hiaux)
+        hi = PC.full.ar (R.rpH.lift S.RMF.C-is-repi hiaux)
       ar : ℙ.peq-mor R S
       ar = record
         { lo = lo
@@ -150,12 +150,12 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
           { hi = hi
           ; cmptb₀ = PC.faith-pf (~proof
                    PC.ₐ (S.%0 ℙ.∘ hi)
-                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full-pf (S.RMF.rmfF%tr₁ ˢ) ⊙ ass ˢ ⊙ ∘e R.rpH.lift-tr r ] /
+                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full.pf (S.RMF.rmfF%tr₁ ˢ) ⊙ ass ˢ ⊙ ∘e R.rpH.lift-tr r ] /
                    S.Q.kp.π/₁ 𝔼.∘ hiaux   ~[ S.Q.kp.×/tr₁ hiaux-pf ]∎
                    PC.ₐ (lo ℙ.∘ R.%0) ∎)
           ; cmptb₁ = PC.faith-pf (~proof
                    PC.ₐ (S.%1 ℙ.∘ hi)
-                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full-pf (S.RMF.rmfF%tr₂ ˢ) ⊙ assˢ ⊙ ∘e R.rpH.lift-tr r ] /
+                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full.pf (S.RMF.rmfF%tr₂ ˢ) ⊙ assˢ ⊙ ∘e R.rpH.lift-tr r ] /
                    S.Q.kp.π/₂ 𝔼.∘ hiaux   ~[ S.Q.kp.×/tr₂ hiaux-pf ]∎
                    PC.ₐ (lo ℙ.∘ R.%1) ∎)
           }
@@ -163,10 +163,10 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
         where open ecategory-aux-only 𝔼
       module ar = ℙ.peq-mor ar
       sqpf : g 𝔼.∘ R.Q.ar 𝔼.~ S.Q.ar 𝔼.∘ PC.ₐ ar.lo
-      sqpf = (∘e PC.full-pf r ⊙ R.rpL.lift-tr) ˢ
+      sqpf = (∘e PC.full.pf r ⊙ R.rpL.lift-tr) ˢ
            where open ecategory-aux-only 𝔼
       eqpf : PC↑ex.ₐ {R} {S} ar 𝔼.~ g
-      eqpf = R.Q.epi-pf (q-sq (PCRel.ₐ ar) ⊙ ∘e PC.full-pf r ⊙ R.rpL.lift-tr)
+      eqpf = R.Q.epi-pf (q-sq (PCRel.ₐ ar) ⊙ ∘e PC.full.pf r ⊙ R.rpL.lift-tr)
            where open ecategory-aux-only 𝔼
                  open quot-of-eqrel-funct ex𝔼 using (q-sq)
     -- end PC↑ex-full
@@ -199,16 +199,16 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
         haux : || 𝔼.Hom (PC.ₒ R.Lo) (PCRel.relOb S) ||
         haux = S.Q.kp.⟨ PC.ₐ f.lo , PC.ₐ f'.lo ⟩[ haux-pf ]
         h : || ℙ.Hom R.Lo S.Hi ||
-        h = PC.full-ar (R.rpL.lift S.RMF.C-is-repi haux)
+        h = PC.full.ar (R.rpL.lift S.RMF.C-is-repi haux)
       pf : f Exℙ.~ f'
       pf = record
         { hty = h
         ; hty₀ = PC.faith-pf (~proof PC.ₐ (S.%0 ℙ.∘ h)
-                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full-pf (S.RMF.rmfF%tr₁ ˢ) ⊙ assˢ ⊙ ∘e R.rpL.lift-tr r ] /
+                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full.pf (S.RMF.rmfF%tr₁ ˢ) ⊙ assˢ ⊙ ∘e R.rpL.lift-tr r ] /
                                      S.RMF.r₁ 𝔼.∘ haux             ~[ S.Q.kp.×/tr₁ haux-pf ]∎
                                      PC.ₐ f.lo ∎)
         ; hty₁ = PC.faith-pf (~proof PC.ₐ (S.%1 ℙ.∘ h)
-                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full-pf (S.RMF.rmfF%tr₂ ˢ) ⊙ assˢ ⊙ ∘e R.rpL.lift-tr r ] /
+                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full.pf (S.RMF.rmfF%tr₂ ˢ) ⊙ assˢ ⊙ ∘e R.rpL.lift-tr r ] /
                                      S.RMF.r₂ 𝔼.∘ haux             ~[ S.Q.kp.×/tr₂ haux-pf ]∎
                                      PC.ₐ f'.lo ∎)
         }
@@ -217,8 +217,8 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
 
   PC↑ex-full : is-full PC↑ex.fctr
   PC↑ex-full = record
-    { full-ar = λ {R} {S} g → ar {R} {S} g
-    ; full-pf = λ {R} {S} {g} → eqpf {R} {S} g
+    { ar = λ {R} {S} g → ar {R} {S} g
+    ; pf = λ {R} {S} {g} → eqpf {R} {S} g
     }
     where open PC↑ex-full
     
@@ -260,8 +260,8 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
         open PC.rprj Ob public
       private
         %0A %1A : || ℙ.Hom rcK.Ob rc.Ob ||
-        %0A = PC.full-ar (exs.π/₁ 𝔼.∘ rcK.ar)
-        %1A = PC.full-ar (exs.π/₂ 𝔼.∘ rcK.ar)
+        %0A = PC.full.ar (exs.π/₁ 𝔼.∘ rcK.ar)
+        %1A = PC.full.ar (exs.π/₂ 𝔼.∘ rcK.ar)
 
       peq/ : ℙ.peqOver rc.Ob
       peq/ = record
@@ -270,47 +270,47 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
         ; %1 = %1A
         ; ispeq = record
           { isρ = record
-            { ρ = PC.full-ar (rc.lift rcK.is-repi exs.ρ)
+            { ρ = PC.full.ar (rc.lift rcK.is-repi exs.ρ)
             ; ρ-ax₀ = PC.faith-pf (~proof
-                    PC.ₐ (%0A ℙ.∘ PC.full-ar (rc.lift rcK.is-repi exs.ρ))
-                                                       ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+                    PC.ₐ (%0A ℙ.∘ PC.full.ar (rc.lift rcK.is-repi exs.ρ))
+                                                       ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
                     exs.π/₁ 𝔼.∘ rcK.ar 𝔼.∘ rc.lift rcK.is-repi exs.ρ              ~[ ∘e rc.lift-tr r ] /
                     exs.π/₁ 𝔼.∘ exs.ρ                                               ~[ exs.ρ-ax₀ ⊙ PC.idˢ ]∎
                     PC.ₐ (ℙ.idar rc.Ob) ∎)
             ; ρ-ax₁ = PC.faith-pf (~proof
-                    PC.ₐ (%1A ℙ.∘ PC.full-ar (rc.lift rcK.is-repi exs.ρ))
-                                                       ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+                    PC.ₐ (%1A ℙ.∘ PC.full.ar (rc.lift rcK.is-repi exs.ρ))
+                                                       ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
                     exs.π/₂ 𝔼.∘ rcK.ar 𝔼.∘ rc.lift rcK.is-repi exs.ρ              ~[ ∘e rc.lift-tr r ] /
                     exs.π/₂ 𝔼.∘ exs.ρ                                             ~[ exs.ρ-ax₁ ⊙ PC.idˢ ]∎
                     PC.ₐ (ℙ.idar rc.Ob) ∎)
             }
           ; isσ = record
-            { σ = PC.full-ar (rcK.lift rcK.is-repi (exs.σ 𝔼.∘ rcK.ar))
+            { σ = PC.full.ar (rcK.lift rcK.is-repi (exs.σ 𝔼.∘ rcK.ar))
             ; σ-ax₀ = PC.faith-pf (~proof
-                    PC.ₐ (%0A ℙ.∘ PC.full-ar (rcK.lift rcK.is-repi (exs.σ 𝔼.∘ rcK.ar)))
-                                                       ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+                    PC.ₐ (%0A ℙ.∘ PC.full.ar (rcK.lift rcK.is-repi (exs.σ 𝔼.∘ rcK.ar)))
+                                                       ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
                     exs.π/₁ 𝔼.∘ rcK.ar 𝔼.∘ rcK.lift rcK.is-repi (exs.σ 𝔼.∘ rcK.ar)      ~[ ∘e rcK.lift-tr r ] /
-                    exs.π/₁ 𝔼.∘ exs.σ 𝔼.∘ rcK.ar                    ~[ ass ⊙ ∘e r exs.σ-ax₀ ⊙ PC.full-pf ˢ ]∎
+                    exs.π/₁ 𝔼.∘ exs.σ 𝔼.∘ rcK.ar                    ~[ ass ⊙ ∘e r exs.σ-ax₀ ⊙ PC.full.pf ˢ ]∎
                     PC.ₐ %1A ∎)
             ; σ-ax₁ = PC.faith-pf (~proof
-                    PC.ₐ (%1A ℙ.∘ PC.full-ar (rcK.lift rcK.is-repi (exs.σ 𝔼.∘ rcK.ar)))
-                                                       ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+                    PC.ₐ (%1A ℙ.∘ PC.full.ar (rcK.lift rcK.is-repi (exs.σ 𝔼.∘ rcK.ar)))
+                                                       ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
                     exs.π/₂ 𝔼.∘ rcK.ar 𝔼.∘ rcK.lift rcK.is-repi (exs.σ 𝔼.∘ rcK.ar)      ~[ ∘e rcK.lift-tr r ] /
-                    exs.π/₂ 𝔼.∘ exs.σ 𝔼.∘ rcK.ar                    ~[ ass ⊙ ∘e r exs.σ-ax₁ ⊙ PC.full-pf ˢ ]∎
+                    exs.π/₂ 𝔼.∘ exs.σ 𝔼.∘ rcK.ar                    ~[ ass ⊙ ∘e r exs.σ-ax₁ ⊙ PC.full.pf ˢ ]∎
                     PC.ₐ %0A ∎)
             }
           ; τwpb = τwpb
           ; iswτ = record
-            { τ = PC.full-ar (τwpb.lift rcK.is-repi τaux)
+            { τ = PC.full.ar (τwpb.lift rcK.is-repi τaux)
             ; τ-ax₀ = PC.faith-pf (~proof
-                    PC.ₐ (%0A ℙ.∘ PC.full-ar (τwpb.lift rcK.is-repi τaux))
-                                                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+                    PC.ₐ (%0A ℙ.∘ PC.full.ar (τwpb.lift rcK.is-repi τaux))
+                                                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
                     exs.π/₁ 𝔼.∘ rcK.ar 𝔼.∘ τwpb.lift rcK.is-repi τaux      ~[ ∘e τwpb.lift-tr r ] /
                     exs.π/₁ 𝔼.∘  τaux                                       ~[ exs.×/tr₁ τaux-pf ]∎
                     PC.ₐ (%0A ℙ.∘ τwpb.wπ/₁) ∎)
             ; τ-ax₁ = PC.faith-pf (~proof
-                    PC.ₐ (%1A ℙ.∘ PC.full-ar (τwpb.lift rcK.is-repi τaux))
-                                                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+                    PC.ₐ (%1A ℙ.∘ PC.full.ar (τwpb.lift rcK.is-repi τaux))
+                                                        ~[ PC.∘ax-rf ˢ ⊙ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
                     exs.π/₂ 𝔼.∘ rcK.ar 𝔼.∘ τwpb.lift rcK.is-repi τaux      ~[ ∘e τwpb.lift-tr r ] /
                     exs.π/₂ 𝔼.∘  τaux                                       ~[ exs.×/tr₂ τaux-pf ]∎
                     PC.ₐ (%1A ℙ.∘ τwpb.wπ/₂) ∎)
@@ -325,13 +325,13 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
                 open PC.rprj ul public
               τaux-pf : rc.ar 𝔼.∘ PC.ₐ (%0A ℙ.∘ τwpb.wπ/₁) 𝔼.~ rc.ar 𝔼.∘ PC.ₐ (%1A ℙ.∘ τwpb.wπ/₂)
               τaux-pf = ~proof
-                rc.ar 𝔼.∘ PC.ₐ (%0A ℙ.∘ τwpb.wπ/₁)                ~[ ∘e (PC.∘ax-rf ˢ ⊙ ∘e r PC.full-pf ⊙ assˢ) r ] /
+                rc.ar 𝔼.∘ PC.ₐ (%0A ℙ.∘ τwpb.wπ/₁)                ~[ ∘e (PC.∘ax-rf ˢ ⊙ ∘e r PC.full.pf ⊙ assˢ) r ] /
                 rc.ar 𝔼.∘ exs.π/₁ 𝔼.∘ rcK.ar 𝔼.∘ PC.ₐ τwpb.wπ/₁    ~[ ass ⊙ ∘e r exs.×/sqpf ⊙ assˢ ] /
-                rc.ar 𝔼.∘ exs.π/₂ 𝔼.∘ rcK.ar 𝔼.∘ PC.ₐ τwpb.wπ/₁ ~[ ∘e (ass ⊙ ∘e r (PC.full-pf ˢ) ⊙ PC.∘ax-rf) r ] /
+                rc.ar 𝔼.∘ exs.π/₂ 𝔼.∘ rcK.ar 𝔼.∘ PC.ₐ τwpb.wπ/₁ ~[ ∘e (ass ⊙ ∘e r (PC.full.pf ˢ) ⊙ PC.∘ax-rf) r ] /
                 rc.ar 𝔼.∘ PC.ₐ (%1A ℙ.∘ τwpb.wπ/₁)                  ~[ ∘e (PC.ext τwpb.w×/sqpf) r ] /
-                rc.ar 𝔼.∘ PC.ₐ (%0A ℙ.∘ τwpb.wπ/₂)                 ~[ ∘e (PC.∘ax-rf ˢ ⊙ ∘e r PC.full-pf ⊙ assˢ) r ] /
+                rc.ar 𝔼.∘ PC.ₐ (%0A ℙ.∘ τwpb.wπ/₂)                 ~[ ∘e (PC.∘ax-rf ˢ ⊙ ∘e r PC.full.pf ⊙ assˢ) r ] /
                 rc.ar 𝔼.∘ exs.π/₁ 𝔼.∘ rcK.ar 𝔼.∘ PC.ₐ τwpb.wπ/₂    ~[ ass ⊙ ∘e r exs.×/sqpf ⊙ assˢ ] /
-                rc.ar 𝔼.∘ exs.π/₂ 𝔼.∘ rcK.ar 𝔼.∘ PC.ₐ τwpb.wπ/₂   ~[ ∘e (ass ⊙ ∘e r (PC.full-pf ˢ) ⊙ PC.∘ax-rf) r ]∎
+                rc.ar 𝔼.∘ exs.π/₂ 𝔼.∘ rcK.ar 𝔼.∘ PC.ₐ τwpb.wπ/₂   ~[ ∘e (ass ⊙ ∘e r (PC.full.pf ˢ) ⊙ PC.∘ax-rf) r ]∎
                 rc.ar 𝔼.∘ PC.ₐ (%1A ℙ.∘ τwpb.wπ/₂) ∎
               τaux : || 𝔼.Hom (PC.ₒ τwpb.ul) exs.ul ||
               τaux = exs.⟨ PC.ₐ (%0A ℙ.∘ τwpb.wπ/₁) , PC.ₐ (%1A ℙ.∘ τwpb.wπ/₂) ⟩[ τaux-pf ]
@@ -339,7 +339,7 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
       peq = ℙ.mkpeq-c peq/
       module peq = ℙ.peq peq
       qexs : 𝔼.is-coeq (PC.ₐ peq.%0) (PC.ₐ peq.%1) rc.ar
-      qexs = 𝔼.epi/coeq-so-coeq (𝔼.repi-is-epic rcK.is-repi) (PC.full-pf ˢ) (PC.full-pf ˢ) exs.iscoeq
+      qexs = 𝔼.epi/coeq-so-coeq (𝔼.repi-is-epic rcK.is-repi) (PC.full.pf ˢ) (PC.full.pf ˢ) exs.iscoeq
            where open ecategory-aux-only 𝔼 using (_ˢ)
       --module qexs = 𝔼.is-coeq qexs
     -- end peq-from-Obj
