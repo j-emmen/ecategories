@@ -38,7 +38,7 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
       open epis&monos-props Ex ℂ [ hasfwl ] public
       open image-fact-defs Ex ℂ [ hasfwl ] public
     module CVex = efunctor-aux CVex ℂ [ hasfwl ]
-  open exact-compl-universal-def hasfwl
+  --open exact-compl-universal-def hasfwl
 
   module extension-is-exact {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                             {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
@@ -56,14 +56,14 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
       module F = efunctor-aux F
       module lcF = is-left-covering lcovF
       F↑ex : efunctor Ex ℂ [ hasfwl ] 𝔼
-      F↑ex = ↑ex ex𝔼 lcovF
+      F↑ex = F CV↑ex[ hasfwl , ex𝔼 , lcovF ]
       module F↑ex = efunctor-aux F↑ex
       reg𝔼 : is-regular 𝔼
       reg𝔼 = ex𝔼.is-reg
       -- it seems that declaring reg𝔼 explicitly is crucial
       -- for typechecking Q/F↑ex.Ob A = F↑ex.ₒ A
       FRel : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
-      FRel = Rel reg𝔼 lcovF
+      FRel = Peq2Rel hasfwl reg𝔼 lcovF
       module FRel where
         open efunctor-aux FRel public
         private
@@ -133,7 +133,7 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
     F↑ex-pres-flim : preserves-fin-limits F↑ex
     F↑ex-pres-flim = lcov→pres-flim reg𝔼
                                      (has-flim→has-fwlim (exact-compl-has-fin-limits hasfwl))
-                                     (↑ex-is-left-covering ex𝔼 lcovF)
+                                     (CV↑ex-is-left-covering ex𝔼 lcovF)
                    where open exact-compl-universal-is-left-cov hasfwl
     
     F↑ex-is-exact : is-exact-functor F↑ex
@@ -145,10 +145,10 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
   -- end extension-is-exact
 
 
-  ↑ex-is-exact : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
-                 {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
-                        → is-exact-functor (↑ex ex𝔼 lcovF)
-  ↑ex-is-exact ex𝔼 lcovF = F↑ex-is-exact
+  CV↑ex-is-exact : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
+                   {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
+                        → is-exact-functor (F CV↑ex[ hasfwl , ex𝔼 , lcovF ])
+  CV↑ex-is-exact ex𝔼 lcovF = F↑ex-is-exact
                           where open extension-is-exact ex𝔼 lcovF
 
 -- end exact-compl-universal-is-exact

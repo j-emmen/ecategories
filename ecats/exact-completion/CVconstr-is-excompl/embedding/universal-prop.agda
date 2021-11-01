@@ -23,26 +23,22 @@ open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-prope
 open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.uniqueness
 
 
-
 CVexcmpl-is-init-lcov-ex : {ℂ : ecategory}(hasfwl : has-fin-weak-limits ℂ)
                            {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
                            {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)  
                              → exwlex-universal-prop (CVex ℂ [ hasfwl ]) ex𝔻 lcovF
-                           {-hasfwl
-                           (exact-compl-is-exact hasfwl)
-                           (excmpl-embed-is-left-covering hasfwl)-}
-CVexcmpl-is-init-lcov-ex hasfwl ex𝔻 lcovF = record
-  { fctr = def.↑ex ex𝔻 lcovF
-  ; ex = ex.↑ex-is-exact ex𝔻 lcovF
-  ; tr = tr.↑ex-tr ex𝔻 lcovF
-  ; uq = uq.↑ex-uq ex𝔻 lcovF
+CVexcmpl-is-init-lcov-ex hasfwl ex𝔻 {F} lcovF = record
+  { fctr = F CV↑ex[ hasfwl , ex𝔻 , lcovF ]
+  ; ex = ex.CV↑ex-is-exact ex𝔻 lcovF
+  ; tr = tr.CV↑ex-tr ex𝔻 lcovF
+  ; uq = uq.CV↑ex-uq ex𝔻 lcovF
   }
-  where module def = exact-compl-universal-def hasfwl
+  where --module def = exact-compl-universal-def hasfwl
         module tr = exact-compl-universal-commut hasfwl
         module ex = exact-compl-universal-is-exact hasfwl
         module uq = exact-compl-universal-uniq hasfwl
 
-
+{-
 module check {ℂ : ecategory}(fwlℂ : has-fin-weak-limits ℂ)
              (flℂ : has-fin-limits ℂ)
              --{PC : efunctor ℂ 𝔼}(pjcPC : is-projective-cover PC)
@@ -67,7 +63,7 @@ module check {ℂ : ecategory}(fwlℂ : has-fin-weak-limits ℂ)
   tr = unv.tr ex𝔻 lcovF
 
 -- with ℂfwl = has-flim→has-fwlim flℂ it takes too long...
-
+-}
 
 
 -- module exact-compl-universal-prop {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)

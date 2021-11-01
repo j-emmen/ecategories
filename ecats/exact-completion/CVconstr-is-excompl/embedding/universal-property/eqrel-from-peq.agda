@@ -17,7 +17,8 @@ open import ecats.exact-completion.CVconstruction
 
 
 
--- Definition of the functor Ex ℂ [ hasfwl ] → 𝔼 induced by a left covering ℂ → 𝔼 into 𝔼 exact.
+-- Definition of the functor Ex ℂ [ hasfwl ] → EqRel 𝔼
+-- into the category of equivalence relations in 𝔼, induced by a left covering ℂ → 𝔼 into 𝔼 exact.
 
 module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
   private
@@ -420,3 +421,19 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
           module F = efunctor-aux F
 
 -- end eqrel-from-peq-funct
+
+
+Peq2Rel :  {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
+           {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼)
+           {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
+              → efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
+Peq2Rel hasfwl = Rel
+               where open eqrel-from-peq-funct hasfwl
+
+
+Peq2Rel-sq : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
+             {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼)
+             {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
+               → Peq2Rel hasfwl reg𝔼 Flcov ○ CVex ℂ [ hasfwl ] ≅ₐ ΔER 𝔼 ○ F
+Peq2Rel-sq hasfwl = Rel-sq
+                  where open eqrel-from-peq-funct hasfwl

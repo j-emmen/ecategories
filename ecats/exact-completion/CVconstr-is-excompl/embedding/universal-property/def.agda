@@ -4,30 +4,35 @@
 module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.def where
 
 open import ecats.basic-defs.ecat-def&not
+open import ecats.basic-defs.regular-ecat
 open import ecats.basic-defs.exact-ecat
 open import ecats.basic-props.exact-ecat
 open import ecats.finite-limits.defs.collective
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.left-covering
-open import ecats.exact-completion.CVconstruction
-open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.eqrel-from-peq
 open import ecats.constructions.ecat-eqrel
+open import ecats.exact-completion.CVconstruction
+open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.eqrel-from-peq public
 
 
 
 -- Definition of the functor Ex ℂ [ hasfwl ] → 𝔼 induced by a left covering ℂ → 𝔼 into 𝔼 exact.
 
-module exact-compl-universal-def {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
-  open eqrel-from-peq-funct hasfwl public
+--module exact-compl-universal-def {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
+  --open eqrel-from-peq-funct hasfwl public
 
-  ↑ex : {𝔼 : ecategory} (exE : is-exact 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
-           → efunctor Ex ℂ [ hasfwl ] 𝔼
-  ↑ex exE Flcov = QER exE ○ Rel 𝔼-is-regular Flcov
-                where open exact-cat-props exE using () renaming (is-reg to 𝔼-is-regular)
+CV↑ex : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
+        {𝔼 : ecategory} (exE : is-exact 𝔼)
+        {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
+             → efunctor Ex ℂ [ hasfwl ] 𝔼
+CV↑ex hasfwl {𝔼} exE Flcov = _○_ {𝔻 = EqRel 𝔼} (QER exE) (Peq2Rel hasfwl 𝔼-is-regular Flcov)
+-- QER exE ○ Peq2Rel hasfwl 𝔼-is-regular Flcov --Rel 𝔼-is-regular Flcov
+                           where --open exact-cat-props exE using () renaming (is-reg to 𝔼-is-regular)
+                                 𝔼-is-regular : is-regular 𝔼
+                                 𝔼-is-regular = exact-cat-props.is-reg exE
 
-
-  syntax ↑ex exE {F} Flcov = F ↑ex[ exE , Flcov ]
+syntax CV↑ex hasfwl exE {F} Flcov = F CV↑ex[ hasfwl , exE , Flcov ]
 
 -- end exact-compl-universal-def
 

@@ -196,10 +196,10 @@ module exact-compl-has-pb-stable-repis {ℂ : ecategory} (hasfwl : has-fin-weak-
       g×/cre = flExℂ.pb-of g cre.ar
       module g×/cre = Exℂ.pullback-of g×/cre
       module pbof = Exℂ.pullback-of-not
-    iso-tr : (pb : Exℂ.pullback-of g cre.ar) → pbof.π/₁ pb Exℂ.∘ Exℂ.pbs-iso-ar g×/cre pb Exℂ.~ g×/cre.π/₁
+    iso-tr : (pb : Exℂ.pullback-of g cre.ar) → pbof.π/₁ pb Exℂ.∘ Exℂ.pbs-unv12 g×/cre pb Exℂ.~ g×/cre.π/₁
     iso-tr pb = pbof.×/tr₁ pb g×/cre.×/sqpf
     pb-crepi-is-repi : (pb : Exℂ.pullback-of g cre.ar) → Exℂ.is-regular-epi (pbof.π/₁ pb)
-    pb-crepi-is-repi pb = Exℂ.iso-to-repi-is-repi-dom (Exℂ.pbs-iso g×/cre pb) (iso-tr pb) g*cre-is-repi
+    pb-crepi-is-repi pb = Exℂ.iso-to-repi-is-repi-dom (Exℂ.pbs-unv-is-iso g×/cre pb) (iso-tr pb) g*cre-is-repi
                         where open pb-of-can-repi-is-repi fdata g
   -- end pbsq-of-can-repi-is-repi
 

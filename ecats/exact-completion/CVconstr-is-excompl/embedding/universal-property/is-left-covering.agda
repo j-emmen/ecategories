@@ -47,7 +47,7 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       open has-terminal hastrm public
       open has-bin-products hasprd public
     module CVex = efunctor-aux CVex ℂ [ hasfwl ]
-  open exact-compl-universal-def hasfwl
+  --open exact-compl-universal-def hasfwl
 
   module extension-is-left-cov {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                                {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
@@ -73,14 +73,14 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       module F = efunctor-aux F
       module lcF = is-left-covering lcovF
       F↑ex : efunctor Ex ℂ [ hasfwl ] 𝔼
-      F↑ex = ↑ex ex𝔼 lcovF
+      F↑ex = F CV↑ex[ hasfwl , ex𝔼 , lcovF ]
       module F↑ex = efunctor-aux F↑ex
       reg𝔼 : is-regular 𝔼
       reg𝔼 = ex𝔼.is-reg
       -- it seems that declaring reg𝔼 explicitly is crucial
       -- for typechecking Q/F↑ex.Ob A = F↑ex.ₒ A
       FRel : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
-      FRel = Rel reg𝔼 lcovF
+      FRel = Peq2Rel hasfwl reg𝔼 lcovF
       module FRel where
         open efunctor-aux FRel public
         private
@@ -260,6 +260,7 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
           module wbw = ℂ.wbow-of eqlLo
         module E = 𝔼.is-equaliser Epf
         module CRFB where
+          open eqrel-from-peq-funct hasfwl
           open eqrel-from-peq-via-left-covering reg𝔼 lcovF
           open eqrel-as-repi-mono-fact B public
           open rmfF% using (C; C-is-repi) public
@@ -488,10 +489,10 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
 
 
 
-  ↑ex-is-left-covering : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
+  CV↑ex-is-left-covering : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                          {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
-                           → is-left-covering (↑ex ex𝔼 lcovF)
-  ↑ex-is-left-covering ex𝔼 lcovF = F↑ex-is-left-covering
+                           → is-left-covering (F CV↑ex[ hasfwl , ex𝔼 , lcovF ])
+  CV↑ex-is-left-covering ex𝔼 lcovF = F↑ex-is-left-covering
                                   where open extension-is-left-cov ex𝔼 lcovF using (F↑ex-is-left-covering)
 -- end exact-compl-universal-is-left-cov
 
