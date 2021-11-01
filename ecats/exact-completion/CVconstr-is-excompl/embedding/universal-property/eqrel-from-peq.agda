@@ -232,9 +232,6 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
 
     eqr : Exℂ.Obj → 𝔼.eqrel
     eqr A = record { eqrelover = CRF%.eqrel/ A }
-    {-module eqr where
-      open 𝔼.eqrel-over public
-      open 𝔼.eqrel-mor public-}
 
     eqr-ar : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) → 𝔼.eqrel-mor (eqr A) (eqr B)
     eqr-ar {A} {B} f = record
@@ -335,27 +332,6 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
       r₁~r₂ : CRA.r₁ 𝔼.~ CRA.r₂
       r₁~r₂ = CRA.epi-pf (CRA.rmfF%tr₁ ⊙ F.ext isfree ⊙ CRA.rmfF%tr₂ ˢ)
             where open ecategory-aux-only 𝔼
-{-
-      inv : || 𝔼.Hom CRA.Ob (F.ₒ A.Hi) ||
-      inv = F.ₐ A.ρ 𝔼.∘ CRA.r₁
-      isop₁  : 𝔼.is-iso-pair CRA.ar inv
-      isop₁ = record
-        { iddom = {!!} --CRA.r₁tr ⊙ F.id
-        ; idcod = {!!} --CRA.jm-pf (ass ⊙ ∘e r CRA.r₁tr ⊙ lidgg ridˢ F.id)
-                      --      (ass ⊙ ∘e r₁~r₂ CRA.r₂tr ⊙ lidgg ridˢ F.id)
-        }
-        where open ecategory-aux-only 𝔼        
-      isop₂  : 𝔼.is-iso-pair CRA.ar CRA.r₂
-      isop₂ = record
-        { iddom = CRA.r₂tr ⊙ F.id
-        ; idcod = CRA.jm-pf (ass ⊙ ∘e (r₁~r₂ ˢ) CRA.r₁tr ⊙ lidgg ridˢ F.id)
-                            (ass ⊙ ∘e r CRA.r₂tr ⊙ lidgg ridˢ F.id)
-        }
-        where open ecategory-aux-only 𝔼
-      qF%iso₁ qF%iso₂ : 𝔼.is-iso CRA.ar
-      qF%iso₁ = iso-defs.mkis-iso isop₁
-      qF%iso₂ = iso-defs.mkis-iso isop₂
--}
     -- end CRF%-is-iso
 
     eqrelΔ2Δ : natural-transformation (Rel reg𝔼 Flcov ○ CVex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)

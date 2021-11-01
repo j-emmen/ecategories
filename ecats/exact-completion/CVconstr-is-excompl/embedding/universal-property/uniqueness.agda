@@ -31,7 +31,6 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
       open can-epi&mono-defs hasfwl public
     module Exℂ = ecategory Ex ℂ [ hasfwl ]
     module CVex = efunctor-aux CVex ℂ [ hasfwl ]
-  --open exact-compl-universal-def hasfwl
   
   module exact-functor-determined-by-free-peq {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                                               {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)

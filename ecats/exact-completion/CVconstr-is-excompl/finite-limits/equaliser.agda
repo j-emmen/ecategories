@@ -93,7 +93,6 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
         module C = ℂ.peq C
         module g = ℂ.peq-mor g
         module pf = ℂ.peq-mor-eq pf
-        --module HiE = fwlℂ.is-std-Ex-monic Eql.cmar-is-std-Ex-monic
 
       log|f-pfl : f.lo ℂ.∘ g.lo ℂ.~ B.%0 ℂ.∘ pf.hty
       log|f-pfl = pf.hty₀ ˢ
@@ -131,7 +130,6 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
         ; hty₁ = ass ⊙ lidgg r A.ρ-ax₁
         }
         where open ecategory-aux-only ℂ
-
     -- end Eql-univ
 
 
@@ -147,14 +145,12 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
         }
       }
       where open Eql-univ
-
   -- end ExC-eql-of
 
 
   ex-cmpl-eql : has-equalisers Ex ℂ [ hasfwl ]
   ex-cmpl-eql = record { eql-of = eql-of }
               where open ExC-eql-of using (eql-of)
-
 -- end exact-compl-has-equalisers
 
 

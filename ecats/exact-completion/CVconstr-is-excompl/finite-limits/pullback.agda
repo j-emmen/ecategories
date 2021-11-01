@@ -14,7 +14,6 @@ open import ecats.finite-limits.d&n-weak-pullback
 open import ecats.finite-limits.props.weak-pullback
 open import ecats.finite-limits.defs.weak-Wlimit
 open import ecats.finite-limits.defs.weak-bow
---open import ecats.functors.defs.efunctor
 open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.CVconstr-is-excompl.exact.canonical-epi&mono
 
