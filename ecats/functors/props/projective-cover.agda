@@ -208,8 +208,8 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
     module PC where
       open efunctor-aux PC public
       open is-projective-cover ispjcov public
-      open full public
-      open faith public
+      --open full public
+      --open faith public
 
 
   -- Covers of limits in ℂ are weak limits in ℙ
@@ -223,7 +223,7 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
     wT = T.rcov.Ob
     iswtrm : ℙ.is-wterminal wT
     iswtrm = record
-             { w! = λ X → PC.full-ar (PC.rprj.lift X T.rcov.is-repi (T.! (PC.ₒ X)))
+             { w! = λ X → PC.full.ar (PC.rprj.lift X T.rcov.is-repi (T.! (PC.ₒ X)))
              }
   -- end cover-of-terminal-is-weak-terminal
 
@@ -244,20 +244,20 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
       w×Ob : ℙ.Obj
       w×Ob = PC.rcov-of.Ob PCX×PCY.O12
       wπ₁ : || ℙ.Hom w×Ob X ||
-      wπ₁ = PC.full-ar (PCX×PCY.π₁ ℂ.∘ ×rc.ar)
+      wπ₁ = PC.full.ar (PCX×PCY.π₁ ℂ.∘ ×rc.ar)
       wπ₂ : || ℙ.Hom w×Ob Y ||
-      wπ₂ = PC.full-ar (PCX×PCY.π₂ ℂ.∘ ×rc.ar)
+      wπ₂ = PC.full.ar (PCX×PCY.π₂ ℂ.∘ ×rc.ar)
       wun-aux : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (k : || ℙ.Hom Z Y ||) → || ℂ.Hom (PC.ₒ Z) (PC.ₒ w×Ob) ||
       wun-aux {Z} h k = PC.rprj.lift Z ×rc.is-repi PCX×PCY.< PC.ₐ h , PC.ₐ k >
       wun-aux-tr : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (k : || ℙ.Hom Z Y ||)
                       → ×rc.ar ℂ.∘ wun-aux h k ℂ.~ PCX×PCY.< PC.ₐ h , PC.ₐ k >
       wun-aux-tr {Z} h k = PC.rprj.lift-tr Z {repi = ×rc.is-repi} {PCX×PCY.< PC.ₐ h , PC.ₐ k >}
       wun : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (k : || ℙ.Hom Z Y ||) → || ℙ.Hom Z w×Ob ||
-      wun h k = PC.full-ar (wun-aux h k)
+      wun h k = PC.full.ar (wun-aux h k)
       tr₁PC : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (k : || ℙ.Hom Z Y ||)
                  → PC.ₐ wπ₁ ℂ.∘ PC.ₐ (wun h k) ℂ.~ PC.ₐ h
       tr₁PC {Z} h k = ~proof
-        PC.ₐ wπ₁ ℂ.∘ PC.ₐ (wun h k)                           ~[ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+        PC.ₐ wπ₁ ℂ.∘ PC.ₐ (wun h k)                           ~[ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
         PCX×PCY.π₁ ℂ.∘ ×rc.ar ℂ.∘ wun-aux h k                 ~[ ∘e (wun-aux-tr h k) r ] /
         PCX×PCY.π₁ ℂ.∘ PCX×PCY.< PC.ₐ h , PC.ₐ k >            ~[ PCX×PCY.×tr₁ ]∎
         PC.ₐ h ∎
@@ -265,7 +265,7 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
       tr₂PC : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (k : || ℙ.Hom Z Y ||)
                  → PC.ₐ wπ₂ ℂ.∘ PC.ₐ (wun h k) ℂ.~ PC.ₐ k
       tr₂PC {Z} h k = ~proof
-        PC.ₐ wπ₂ ℂ.∘ PC.ₐ (wun h k)                           ~[ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+        PC.ₐ wπ₂ ℂ.∘ PC.ₐ (wun h k)                           ~[ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
         PCX×PCY.π₂ ℂ.∘ ×rc.ar ℂ.∘ wun-aux h k                 ~[ ∘e (wun-aux-tr h k) r ] /
         PCX×PCY.π₂ ℂ.∘ PCX×PCY.< PC.ₐ h , PC.ₐ k >            ~[ PCX×PCY.×tr₂ ]∎
         PC.ₐ k ∎
@@ -302,10 +302,10 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
       wE : ℙ.Obj
       wE = PC.rcov-of.Ob PCf~PCf'.Eql
       we : || ℙ.Hom wE X ||
-      we = PC.full-ar (PCf~PCf'.eqlar ℂ.∘ ~rc.ar)
+      we = PC.full.ar (PCf~PCf'.eqlar ℂ.∘ ~rc.ar)
       weq : f ℙ.∘ we ℙ.~ f' ℙ.∘ we
-      weq = PC.faith-pf (PC.∘ax-rfˢ ⊙ ∘e (PC.full-pf {_}) r ⊙ ass
-                        ⊙ ∘e r PCf~PCf'.eqleq ⊙ assˢ ⊙ ∘e (PC.full-pf {_} ˢ) r ⊙ PC.∘ax-rf)
+      weq = PC.faith-pf (PC.∘ax-rfˢ ⊙ ∘e (PC.full.pf {_}) r ⊙ ass
+                        ⊙ ∘e r PCf~PCf'.eqleq ⊙ assˢ ⊙ ∘e (PC.full.pf {_} ˢ) r ⊙ PC.∘ax-rf)
           where open ecategory-aux-only ℂ
 
       wun-aux : {Z : ℙ.Obj} {h : || ℙ.Hom Z X ||} (pf : f ℙ.∘ h ℙ.~ f' ℙ.∘ h)
@@ -315,11 +315,11 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
                    → ~rc.ar ℂ.∘ wun-aux pf ℂ.~ PC.ₐ h PCf~PCf'.|eql[ PC.∘∘ pf ]
       wun-aux-tr {Z} {h} pf = PC.rprj.lift-tr Z {repi = ~rc.is-repi} {PC.ₐ h PCf~PCf'.|eql[ PC.∘∘ pf ]}
       wun : {Z : ℙ.Obj} (h : || ℙ.Hom Z X ||) (pf : f ℙ.∘ h ℙ.~ f' ℙ.∘ h) → || ℙ.Hom Z wE ||
-      wun _ pf = PC.full-ar (wun-aux pf)
+      wun _ pf = PC.full.ar (wun-aux pf)
       trPC : {Z : ℙ.Obj} {h : || ℙ.Hom Z X ||} (pf : f ℙ.∘ h ℙ.~ f' ℙ.∘ h)
                 → PC.ₐ we ℂ.∘ PC.ₐ (wun h pf) ℂ.~ PC.ₐ h
       trPC {_} {h} pf = ~proof
-        PC.ₐ we ℂ.∘ PC.ₐ (wun h pf)                             ~[ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+        PC.ₐ we ℂ.∘ PC.ₐ (wun h pf)                             ~[ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
         PCf~PCf'.eqlar  ℂ.∘ ~rc.ar ℂ.∘ wun-aux pf              ~[ ∘e (wun-aux-tr pf) r ] /
         PCf~PCf'.eqlar ℂ.∘ PC.ₐ h PCf~PCf'.|eql[ PC.∘∘ pf ]     ~[ PCf~PCf'.eqltr (PC.∘∘ pf) ]∎
         PC.ₐ h ∎
@@ -358,14 +358,14 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
       w×/Ob : ℙ.Obj
       w×/Ob = PC.rcov-of.Ob PCf×/PCg.ul
       wπ/₁ : || ℙ.Hom w×/Ob X ||
-      wπ/₁ = PC.full-ar (PCf×/PCg.π/₁ ℂ.∘ ×/rc.ar)
+      wπ/₁ = PC.full.ar (PCf×/PCg.π/₁ ℂ.∘ ×/rc.ar)
       wπ/₂ : || ℙ.Hom w×/Ob Y ||
-      wπ/₂ = PC.full-ar (PCf×/PCg.π/₂ ℂ.∘ ×/rc.ar)
+      wπ/₂ = PC.full.ar (PCf×/PCg.π/₂ ℂ.∘ ×/rc.ar)
       w×/sqpf : f ℙ.∘ wπ/₁ ℙ.~ g ℙ.∘ wπ/₂
       w×/sqpf = PC.faith-pf (~proof
-        PC.ₐ (f ℙ.∘ wπ/₁)                     ~[ PC.∘ax-rfˢ ⊙ ∘e PC.full-pf r ] /
+        PC.ₐ (f ℙ.∘ wπ/₁)                     ~[ PC.∘ax-rfˢ ⊙ ∘e PC.full.pf r ] /
         PC.ₐ f ℂ.∘ PCf×/PCg.π/₁ ℂ.∘ ×/rc.ar   ~[ ass ⊙ ∘e r PCf×/PCg.×/sqpf ⊙ assˢ ] /
-        PC.ₐ g ℂ.∘ PCf×/PCg.π/₂ ℂ.∘ ×/rc.ar   ~[ ∘e (PC.full-pf ˢ) r ⊙ PC.∘ax-rf ]∎
+        PC.ₐ g ℂ.∘ PCf×/PCg.π/₂ ℂ.∘ ×/rc.ar   ~[ ∘e (PC.full.pf ˢ) r ⊙ PC.∘ax-rf ]∎
         PC.ₐ (g ℙ.∘ wπ/₂) ∎)
               where open ecategory-aux-only ℂ
       wun-aux : {W : ℙ.Obj} {h : || ℙ.Hom W X ||} {k : || ℙ.Hom W Y ||}
@@ -376,11 +376,11 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
       wun-aux-tr {W} {h} {k} pf = PC.rprj.lift-tr W {repi = ×/rc.is-repi} {PCf×/PCg.⟨ PC.ₐ h , PC.ₐ k ⟩[ PC.∘∘ pf ]}
       wun : {W : ℙ.Obj} (h : || ℙ.Hom W X ||) (k : || ℙ.Hom W Y ||)
                → f ℙ.∘ h ℙ.~ g ℙ.∘ k → || ℙ.Hom W w×/Ob ||
-      wun h k pf = PC.full-ar (wun-aux pf)
+      wun h k pf = PC.full.ar (wun-aux pf)
       tr₁PC : {W : ℙ.Obj} {h : || ℙ.Hom W X ||} {k : || ℙ.Hom W Y ||} (pf : f ℙ.∘ h ℙ.~ g ℙ.∘ k)
                  → PC.ₐ wπ/₁ ℂ.∘ PC.ₐ (wun h k pf) ℂ.~ PC.ₐ h
       tr₁PC {W} {h} {k} pf = ~proof
-        PC.ₐ wπ/₁ ℂ.∘ PC.ₐ (wun h k pf)                                ~[ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+        PC.ₐ wπ/₁ ℂ.∘ PC.ₐ (wun h k pf)                                ~[ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
         PCf×/PCg.π/₁ ℂ.∘ ×/rc.ar ℂ.∘ wun-aux pf                        ~[ ∘e (wun-aux-tr pf) r ] /
         PCf×/PCg.π/₁ ℂ.∘ PCf×/PCg.⟨ PC.ₐ h , PC.ₐ k ⟩[ PC.∘∘ pf ]        ~[ PCf×/PCg.×/tr₁ (PC.∘∘ pf) ]∎
         PC.ₐ h ∎
@@ -388,7 +388,7 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
       tr₂PC : {W : ℙ.Obj} {h : || ℙ.Hom W X ||} {k : || ℙ.Hom W Y ||} (pf : f ℙ.∘ h ℙ.~ g ℙ.∘ k)
                  → PC.ₐ wπ/₂ ℂ.∘ PC.ₐ (wun h k pf) ℂ.~ PC.ₐ k
       tr₂PC {W} {h} {k} pf = ~proof
-        PC.ₐ wπ/₂ ℂ.∘ PC.ₐ (wun h k pf)                               ~[ ∘e PC.full-pf PC.full-pf ⊙ assˢ ] /
+        PC.ₐ wπ/₂ ℂ.∘ PC.ₐ (wun h k pf)                               ~[ ∘e PC.full.pf PC.full.pf ⊙ assˢ ] /
         PCf×/PCg.π/₂ ℂ.∘ ×/rc.ar ℂ.∘ wun-aux pf                       ~[ ∘e (wun-aux-tr pf) r ] /
         PCf×/PCg.π/₂ ℂ.∘ PCf×/PCg.⟨ PC.ₐ h , PC.ₐ k ⟩[ PC.∘∘ pf ]       ~[ PCf×/PCg.×/tr₂ (PC.∘∘ pf) ]∎
         PC.ₐ k ∎
@@ -483,8 +483,8 @@ module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : i
       open efunctor-aux PC public
       open is-projective-cover ispjcov public
       open prj-cover-of-lex-is-wlex r𝔼.hasfl ispjcov public
-      open full public
-      open faith public
+      --open full public
+      --open faith public
 
   module PC-is-left-cov-trm  {PT : ℙ.Obj} (PT-pf : ℙ.is-wterminal PT)
                              {CT : 𝔼.Obj} (CT-pf : 𝔼.is-terminal CT)
@@ -528,10 +528,10 @@ module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : i
     med-ar = Pw×.w< w×rc.wπ₁ , w×rc.wπ₂ >
     cov×-pf : cov× 𝔼.∘ PC.ₐ med-ar 𝔼.~ rc×.ar
     cov×-pf = E×.×uq (~proof E×.π₁ 𝔼.∘ cov× 𝔼.∘ PC.ₐ med-ar      ~[ ass ⊙ ∘e r cov×-tr₁ ] /
-                             PC.ₐ Pw×.wπ₁ 𝔼.∘ PC.ₐ med-ar         ~[ PC.∘ax Pw×.w×tr₁ ⊙ PC.full-pf ]∎
+                             PC.ₐ Pw×.wπ₁ 𝔼.∘ PC.ₐ med-ar         ~[ PC.∘ax Pw×.w×tr₁ ⊙ PC.full.pf ]∎
                              E×.π₁ 𝔼.∘ rc×.ar ∎)
                      (~proof E×.π₂ 𝔼.∘ cov× 𝔼.∘ PC.ₐ med-ar      ~[ ass ⊙ ∘e r cov×-tr₂ ] /
-                             PC.ₐ Pw×.wπ₂ 𝔼.∘ PC.ₐ med-ar         ~[ PC.∘ax Pw×.w×tr₂ ⊙ PC.full-pf ]∎
+                             PC.ₐ Pw×.wπ₂ 𝔼.∘ PC.ₐ med-ar         ~[ PC.∘ax Pw×.w×tr₂ ⊙ PC.full.pf ]∎
                              E×.π₂ 𝔼.∘ rc×.ar ∎)
               where open ecategory-aux-only 𝔼
     cov×-repi : 𝔼.is-regular-epi cov×
@@ -564,7 +564,7 @@ module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : i
     coveql-pf = Ee.eqluq (~proof
       Ee.eqlar 𝔼.∘ coveql 𝔼.∘ PC.ₐ med-ar     ~[ ass ⊙ ∘e r coveql-tr ] /
       PC.ₐ Pe.weqlar 𝔼.∘ PC.ₐ med-ar           ~[ PC.∘ax (Pe.weqltr werc.weqleq) ] /
-      PC.ₐ werc.weqlar                         ~[ PC.full-pf ]∎
+      PC.ₐ werc.weqlar                         ~[ PC.full.pf ]∎
       Ee.eqlar 𝔼.∘ rce.ar ∎)
               where open ecategory-aux-only 𝔼
     coveql-repi : 𝔼.is-regular-epi coveql
@@ -597,10 +597,10 @@ module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : i
     med-ar = Pw×/.w⟨ w×/rc.wπ/₁ , w×/rc.wπ/₂ ⟩[ w×/rc.w×/sqpf ]
     cov×/-pf : cov×/ 𝔼.∘ PC.ₐ med-ar 𝔼.~ rc×/.ar
     cov×/-pf = E×/.×/uq (~proof E×/.π/₁ 𝔼.∘ cov×/ 𝔼.∘ PC.ₐ med-ar      ~[ ass ⊙ ∘e r cov×/-tr₁ ] /
-                                PC.ₐ Pw×/.wπ/₁ 𝔼.∘ PC.ₐ med-ar         ~[ PC.∘ax (Pw×/.w×/tr₁ w×/rc.w×/sqpf) ⊙ PC.full-pf ]∎
+                                PC.ₐ Pw×/.wπ/₁ 𝔼.∘ PC.ₐ med-ar         ~[ PC.∘ax (Pw×/.w×/tr₁ w×/rc.w×/sqpf) ⊙ PC.full.pf ]∎
                                 E×/.π/₁ 𝔼.∘ rc×/.ar ∎)
                         (~proof E×/.π/₂ 𝔼.∘ cov×/ 𝔼.∘ PC.ₐ med-ar      ~[ ass ⊙ ∘e r cov×/-tr₂ ] /
-                                PC.ₐ Pw×/.wπ/₂ 𝔼.∘ PC.ₐ med-ar         ~[ PC.∘ax (Pw×/.w×/tr₂ w×/rc.w×/sqpf) ⊙ PC.full-pf ]∎
+                                PC.ₐ Pw×/.wπ/₂ 𝔼.∘ PC.ₐ med-ar         ~[ PC.∘ax (Pw×/.w×/tr₂ w×/rc.w×/sqpf) ⊙ PC.full.pf ]∎
                                 E×/.π/₂ 𝔼.∘ rc×/.ar ∎)
               where open ecategory-aux-only 𝔼
     cov×/-repi : 𝔼.is-regular-epi cov×/

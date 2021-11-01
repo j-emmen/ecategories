@@ -75,8 +75,8 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
 
   eqv-is-full : is-adj-equivalence F → is-full F
   eqv-is-full adjeqv = record
-    { full-ar = λ {X} {Y} g → ι2.fnc {Y} ℂ.∘ G.ₐ g ℂ.∘ ι2.fnc⁻¹ {X}
-    ; full-pf = λ {X} {_} {g} → ~proof
+    { ar = λ {X} {Y} g → ι2.fnc {Y} ℂ.∘ G.ₐ g ℂ.∘ ι2.fnc⁻¹ {X}
+    ; pf = λ {X} {_} {g} → ~proof
               F.ₐ (ι2.fnc ℂ.∘ G.ₐ g ℂ.∘ ι2.fnc⁻¹ {X})          ~[ F.∘ax-rfˢ ⊙ ∘e F.∘ax-rfˢ r ] /
               F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ g 𝔻.∘ F.ₐ (ι2.fnc⁻¹ {X})   ~[ ∘e (∘e eq⁻¹₁ r) eq₁ ] /
               ι1.fnc 𝔻.∘ F○G.ₐ g 𝔻.∘ ι1.fnc⁻¹ {F.ₒ X}         ~[ ∘e (ι1.natt⁻¹.nat g ˢ) r ] /
@@ -124,7 +124,6 @@ adjeqv-is-esseqv {F = F} adjeqv = record
 
 module esseqv-is-adjeqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-ess-equivalence F) where
   open is-ess-equivalence eeqv
-  open is-full isfull
   open is-faithful isfaithful
   private
     module macros (𝕏 : ecategory) where
@@ -133,6 +132,7 @@ module esseqv-is-adjeqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-
     module ℂ = macros ℂ
     module 𝔻 = macros 𝔻
     module F = efunctor-aux F
+    module full = is-full isfull
     module essrj = is-ess-surjective-ob isesurjobj
 
   invFₒ : 𝔻.Obj → ℂ.Obj
@@ -142,20 +142,20 @@ module esseqv-is-adjeqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-
   private module γ (Y : 𝔻.Obj) = 𝔻.is-iso (essrj.iso Y)
 
   invFₐ : {Y Y' : 𝔻.Obj} → || 𝔻.Hom Y Y' || → || ℂ.Hom (invFₒ Y) (invFₒ Y') ||
-  invFₐ {Y} {Y'} g = full-ar (γ.⁻¹ Y' 𝔻.∘ g 𝔻.∘ γ Y)
+  invFₐ {Y} {Y'} g = full.ar (γ.⁻¹ Y' 𝔻.∘ g 𝔻.∘ γ Y)
 
   δ : (X : ℂ.Obj) → || ℂ.Hom (invFₒ (F.ₒ X)) X ||
-  δ X = full-ar (γ (F.ₒ X))
+  δ X = full.ar (γ (F.ₒ X))
   δ⁻¹ : (X : ℂ.Obj) → || ℂ.Hom X (invFₒ (F.ₒ X)) ||
-  δ⁻¹ X = full-ar (γ.⁻¹ (F.ₒ X))
+  δ⁻¹ X = full.ar (γ.⁻¹ (F.ₒ X))
   δ-isopair : (X : ℂ.Obj) → ℂ.is-iso-pair (δ X) (δ⁻¹ X)
   δ-isopair X = record
     { iddom = faith-pf (~proof F.ₐ (δ⁻¹ X ℂ.∘ δ X)               ~[ F.∘ax-rfˢ ] /
-                               F.ₐ (δ⁻¹ X) 𝔻.∘ F.ₐ (δ X)          ~[ ∘e full-pf full-pf ] /
+                               F.ₐ (δ⁻¹ X) 𝔻.∘ F.ₐ (δ X)          ~[ ∘e full.pf full.pf ] /
                                γ.⁻¹ (F.ₒ X) 𝔻.∘ γ (F.ₒ X)          ~[ γ.iddom (F.ₒ X) ⊙ F.idˢ ]∎
                                F.ₐ (ℂ.idar (invFₒ (F.ₒ X)))      ∎)
     ; idcod = faith-pf (~proof F.ₐ (δ X ℂ.∘ δ⁻¹ X)               ~[ F.∘ax-rfˢ ] /
-                               F.ₐ (δ X) 𝔻.∘ F.ₐ (δ⁻¹ X)          ~[ ∘e full-pf full-pf ] /
+                               F.ₐ (δ X) 𝔻.∘ F.ₐ (δ⁻¹ X)          ~[ ∘e full.pf full.pf ] /
                                γ (F.ₒ X) 𝔻.∘ γ.⁻¹ (F.ₒ X)          ~[ γ.idcod (F.ₒ X) ⊙ F.idˢ ]∎
                                F.ₐ (ℂ.idar X)                  ∎)
     }
@@ -169,20 +169,20 @@ module esseqv-is-adjeqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-
        ; FHom = invFₐ
        ; isF = record
              { ext = λ {Y} {Y'} {g} {g'} pf → faith-pf (~proof
-                   F.ₐ (invFₐ g)                       ~[ full-pf ] /
+                   F.ₐ (invFₐ g)                       ~[ full.pf ] /
                    γ.⁻¹ Y' 𝔻.∘ g 𝔻.∘ γ Y              ~[ ∘e (∘e r pf) r ] /
-                   γ.⁻¹ Y' 𝔻.∘ g' 𝔻.∘ γ Y             ~[ full-pf ˢ ]∎
+                   γ.⁻¹ Y' 𝔻.∘ g' 𝔻.∘ γ Y             ~[ full.pf ˢ ]∎
                    F.ₐ (invFₐ g')         ∎)
              ; id = λ {Y} → faith-pf (~proof
-                  F.ₐ (invFₐ (𝔻.idar Y))              ~[ full-pf ] /
+                  F.ₐ (invFₐ (𝔻.idar Y))              ~[ full.pf ] /
                   γ.⁻¹ Y 𝔻.∘ (𝔻.idar Y) 𝔻.∘ γ Y      ~[ ∘e lid r ⊙ γ.iddom Y ⊙ F.idˢ ]∎
                   F.ₐ (ℂ.idar (invFₒ Y))          ∎)
              ; cmp = λ {Y₁} {Y₂} {Y₃} g₁ g₂ → faith-pf (~proof
                    F.ₐ (invFₐ g₂ ℂ.∘ invFₐ g₁)                                 ~[ F.∘ax-rfˢ ] /
-                   F.ₐ (invFₐ g₂) 𝔻.∘ F.ₐ (invFₐ g₁)                          ~[ ∘e full-pf full-pf ] /
+                   F.ₐ (invFₐ g₂) 𝔻.∘ F.ₐ (invFₐ g₁)                          ~[ ∘e full.pf full.pf ] /
                    (γ.⁻¹ Y₃ 𝔻.∘ g₂ 𝔻.∘ γ Y₂) 𝔻.∘ (γ.⁻¹ Y₂ 𝔻.∘ g₁ 𝔻.∘ γ Y₁)  ~[ assˢ ⊙ ∘e ass r ] /
                    γ.⁻¹ Y₃ 𝔻.∘ ((g₂ 𝔻.∘ γ Y₂) 𝔻.∘ γ.⁻¹ Y₂) 𝔻.∘ g₁ 𝔻.∘ γ Y₁  ~[ ∘e (∘e r (assˢ ⊙ ridgg r (γ.idcod Y₂))) r ] /
-                   γ.⁻¹ Y₃ 𝔻.∘ g₂ 𝔻.∘ g₁ 𝔻.∘ γ Y₁                            ~[ ∘e ass r ⊙ full-pf ˢ ]∎
+                   γ.⁻¹ Y₃ 𝔻.∘ g₂ 𝔻.∘ g₁ 𝔻.∘ γ Y₁                            ~[ ∘e ass r ⊙ full.pf ˢ ]∎
                    F.ₐ (invFₐ (g₂ 𝔻.∘ g₁))                             ∎)
              }
        }
@@ -191,7 +191,7 @@ module esseqv-is-adjeqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-
   γnat : natural-transformation (F ○ invF) IdF
   γnat = record
     { fnc = λ {Y} → γ Y
-    ; nat = λ {Y} {Y'} g → ~proof γ Y' 𝔻.∘ F.ₐ (invFₐ g)           ~[ ∘e full-pf r ⊙ ass ] /
+    ; nat = λ {Y} {Y'} g → ~proof γ Y' 𝔻.∘ F.ₐ (invFₐ g)           ~[ ∘e full.pf r ⊙ ass ] /
                                    (γ Y' 𝔻.∘ γ.⁻¹ Y') 𝔻.∘ g 𝔻.∘ γ Y   ~[ lidgg r (γ.idcod Y') ]∎
                                    g 𝔻.∘ γ Y                      ∎
     }
@@ -207,9 +207,9 @@ module esseqv-is-adjeqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-
     { fnc = λ {X} → δ X
     ; nat = λ {X} {X'} f →
           faith-pf (~proof F.ₐ (δ X' ℂ.∘ invFₐ (F.ₐ f))                           ~[ F.∘ax-rfˢ ] /
-                           F.ₐ (δ X') 𝔻.∘ F.ₐ (invFₐ (F.ₐ f))                     ~[ ∘e full-pf full-pf ] /
+                           F.ₐ (δ X') 𝔻.∘ F.ₐ (invFₐ (F.ₐ f))                     ~[ ∘e full.pf full.pf ] /
                            γ (F.ₒ X') 𝔻.∘ γ.⁻¹ (F.ₒ X') 𝔻.∘ F.ₐ f 𝔻.∘ γ (F.ₒ X)   ~[ ass ⊙ lidgg r (γ.idcod (F.ₒ X')) ] /
-                           F.ₐ f 𝔻.∘ γ (F.ₒ X)                                   ~[ ∘e (full-pf ˢ) r ⊙ F.∘ax-rf ]∎
+                           F.ₐ f 𝔻.∘ γ (F.ₒ X)                                   ~[ ∘e (full.pf ˢ) r ⊙ F.∘ax-rf ]∎
                            F.ₐ (f ℂ.∘ δ X)                                   ∎)
     }
     where open ecategory-aux-only 𝔻
@@ -220,13 +220,13 @@ module esseqv-is-adjeqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-
                   where open natural-transformation δnat
 
   trid₁ : {X : ℂ.Obj} → γ (F.ₒ X) 𝔻.∘ F.ₐ (δ⁻¹ X) 𝔻.~ 𝔻.idar (F.ₒ X)
-  trid₁ {X} = ~proof γ (F.ₒ X) 𝔻.∘ F.ₐ (δ⁻¹ X)     ~[ ∘e full-pf r ] /
+  trid₁ {X} = ~proof γ (F.ₒ X) 𝔻.∘ F.ₐ (δ⁻¹ X)     ~[ ∘e full.pf r ] /
                      γ (F.ₒ X) 𝔻.∘ γ.⁻¹ (F.ₒ X)    ~[ γ.idcod (F.ₒ X) ]∎
                      𝔻.idar (F.ₒ X) ∎
             where open ecategory-aux-only 𝔻
   trid₂ : {Y : 𝔻.Obj} → invFₐ (γ Y) ℂ.∘ δ⁻¹ (invFₒ Y) ℂ.~ ℂ.idar (invFₒ Y)
   trid₂ {Y} = faith-pf (~proof
-    F.ₐ (invFₐ (γ Y) ℂ.∘ δ⁻¹ (invFₒ Y))           ~[ F.∘ax-rfˢ ⊙ (∘e full-pf (full-pf ⊙ ass) ⊙ assˢ) ] /
+    F.ₐ (invFₐ (γ Y) ℂ.∘ δ⁻¹ (invFₒ Y))           ~[ F.∘ax-rfˢ ⊙ (∘e full.pf (full.pf ⊙ ass) ⊙ assˢ) ] /
     (γ.⁻¹ Y 𝔻.∘ γ Y) 𝔻.∘ γ (F.ₒ (invFₒ Y)) 𝔻.∘ γ.⁻¹ (F.ₒ (invFₒ Y))  ~[ lidgg (γ.idcod (F.ₒ (invFₒ Y))) (γ.iddom Y) ⊙ F.idˢ ]∎
     F.ₐ (ℂ.idar (invFₒ Y)) ∎)
     where open ecategory-aux-only 𝔻
@@ -490,6 +490,67 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
       where open pres-bin-products
 
 
+    module pres-equalisers {A B E : ℂ.Obj}{f f' : || ℂ.Hom A B ||}{e : || ℂ.Hom E A ||}
+                           {pfeq : f ℂ.∘ e ℂ.~ f' ℂ.∘ e}(iseql : ℂ.is-equaliser pfeq)
+                           where
+      private
+        module eql = ℂ.is-equaliser iseql
+        --module Fsq/ = 𝔻.square/cosp (F.sq/ sq/)
+
+      unv-pf : {C : 𝔻.Obj}{h : || 𝔻.Hom C (F.FObj A) ||}
+               → F.ₐ f 𝔻.∘ h 𝔻.~ F.ₐ f' 𝔻.∘ h → f ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h ℂ.~ f' ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h
+      unv-pf {C} {h} pf = ~proof
+        f ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h           ~[ ass ⊙ ∘e r (ι2.natt.nat f ˢ) ⊙ assˢ ] /
+        ι2.fnc ℂ.∘ G○F.ₐ f ℂ.∘ G.ₐ h     ~[ ∘e (G.∘∘ pf) r ] /
+        ι2.fnc ℂ.∘ G○F.ₐ f' ℂ.∘ G.ₐ h    ~[ ass ⊙ ∘e r (ι2.natt.nat f') ⊙ assˢ ]∎
+        f' ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h ∎
+                        where open ecategory-aux-only ℂ
+      unv : {C : 𝔻.Obj}(h : || 𝔻.Hom C (F.FObj A) ||)
+               → F.ₐ f 𝔻.∘ h 𝔻.~ F.ₐ f' 𝔻.∘ h → || 𝔻.Hom C (F.ₒ E) ||
+      unv {C} h pf = F.ₐ ((ι2.fnc ℂ.∘ G.ₐ h) eql.|eql[ unv-pf pf ]) 𝔻.∘ ι1.fnc⁻¹ {C}
+
+      tr : {C : 𝔻.Obj}{h : || 𝔻.Hom C (F.FObj A) ||}(pf : F.ₐ f 𝔻.∘ h 𝔻.~ F.ₐ f' 𝔻.∘ h)
+              → F.ₐ e 𝔻.∘ unv h pf 𝔻.~ h
+      tr {C} {h} pf = ~proof
+        F.ₐ e 𝔻.∘ unv h pf             ~[ ass ⊙ ∘e r (F.∘∘ (eql.eqltr (unv-pf pf))) ⊙ assˢ ] /
+        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ h 𝔻.∘ ι1.fnc⁻¹ {C}    ~[ ∘e (ι1.natt⁻¹.nat h ˢ) r ] /
+        F.ₐ ι2.fnc 𝔻.∘ ι1.fnc⁻¹ 𝔻.∘ h              ~[ ass ⊙ lidgg r trid⁻¹₁ ]∎
+        h ∎
+        where open ecategory-aux-only 𝔻
+      
+      uq : {C : 𝔻.Obj}{h h' : || 𝔻.Hom C (F.ₒ E) ||} → F.ₐ e 𝔻.∘ h 𝔻.~ F.ₐ e 𝔻.∘ h'
+              → h 𝔻.~ h'
+      uq {C} {h} {h'} pf = Gfaith.pf (~proof
+        G.ₐ h                            ~[ lidggˢ r ι2.iddom ⊙ assˢ ] /
+        ι2.fnc⁻¹ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h    ~[ ∘e (eql.eqluq aux) r ] /
+        ι2.fnc⁻¹ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'   ~[ ass ⊙ lidgg r ι2.iddom ]∎
+        G.ₐ h' ∎)
+        where Geqv : is-equivalence G
+              Geqv = record { inv = F ; iseqvp = inv-is-eqv (adjeqvp2eqvp adjeqv) }
+              module Gfaith = is-faithful (G.eqv-is-faith Geqv) renaming (faith-pf to pf)
+              open ecategory-aux-only ℂ
+              aux : e ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h ℂ.~ e ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'
+              aux = ~proof
+                e ℂ.∘  ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.natt.nat e ˢ) ⊙ assˢ ] /
+                ι2.fnc ℂ.∘ G○F.ₐ e ℂ.∘ G.ₐ h     ~[ ∘e (G.∘∘ pf) r ] /
+                ι2.fnc ℂ.∘ G○F.ₐ e ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.natt.nat e) ⊙ assˢ ]∎
+                e ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h' ∎
+      Feql : 𝔻.is-equaliser (F.∘∘ pfeq)
+      Feql = record
+        { _|eql[_] = unv
+        ; eqltr = tr
+        ; eqluq = uq
+        }
+    --end pres-equalisers
+
+    pres-eql : preserves-equalisers F
+    pres-eql = record
+      { pres-eql-pf = Feql
+      }
+      where open pres-equalisers
+
+
+
     module pres-pullbacks {I A B : ℂ.Obj} {a : || ℂ.Hom A I ||} {b : || ℂ.Hom B I ||}
                           {sq/ : ℂ.square/cosp a b}(ispb : ℂ.is-pullback-of sq/)
                           where
@@ -574,6 +635,7 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
   pres-fin-lim adjeqv = record
     { prestrm = pres-term
     ; presprd = pres-prods
+    ; preseql = pres-eql
     ; prespb = pres-pb
     }
     where open adj-eqv-pres-fin-lim adjeqv

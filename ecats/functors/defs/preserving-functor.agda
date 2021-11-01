@@ -29,19 +29,37 @@ record preserves-terminal {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set�
 
 
 private
-  module pbn-macros (𝕏 : ecategory) where
+  module pbp-macros (𝕏 : ecategory) where
     open ecategory 𝕏 public
     open comm-shapes 𝕏 public
     open bin-product-defs 𝕏 public
     
 record preserves-bin-products {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private
-    module ℂ = pbn-macros ℂ
-    module 𝔻 = pbn-macros 𝔻
+    module ℂ = pbp-macros ℂ
+    module 𝔻 = pbp-macros 𝔻
     module F = efunctor-aux F
   field
     pres-×-pf : {sp : ℂ.span} → ℂ.is-product sp →  𝔻.is-product (F.span sp)
 
+
+
+
+private
+  module peql-macros (𝕏 : ecategory) where
+    open ecategory 𝕏 public
+    --open comm-shapes 𝕏 public
+    open equaliser-defs 𝕏 public
+    
+record preserves-equalisers {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
+  private
+    module ℂ = peql-macros ℂ
+    module 𝔻 = peql-macros 𝔻
+    module F = efunctor-aux F
+  field
+    pres-eql-pf : {A B E : ℂ.Obj}{f f' : || ℂ.Hom A B ||}{e : || ℂ.Hom E A ||}
+                  {pfeq : f ℂ.∘ e ℂ.~ f' ℂ.∘ e} → ℂ.is-equaliser pfeq
+                     → 𝔻.is-equaliser (F.∘∘ pfeq)
 
 
 private
@@ -79,10 +97,13 @@ record preserves-fin-limits {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set
   field
     prestrm : preserves-terminal F
     presprd : preserves-bin-products F
+    preseql : preserves-equalisers F
     prespb : preserves-pullbacks F
   open preserves-terminal prestrm public
   open preserves-bin-products presprd public
+  open preserves-equalisers preseql public
   open preserves-pullbacks prespb public
+
 
 private
   module pre-macros (𝕏 : ecategory) where
@@ -101,11 +122,27 @@ record preserves-regular-epis {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : S
 
 
 private
+  module pm-macros (𝕏 : ecategory) where
+    open ecategory 𝕏 public
+    open epis&monos-defs 𝕏 public
+    
+
+record preserves-monos {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
+  private
+    module ℂ = pm-macros ℂ
+    module 𝔻 = pm-macros 𝔻
+    module F = efunctor-aux F
+  field
+    pres-monos-pf : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||}
+                       → ℂ.is-monic f → 𝔻.is-monic (F.ₐ f)
+
+
+private
   module pjm-macros (𝕏 : ecategory) where
     open ecategory 𝕏 public
     open comm-shapes 𝕏 public
     open epis&monos-defs 𝕏 public
-    
+
 record preserves-jointly-monic/ {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private
     module ℂ = pjm-macros ℂ

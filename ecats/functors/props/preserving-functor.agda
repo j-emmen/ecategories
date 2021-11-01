@@ -15,7 +15,7 @@ open import ecats.functors.defs.preserving-functor
 
 pres-term-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor ℂ 𝔻}
                    → preserves-terminal F → preserves-terminal G
-                     → preserves-terminal (G ○ F)
+                     → preserves-terminal (_○_ {𝔻 = ℂ} G F)
 pres-term-cmp Fprestrm Gprestrm = record
   { pres-!-pf = λ {X} Xistrm → G!pf (F!pf Xistrm)
   }
@@ -31,6 +31,21 @@ pres-bprd-cmp Fpresbprd Gpresbprd = record
   }
   where open preserves-bin-products Fpresbprd renaming (pres-×-pf to F×pf)
         open preserves-bin-products Gpresbprd renaming (pres-×-pf to G×pf)
+
+
+pres-eql-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor ℂ 𝔻}
+                 → preserves-equalisers F → preserves-equalisers G
+                   → preserves-equalisers (G ○ F)
+pres-eql-cmp {𝔹} {ℂ} {𝔻} {F = F} {G} Fpreseql Gpreseql = record
+  { pres-eql-pf = λ {_} {_} {_} {_} {_} {e} {pfeq} iseql
+                    → 𝔻.pfeq-irr (Geqlpf (Feqlpf iseql)) (G○F.∘∘ pfeq)
+  }
+  where open preserves-equalisers Fpreseql renaming (pres-eql-pf to Feqlpf)
+        open preserves-equalisers Gpreseql renaming (pres-eql-pf to Geqlpf)
+        module 𝔻 = equaliser-props 𝔻
+        module F = efunctor-aux F
+        module G = efunctor-aux G
+        module G○F = efunctor-aux (G ○ F)
 
 
 pres-pb-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor ℂ 𝔻}
@@ -54,6 +69,7 @@ pres-fl-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor �
 pres-fl-cmp Fpresfl Gpresfl = record
   { prestrm = pres-term-cmp Ffl.prestrm Gfl.prestrm 
   ; presprd = pres-bprd-cmp Ffl.presprd Gfl.presprd
+  ; preseql = pres-eql-cmp Ffl.preseql Gfl.preseql
   ; prespb = pres-pb-cmp Ffl.prespb Gfl.prespb
   }
   where module Ffl = preserves-fin-limits Fpresfl
@@ -94,3 +110,31 @@ exact-cmp Fex Gex = record
         module Gex = is-exact-functor Gex
 
 
+IdF-pres-fin-limits : {ℂ : ecategory} → preserves-fin-limits (IdF {ℂ})
+IdF-pres-fin-limits {ℂ} = record
+  { prestrm = record { pres-!-pf = λ istrm → istrm }
+  ; presprd = record { pres-×-pf = λ isprd → isprd }
+  ; preseql = record { pres-eql-pf = λ {_} {_} {_} {_} {_} {_} {pfeq} iseql
+                                   → pfeq-irr iseql (Id.∘∘ pfeq) }
+  ; prespb = record { pres-ispbof-pf = λ {_} {_} {_} {_} {_} {sq/} ispbof
+                      → pullback-defs.mkis-pb-of (×/sqpf-irr (ispb ispbof) (Id.∘∘ (sq-pf sq/) )) }
+  }
+  where open equaliser-props ℂ
+        open pullback-props ℂ
+        module Id = efunctor-aux (IdF {ℂ})
+        open comm-shapes.square/cosp {ℂ}
+        open pullback-defs.is-pullback-of {ℂ}
+
+
+
+IdF-pres-reg-epis : {ℂ : ecategory} → preserves-regular-epis (IdF {ℂ})
+IdF-pres-reg-epis {ℂ} = record
+  { pres-repi-pf = λ repi → repi
+  }
+
+
+IdF-is-exact : {ℂ : ecategory} → is-exact-functor (IdF {ℂ})
+IdF-is-exact {ℂ} = record
+  { presfl = IdF-pres-fin-limits {ℂ}
+  ; presrepi = IdF-pres-reg-epis {ℂ}
+  }

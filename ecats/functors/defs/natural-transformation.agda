@@ -83,6 +83,38 @@ natt-hcmp {𝔼 = 𝔼} {F} {G} {H} {K} β α = record
         module β = natural-transformation β
         open ecategory-aux-only 𝔼
 
+module identity-is-natural {ℂ 𝔻 : ecategory}{FO : ecategory.Obj ℂ → ecategory.Obj 𝔻}
+                           {FH : {X X' : ecategory.Obj ℂ} → || ecategory.Hom ℂ X X' ||
+                                              → || ecategory.Hom 𝔻 (FO X) (FO X') ||}
+                           (isfFH1 isfFH2 : efunctor-defs.is-functorial ℂ 𝔻 FH)
+                           where
+  private
+    module ℂ = ecategory ℂ
+    module 𝔻 = ecategory 𝔻
+    F1 F2 : efunctor ℂ 𝔻
+    F1 = record
+       { FObj = FO
+       ; FHom = FH
+       ; isF = isfFH1
+       }
+    F2 = record
+       { FObj = FO
+       ; FHom = FH
+       ; isF = isfFH2
+       }
+    module F1 = efunctor F1
+    module F2 = efunctor F2
+
+  id-is-nat : natural-transformation F1 F2
+  id-is-nat = record
+    { fnc = λ {X} → 𝔻.idar (FO X)
+    ; nat = λ f → lidgen ridˢ
+    }
+    where open ecategory-aux-only 𝔻 using (lidgen; ridˢ)
+-- end identity-is-natural
+
+
+
 ------------------------
 -- Natural isomorphisms
 ------------------------
@@ -215,22 +247,15 @@ FctrStd ℂ 𝔻 = record
   where module ℂ = ecategory ℂ
         module 𝔻 where
           open ecategory 𝔻 public
-          open epis&monos-defs 𝔻 public
-          open epis&monos-props 𝔻 public
           open iso-defs 𝔻 public
-        module F = efunctor-aux F
+        module F = efunctor F
+        module Id○F = efunctor (IdF ○ F)
         natt : natural-transformation (IdF ○ F) F
-        natt = record
-             { fnc = λ {A} → 𝔻.idar (F.ₒ A)
-             ; nat = λ f → lidgen ridˢ
-             }
-             where open ecategory-aux-only 𝔻
+        natt = id-is-nat
+             where open identity-is-natural Id○F.isF F.isF
         natt⁻¹ : natural-transformation F (IdF ○ F)
-        natt⁻¹ = record
-             { fnc = λ {A} → 𝔻.idar (F.ₒ A)
-             ; nat = λ f → lidgen ridˢ
-             }
-             where open ecategory-aux-only 𝔻
+        natt⁻¹ = id-is-nat
+               where open identity-is-natural F.isF Id○F.isF
         idiso : {A : ℂ.Obj} → 𝔻.is-iso (𝔻.idar (F.ₒ A))
         idiso {A} = 𝔻.idar-is-iso (F.ₒ A)
         module idiso {A : ℂ.Obj} = 𝔻.is-iso (idiso {A})
@@ -244,25 +269,26 @@ FctrStd ℂ 𝔻 = record
   where module ℂ = ecategory ℂ
         module 𝔻 where
           open ecategory 𝔻 public
-          open epis&monos-defs 𝔻 public
-          open epis&monos-props 𝔻 public
           open iso-defs 𝔻 public
-        module F = efunctor-aux F
+        module F = efunctor F
+        module F○Id = efunctor (F ○ IdF)
         natt : natural-transformation (F ○ IdF) F
-        natt = record
-             { fnc = λ {A} → 𝔻.idar (F.ₒ A)
-             ; nat = λ f → lidgen ridˢ
-             }
-             where open ecategory-aux-only 𝔻
+        natt = id-is-nat
+             where open identity-is-natural F○Id.isF F.isF
         natt⁻¹ : natural-transformation F (F ○ IdF)
-        natt⁻¹ = record
-             { fnc = λ {A} → 𝔻.idar (F.ₒ A)
-             ; nat = λ f → lidgen ridˢ
-             }
-             where open ecategory-aux-only 𝔻
+        natt⁻¹ = id-is-nat
+               where open identity-is-natural F.isF F○Id.isF
         idiso : {A : ℂ.Obj} → 𝔻.is-iso (𝔻.idar (F.ₒ A))
         idiso {A} = 𝔻.idar-is-iso (F.ₒ A)
         module idiso {A : ℂ.Obj} = 𝔻.is-iso (idiso {A})
+
+{-
+record
+             { fnc = λ {A} → 𝔻.idar (F.ₒ A)
+             ; nat = λ f → lidgen ridˢ
+             }
+             where open ecategory-aux-only 𝔻 using (lidgen; ridˢ)
+-}
 
 ○ass : {ℂ 𝔻 𝔼 𝔽 : ecategory} {F : efunctor ℂ 𝔻} {G : efunctor 𝔻 𝔼} {H : efunctor 𝔼 𝔽}
           → H ○ G ○ F ≅ₐ (H ○ G) ○ F
@@ -274,27 +300,29 @@ FctrStd ℂ 𝔻 = record
   where module ℂ = ecategory ℂ
         module 𝔽 where
           open ecategory 𝔽 public
-          open epis&monos-defs 𝔽 public
-          open epis&monos-props 𝔽 public
           open iso-defs 𝔽 public
-        module F = efunctor-aux F
-        module G = efunctor-aux G
-        module H = efunctor-aux H
+        module F = efunctor F
+        module G = efunctor G
+        module H = efunctor H
+        module H○G○F = efunctor (H ○ G ○ F)
+        module [H○G]○F = efunctor ((H ○ G) ○ F)
         natt : natural-transformation (H ○ G ○ F) ((H ○ G) ○ F)
-        natt = record
-             { fnc = λ {A} → 𝔽.idar (H.ₒ (G.ₒ (F.ₒ A)))
-             ; nat = λ f → lidgen ridˢ
-             }
-             where open ecategory-aux-only 𝔽
+        natt = id-is-nat
+             where open identity-is-natural H○G○F.isF [H○G]○F.isF
         natt⁻¹ : natural-transformation ((H ○ G) ○ F) (H ○ G ○ F)
-        natt⁻¹ = record
-             { fnc = λ {A} → 𝔽.idar (H.ₒ (G.ₒ (F.ₒ A)))
-             ; nat = λ f → lidgen ridˢ
-             }
-             where open ecategory-aux-only 𝔽
+        natt⁻¹ = id-is-nat
+               where open identity-is-natural [H○G]○F.isF H○G○F.isF
         idiso : {A : ℂ.Obj} → 𝔽.is-iso (𝔽.idar (H.ₒ (G.ₒ (F.ₒ A))))
         idiso {A} = 𝔽.idar-is-iso (H.ₒ (G.ₒ (F.ₒ A)))
         module idiso {A : ℂ.Obj} = 𝔽.is-iso (idiso {A})
+
+{-
+record
+             { fnc = λ {A} → 𝔽.idar (H.ₒ (G.ₒ (F.ₒ A)))
+             ; nat = λ f → lidgen ridˢ
+             }
+             where open ecategory-aux-only 𝔽 using (lidgen; ridˢ)
+-}
 
 
 ---------------------------------------------------------------------

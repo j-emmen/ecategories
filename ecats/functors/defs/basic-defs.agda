@@ -195,27 +195,27 @@ record is-full {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
     module 𝔻 = ecategory 𝔻
     module F = efunctor F
   field
-    full-ar : {X Y : ℂ.Obj} → || 𝔻.Hom (F.ₒ X) (F.ₒ Y) || → || ℂ.Hom X Y ||
-    full-pf : {X Y : ℂ.Obj} {g : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
-                    → F.ₐ (full-ar g) 𝔻.~ g
-  full-pfˢ : {X Y : ℂ.Obj} {g : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
-                    → g 𝔻.~ F.ₐ (full-ar g)
-  full-pfˢ =  full-pf ˢ
-           where open ecategory-aux-only 𝔻
-  full-pfg : {X Y : ℂ.Obj} {g g' : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
-                    → g 𝔻.~ g' → F.ₐ (full-ar g) 𝔻.~ g'
-  full-pfg pf = full-pf ⊙ pf
-              where open ecategory-aux-only 𝔻
-  full-pfgˢ : {X Y : ℂ.Obj} {g g' : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
-                    → g 𝔻.~ g' → g' 𝔻.~ F.ₐ (full-ar g)
-  full-pfgˢ pf = full-pfg pf ˢ
-              where open ecategory-aux-only 𝔻
+    ar : {X Y : ℂ.Obj} → || 𝔻.Hom (F.ₒ X) (F.ₒ Y) || → || ℂ.Hom X Y ||
+    pf : {X Y : ℂ.Obj} {g : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
+                    → F.ₐ (ar g) 𝔻.~ g
+  pfˢ : {X Y : ℂ.Obj} {g : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
+                    → g 𝔻.~ F.ₐ (ar g)
+  pfˢ =  pf ˢ
+      where open ecategory-aux-only 𝔻
+  pfg : {X Y : ℂ.Obj} {g g' : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
+                    → g 𝔻.~ g' → F.ₐ (ar g) 𝔻.~ g'
+  pfg eq = pf ⊙ eq
+         where open ecategory-aux-only 𝔻
+  pfgˢ : {X Y : ℂ.Obj} {g g' : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
+                    → g 𝔻.~ g' → g' 𝔻.~ F.ₐ (ar g)
+  pfgˢ eq = pfg eq ˢ
+          where open ecategory-aux-only 𝔻
 
 full-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor ℂ 𝔻}
                → is-full F → is-full G → is-full (G ○ F)
 full-cmp {𝔻 = 𝔻} {F} {G} fullF fullG = record
-  { full-ar = λ k → F.full-ar (G.full-ar k)
-  ; full-pf = λ {_} {_} {k} → G.ext F.full-pf ⊙ G.full-pf
+  { ar = λ k → F.ar (G.ar k)
+  ; pf = λ {_} {_} {k} → G.ext F.pf ⊙ G.pf
   }
   where module F = is-full fullF
         module G where
@@ -226,16 +226,16 @@ full-cmp {𝔻 = 𝔻} {F} {G} fullF fullG = record
 full-ext : {ℂ 𝔻 : ecategory}{F G : efunctor ℂ 𝔻}
                → is-full F → F ≅ₐ G → is-full G
 full-ext {ℂ} {𝔻} {F} {G} fullF α = record
-  { full-ar = λ g → F.full-ar (α.fnc⁻¹ ∘ g ∘ α.fnc)
-  ; full-pf = λ {X} {Y} {g} → ~proof
-            G.ₐ (F.full-ar (α.fnc⁻¹ ∘ g ∘ α.fnc))                     ~[ α.C2Dₗ ] /
-            (α.fnc ∘ F.ₐ (F.full-ar (α.fnc⁻¹ ∘ g ∘ α.fnc))) ∘ α.fnc⁻¹  ~[ ∘e r (∘e  F.full-pf r) ] /
+  { ar = λ g → F.full.ar (α.fnc⁻¹ ∘ g ∘ α.fnc)
+  ; pf = λ {X} {Y} {g} → ~proof
+            G.ₐ (F.full.ar (α.fnc⁻¹ ∘ g ∘ α.fnc))                     ~[ α.C2Dₗ ] /
+            (α.fnc ∘ F.ₐ (F.full.ar (α.fnc⁻¹ ∘ g ∘ α.fnc))) ∘ α.fnc⁻¹  ~[ ∘e r (∘e  F.full.pf r) ] /
             (α.fnc ∘ (α.fnc⁻¹ ∘ g ∘ α.fnc)) ∘ α.fnc⁻¹                  ~[ ∘e r ass ⊙ assˢ ⊙ ∘e assˢ r ] /
             (α.fnc ∘ α.fnc⁻¹) ∘ g ∘ α.fnc ∘ α.fnc⁻¹                ~[ lidgg (ridgg r α.idcod) α.idcod ]∎
             g ∎
   }
   where module F where
-          open is-full fullF public
+          module full = is-full fullF
           open efunctor-aux F public
         module G = efunctor-aux G
         module α = natural-iso α
