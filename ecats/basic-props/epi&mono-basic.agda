@@ -327,11 +327,6 @@ module epis&monos-basic-props (ℂ : ecategory) where
                                             linv ∘ f ∘ g'   ~[ ass ⊙ lidgg r linv-pf ]∎
                                             g' ∎
     }
-
-
-
-  idar-is-iso : (A : Obj) → is-iso (idar A)
-  idar-is-iso A = mkis-iso (record { iddom = lid {f = idar A} ; idcod = rid {f = idar A} })
   
   
   iso-is-monic : {A B : Obj} {f : || Hom A B ||} → is-iso f → is-monic f

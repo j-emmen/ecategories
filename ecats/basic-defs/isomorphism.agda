@@ -123,6 +123,18 @@ module iso-defs (ℂ : ecategory) where
       isop : is-iso-pair a12 a21
     open is-iso-pair isop public
 
+
+  idar-is-iso : (a : Obj) → is-iso (idar a)
+  idar-is-iso a = record
+    { invf = idar a
+    ; isisopair = record
+            { iddom = lid {f = idar a}
+            ; idcod = rid {f = idar a}
+            }
+    }
+    where open ecategory-aux-only ℂ using (lid; rid)
+
+
   iso-trdom : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
               {g : || Hom b c ||} {h : || Hom a  c ||}
                 → g ∘ f ~ h → h ∘ f' ~ g
