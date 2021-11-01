@@ -47,7 +47,7 @@ module proj-cover-universal-uniq {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
                                                             CV↑PC.tr))
                      (≅ₐsym (○ass {F = CVex ℙ [ fwlℙ ]} {CV↑PC.fctr} {G})))
 
-    uq : G ≅ₐ F ↑ex[ ex𝔻 , lcovF ]
+    uq : G ≅ₐ F pjc↑ex[ ex𝔻 , lcovF ]
     uq = natiso-vcmp (natiso-hcmp uq-aux
                                   (≅ₐrefl {F = CV↑PC.inv}))
                      (natiso-vcmp (○ass {F = CV↑PC.inv} {CV↑PC.fctr} {G})
@@ -58,7 +58,7 @@ module proj-cover-universal-uniq {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
 
   ↑ex-uq : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
              {G : efunctor 𝔼 𝔻}(exG : is-exact-functor G)
-             → G ○ PC ≅ₐ F → G ≅ₐ F ↑ex[ ex𝔻 , lcovF ]
+             → G ○ PC ≅ₐ F → G ≅ₐ F pjc↑ex[ ex𝔻 , lcovF ]
   ↑ex-uq {𝔻} ex𝔻 {F} lcovF {G} exG trG = uq
                                          where open ↑ex-uniqueness ex𝔻 lcovF exG trG
 -- end proj-cover-universal-uniq

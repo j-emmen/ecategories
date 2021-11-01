@@ -10,11 +10,7 @@ open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.left-covering
 open import ecats.functors.defs.projective-cover
 open import ecats.exact-completion.def
-open import ecats.exact-completion.projcov-is-excompl.eqv-to-CVconstr
-open import ecats.exact-completion.projcov-is-excompl.def
-open import ecats.exact-completion.projcov-is-excompl.commut
-open import ecats.exact-completion.projcov-is-excompl.is-exact-fun
-open import ecats.exact-completion.projcov-is-excompl.uniqueness
+open import ecats.exact-completion.projcov-is-excompl.universal-prop
 
 -----------------------------------------------------------------
 -- A projective cover ℙ → 𝔼 of 𝔼 exact is the exact completion
@@ -28,18 +24,10 @@ projcov-is-excompl : {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
                        → is-exwlex-completion fwlℙ PC
 projcov-is-excompl ex𝔼 fwlℙ lcovPC pjcPC = record
   { cat-ex = ex𝔼
-  ; emb-full = pjc.isfull
-  ; emb-faith = pjc.isfaith
+  ; emb-full = PC.isfull
+  ; emb-faith = PC.isfaith
   ; emb-lcov = lcovPC
-  ; emb-unv = λ ex𝔻 lcovF → record
-            { fctr = ↑ex ex𝔻 lcovF
-            ; tr = ↑ex-tr ex𝔻 lcovF
-            ; ex = ↑ex-is-exact ex𝔻 lcovF
-            ; uq = ↑ex-uq ex𝔻 lcovF
-            }
+  ; emb-unv = projcov-is-init-lcov-ex
   }
-  where module pjc = is-projective-cover pjcPC
-        open proj-cover-universal-def ex𝔼 fwlℙ lcovPC pjcPC
-        open proj-cover-universal-comm ex𝔼 fwlℙ lcovPC pjcPC
-        open proj-cover-universal-is-exact ex𝔼 fwlℙ lcovPC pjcPC
-        open proj-cover-universal-uniq ex𝔼 fwlℙ lcovPC pjcPC
+  where module PC = is-projective-cover pjcPC
+        open proj-cover-universal-property ex𝔼 fwlℙ lcovPC pjcPC

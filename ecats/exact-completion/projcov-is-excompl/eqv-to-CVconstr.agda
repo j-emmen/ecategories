@@ -16,7 +16,6 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.projective-cover
 open import ecats.functors.defs.left-covering
 open import ecats.functors.props.basic-props
---open import ecats.functors.props.projective-cover
 open import ecats.constructions.ecat-eqrel
 open import ecats.exact-completion.def
 open import ecats.exact-completion.CVconstruction
@@ -341,7 +340,6 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
       qexs : 𝔼.is-coeq (PC.ₐ peq.%0) (PC.ₐ peq.%1) rc.ar
       qexs = 𝔼.epi/coeq-so-coeq (𝔼.repi-is-epic rcK.is-repi) (PC.full.pf ˢ) (PC.full.pf ˢ) exs.iscoeq
            where open ecategory-aux-only 𝔼 using (_ˢ)
-      --module qexs = 𝔼.is-coeq qexs
     -- end peq-from-Obj
   -- end private
   
@@ -368,16 +366,6 @@ module projcov-of-exact-is-ess-eqv-to-CVconstr {𝔼 : ecategory}(ex𝔼 : is-ex
     ; isfaithful = PC↑ex-faithful
     ; isesurjobj = PC↑ex-ess-surj-obs
     }
-
---   module PC↑ex-is-eqv where
---     open is-adj-equivalence PC↑ex-is-eqv using (invF)
---     -- declaring inv explicitly speeds up typechecking of tr-inv
---     inv : efunctor 𝔼 Ex ℙ [ fwlℙ ]
---     inv = invF
---     open is-adj-equivalence PC↑ex-is-eqv hiding (invF) public
---     tr-inv : inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
---     tr-inv = eqv-tr {F = CVex ℙ [ fwlℙ ]} {PC↑ex.fctr} {inv} {PC} (adjeqvp2eqvp isadjeqvp) (CVex.unv.tr ex𝔼 lcovPC)
-
 -- end projcov-of-exact-is-ess-eqv-to-CVconstr
 
 
@@ -393,7 +381,6 @@ module pjc-eqv-CV {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼){ℙ : ecategory}(fw
   
   isaeqvp : is-adj-equivalence-pair fctr inv
   isaeqvp = adjeqv
-  --open is-adj-equivalence-pair isaeqvp public
 
   inv-tr : inv ○ PC ≅ₐ CVex ℙ [ fwlℙ ]
   inv-tr = eqv-tr {F = CVex ℙ [ fwlℙ ]} {fctr} {inv} {PC}

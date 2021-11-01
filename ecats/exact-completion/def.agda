@@ -59,57 +59,5 @@ record is-exwlex-completion {ℂ : ecategory}(hasfwl : has-fin-weak-limits ℂ)
            open is-exact cat-ex using () renaming (hasfl to flExℂ)
            open exact-cat-props ex𝔼 using () renaming (is-reg to reg𝔼)
            module unv' = emb-unv ex𝔼 {G' ○ emb} (ex○lcov-is-lcov hasweql haswpb flExℂ reg𝔼 emb-lcov exG')
-     -- need to prove that left covering followed by exact is left covering
 
 syntax is-exwlex-completion {ℂ} hasfwl emb = emb is-exact-completion-of ℂ [ hasfwl ]
-
-
-
-
-{-
-module exwlex-universal-prop-data {ℂ 𝔼 : ecategory}(F : efunctor ℂ 𝔼)
-                                  {𝔻 : ecategory}(G : efunctor ℂ 𝔻)
-                                  where
-  
-  record def-props-of-fnct (fnct : efunctor 𝔼 𝔻) : Set₂ where
-    field
-      ex : is-exact-functor fnct
-      tr :  fnct ○ F ≅ₐ G
-
-  record is-unique-ex+tr (fnct : efunctor 𝔼 𝔻) : Set₂ where
-    field
-      ex+tr : def-props-of-fnct fnct
-      isuq : {E : efunctor 𝔼 𝔻}(propsE : def-props-of-fnct E)
-             →  E ≅ₐ fnct
-    open def-props-of-fnct ex+tr public
-
-  record univprop-data : Set₂ where
-    field
-      fnct : efunctor 𝔼 𝔻
-      prop : is-unique-ex+tr fnct
-    module fnct where
-      open efunctor-aux fnct public
-      open is-unique-ex+tr prop public
-      --open def-props-of-fnct ex+tr public
-      uq : {E : efunctor 𝔼 𝔻}(exE : is-exact-functor E)(trE : E ○ F ≅ₐ G)
-              →  E ≅ₐ fnct
-      uq exE trE = isuq (record { ex = exE ; tr = trE })
-    {-module fnct = efunctor fnct
-    module ex = is-exact-functor ex
-    module tr = natural-iso tr
-    module uq {E : efunctor 𝔼 𝔻}(exE : is-exact-functor E)(trE : E ○ F ≅ₐ G)
-              = natural-iso (uq exE trE)-}
-
--- end exwlex-universal-prop-data
--}
-{-
-    univ : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
-           {G : efunctor ℂ 𝔻}(lcovG : is-left-covering G)
-             → univprop-data {𝔻} G
-  module univ {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
-              {G : efunctor ℂ 𝔻}(lcovG : is-left-covering G)
-              = univprop-data G (univ ex𝔻 lcovG)
--}
-  --open univ public
-
-
