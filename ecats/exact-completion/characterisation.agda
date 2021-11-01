@@ -1,6 +1,5 @@
 
 {-# OPTIONS --without-K #-}
- --show-implicit
 
 module ecats.exact-completion.characterisation where
 
