@@ -3,7 +3,7 @@
 
 module ecats.small-limits.defs.small-limit where
 
-open import Agda.Primitive
+--open import Agda.Primitive
 open import ecats.basic-defs.ecat-def&not
 open import ecats.functors.defs.cone public
 open import ecats.functors.defs.efunctor-d&n
