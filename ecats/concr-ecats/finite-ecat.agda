@@ -14,10 +14,11 @@ open import ecats.functors.defs.efunctor
 
 module FinCat-data where
   𝔽Hom : (n : N) → Fin n → Fin n → setoid {0ₗₑᵥ} {0ₗₑᵥ}
-  𝔽Hom (s n) (inl x) (inl y) = 𝔽Hom n x y
-  𝔽Hom (s n) (inl x) (inr y) = Freestd N₁
-  𝔽Hom (s n) (inr x) (inl y) = Freestd N₀
-  𝔽Hom (s n) (inr x) (inr y) = Freestd N₁
+  𝔽Hom (s O) x y = Freestd N₁
+  𝔽Hom (s (s n)) (inl x) (inl y) = 𝔽Hom (s n) x y
+  𝔽Hom (s (s n)) (inl x) (inr y) = Freestd N₁
+  𝔽Hom (s (s n)) (inr x) (inl y) = Freestd N₀
+  𝔽Hom (s (s n)) (inr x) (inr y) = Freestd N₁
   {-
   𝔽Hom (s n) = Finsrec n {λ _ → (_ : Fin (s n)) → setoid}
                        -- one arrow from inl to inr
