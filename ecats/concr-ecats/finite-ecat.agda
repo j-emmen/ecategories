@@ -3,10 +3,9 @@
 
 module ecats.concr-ecats.finite-ecat where
 
-open import tt-basics.basics
-open import tt-basics.id-type
-open import tt-basics.setoids renaming (||_|| to ||_||std)
+open import tt-basics.all-basics renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
+open import ecats.basic-defs.commut-shapes
 open import ecats.concr-ecats.Std-lev
 open import ecats.functors.defs.efunctor
 
@@ -188,3 +187,152 @@ module ω where
           fctr (s n) {inl x} {inl x₁} ij = fctr n ij
           fctr (s n) {inl x} {inr x₁} ij = frgt-ar n x
           fctr (s n) {inr x} {inr x₁} ij = ω.idar n
+
+
+-- the cospan category
+module cospan-category where
+-- inr (inl 0₁) → inl 0₁ ← inr (inr 0₁)
+  Ob : Set
+  Ob = N₁ + (N₁ + N₁)
+  H : Ob → Ob → Set
+  H (inl x) (inl y) = N₁
+  H (inr (inl x)) (inr (inl y)) = N₁
+  H (inr (inr x)) (inr (inr y)) = N₁
+  H (inr x) (inl y) = N₁
+  H (inl x) (inr y) = N₀
+  H (inr (inl x)) (inr (inr y)) = N₀
+  H (inr (inr x)) (inr (inl y)) = N₀  
+  Hm : Ob → Ob → setoid {0ₗₑᵥ} {0ₗₑᵥ}
+  Hm x y = Freestd (H x y)
+  
+  cmp :  {a b c : Ob} → || Hm b c || → || Hm a b || → || Hm a c ||
+  cmp {inl 0₁} {inl 0₁} {c} g f = g
+  cmp {inr x} {inl 0₁} {inl 0₁} g f = f
+  cmp {inr (inl 0₁)} {inr (inl 0₁)} {c} g f = g
+  cmp {inr (inr 0₁)} {inr (inr 0₁)} {c} g f = g  
+
+  id : (a : Ob) → || Hm a a ||
+  id (inl x) = 0₁
+  id (inr (inl x)) = 0₁
+  id (inr (inr x)) = 0₁
+
+  ext : {a b c : Ob} (f f' : || Hm a b ||) (g g' : || Hm b c ||)
+           → < Hm a b > f ~ f' → < Hm b c > g ~ g'
+             → < Hm a c > cmp {a} {b} {c} g f ~ cmp {a} {b} {c} g' f'
+  ext {inl 0₁} {inl 0₁} {c} f f' g g' eqf eqg = eqg
+  ext {inr x} {inl 0₁} {inl 0₁} f f' g g' eqf eqg = eqf
+  ext {inr (inl 0₁)} {inr (inl 0₁)} {c} f f' g g' eqf eqg = eqg
+  ext {inr (inr 0₁)} {inr (inr 0₁)} {c} f f' g g' eqf eqg = eqg
+
+  lid : {a b : Ob} (f : || Hm a b ||) → < Hm a b > cmp {a} {b} {b} (id b) f ~ f
+  lid {inl 0₁} {inl 0₁} 0₁ = =rf
+  lid {inr x} {inl 0₁} f = =rf
+  lid {inr (inl 0₁)} {inr (inl 0₁)} 0₁ = =rf
+  lid {inr (inr 0₁)} {inr (inr 0₁)} 0₁ = =rf
+
+  rid : {a b : Ob} (f : || Hm a b ||) → < Hm a b > cmp {a} {a} {b} f (id a) ~ f
+  rid {inl 0₁} {b} f = =rf
+  rid {inr (inl 0₁)} {b} f = =rf
+  rid {inr (inr 0₁)} {b} f = =rf
+
+  ass : {a b c d : Ob} (f : || Hm a b ||) (g : || Hm b c ||)(h : || Hm c d ||)
+           → < Hm a d > cmp h (cmp g f) ~ cmp (cmp h g) f
+  ass {inl 0₁} {inl 0₁} {c} {d} f g h = =rf
+  ass {inr (inl 0₁)} {inr (inl 0₁)} {c} {d} f g h = =rf
+  ass {inr (inr 0₁)} {inr (inr 0₁)} {c} {d} f g h = =rf
+  ass {inr (inl x)} {inl 0₁} {inl 0₁} {d} f g h = =rf
+  ass {inr (inr x)} {inl 0₁} {inl 0₁} {d} f g h = =rf
+
+-- end cospan-category
+
+Cospan : small-ecategory
+Cospan = record
+     { Obj = Ob
+     ; Hom = Hm
+     ; isecat = record
+                  { _∘_ = λ {a} {b} {c} → cmp {a} {b} {c}
+                  ; idar = id
+                  ; ∘ext = ext
+                  ; lidax = lid
+                  ; ridax = rid
+                  ; assoc = ass
+                  }
+     }
+     where open cospan-category
+
+module Cospan-aux where
+  open ecategory-aux Cospan public
+  crn v₁ v₂ : Obj
+  crn = inl 0₁
+  v₁ = inr (inl 0₁)
+  v₂ = inr (inr 0₁)
+  a₁ : || Hom v₁ crn ||
+  a₁ = 0₁
+  a₂ : || Hom v₂ crn ||
+  a₂ = 0₁
+
+module cospan-in-ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+  private
+    module ℂ where
+      open ecategory-aux ℂ public
+      open comm-shapes ℂ public
+    module Csp = Cospan-aux
+    
+  diag2cosp : Cospan diag-in ℂ → ℂ.cospan
+  diag2cosp cosp = record
+    { O12 = cosp.ₒ Csp.crn
+    ; cosp/ = record
+            { O1 = cosp.ₒ Csp.v₁
+            ; O2 = cosp.ₒ Csp.v₂
+            ; a1 = cosp.ₐ Csp.a₁
+            ; a2 = cosp.ₐ Csp.a₂
+            }
+    }
+    where module cosp = diagram cosp
+
+  cosp2diag : ℂ.cospan → Cospan diag-in ℂ
+  cosp2diag cosp = record
+    { FObj = FO
+    ; FHom = FH
+    ; isF = record
+          { ext = ext
+          ; id = λ {A} → id A
+          ; cmp = cmp
+          }
+    }
+    where module cosp = ℂ.cospan cosp
+          FO : Csp.Obj → ℂ.Obj
+          FO (inl x) = cosp.O12
+          FO (inr (inl x)) = cosp.O1
+          FO (inr (inr x)) = cosp.O2
+          FH : {A B : Csp.Obj} → || Csp.Hom A B || → || ℂ.Hom (FO A) (FO B) ||
+          FH {inl x} {inl y} f = ℂ.idar cosp.O12
+          FH {inr (inl x)} {inl y} f = cosp.a1
+          FH {inr (inl x)} {inr (inl y)} f = ℂ.idar cosp.O1
+          FH {inr (inr x)} {inl y} f = cosp.a2
+          FH {inr (inr x)} {inr (inr y)} f = ℂ.idar cosp.O2
+
+          ext : {A B : Csp.Obj} {f f' : || Csp.Hom A B ||}
+                   → f Csp.~ f' → FH f ℂ.~ FH f'
+          ext {inl x} {inl x₁} {f} {f'} eq = ℂ.r
+          ext {inr (inl x)} {inl y} {f} {f'} eq = ℂ.r
+          ext {inr (inl x)} {inr (inl y)} {f} {f'} eq = ℂ.r
+          ext {inr (inr x)} {inl y} {f} {f'} eq = ℂ.r
+          ext {inr (inr x)} {inr (inr y)} {f} {f'} eq = ℂ.r
+
+          id : (A : Csp.Obj) → FH (Csp.idar A) ℂ.~ ℂ.idar (FO A)
+          id (inl x) = ℂ.r
+          id (inr (inl x)) = ℂ.r
+          id (inr (inr x)) = ℂ.r
+
+          cmp : {A B C : Csp.Obj}(f : || Csp.Hom A B ||)(g : || Csp.Hom B C ||)
+                   → FH g ℂ.∘ FH f ℂ.~ FH (g Csp.∘ f)
+          cmp {inl x} {inl y} {inl z} f g = ℂ.lid
+          cmp {inr (inl x)} {inl x₁} {inl x₂} f g = ℂ.lid
+          cmp {inr (inl x)} {inr (inl x₁)} {inl x₂} f g = ℂ.rid
+          cmp {inr (inl x)} {inr (inl x₁)} {inr (inl x₂)} f g = ℂ.rid
+          cmp {inr (inr x)} {inl x₁} {inl x₂} f g = ℂ.lid
+          cmp {inr (inr x)} {inr (inr x₁)} {inl x₂} f g = ℂ.rid
+          cmp {inr (inr x)} {inr (inr x₁)} {inr (inr x₂)} f g = ℂ.rid
+
+-- end cospan-in-ecat

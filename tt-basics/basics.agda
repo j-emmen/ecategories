@@ -31,6 +31,11 @@ Nrec : {ℓ : Level} {C : N -> Set ℓ} -> C O -> ((n : N) -> C n -> C (s n)) ->
 Nrec d e O = d
 Nrec d e (s n) = e n (Nrec d e n)
 
+one two three four : N
+one = s O
+two = s one
+three = s two
+four = s three
 
 -- disjoint sums
 

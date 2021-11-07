@@ -27,7 +27,7 @@ discrete-ecat : {ℓ : Level} → Set ℓ → ecategoryₗₑᵥ ℓ ℓ ℓ
 -- ℓ₁ ≤ ℓ₂ ; 0ₗₑᵥ ≤ ℓ₃
 discrete-ecat A = record
   { Obj = A
-  ; Hom = λ x y → disc-std (x == y)
+  ; Hom = λ x y → Freestd (x == y)
   ; isecat = record
            { _∘_ = λ q p → p ■ q
            ; idar = λ _ → =rf
@@ -67,7 +67,7 @@ codiscrete-ecat : {ℓ : Level} → Set ℓ → ecategoryₗₑᵥ ℓ 0ₗₑ�
 -- ℓ₁ ≤ ℓ₂ ; 0ₗₑᵥ ≤ ℓ₃
 codiscrete-ecat A = record
   { Obj = A
-  ; Hom = λ x y → disc-std N₁
+  ; Hom = λ x y → Freestd N₁
   ; isecat = record
            { _∘_ = λ g f → f
            ; idar = λ a → 0₁

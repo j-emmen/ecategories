@@ -41,18 +41,25 @@ module comm-shapes {ℓ₁ ℓ₂ ℓ₃}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂
           where open span/ sp/
 
 
-  record cospan/ (O1 O2 : Obj) : Set ℓₙₒ~ where
+  record /cospan (O1 O2 : Obj) : Set ℓₙₒ~ where
     constructor mkcospan/
     field
       {O12} : Obj
       a1 : || Hom O1 O12 ||
       a2 : || Hom O2 O12 ||
 
+  record cospan/ (O12 : Obj) : Set ℓₙₒ~ where
+    constructor mkcospan/
+    field
+      {O1} {O2} : Obj
+      a1 : || Hom O1 O12 ||
+      a2 : || Hom O2 O12 ||
+
   record cospan : Set ℓₙₒ~ where
     constructor mkcospan
     field
-      {O1} {O2} : Obj
-      cosp/ : cospan/ O1 O2
+      {O12} : Obj
+      cosp/ : cospan/ O12
     open cospan/ cosp/ public
 
 
