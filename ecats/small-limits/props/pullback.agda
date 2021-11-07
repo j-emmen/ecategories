@@ -3,7 +3,6 @@
 
 module ecats.small-limits.props.pullback where
 
-open import Agda.Primitive
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
 open import ecats.functors.defs.efunctor-d&n
