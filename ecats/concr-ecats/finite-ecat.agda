@@ -5,9 +5,14 @@ module ecats.concr-ecats.finite-ecat where
 
 open import tt-basics.all-basics renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
+open import ecats.basic-defs.isomorphism
+open import ecats.basic-props.isomorphism
+open import ecats.basic-defs.free-ecat-on-graph
 open import ecats.basic-defs.commut-shapes
 open import ecats.concr-ecats.Std-lev
 open import ecats.functors.defs.efunctor
+open import ecats.functors.defs.natural-iso
+open import ecats.functors.defs.natural-transformation
 
 
 
@@ -271,27 +276,223 @@ module Cospan-aux where
   a₂ : || Hom v₂ crn ||
   a₂ = 0₁
 
+module Cospan-graph where
+  private module Csp = Cospan-aux
+  V : Set
+  V = N₁ + (N₁ + N₁)
+  E : V → V → Set
+  E (inl x) y = N₀
+  E (inr (inl x)) (inl y) = N₁
+  E (inr (inl x)) (inr y) = N₀
+  E (inr (inr x)) (inl y) = N₁
+  E (inr (inr x)) (inr y) = N₀
+
+  crn v₁ v₂ : V
+  crn = inl 0₁
+  v₁ = inr (inl 0₁)
+  v₂ = inr (inr 0₁)
+  a₁ : E v₁ crn
+  a₁ = 0₁
+  a₂ : E v₂ crn
+  a₂ = 0₁
+
+  IE : {u v : V} → E u v → || Csp.Hom u v ||
+  IE {inr (inl x)} {inl y} uv = 0₁
+  IE {inr (inr x)} {inl y} uv = 0₁
+
+  ES :(u v : V) → setoid {0ₗₑᵥ} {0ₗₑᵥ}
+  ES u v = Freestd (E u v)
+
+  _~_ : {u v : V}(uv uv' : E u v) → Set
+  uv ~ uv' = ES._∼_ uv uv'
+           where module ES {u v : V} = setoid (ES u v)
+  
+  IE-ext : {u v : V}{uv uv' : E u v} → uv ~ uv' → IE uv Csp.~ IE uv'
+  IE-ext {u} {v} {uv} {uv'} = =J (λ a _ → IE uv Csp.~ IE a) =rf
+-- end Cospan-graph
+
+
+module Cospan-is-free-props {ℓ₁ ℓ₂ ℓ₃ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)
+                            {GO : Cospan-aux.Obj → ecat.Obj 𝔻}
+                            {GE : {u v : Cospan-aux.Obj} → Cospan-graph.E u v
+                                       → || ecat.Hom 𝔻 (GO u) (GO v) ||}
+                            (GEext : {u v : Cospan-aux.Obj}{uv uv' : Cospan-graph.E u v}
+                                       → uv Cospan-graph.~ uv'
+                                         → < ecat.Hom 𝔻 (GO u) (GO v) > GE uv ~ GE uv')
+                            where
+  --open Cospan-graph --using (IE; IE-ext)
+  private
+    module 𝔻 where
+      open ecat 𝔻 public
+      open ecategory-aux-only 𝔻 using (r) public
+      open iso-defs 𝔻 public
+      open iso-props 𝔻 public
+    module CspC = Cospan-aux
+    module CspG = Cospan-graph
+    GH : {A B : CspC.Obj} → || CspC.Hom A B || → || 𝔻.Hom (GO A) (GO B) ||
+    GH {inl 0₁} {inl 0₁} f = 𝔻.idar (GO (inl 0₁))
+    GH {inr (inl x)} {inl y} f = GE CspG.a₁
+    GH {inr (inl 0₁)} {inr (inl 0₁)} f = 𝔻.idar (GO (inr (inl 0₁)))
+    GH {inr (inr x)} {inl y} f = GE CspG.a₂
+    GH {inr (inr 0₁)} {inr (inr 0₁)} f = 𝔻.idar (GO (inr (inr 0₁)))
+    
+  fctr  : efunctorₗₑᵥ Cospan 𝔻
+  fctr = record
+       { FObj = GO
+       ; FHom = GH
+       ; isF = record
+             { ext = ext
+             ; id = λ {A} → id A
+             ; cmp = cmp
+             }
+       }
+       where open ecategory-aux-only 𝔻 using (r; lid; rid)
+             ext : {A B : CspC.Obj}{f f' : || CspC.Hom A B ||} → f CspC.~ f' → GH f 𝔻.~ GH f'
+             ext {inl 0₁} {inl 0₁} {f} {f'} eq = r
+             ext {inr (inl x)} {inl x₁} {f} {f'} eq = r
+             ext {inr (inl 0₁)} {inr (inl 0₁)} {f} {f'} eq = r
+             ext {inr (inr x)} {inl x₁} {f} {f'} eq = r
+             ext {inr (inr 0₁)} {inr (inr 0₁)} {f} {f'} eq = r
+             id : (A : CspC.Obj) → GH (CspC.idar A) 𝔻.~ 𝔻.idar (GO A)
+             id (inl 0₁) = r
+             id (inr (inl 0₁)) = r
+             id (inr (inr 0₁)) = r
+             cmp : {A B C : CspC.Obj}(f : || CspC.Hom A B ||)(g : || CspC.Hom B C ||)
+                      → GH g 𝔻.∘ GH f 𝔻.~ GH (g CspC.∘ f)
+             cmp {inl 0₁} {inl 0₁} {inl 0₁} f g = rid
+             cmp {inr (inl x)} {inl 0₁} {inl 0₁} f g = lid
+             cmp {inr (inl 0₁)} {inr (inl 0₁)} {inl z} f g = rid
+             cmp {inr (inl 0₁)} {inr (inl 0₁)} {inr (inl 0₁)} f g = rid
+             cmp {inr (inr x)} {inl 0₁} {inl 0₁} f g = lid
+             cmp {inr (inr 0₁)} {inr (inr 0₁)} {inl z} f g = rid
+             cmp {inr (inr 0₁)} {inr (inr 0₁)} {inr (inr 0₁)} f g = rid
+  private module fctr = efunctorₗₑᵥ fctr
+
+  ar : {v : CspC.Obj} → || 𝔻.Hom (fctr.ₒ v) (GO v) ||
+  ar {v} = 𝔻.idar (GO v)
+  nat : {u v : CspC.Obj} (uv : Cospan-graph.E u v)
+           → ar 𝔻.∘ fctr.ₐ (CspG.IE uv) 𝔻.~  GE uv 𝔻.∘ ar
+  nat {inr (inl x)} {inl y} 0₁ = lidgen ridˢ
+                               where open ecategory-aux-only 𝔻 using (lidgen; ridˢ)
+  nat {inr (inr x)} {inl y} 0₁ = lidgen ridˢ
+                               where open ecategory-aux-only 𝔻 using (lidgen; ridˢ)
+  iso : {v : CspC.Obj} → 𝔻.is-iso (ar {v})
+  iso {v} = 𝔻.idar-is-iso (GO v)
+
+  uq : {H : efunctorₗₑᵥ Cospan 𝔻}
+       (Hfnc : {v : CspC.Obj} → || 𝔻.Hom (efctr.ₒ H v) (GO v) ||)
+       (Hnat : {u v : CspC.Obj}(uv : Cospan-graph.E u v)
+                   → Hfnc 𝔻.∘ efctr.ₐ H (Cospan-graph.IE uv) 𝔻.~ GE uv 𝔻.∘ Hfnc)
+       (Hiso : {v : CspC.Obj} → 𝔻.is-iso (Hfnc {v}))
+          → H ≅ₐ fctr
+  uq {H} Hfnc Hnat Hiso = record
+    { natt = record
+             { fnc = Hfnc
+             ; nat = natfnc
+             }
+    ; natt⁻¹ = record
+             { fnc = Hiso.invf
+             ; nat = λ {A} {B} f → 𝔻.iso-sq (Hiso.isisopair {A}) (Hiso.isisopair {B}) (natfnc f) 
+             }
+    ; isiso = Hiso.isisopair
+    }
+    where module H = efctr H
+          module Hiso {v : CspC.Obj} = 𝔻.is-iso (Hiso {v})
+          open ecategory-aux-only 𝔻
+          natfnc : {A B : CspC.Obj} (f : || CspC.Hom A B ||)
+                      → Hfnc 𝔻.∘ H.ₐ f 𝔻.~ fctr.ₐ f 𝔻.∘ Hfnc
+          natfnc {inl 0₁} {inl 0₁} 0₁ = ridgg (lidggˢ r fctr.id) H.id
+          natfnc {inr (inl x)} {inl x₁} 0₁ = Hnat CspG.a₁
+          natfnc {inr (inl 0₁)} {inr (inl 0₁)} 0₁ = ridgg (lidggˢ r fctr.id) H.id
+          natfnc {inr (inr x)} {inl x₁} 0₁ = Hnat CspG.a₂
+          natfnc {inr (inr 0₁)} {inr (inr 0₁)} 0₁ = ridgg (lidggˢ r fctr.id) H.id          
+-- end Cospan-is-free-props
+
+
+-- To have a cospan diagram in ℂ is to have Cospan-graph → ℂ
+
+Cospan-free : (ℓ₁ ℓ₂ ℓ₃ : Level)
+  → Cospan is-free-category-on-graph Cospan-graph.ES via Cospan-graph.IE at-lev[ ℓ₁ , ℓ₂ , ℓ₃ ]
+Cospan-free ℓ₁ ℓ₂ ℓ₃ = record
+  { ext = IE-ext
+  ; unvprop = λ 𝔻 GEext → record
+            { fctr = fctr 𝔻 GEext
+            ; tr-fnc = ar 𝔻 GEext
+            ; tr-nat = nat 𝔻 GEext
+            ; tr-iso = iso 𝔻 GEext
+            ; uq = uq 𝔻 GEext
+            }
+  }
+  where open Cospan-is-free-props
+        open Cospan-graph using (IE-ext)
+
+module Cospan-free {ℓ₁ ℓ₂ ℓ₃ : Level} = _is-free-category-on-graph_via_at-lev[_,_,_] (Cospan-free ℓ₁ ℓ₂ ℓ₃)
+
+{-
+mk-cosp-diag : {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)
+               {FO : Cospan-aux.Obj → ecat.Obj ℂ}
+               (FE : {u v : Cospan-aux.Obj} → Cospan-graph.E u v
+                          → || ecat.Hom ℂ (FO u) (FO v) ||)
+               (FEext : {u v : Cospan-aux.Obj}{uv uv' : Cospan-graph.E u v}
+                        → uv Cospan-graph.~ uv'
+                             → < ecat.Hom ℂ (FO u) (FO v) > FE uv ~ FE uv')
+                   → Cospan diag-in ℂ
+mk-cosp-diag {ℓ₁} {ℓ₂} {ℓ₃} ℂ FE FEext = unv.fctr ℂ FEext
+                        where open _is-free-category-on-graph_via_at-lev[_,_,_] (Cospan-free ℓ₁ ℓ₂ ℓ₃)
+-}
+
 module cospan-in-ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
   private
     module ℂ where
       open ecategory-aux ℂ public
       open comm-shapes ℂ public
-    module Csp = Cospan-aux
+    module CspC = Cospan-aux
+    module CspG = Cospan-graph
     
   diag2cosp : Cospan diag-in ℂ → ℂ.cospan
   diag2cosp cosp = record
-    { O12 = cosp.ₒ Csp.crn
+    { O12 = cosp.ₒ CspC.crn
     ; cosp/ = record
-            { O1 = cosp.ₒ Csp.v₁
-            ; O2 = cosp.ₒ Csp.v₂
-            ; a1 = cosp.ₐ Csp.a₁
-            ; a2 = cosp.ₐ Csp.a₂
+            { O1 = cosp.ₒ CspC.v₁
+            ; O2 = cosp.ₒ CspC.v₂
+            ; a1 = cosp.ₐ CspC.a₁
+            ; a2 = cosp.ₐ CspC.a₂
             }
     }
     where module cosp = diagram cosp
 
   cosp2diag : ℂ.cospan → Cospan diag-in ℂ
-  cosp2diag cosp = record
+  cosp2diag cosp = Cospan-free.unv.fctr ℂ {FV} {FE} FEext
+                 where module cosp = ℂ.cospan cosp
+                       FV : CspG.V → ℂ.Obj
+                       FV (inl x) = cosp.O12
+                       FV (inr (inl x)) = cosp.O1
+                       FV (inr (inr x)) = cosp.O2
+                       FE : {u v : CspG.V} → CspG.E u v → || ℂ.Hom (FV u) (FV v) ||
+                       FE {inr (inl x)} {inl y} uv = cosp.a1
+                       FE {inr (inr x)} {inl y} uv = cosp.a2
+                       FEext : {u v : CspG.V} {uv uv' : CspG.E u v}
+                                  → uv CspG.~ uv' → FE uv ℂ.~ FE uv'
+                       FEext {inr (inl x)} {inl x₁} {uv} {uv'} eq = ℂ.r
+                       FEext {inr (inr x)} {inl x₁} {uv} {uv'} eq = ℂ.r
+{-
+                       FH : {A B : CspC.Obj} → || CspC.Hom A B || → || ℂ.Hom (FO A) (FO B) ||
+                       FH {inl x} {inl y} f = ℂ.idar cosp.O12
+                       FH {inr (inl x)} {inl y} f = cosp.a1
+                       FH {inr (inl x)} {inr (inl y)} f = ℂ.idar cosp.O1
+                       FH {inr (inr x)} {inl y} f = cosp.a2
+                       FH {inr (inr x)} {inr (inr y)} f = ℂ.idar cosp.O2
+                       FHext : {A B : CspC.Obj} {f f' : || CspC.Hom A B ||}
+                                → f CspC.~ f' → FH f ℂ.~ FH f'
+                       FHext {inl x} {inl x₁} {f} {f'} eq = ℂ.r
+                       FHext {inr (inl x)} {inl y} {f} {f'} eq = ℂ.r
+                       FHext {inr (inl x)} {inr (inl y)} {f} {f'} eq = ℂ.r
+                       FHext {inr (inr x)} {inl y} {f} {f'} eq = ℂ.r
+                       FHext {inr (inr x)} {inr (inr y)} {f} {f'} eq = ℂ.r
+-}
+
+{-
+record
     { FObj = FO
     ; FHom = FH
     ; isF = record
@@ -334,5 +535,6 @@ module cospan-in-ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ �
           cmp {inr (inr x)} {inl x₁} {inl x₂} f g = ℂ.lid
           cmp {inr (inr x)} {inr (inr x₁)} {inl x₂} f g = ℂ.rid
           cmp {inr (inr x)} {inr (inr x₁)} {inr (inr x₂)} f g = ℂ.rid
+-}
 
 -- end cospan-in-ecat
