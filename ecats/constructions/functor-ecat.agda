@@ -3,9 +3,7 @@
 
 module ecats.constructions.functor-ecat where
 
-open import Agda.Primitive
-open import tt-basics.id-type using (=J)
-open import tt-basics.setoids
+open import tt-basics.setoids using (stdsections)
 open import ecats.basic-defs.ecat-def&not
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
@@ -33,6 +31,10 @@ private module fctr {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑ�
                     = is-ecategory (fctr-and-natt-is-ecat ℂ 𝔻)
 
 
+-------------------------------------------------
+-- Category of efunctors between two ecategories
+-------------------------------------------------
+
 Fctrₗₑᵥ : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~)
          {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~)
            → ecategoryₗₑᵥ (fctr.ℓₒ ℂ 𝔻) (fctr.ℓₐᵣᵣ ℂ 𝔻) (fctr.ℓ~ ℂ 𝔻)
@@ -44,29 +46,32 @@ Fctrₗₑᵥ ℂ 𝔻 = record
 
 
 
--- Small category of functors between small categories
+-------------------------------------------------------------
+-- Small category of efunctors between two small ecategories
+-------------------------------------------------------------
 
 Fctrₛₘ : (ℂ 𝔻 : small-ecategory) → small-ecategory
 Fctrₛₘ ℂ 𝔻 = Fctrₗₑᵥ ℂ 𝔻
 
--- Large category of functors between locally small categories
+---------------------------------------------------------------------
+-- Large category of efunctors between two locally small ecategories
+---------------------------------------------------------------------
 
 Fctrₗₛ : (ℂ 𝔻 : ecategory) → large-ecategory
 Fctrₗₛ ℂ 𝔻 = Fctrₗₑᵥ ℂ 𝔻
 
 
--- Category of diagrams, i.e. the category of functors from a small category.
+
+--------------------------------------------------------------
+-- Category of diagrams,
+-- i.e. the category of functors from a small category.
 -- When ℂ is locally small, Diagr 𝕁 ℂ is locally small too.
+--------------------------------------------------------------
+
 Diagr : (𝕁 : small-ecategory){ℓₒ ℓₕ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~)
             → ecategoryₗₑᵥ (ℓₒ ⊔ ℓₕ ⊔ ℓ~) (ℓₕ ⊔ ℓ~) ℓ~
 Diagr 𝕁 ℂ = Fctrₗₑᵥ 𝕁 ℂ
-{-
-record
-  { Obj = 𝕁 diag-in ℂ
-  ; Hom = NatTr {ℂ = 𝕁} {𝔻 = ℂ}
-  ; isecat = fctr-and-natt-is-ecat 𝕁 ℂ
-  }
--}
+
 
 const-diagr-on : {𝕁 : small-ecategory}{ℓₒ ℓₕ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~}
                     → ecat.Obj ℂ → 𝕁 diag-in ℂ
@@ -98,7 +103,9 @@ const-Diagr 𝕁 ℂ = record
   }
   where module ℂ = ecategory-aux ℂ
 
--- discrete diagrams
+---------------------------------
+-- Category of discrete diagrams
+---------------------------------
 
 discDiagr : (I : Set){ℓₒ ℓₕ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~) → ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~
 discDiagr I ℂ = record
