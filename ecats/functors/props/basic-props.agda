@@ -13,7 +13,7 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
-
+open import ecats.functors.props.efunctor
 
 
 module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
@@ -26,26 +26,17 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
         open finite-weak-limits 𝕏 public
     module ℂ = macros ℂ
     module 𝔻 = macros 𝔻
-    module F = efunctor-aux F
+    module F where
+      open efunctor-aux F public
+      open efunctor-lev-props F public
 
+  -- who knows how far these two guys go
   Fiso :  {A B : ℂ.Obj} {f : || ℂ.Hom A B ||} {invf : || ℂ.Hom B A ||}
              → ℂ.is-iso-pair f invf → 𝔻.is-iso-pair (F.ₐ f) (F.ₐ invf)
-  Fiso {f = f} {invf} isopair = record
-    { iddom = F.∘ax iddom ⊙ F.id
-    ; idcod = F.∘ax idcod ⊙ F.id
-    }
-    where open ℂ.is-iso-pair isopair
-          open ecategory-aux 𝔻
-  
-
+  Fiso = F.pres-iso-pair
   Fpres-iso : {A B : ℂ.Obj} {f : || ℂ.Hom A B ||}
                  → ℂ.is-iso f → 𝔻.is-iso (F.ₐ f)
-  Fpres-iso isof = record
-    { invf = F.ₐ invf
-    ; isisopair = Fiso isisopair
-    }
-    where open ℂ.is-iso isof
-
+  Fpres-iso = F.pres-iso
 
 
   pres!→lc! : has-terminal ℂ → preserves-terminal F → is-left-covering-trm F

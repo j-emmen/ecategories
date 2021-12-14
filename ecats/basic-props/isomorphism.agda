@@ -120,6 +120,30 @@ module iso-props {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ 
     iso-trcod ison {_} {f'} (ass ⊙ iso-trdom isom {f'} {n ∘ f} (pf ˢ))
       where open ecategory-aux-only ℂ
 
+  ≅ₒrefl : (a : Obj) → a ≅ₒ a
+  ≅ₒrefl a = record
+           { a12 = idar a
+           ; a21 = idar a
+           ; isop = idar-is-isopair a
+           }
+
+  ≅ₒsym : {a b : Obj} → a ≅ₒ b → b ≅ₒ a
+  ≅ₒsym iso = record
+            { a12 = a21
+            ; a21 = a12
+            ; isop = inv-iso-pair isop
+            }
+            where open _≅ₒ_ iso
+
+  ≅ₒtra : {a b c : Obj} → a ≅ₒ b → b ≅ₒ c → a ≅ₒ c
+  ≅ₒtra iso1 iso2 = record
+                  { a12 = i2.a12 ∘ i1.a12
+                  ; a21 = i1.a21 ∘ i2.a21
+                  ; isop = isopair-cmp i1.isop i2.isop
+                  }
+                  where module i1 = _≅ₒ_ iso1
+                        module i2 = _≅ₒ_ iso2
+  
 -- end iso-props
 
 
