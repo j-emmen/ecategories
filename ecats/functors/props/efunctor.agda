@@ -38,4 +38,12 @@ module efunctor-lev-props {ℓ₁ₒ ℓ₁ₕ ℓ₁~}{ℂ : ecategoryₗₑᵥ
     }
     where open ℂ.is-iso isof
 
+  pres≅ₒ : {A B : ℂ.Obj} → A ℂ.≅ₒ B → (F.ₒ A) 𝔻.≅ₒ (F.ₒ B)
+  pres≅ₒ iso = record
+    { a12 = F.ₐ a12
+    ; a21 = F.ₐ a21
+    ; isop = pres-iso-pair isop
+    }
+    where open ℂ._≅ₒ_ iso
+
 -- end efunctor-lev-props
