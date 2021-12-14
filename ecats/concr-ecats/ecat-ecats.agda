@@ -1,7 +1,7 @@
 
 {-# OPTIONS --without-K #-}
 
-module ecats.constructions.ecat-ecats where
+module ecats.concr-ecats.ecat-ecats where
 
 open import Agda.Primitive
 open import tt-basics.basics using (is-tt-eqrel)
