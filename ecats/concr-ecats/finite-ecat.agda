@@ -6,6 +6,7 @@ module ecats.concr-ecats.finite-ecat where
 open import tt-basics.all-basics renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.isomorphism
+open import ecats.basic-defs.preorder
 open import ecats.basic-props.isomorphism
 open import ecats.basic-defs.commut-shapes
 open import ecats.constructions.free-ecat-on-graph
@@ -16,7 +17,7 @@ open import ecats.functors.defs.natural-transformation
 
 
 
-module FinCat-data where
+module finite-linear-preorders-data where
   𝔽Hom : (n : N) → Fin n → Fin n → setoid {0ₗₑᵥ} {0ₗₑᵥ}
   𝔽Hom (s n) (inl x) (inl y) = 𝔽Hom n x y
   𝔽Hom (s n) (inl x) (inr y) = Freestd N₁
@@ -42,84 +43,51 @@ module FinCat-data where
   𝔽cmp (s n) {inl x} {inr y} {inr z} jk ij = 0₁
   𝔽cmp (s n) {inr x} {inr y} {inr z} jk ij = 0₁
 
-  {-
-  𝔽cmp (s n) {i} {j} {k} jk ij =
-    Finsrec n { C = λ (x : Fin (s n)) → {y z : Fin (s n)}
-                     → || 𝔽Hom (s n) x y || → || 𝔽Hom (s n) y z || → || 𝔽Hom (s n) x z || }
-            ( λ i₁ {j₁} {k₁} → {! Finsrec n {C = λ z → {y : Fin (s n)}
-                                         → || 𝔽Hom (s n) (Fin-emb n i₁) y || → || 𝔽Hom (s n) y z ||
-                                          → || 𝔽Hom (s n) (Fin-emb n i₁) z ||} !} )
-            {!!}
-            i
-            ij
-            jk
-
-  ck : (n : N){i j k : Fin n} → || 𝔽Hom n j k || → || 𝔽Hom n i j || → Set
-  ck  n {i} {j} {k} jk ij = {!𝔽Hom (s n) (inl i) (inl j) !}
-  -}
-
   ispreorder : (n : N){i j : Fin n}{ij ij' :  || 𝔽Hom n i j ||} → < 𝔽Hom n i j > ij ~ ij'
   ispreorder (s n) {inl x} {inl x₁} {ij} {ij'} = ispreorder n {ij = ij} {ij'}
   ispreorder (s n) {inl x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
   ispreorder (s n) {inr x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
+-- end finite-linear-preorders-data
 
 
+FinLinOrd : (n : N) → small-ecategory
+FinLinOrd n = record
+            { Obj = Fin n
+            ; Hom = 𝔽Hom n
+            ; isecat = record
+                     { _∘_ = 𝔽cmp n
+                     ; idar = 𝔽id n
+                     ; ∘ext = λ f f' g g' x x₁ → ispreorder n
+                     ; lidax = λ f → ispreorder n
+                     ; ridax = λ f → ispreorder n
+                     ; assoc = λ f g h → ispreorder n
+                     }
+            }
+            where open finite-linear-preorders-data
 
-{-
-  𝔽cmp-ext : (n : N){a b c : Fin n} (f f' : || 𝔽Hom n a b ||)(g g' : || 𝔽Hom n b c ||)
-                → < 𝔽Hom n a b > f ~ f' → < 𝔽Hom n b c > g ~ g'
-                    → < 𝔽Hom n a c > 𝔽cmp n g f ~ 𝔽cmp n g' f'
-  𝔽cmp-ext (s n) {inl x} {inl y} {inl z} ij ij' jk jk' eqij eqjk = 𝔽cmp-ext n ij ij' jk jk' eqij eqjk
-  𝔽cmp-ext (s n) {inl x} {inl y} {inr z} ij ij' jk jk' eqij eqjk = =rf
-  𝔽cmp-ext (s n) {inl x} {inr y} {inr z} ij ij' jk jk' eqij eqjk = =rf
-  𝔽cmp-ext (s n) {inr x} {inr x₁} {inr x₂} ij ij' jk jk' eqij eqjk = =rf
+FinLinOrd-is-preorder : (n : N) → is-preorder (FinLinOrd n)
+FinLinOrd-is-preorder n = record { pf = ispreorder n }
+                      where open finite-linear-preorders-data
 
-  𝔽lidax : (n : N){a b : Fin n}(f : || 𝔽Hom n a b ||) → < 𝔽Hom n a b > 𝔽cmp n (𝔽id n b) f ~ f
-  𝔽lidax (s n) {inl x} {inl x₁} ij = 𝔽lidax n ij
-  𝔽lidax (s n) {inl x} {inr x₁} ij = pj2 N₁-isContr ij ⁻¹
-  𝔽lidax (s n) {inr x} {inr x₁} ij = pj2 N₁-isContr ij ⁻¹
+𝔽inPreOrd : (n : N) → small-preorder
+𝔽inPreOrd n = record
+             { ℂ = FinLinOrd n
+             ; ispreord = FinLinOrd-is-preorder n
+             }
 
-  𝔽ridax : (n : N){a b : Fin n}(f : || 𝔽Hom n a b ||) → < 𝔽Hom n a b > 𝔽cmp n f (𝔽id n a) ~ f
-  𝔽ridax (s n) {inl x} {inl x₁} ij = 𝔽ridax n ij
-  𝔽ridax (s n) {inl x} {inr x₁} ij = pj2 N₁-isContr ij ⁻¹
-  𝔽ridax (s n) {inr x} {inr x₁} ij = pj2 N₁-isContr ij ⁻¹
-
-  𝔽assoc : (n : N){a b c d : Fin n}(f : || 𝔽Hom n a b ||)(g : || 𝔽Hom n b c ||)(h : || 𝔽Hom n c d ||)
-              → < 𝔽Hom n a d > 𝔽cmp n h (𝔽cmp n g f) ~ 𝔽cmp n (𝔽cmp n h g) f
-  𝔽assoc (s n) {inl x} {inl x₁} {inl x₂} {inl x₃} ij jk kl = 𝔽assoc n ij jk kl
-  𝔽assoc (s n) {inl x} {inl x₁} {inl x₂} {inr x₃} ij jk kl = =rf
-  𝔽assoc (s n) {inl x} {inl x₁} {inr x₂} {inr x₃} ij jk kl = =rf
-  𝔽assoc (s n) {inl x} {inr x₁} {inr x₂} {inr x₃} ij jk kl = =rf
-  𝔽assoc (s n) {inr x} {inr x₁} {inr x₂} {inr x₃} ij jk kl = =rf
-  -}
--- end FinCat-data
-
-𝔽inCat : (n : N) → small-ecategory
-𝔽inCat n = record
-         { Obj = Fin n
-         ; Hom = 𝔽Hom n
-         ; isecat = record
-                  { _∘_ = 𝔽cmp n
-                  ; idar = 𝔽id n
-                  ; ∘ext = λ f f' g g' x x₁ → ispreorder n
-                  ; lidax = λ f → ispreorder n
-                  ; ridax = λ f → ispreorder n
-                  ; assoc = λ f g h → ispreorder n
-                  }
-         }
-         where open FinCat-data
-
-module 𝔽inCat (n : N) where
-  open ecategory-aux (𝔽inCat n) public
-  open FinCat-data using (ispreorder) public
+module FinLinOrd (n : N) where
+  open ecategory-aux (FinLinOrd n) public
+  module ispreord = is-preorder (FinLinOrd-is-preorder n)
 
 
-𝟘 𝟙 𝟚 : small-ecategory
-𝟘 = 𝔽inCat O
-𝟙 = 𝔽inCat (s O)
-𝟚 = 𝔽inCat (s (s O))
-𝟛 = 𝔽inCat (s (s (s O)))
-𝟜 = 𝔽inCat (s (s (s (s O))))
+[0] [1] [2] [3] [4] ⇨ : small-ecategory
+[0] = FinLinOrd O
+[1] = FinLinOrd (s O)
+[2] = FinLinOrd (s (s O))
+[3] = FinLinOrd (s (s (s O)))
+[4] = FinLinOrd (s (s (s (s O))))
+⇨ = [2]
+
 
 module ωCat-data where
   Hom : N → N → setoid {0ₗₑᵥ} {0ₗₑᵥ}
@@ -163,21 +131,32 @@ module ωCat-data where
   }
   where open ωCat-data
 
+ω-is-preorder : is-preorder ω
+ω-is-preorder = record { pf =  λ {m} {n} {f} {f'} → ispreorder {m} {n} {f} {f'} }
+              where open ωCat-data
+
+ωPreOrd : small-preorder
+ωPreOrd = record
+        { ℂ = ω
+        ; ispreord = ω-is-preorder
+        }
+
 module ω where
   open ecategory-aux ω public
-  open ωCat-data using (suc; ispreorder) public
+  open ωCat-data using (suc) public
+  module ispreord = is-preorder ω-is-preorder
 
 
--- embedding of finite preorders into ω
+-- embedding of finite linear preorders into ω
 
-Ι : (n : N) → efunctor (𝔽inCat n) ω
+Ι : (n : N) → efunctor (FinLinOrd n) ω
 Ι n = record
     { FObj = frgt n
     ; FHom = fctr n
     ; isF = record
-          { ext = λ {i} _ → ω.ispreorder {frgt n i}
-          ; id = λ {i} → ω.ispreorder {frgt n i}
-          ; cmp = λ {i} _ _ → ω.ispreorder {frgt n i}
+          { ext = λ {i} _ → ω.ispreord.pf {frgt n i}
+          ; id = λ {i} → ω.ispreord.pf {frgt n i}
+          ; cmp = λ {i} _ _ → ω.ispreord.pf {frgt n i}
           }
     }
     where frgt : (n : N) → Fin n → N
@@ -187,7 +166,7 @@ module ω where
           frgt-ar : (n : N)(i : Fin n) → || ωCat-data.Hom (frgt n i) n ||
           frgt-ar (s n) (inl x) = ω._∘_ {a = frgt n x} (ω.suc n) (frgt-ar n x)
           frgt-ar (s n) (inr x) = ω.suc n
-          fctr : (n : N){i j : Fin n} → || ecategoryₗₑᵥ.Hom (𝔽inCat n) i j ||
+          fctr : (n : N){i j : Fin n} → || ecategoryₗₑᵥ.Hom (FinLinOrd n) i j ||
                     → || ωCat-data.Hom (frgt n i) (frgt n j) ||
           fctr (s n) {inl x} {inl x₁} ij = fctr n ij
           fctr (s n) {inl x} {inr x₁} ij = frgt-ar n x
@@ -538,3 +517,48 @@ record
 -}
 
 -- end cospan-in-ecat
+
+
+
+
+-- Explicit proofs
+  {-
+  𝔽cmp (s n) {i} {j} {k} jk ij =
+    Finsrec n { C = λ (x : Fin (s n)) → {y z : Fin (s n)}
+                     → || 𝔽Hom (s n) x y || → || 𝔽Hom (s n) y z || → || 𝔽Hom (s n) x z || }
+            ( λ i₁ {j₁} {k₁} → {! Finsrec n {C = λ z → {y : Fin (s n)}
+                                         → || 𝔽Hom (s n) (Fin-emb n i₁) y || → || 𝔽Hom (s n) y z ||
+                                          → || 𝔽Hom (s n) (Fin-emb n i₁) z ||} !} )
+            {!!}
+            i
+            ij
+            jk
+  -}
+
+{-
+  𝔽cmp-ext : (n : N){a b c : Fin n} (f f' : || 𝔽Hom n a b ||)(g g' : || 𝔽Hom n b c ||)
+                → < 𝔽Hom n a b > f ~ f' → < 𝔽Hom n b c > g ~ g'
+                    → < 𝔽Hom n a c > 𝔽cmp n g f ~ 𝔽cmp n g' f'
+  𝔽cmp-ext (s n) {inl x} {inl y} {inl z} ij ij' jk jk' eqij eqjk = 𝔽cmp-ext n ij ij' jk jk' eqij eqjk
+  𝔽cmp-ext (s n) {inl x} {inl y} {inr z} ij ij' jk jk' eqij eqjk = =rf
+  𝔽cmp-ext (s n) {inl x} {inr y} {inr z} ij ij' jk jk' eqij eqjk = =rf
+  𝔽cmp-ext (s n) {inr x} {inr x₁} {inr x₂} ij ij' jk jk' eqij eqjk = =rf
+
+  𝔽lidax : (n : N){a b : Fin n}(f : || 𝔽Hom n a b ||) → < 𝔽Hom n a b > 𝔽cmp n (𝔽id n b) f ~ f
+  𝔽lidax (s n) {inl x} {inl x₁} ij = 𝔽lidax n ij
+  𝔽lidax (s n) {inl x} {inr x₁} ij = pj2 N₁-isContr ij ⁻¹
+  𝔽lidax (s n) {inr x} {inr x₁} ij = pj2 N₁-isContr ij ⁻¹
+
+  𝔽ridax : (n : N){a b : Fin n}(f : || 𝔽Hom n a b ||) → < 𝔽Hom n a b > 𝔽cmp n f (𝔽id n a) ~ f
+  𝔽ridax (s n) {inl x} {inl x₁} ij = 𝔽ridax n ij
+  𝔽ridax (s n) {inl x} {inr x₁} ij = pj2 N₁-isContr ij ⁻¹
+  𝔽ridax (s n) {inr x} {inr x₁} ij = pj2 N₁-isContr ij ⁻¹
+
+  𝔽assoc : (n : N){a b c d : Fin n}(f : || 𝔽Hom n a b ||)(g : || 𝔽Hom n b c ||)(h : || 𝔽Hom n c d ||)
+              → < 𝔽Hom n a d > 𝔽cmp n h (𝔽cmp n g f) ~ 𝔽cmp n (𝔽cmp n h g) f
+  𝔽assoc (s n) {inl x} {inl x₁} {inl x₂} {inl x₃} ij jk kl = 𝔽assoc n ij jk kl
+  𝔽assoc (s n) {inl x} {inl x₁} {inl x₂} {inr x₃} ij jk kl = =rf
+  𝔽assoc (s n) {inl x} {inl x₁} {inr x₂} {inr x₃} ij jk kl = =rf
+  𝔽assoc (s n) {inl x} {inr x₁} {inr x₂} {inr x₃} ij jk kl = =rf
+  𝔽assoc (s n) {inr x} {inr x₁} {inr x₂} {inr x₃} ij jk kl = =rf
+  -}
