@@ -1,14 +1,10 @@
- 
 
 {-# OPTIONS --without-K #-}
-
--- This module defines the category of small types and proves some of its properties
 
 module ecats.concr-ecats.Type where
 
 open import tt-basics.basics
-open import tt-basics.id-type
-open import tt-basics.setoids renaming (||_|| to ||_||std)
+open import tt-basics.id-type public
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.isomorphism
@@ -18,48 +14,18 @@ open import ecats.basic-defs.epi&mono
 open import ecats.basic-props.epi&mono-basic
 open import ecats.finite-limits.defs&not
 open import ecats.finite-limits.props.relations-among-weak-limits
+open import ecats.concr-ecats.Type-lev using (Type) public
 
-
-{-
-infix 3 ||_||
-||_|| : setoid → Set
-||_|| X = ||_||std X
--}
-module Type-defs where
-  TypeHom : (X Y : Set) → setoid
-  TypeHom X Y = record
-    { object = X → Y
-    ; _∼_ = λ f f' → (x : X) → f x == f' x
-    ; istteqrel = record
-      { refl = λ f x → =rf
-      ; sym = λ p x → =sym (p x)
-      ; tra = λ p q x → =tra (p x) (q x)
-      }
-    }
--- end Type-defs
-
-Type : ecategory
-Type = record
-         { Obj = Set
-         ; Hom = TypeHom
-         ; isecat = record
-                  { _∘_ = λ g f → λ x → g (f x)
-                  ; idar = λ X x → x
-                  ; ∘ext = λ f f' g g' p q x → =tra (=ap g (p x)) (q (f' x))
-                  ; lidax = λ f x → =rf
-                  ; ridax = λ f x → =rf
-                  ; assoc = λ f g h x → =rf
-                  }
-         }
-         where open Type-defs
+-- This module proves some properties of the category of small types.
+-- Type is defined in ecats.concr-ecats.Type-lev
 
 private
   module Type where
     open ecategory Type public
-open ecategory-aux Type
-open comm-shapes Type
-open iso-defs Type
-open epi&mono-defs Type
+    open comm-shapes Type public
+    open iso-defs Type public
+    open epi&mono-defs Type public
+open Type
 
 
 -- Type is quasi-cartesian
@@ -91,6 +57,7 @@ module Type-quasi-cartesian where
                }
       }
     }
+    where open ecategory-aux-only Type
 
   weql-Ty : has-weak-equalisers Type
   weql-Ty = record
@@ -147,15 +114,15 @@ open surjective-defs {Type} qcTy.hastrm
 -- Elementality aka conservativity of the global section functor
 
 module Type-is-elemental where
-  glel : {A : Set} → A → || Type.Hom N₁ A ||
+  glel : {A : Set} → A → || Hom N₁ A ||
   glel a = λ x → a
-  tyel : {A : Set} → || Type.Hom N₁ A || → A
+  tyel : {A : Set} → || Hom N₁ A || → A
   tyel a = a 0₁
   trmgen : terminal-is-generator qcTy.hastrm
   trmgen = record { isgen  = λ H x → tyel (H (glel x)) }
 
   -- Every surjective function splits
-  surj-splits : {A B : Set}{f : || Type.Hom A B ||}
+  surj-splits : {A B : Set}{f : || Hom A B ||}
                   → is-surjective f → is-split-epi f
   surj-splits {A} {B} {f} issrj = record
     { rinv = λ b → tyel (srj.cntimg (glel b))
@@ -194,6 +161,7 @@ module equalisers-imply-UIP (eql : has-equalisers Type) where
   UIP-ER-rf : {A : Set} (a : A) → UIP-EqRel a a
   UIP-ER-rf a = tyel (idar N₁ |eql[ r ])
               where open eqlofel a a
+                    open ecategory-aux-only Type
 
   UIP-ER-isprop : {A : Set} (a a' : A) → isProp (UIP-EqRel a a')
   UIP-ER-isprop a a' = λ e e' → eqluq {N₁} {glel e} {glel e'} (λ _ → isContr→isProp N₁-isContr _ _) 0₁
