@@ -162,6 +162,7 @@ CATₗₑᵥ ℓₒ ℓₐ ℓ~ = record
   ; Hom = λ ℂ 𝔻 → FctrStdₗₑᵥ ℂ 𝔻
   ; isecat = ○-is-ecat ℓₒ ℓₐ ℓ~
   }
+module CATₗₑᵥ (ℓₒ ℓₐ ℓ~ : Level) = ecat (CATₗₑᵥ ℓₒ ℓₐ ℓ~)
 
 -------------------------------------------------------------
 -- Locally small category of small ecategories and efunctors

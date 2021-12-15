@@ -6,11 +6,13 @@ module ecats.concr-ecats.adjunctions-Cat-Std where
 open import tt-basics.basics
 open import tt-basics.setoids renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
+open import ecats.basic-defs.preorder
 open import ecats.isomorphism
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.adjunction
+open import ecats.functors.defs.basic-defs
 open import ecats.functors.props.efunctor
 open import ecats.concr-ecats.ecat-ecats
 open import ecats.concr-ecats.Type-lev
@@ -32,6 +34,9 @@ attempt = record
         }
   }
 -}
+
+
+-- From ecategories to setoids
 
 module obj-up-to-iso {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
   private
@@ -104,8 +109,8 @@ module making-efctrs-ext-is-ext {ℓ₁ₒ ℓ₁ₐ ℓ₁~}{ℂ : ecategoryₗ
 -- Objects functor from categories to setoids, at every level
 --------------------------------------------------------------
 
-O/≅ₒ : (ℓₒ ℓₐ ℓ~ : Level) → efunctor (CATₗₑᵥ ℓₒ ℓₐ ℓ~) (Stdₗₑᵥ ℓₒ (ℓₐ ⊔ ℓ~))
-O/≅ₒ ℓₒ ℓₐ ℓ~ = record
+Ob/≅ₒ : (ℓₒ ℓₐ ℓ~ : Level) → efunctor (CATₗₑᵥ ℓₒ ℓₐ ℓ~) (Stdₗₑᵥ ℓₒ (ℓₐ ⊔ ℓ~))
+Ob/≅ₒ ℓₒ ℓₐ ℓ~ = record
   { FObj = Obj/≅ₒ
   ; FHom = ₒ/≅ₒ
   ; isF = record
@@ -120,6 +125,121 @@ O/≅ₒ ℓₒ ℓₐ ℓ~ = record
 
 
 
+-- From setoid to ecategories
+
+Disc-ecat : {ℓₒ ℓᵣ : Level} → setoid {ℓₒ} {ℓᵣ} → ecategoryₗₑᵥ ℓₒ ℓᵣ 0ₗₑᵥ
+Disc-ecat A = record
+  { Obj = || A ||std
+  ; Hom = λ a b → codisc-std (a A.~ b)
+  ; isecat = record
+               { _∘_ = λ g f → A.tra f g
+               ; idar = A.refl
+               ; ∘ext = λ _ _ _ _ _ _ → 0₁
+               ; lidax = λ _ → 0₁
+               ; ridax = λ _ → 0₁
+               ; assoc = λ _ _ _ → 0₁
+               }
+  }
+  where module A where
+          open setoid A public
+          open setoid-aux A public
+
+Disc-is-preord : {ℓₒ ℓᵣ : Level}(A : setoid {ℓₒ} {ℓᵣ}) → is-preorder (Disc-ecat A)
+Disc-is-preord A = record { pf = 0₁ }
+
+Disc-map : {ℓₒ₁ ℓᵣ₁ : Level}{A : setoid {ℓₒ₁} {ℓᵣ₁}}{ℓₒ₂ ℓᵣ₂ : Level}{B : setoid {ℓₒ₂} {ℓᵣ₂}}
+                → setoidmap A B → efunctorₗₑᵥ (Disc-ecat A) (Disc-ecat B)
+Disc-map {A = A} {B = B} f = record
+  { FObj = f.op
+  ; FHom = f.ext
+  ; isF = record
+        { ext = λ _ → 0₁
+        ; id = λ {_} → 0₁
+        ; cmp = λ _ _ → 0₁
+        }
+  }
+  where module f = setoidmap f
+
+module Disc-is-functorial (ℓₒ ℓᵣ : Level) where
+  private
+    module CAT = ecat (CATₗₑᵥ ℓₒ ℓᵣ 0ₗₑᵥ)
+    module Std = ecat (Stdₗₑᵥ ℓₒ ℓᵣ)
+
+  ext : {A B : Std.Obj}{f f' : || Std.Hom A B ||}
+           → f Std.~ f' → (Disc-map f) CAT.~ (Disc-map f')
+  ext {A} {B} {f} {f'} eq = record
+    { natt = record { fnc = λ {X} → eq X ; nat = λ _ → 0₁ }
+    ; natt⁻¹ = record { fnc = λ {X} → eq X B.ˢ ; nat = λ _ → 0₁ }
+    ; isiso = record { iddom = 0₁ ; idcod = 0₁ }
+    }
+    where module A where
+            open setoid A public
+            open setoid-aux A public
+          module B where
+            open setoid B public
+            open setoid-aux B public
+          module f = setoidmap f
+
+  idax : {A : Std.Obj} → Disc-map (Std.idar A) ≅ₐ CAT.idar (Disc-ecat A)
+  idax {A} = record
+    { natt = record { fnc = A.r ; nat = λ _ → 0₁ }
+    ; natt⁻¹ = record { fnc = A.r ; nat = λ _ → 0₁ }
+    ; isiso = record { iddom = 0₁ ; idcod = 0₁ }
+    }
+    where module A where
+            open setoid A public
+            open setoid-aux A public
+
+  cmpax : {A B C : Std.Obj}(f : || Std.Hom A B ||)(g : || Std.Hom B C ||)
+             → (Disc-map g) CAT.∘ (Disc-map f) CAT.~ Disc-map (g Std.∘ f)
+  cmpax {A} {B} {C} f g = record
+    { natt = record { fnc = C.r ; nat = λ _ → 0₁ }
+    ; natt⁻¹ = record { fnc = C.r ; nat = λ _ → 0₁ }
+    ; isiso = record { iddom = 0₁ ; idcod = 0₁ }
+    }
+    where module C where
+            open setoid C public
+            open setoid-aux C public
+-- end Disc-is-functorial
+
+
+---------------------------------------------------------------
+-- Discrete functor from setoids to categories, at every level
+---------------------------------------------------------------
+
+DiscCat : (ℓₒ ℓᵣ : Level) → efunctor (Stdₗₑᵥ ℓₒ ℓᵣ) (CATₗₑᵥ ℓₒ ℓᵣ 0ₗₑᵥ)
+DiscCat ℓₒ ℓᵣ = record
+  { FObj = Disc-ecat
+  ; FHom = Disc-map
+  ; isF = record
+        -- implicit are explicit because of symmetry
+        { ext = λ {A} {B} → ext {A} {B}
+        ; id = λ {A} → idax {A}
+        ; cmp = cmpax
+        }
+  }
+  where open Disc-is-functorial ℓₒ ℓᵣ
+
+
+
+{-
+module (ℓₒ ℓₐ ℓ~ : Level) where
+  private
+    module CAT = ecat (CATₗₑᵥ ℓₒ ℓₐ ℓ~)
+    module Std = ecat (Stdₗₑᵥ ℓₒ (ℓₐ ⊔ ℓ~))
+    module O/≅ = efctr (Ob/≅ₒ  ℓₒ ℓₐ ℓ~)
+    module ecat&iso (𝕏 : CAT.Obj) where
+      open ecat 𝕏 public
+      open iso-d&p 𝕏 public
+
+  module {𝔸 𝔹 : CAT.Obj}{F G : || CAT.Hom 𝔸 𝔹 ||}(eq : O/≅.ₐ F Std.~ O/≅.ₐ G) where
+    private
+      module 𝔸 = ecat&iso 𝔸
+      module 𝔹 = ecat&iso 𝔹
+      module F = efctr F
+      module G = efctr G
+      module eq (X : 𝔸.Obj) = 𝔹._≅ₒ_ (eq X)
+-}
 
 
 
