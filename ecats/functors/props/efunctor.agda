@@ -6,7 +6,7 @@ module ecats.functors.props.efunctor where
 open import ecats.basic-defs.ecat-def&not
 open import ecats.isomorphism
 open import ecats.functors.defs.efunctor-d&n
-
+open import ecats.functors.defs.natural-iso
 
 module efunctor-lev-props {ℓ₁ₒ ℓ₁ₕ ℓ₁~}{ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
                           {ℓ₂ₒ ℓ₂ₕ ℓ₂~}{𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
@@ -47,3 +47,28 @@ module efunctor-lev-props {ℓ₁ₒ ℓ₁ₕ ℓ₁~}{ℂ : ecategoryₗₑᵥ
     where open ℂ._≅ₒ_ iso
 
 -- end efunctor-lev-props
+
+
+module ≅ₐ2≅ₒ-defs {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}
+                  {ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                  (F G : efunctorₗₑᵥ ℂ 𝔻)
+                  where
+  private
+    module ℂ = ecat ℂ
+    module 𝔻 = iso-d&p 𝔻
+    module F = efctr F
+    module G = efctr G
+  ≅ₐ2≅ₒ : F ≅ₐ G → {X : ℂ.Obj} → F.ₒ X 𝔻.≅ₒ G.ₒ X
+  ≅ₐ2≅ₒ natiso {X} = record
+    { a12 = F≅G.fnc {X}
+    ; a21 = F≅G.fnc⁻¹ {X}
+    ; isop = F≅G.isiso {X}
+    }
+    where module F≅G = natural-iso natiso
+-- end ≅ₐ2≅ₒ-defs
+--open ≅ₐ2≅ₒ-defs public
+private module tmp {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}
+                   {ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                   {F G : efunctorₗₑᵥ ℂ 𝔻}
+                   = ≅ₐ2≅ₒ-defs F G
+open tmp public
