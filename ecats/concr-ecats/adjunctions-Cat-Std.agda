@@ -41,8 +41,8 @@ attempt = record
 module obj-up-to-iso {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
   private
     module ℂ where
-      open ecat ℂ public
-      open iso-d&p ℂ public
+       open ecat ℂ public
+       open iso-d&p ℂ public
   Obj/≅ₒ : setoid {ℓ₁} {ℓ₂ ⊔ ℓ₃}
   Obj/≅ₒ = record
          { object = ℂ.Obj
@@ -220,6 +220,100 @@ DiscCat ℓₒ ℓᵣ = record
   }
   where open Disc-is-functorial ℓₒ ℓᵣ
 
+
+module dicrete-adjunction (ℓₒ ℓₐ : Level) where
+  private
+    module CAT = ecat (CATₗₑᵥ ℓₒ ℓₐ 0ₗₑᵥ)
+    module Std = ecat (Stdₗₑᵥ ℓₒ ℓₐ)
+    module Δ = efctr (DiscCat ℓₒ ℓₐ)
+    module U = efctr (Ob/≅ₒ ℓₒ ℓₐ 0ₗₑᵥ)
+
+  module ~isiso (A : Std.Obj) where
+    private
+      module A where
+        open setoid A public
+        open setoid-aux A public
+      module ΔA where
+        open ecat (Δ.ₒ A) public
+        open iso-d&p (Δ.ₒ A) public
+    ~isiso : {a b : || A ||std} → a A.~ b → a ΔA.≅ₒ b
+    ~isiso eq = record
+      { a12 = eq
+      ; a21 = eq A.ˢ
+      ; isop = record { iddom = 0₁ ; idcod = 0₁ }
+      }
+  -- end ~isiso
+  open ~isiso
+
+  module lr (A : Std.Obj)(ℂ : CAT.Obj)(F : efunctor (Δ.ₒ A) ℂ) where
+    private
+      module F where
+        open efctr F public
+        open efunctor-lev-props F public
+    ar : || Std.Hom A (U.ₒ ℂ) ||std
+    ar = record
+       { op = F.ₒ
+       ; ext = λ eq → F.pres≅ₒ (~isiso A eq)
+       }
+  -- end lr
+  lr : (A : Std.Obj)(ℂ : CAT.Obj) → setoidmap (CAT.Hom (Δ.ₒ A) ℂ) (Std.Hom A (U.ₒ ℂ))
+  lr A ℂ = record
+    { op = ar
+    ; ext = λ natiso a → ≅ₐ2≅ₒ natiso {a}
+    }
+    where open lr A ℂ
+
+  module rl (A : Std.Obj)(ℂ : CAT.Obj)(g : setoidmap A (U.ₒ ℂ)) where
+    private
+      module A where
+        open setoid A public
+        open setoid-aux A public
+      {-module Uℂ where
+        open setoid (U.ₒ ℂ) public
+        open setoid-aux (U.ₒ ℂ) public
+      module ΔA where
+        open ecat (Δ.ₒ A) public
+        open iso-d&p (Δ.ₒ A) public-}
+      module ℂ where
+        open ecat ℂ public
+        open iso-d&p ℂ public
+      module g where
+        open setoidmap g public
+        module ext {a b : || A ||std}(eq : a A.~ b) = ℂ._≅ₒ_ (ext eq)
+      
+    ar : || CAT.Hom (Δ.ₒ A) ℂ ||
+    ar = record
+      { FObj = g.op
+      ; FHom = λ eq → g.ext.a21 A.r ℂ.∘ g.ext.a12 eq
+      ; isF = record
+            -- not extensional because the setoid on arrows is not free..?
+            { ext = {!!}
+            ; id = g.ext.iddom A.r
+            -- not split either? Here freeness doesn't help...
+            ; cmp = {!!}
+            }
+      }
+  -- end rl
+  rl : (A : Std.Obj)(ℂ : CAT.Obj) → setoidmap (Std.Hom A (U.ₒ ℂ)) (CAT.Hom (Δ.ₒ A) ℂ)
+  rl A ℂ = record
+    { op = {!!}
+    ; ext = {!!}
+    }
+    where 
+
+-- end dicrete-adjunction
+
+DiscAdj : (ℓₒ ℓₐ : Level) → adjunction-bij (DiscCat ℓₒ ℓₐ) (Ob/≅ₒ ℓₒ ℓₐ 0ₗₑᵥ)
+DiscAdj ℓₒ ℓₐ = record
+                  { lr = lr
+                  ; rl = {!!}
+                  ; isbij = {!!}
+                  ; lr-natl = {!!}
+                  ; lr-natr = {!!}
+                  ; rl-natl = {!!}
+                  ; rl-natr = {!!}
+                  }
+                  where open dicrete-adjunction ℓₒ ℓₐ
 
 
 {-
