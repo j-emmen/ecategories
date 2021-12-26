@@ -14,7 +14,7 @@ open import ecats.constructions.slice-ecat
 -- Category of cones over a diagram
 Cone/ : {𝕀 : small-ecategory}{ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}(D : 𝕀 diag-in ℂ)
           → ecategoryₗₑᵥ (ecat.ℓₐₗₗ ℂ) (ecat.ℓₕₒₘ ℂ) (ecat.ℓ~ ℂ)
-Cone/ {𝕀} {ℂ = ℂ} D = const-Diagr 𝕀 ℂ ↓ₒ D
+Cone/ {𝕀} {ℂ = ℂ} D = (const-Diagr 𝕀 ℂ) ↓ₒ D
 
 -- The category of cones over a diagram in a locally-small ecategory is locally-small
 Cone/lc : {𝕀 : small-ecategory}{ℂ : ecategory}(D : 𝕀 diag-in ℂ)

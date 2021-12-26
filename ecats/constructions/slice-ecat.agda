@@ -11,6 +11,7 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.constructions.opposite
 
 
+-- slice over an object
 
 module slice-ecat-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)(X : ecat.Obj ℂ) where
   open ecat ℂ
@@ -88,7 +89,7 @@ module slice-ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁
   module ₐ {a b : Obj} = ||/Hom|| {a} {b}
 
 
-
+-- comma category whose right factor is constant
 
 module funct-slice-ecat-defs {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
                              (F : efunctorₗₑᵥ ℂ 𝔻)(Y : ecat.Obj 𝔻)
@@ -182,6 +183,7 @@ funct-slice-ecat-lc = funct-slice-ecat
 
 
 
+-- comma category whose left factor is constant
 
 module slice-funct-ecat-defs {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
                              (F : efunctorₗₑᵥ ℂ 𝔻)(Y : ecat.Obj 𝔻)
