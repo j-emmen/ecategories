@@ -16,7 +16,6 @@ open import ecats.functors.defs.presheaf
 open import ecats.functors.defs.representable
 open import ecats.functors.props.representable
 open import ecats.constructions.opposite
---open import ecats.constructions.slice-ecat
 open import ecats.constructions.ecat-elements
 open import ecats.concr-ecats.Std-lev
 
@@ -59,6 +58,31 @@ _⊣_ : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁
                   → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ 𝔻 ℂ → Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
 L ⊣ R = adjunction-bij L R
 
+record is-right-adjoint {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                        {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                        (F : efunctorₗₑᵥ ℂ 𝔻)
+                        : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
+                        where
+  private
+    module ℂ = ecat ℂ
+    module 𝔻 = ecat 𝔻
+    module F = efctr F
+  field
+    left : efunctorₗₑᵥ 𝔻 ℂ
+    adj : left ⊣ F
+
+record is-left-adjoint {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                       {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                       (F : efunctorₗₑᵥ ℂ 𝔻)
+                       : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
+                       where
+  private
+    module ℂ = ecat ℂ
+    module 𝔻 = ecat 𝔻
+    module F = efctr F
+  field
+    right : efunctorₗₑᵥ 𝔻 ℂ
+    adj : F ⊣ right
 
 -- via unit + counit + triangular identities
 
@@ -79,6 +103,13 @@ record adjunction-εη {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ �
   field
     trid₁ : {X : ℂ.Obj} → εnt.fnc 𝔻.∘ (L.ₐ ηnt.fnc) 𝔻.~ 𝔻.idar (L.ₒ X)
     trid₂ : {A : 𝔻.Obj} → (R.ₐ εnt.fnc) ℂ.∘ ηnt.fnc ℂ.~ ℂ.idar (R.ₒ A)
+
+
+
+
+
+
+
 
 
 module adjunction-bij-equat {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
