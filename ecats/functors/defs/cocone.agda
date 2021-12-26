@@ -9,7 +9,7 @@ open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.cone
 open import ecats.constructions.functor-ecat
-open import ecats.constructions.slice-ecat
+open import ecats.constructions.comma-ecat
 
 
 -- Category of cones over a diagram
