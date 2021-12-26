@@ -14,10 +14,10 @@ open import ecats.finite-limits.defs.terminal
 open import ecats.finite-limits.defs.equaliser
 open import ecats.small-limits.defs.small-limit
 
-module small-limit-props (ℂ : ecategory) where
+module small-limit-props {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~} where
   private
     module ℂ where
-      open ecategory ℂ public
+      open ecat ℂ public
       open equaliser-defs ℂ public
       open small-limit-defs ℂ public
 

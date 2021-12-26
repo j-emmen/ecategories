@@ -3,14 +3,11 @@
 
 module ecats.small-colimits.defs.small-colimit where
 
-open import Agda.Primitive
 open import ecats.basic-defs.ecat-def&not
 open import ecats.functors.defs.cocone public
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.constructions.functor-ecat
-open import ecats.constructions.slice-ecat
-open import ecats.finite-limits.defs.terminal public
 open import ecats.basic-defs.initial public
 
 module small-colimit-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where

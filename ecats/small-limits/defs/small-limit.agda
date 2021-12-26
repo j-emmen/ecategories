@@ -3,13 +3,11 @@
 
 module ecats.small-limits.defs.small-limit where
 
-open import Agda.Primitive
 open import ecats.basic-defs.ecat-def&not
 open import ecats.functors.defs.cone public
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.constructions.functor-ecat
-open import ecats.constructions.slice-ecat
 open import ecats.finite-limits.defs.terminal public
 
 
