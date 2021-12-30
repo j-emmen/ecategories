@@ -15,9 +15,14 @@ open import ecats.concr-ecats.Std-lev
 
 -- Presheaves in this sense, where the 
 
+presheafₗₑᵥ_at : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)(ℓo ℓr : Level)
+                  → Set (ecat.ℓₐₗₗ ℂ ⊔ Stdₗₑᵥ.ℓₐₗₗ ℓo ℓr)
+presheafₗₑᵥ ℂ at ℓo ℓr = efunctorₗₑᵥ (ℂ ᵒᵖ) (Stdₗₑᵥ ℓo ℓr)
+                      where module ℂ = ecat ℂ
+
 presheafₗₑᵥ : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)
                   → Set (ecat.ℓₐₗₗ ℂ ⊔ Stdₗₑᵥ.ℓₐₗₗ ℓₐ ℓ~)
-presheafₗₑᵥ ℂ = efunctorₗₑᵥ (ℂ ᵒᵖ) (Stdₗₑᵥ ℂ.ℓₐᵣᵣ ℂ.ℓ~)
+presheafₗₑᵥ ℂ = presheafₗₑᵥ ℂ at ℂ.ℓₐᵣᵣ ℂ.ℓ~
              where module ℂ = ecat ℂ
 
 module presheafₗₑᵥ {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}(F : presheafₗₑᵥ ℂ)
@@ -29,9 +34,14 @@ module presheafₗₑᵥ {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ �
   _ₒ~_ {X} x x' = ₒ._~_ X x x'
   module ₐ {Z Z' : Obj}(g : || Hom Z Z' ||) = StdHom (ₐ g)
 
+copresheafₗₑᵥ_at : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)(ℓo ℓr : Level)
+                    → Set (ecat.ℓₐₗₗ ℂ ⊔ Stdₗₑᵥ.ℓₐₗₗ ℓo ℓr) --ℓₐ ℓ~)
+copresheafₗₑᵥ ℂ at ℓo ℓr = efunctorₗₑᵥ ℂ (Stdₗₑᵥ ℓo ℓr)
+                        where module ℂ = ecat ℂ
+
 copresheafₗₑᵥ : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)
                     → Set (ecat.ℓₐₗₗ ℂ ⊔ Stdₗₑᵥ.ℓₐₗₗ ℓₐ ℓ~)
-copresheafₗₑᵥ ℂ = efunctorₗₑᵥ ℂ (Stdₗₑᵥ ℂ.ℓₐᵣᵣ ℂ.ℓ~)
+copresheafₗₑᵥ ℂ = copresheafₗₑᵥ ℂ at ℂ.ℓₐᵣᵣ ℂ.ℓ~
                where module ℂ = ecat ℂ
 
 module copresheafₗₑᵥ {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}(F : copresheafₗₑᵥ ℂ)
@@ -86,23 +96,3 @@ module psheaf-mor {ℂ : ecategory}{F G : presheaf ℂ}(μ : F ⇒ G) where
 
 PSh : (ℂ : ecategory) → large-ecategory
 PSh ℂ = Fctrₗₛ (ℂ ᵒᵖ) Std
-
-
-{-
-module representable-presheaf (ℂ : ecategory) where
-  open ecategory-aux ℂ
-  
-  repr-presheaf : (X : Obj) → presheaf ℂ
-  repr-presheaf X = repres-fctr-at (ℂ ᵒᵖ) X
-  
-  precmp-nat : {X Y : Obj}(f : || Hom X Y ||)
-                  → || NatTr (repr-presheaf X) (repr-presheaf Y) ||
-  precmp-nat f = record
-    { fnc = record
-          { op = λ a → f ∘ a
-          ; ext = λ pf → ∘e pf r
-          }
-    ; nat = λ g a → ass
-    }
--- end representable-presheaf
--}
