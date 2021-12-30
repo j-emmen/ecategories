@@ -23,41 +23,35 @@ open import ecats.concr-ecats.Std-lev
 
 -- Adjunctions
 
-record adjunction-bij {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}{ℓₒ₂ ℓₐ₂ ℓ~₂}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
-                      (L : efunctorₗₑᵥ ℂ 𝔻) (R : efunctorₗₑᵥ 𝔻 ℂ)
-                      : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
-                      where
+-- via unit + counit + triangular identities
+
+record adjunction-εη {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}{ℓₒ₂ ℓₐ₂ ℓ~₂}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                     (L : efunctorₗₑᵥ ℂ 𝔻) (R : efunctorₗₑᵥ 𝔻 ℂ)
+                     : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
+                     where
   private
     module ℂ = ecat ℂ
     module 𝔻 = ecat 𝔻
-    module L = efunctor-aux L
-    module R = efunctor-aux R
+    module L = efunctorₗₑᵥ L
+    module R = efunctorₗₑᵥ R
   field
-    lr : (A : ℂ.Obj)(B : 𝔻.Obj) → setoidmap (𝔻.Hom (L.ₒ A) B) (ℂ.Hom A (R.ₒ B))
-    rl : (A : ℂ.Obj)(B : 𝔻.Obj) → setoidmap (ℂ.Hom A (R.ₒ B)) (𝔻.Hom (L.ₒ A) B)
-    isbij : (A : ℂ.Obj)(B : 𝔻.Obj)
-             → is-bij-pair (𝔻.Hom (L.ₒ A) B) (ℂ.Hom A (R.ₒ B)) (lr A B) (rl A B)  
-  private module bij {A : ℂ.Obj}{B : 𝔻.Obj} = is-bij-pair (isbij A B)
-  open bij public
-  module lr {A : ℂ.Obj}{B : 𝔻.Obj} = setoidmap (lr A B) renaming (op to ap)
-  module rl {A : ℂ.Obj}{B : 𝔻.Obj} = setoidmap (rl A B) renaming (op to ap)
+    ηnt : natural-transformation IdF (R ○ L)
+    εnt : natural-transformation (L ○ R) IdF
+  module εnt = natural-transformation εnt
+  module ηnt = natural-transformation ηnt
   field
-    lr-natl : (B : 𝔻.Obj){A A' : ℂ.Obj}(a : || ℂ.Hom A A' ||)(g : || 𝔻.Hom (L.ₒ A') B ||)
-                 → lr.ap (g 𝔻.∘ L.ₐ a) ℂ.~ (lr.ap g) ℂ.∘ a
-                 -- (lr ∘ 𝔻[─, L.ₐ a ₐ]).ap g ~ (ℂ[─, a ] ∘ lr).ap g
-    lr-natr : (A : ℂ.Obj){B B' : 𝔻.Obj}(b : || 𝔻.Hom B B' ||)(g : || 𝔻.Hom (L.ₒ A) B ||)
-                 → lr.ap (b 𝔻.∘ g) ℂ.~ R.ₐ b ℂ.∘ lr.ap g
-    rl-natl : (B : 𝔻.Obj){A A' : ℂ.Obj}(a : || ℂ.Hom A A' ||)(f : || ℂ.Hom A' (R.ₒ B) ||)
-                 → rl.ap (f ℂ.∘ a) 𝔻.~ (rl.ap f) 𝔻.∘ L.ₐ a
-    rl-natr : (A : ℂ.Obj){B B' : 𝔻.Obj}(b : || 𝔻.Hom B B' ||)(f : || ℂ.Hom A (R.ₒ B) ||)
-                 → rl.ap (R.ₐ b ℂ.∘ f) 𝔻.~ b 𝔻.∘ rl.ap f
+    trid₁ : {X : ℂ.Obj} → εnt.fnc 𝔻.∘ (L.ₐ ηnt.fnc) 𝔻.~ 𝔻.idar (L.ₒ X)
+    trid₂ : {A : 𝔻.Obj} → (R.ₐ εnt.fnc) ℂ.∘ ηnt.fnc ℂ.~ ℂ.idar (R.ₒ A)
 
+
+-- notation
 
 infix 3 _⊣_
 _⊣_ : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
       {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                   → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ 𝔻 ℂ → Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
-L ⊣ R = adjunction-bij L R
+L ⊣ R = adjunction-εη L R
+
 
 record is-right-adjoint {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
                         {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
@@ -85,27 +79,36 @@ record is-left-adjoint {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗ�
     right : efunctorₗₑᵥ 𝔻 ℂ
     adj : F ⊣ right
 
--- via unit + counit + triangular identities
 
-record adjunction-εη {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}{ℓₒ₂ ℓₐ₂ ℓ~₂}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
-                     (L : efunctorₗₑᵥ ℂ 𝔻) (R : efunctorₗₑᵥ 𝔻 ℂ)
-                     : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
-                     where
+-- via natural bijections between hom-setoids
+
+record adjunction-bij {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}{ℓₒ₂ ℓₐ₂ ℓ~₂}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                      (L : efunctorₗₑᵥ ℂ 𝔻) (R : efunctorₗₑᵥ 𝔻 ℂ)
+                      : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
+                      where
   private
     module ℂ = ecat ℂ
     module 𝔻 = ecat 𝔻
-    module L = efunctorₗₑᵥ L
-    module R = efunctorₗₑᵥ R
+    module L = efunctor-aux L
+    module R = efunctor-aux R
   field
-    ηnt : natural-transformation IdF (R ○ L)
-    εnt : natural-transformation (L ○ R) IdF
-  module εnt = natural-transformation εnt
-  module ηnt = natural-transformation ηnt
+    lr : (A : ℂ.Obj)(B : 𝔻.Obj) → setoidmap (𝔻.Hom (L.ₒ A) B) (ℂ.Hom A (R.ₒ B))
+    rl : (A : ℂ.Obj)(B : 𝔻.Obj) → setoidmap (ℂ.Hom A (R.ₒ B)) (𝔻.Hom (L.ₒ A) B)
+    isbij : (A : ℂ.Obj)(B : 𝔻.Obj)
+             → is-bij-pair (𝔻.Hom (L.ₒ A) B) (ℂ.Hom A (R.ₒ B)) (lr A B) (rl A B)  
+  private module bij {A : ℂ.Obj}{B : 𝔻.Obj} = is-bij-pair (isbij A B)
+  open bij public
+  module lr {A : ℂ.Obj}{B : 𝔻.Obj} = setoidmap (lr A B) renaming (op to ap)
+  module rl {A : ℂ.Obj}{B : 𝔻.Obj} = setoidmap (rl A B) renaming (op to ap)
   field
-    trid₁ : {X : ℂ.Obj} → εnt.fnc 𝔻.∘ (L.ₐ ηnt.fnc) 𝔻.~ 𝔻.idar (L.ₒ X)
-    trid₂ : {A : 𝔻.Obj} → (R.ₐ εnt.fnc) ℂ.∘ ηnt.fnc ℂ.~ ℂ.idar (R.ₒ A)
-
-
+    lr-natl : (B : 𝔻.Obj){A A' : ℂ.Obj}(a : || ℂ.Hom A A' ||)(g : || 𝔻.Hom (L.ₒ A') B ||)
+                 → lr.ap (g 𝔻.∘ L.ₐ a) ℂ.~ (lr.ap g) ℂ.∘ a
+    lr-natr : (A : ℂ.Obj){B B' : 𝔻.Obj}(b : || 𝔻.Hom B B' ||)(g : || 𝔻.Hom (L.ₒ A) B ||)
+                 → lr.ap (b 𝔻.∘ g) ℂ.~ R.ₐ b ℂ.∘ lr.ap g
+    rl-natl : (B : 𝔻.Obj){A A' : ℂ.Obj}(a : || ℂ.Hom A A' ||)(f : || ℂ.Hom A' (R.ₒ B) ||)
+                 → rl.ap (f ℂ.∘ a) 𝔻.~ (rl.ap f) 𝔻.∘ L.ₐ a
+    rl-natr : (A : ℂ.Obj){B B' : 𝔻.Obj}(b : || 𝔻.Hom B B' ||)(f : || ℂ.Hom A (R.ₒ B) ||)
+                 → rl.ap (R.ₐ b ℂ.∘ f) 𝔻.~ b 𝔻.∘ rl.ap f
 
 
 
@@ -625,7 +628,7 @@ module adjunction-as-universal-props {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecatego
 
 
 
-  module adj2unv (adj : L ⊣ R) where
+  module adj2unv (adj : adjunction-bij L R) where
     open adjunction-bij adj
     open adjunction-bij-equat adj
     private
