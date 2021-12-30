@@ -38,8 +38,12 @@ record natural-transformation {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ �
     module G = efctr G
   field
     fnc : {A : ℂ.Obj} → || 𝔻.Hom (F.ₒ A) (G.ₒ A) ||
-    nat : {A B : ℂ.Obj} → (f : || ℂ.Hom A B ||)
-             → fnc 𝔻.∘ (F.ₐ f) 𝔻.~ (G.ₐ f) 𝔻.∘ fnc
+    nat : {A B : ℂ.Obj}(f : || ℂ.Hom A B ||)
+             → fnc 𝔻.∘ F.ₐ f 𝔻.~ G.ₐ f 𝔻.∘ fnc
+  natˢ : {A B : ℂ.Obj}(f : || ℂ.Hom A B ||)
+             → G.ₐ f 𝔻.∘ fnc 𝔻.~ fnc 𝔻.∘ F.ₐ f
+  natˢ f = nat f ˢ
+         where open ecategory-aux-only 𝔻 using (_ˢ)
 
 infixr 60 _⇒_
 _⇒_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
