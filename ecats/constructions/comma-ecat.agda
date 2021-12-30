@@ -234,6 +234,7 @@ funct-slice-ecat-lc = funct-slice-ecat
 
 
 -- comma category whose left factor is constant
+-- when the functor F is a presheaf, this is isomorphic to its category of elements
 
 module slice-funct-ecat-defs {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
                              (F : efunctorₗₑᵥ ℂ 𝔻)(Y : ecat.Obj 𝔻)
