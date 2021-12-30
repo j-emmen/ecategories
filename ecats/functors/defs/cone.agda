@@ -9,7 +9,7 @@ open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.constructions.functor-ecat
 open import ecats.constructions.comma-ecat
-
+open import ecats.constructions.discrete-ecat
 
 -- Category of cones over a diagram
 Cone/ : {𝕀 : small-ecategory}{ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}(D : 𝕀 diag-in ℂ)
@@ -84,7 +84,7 @@ Fcone F {𝕀} D C = Cn/FD.if-tr-then-ob {f = λ I → F.ₐ (C.leg I)} (λ IJ �
 -- Category of spans over a family of objects
 Span/ : {I : Set}{ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)(D : I → ecat.Obj ℂ)
              → ecategoryₗₑᵥ (ecat.ℓₙₒ~ ℂ) (ecat.ℓₕₒₘ ℂ) (ecat.ℓ~ ℂ)
-Span/ {I} ℂ D = const-discDiagr I ℂ ↓ₒ D
+Span/ {I} ℂ D = (const-discDiagr I ℂ) ↓ₒ D
 
 module Span/ {I : Set}{ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)(D : I → ecat.Obj ℂ) where
   private
@@ -102,16 +102,6 @@ module Span/ {I : Set}{ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ �
          renaming (arL to ar)
   open ecategory-aux (Span/ ℂ D) public
 
--- underlying family of a cone
-cone→span : {𝕀 : small-ecategory}{ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{D : 𝕀 diag-in ℂ}
-                     → Cone/.Obj D → Span/.Obj ℂ (efctr.ₒ D)
-cone→span {D = D} cone = record
-         { L = cone.Vx
-         ; ar = cone.leg
-         }
-         where module cone = Cone/.ₒ D cone
-
-
 -- an efunctor maps spans into spans
 Fspan : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
         (F : efunctorₗₑᵥ ℂ 𝔻){I : Set}(D : I → ecat.Obj ℂ)
@@ -122,3 +112,24 @@ Fspan F {𝕀} D C = record
   }
   where module F = efunctor-aux F
         module C = Span/.ₒ _ D C
+
+-- underlying family of a cone
+cone→span : {𝕀 : small-ecategory}{ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{D : 𝕀 diag-in ℂ}
+                     → Cone/.Obj D → Span/.Obj ℂ (efctr.ₒ D)
+cone→span {D = D} cone = record
+         { L = cone.Vx
+         ; ar = cone.leg
+         }
+         where module cone = Cone/.ₒ D cone
+
+
+-- a span is a cone over a discrete diagram
+span→cone : {I : Set}{ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃){D : I → ecat.Obj ℂ}
+               → Span/.Obj ℂ D → Cone/.Obj (disc-ecat-lift-efctr ℂ D)
+span→cone {I} ℂ {D} sp = record
+  { L = sp.Vx
+  ; ar = disc-ecat-lift-full ℂ {cnstDg.ₒ sp.Vx} {disc-ecat-lift-efctr ℂ D} sp.leg
+  }
+  where module sp = Span/.ₒ ℂ D sp
+        module D = efctr (disc-ecat-lift-efctr ℂ D)
+        module cnstDg = efctr (const-Diagr (discrete-ecat I) ℂ)
