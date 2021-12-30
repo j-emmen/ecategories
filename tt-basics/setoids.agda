@@ -283,11 +283,15 @@ free-stdmap f = record
   ; ext = =ap f
   }
 
+free-std-is-min-pf : {ℓ ℓo ℓr : Level}{X : Set ℓ}(A : setoid {ℓo} {ℓr})(f : X → || A ||){x x' : X}
+                        → < Freestd X > x ~ x' → < A > f x ~ f x'
+free-std-is-min-pf A f pf = ==→~ A (=ap f pf)
+
 free-std-is-min : {ℓ ℓo ℓr : Level}{X : Set ℓ}{A : setoid {ℓo} {ℓr}}(f : X → || A ||)
                      → setoidmap (Freestd X) A
 free-std-is-min {X = X} {A} f = record
   { op = f
-  ; ext = λ pf → ==→~ A (=ap f pf)
+  ; ext = free-std-is-min-pf A f
   }
 
 can-cover : {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) → setoidmap (Freestd || A ||) A
