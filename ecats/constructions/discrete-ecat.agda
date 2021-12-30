@@ -3,10 +3,10 @@
 
 module ecats.constructions.discrete-ecat where
 
-open import Agda.Primitive
 open import tt-basics.all-basics hiding (||_||)
 open import ecats.basic-defs.ecat-def&not
 open import ecats.functors.defs.efunctor-d&n
+open import ecats.functors.defs.natural-transformation
 
 discrete-ecat' : {ℓ : Level} → Set ℓ → ecategoryₗₑᵥ ℓ ℓ 0ₗₑᵥ
 -- ℓ₁ ≤ ℓ₂ ; 0ₗₑᵥ ≤ ℓ₃
@@ -43,9 +43,12 @@ small-disc-ecat = discrete-ecat {0ₗₑᵥ}
 
 -- there is no discrete locally small category
 
-disc-ecat-lift : {A : Set}{ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}(F : A → ecat.Obj ℂ)
-                    → efunctorₗₑᵥ (small-disc-ecat A) ℂ
-disc-ecat-lift {A} {ℂ = ℂ} F = record
+
+-- part of the universal property of discrete ecategories:
+
+disc-ecat-lift-efctr : {ℓ : Level}{A : Set ℓ}{ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)
+                          → (A → ecat.Obj ℂ) → efunctorₗₑᵥ (discrete-ecat A) ℂ
+disc-ecat-lift-efctr {A = A} ℂ F = record
   { FObj = F
   ; FHom = FH 
   ; isF = record
@@ -61,7 +64,33 @@ disc-ecat-lift {A} {ℂ = ℂ} F = record
                    → FH q ℂ.∘ FH p ℂ.~ FH (p ■ q)
         FHcmp p q = =J (λ _ v → ∀ u → FH v ℂ.∘ FH u ℂ.~ FH (u ■ v)) (λ _ → ℂ.lid) q p
 
+disc-ecat-lift-transf : {ℓ : Level}{A : Set ℓ}{ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)
+                        {F G : A → ecat.Obj ℂ} (t : (a : A) → || ecat.Hom ℂ (F a) (G a) ||)
+                             → natural-transformation (disc-ecat-lift-efctr ℂ F)
+                                                       (disc-ecat-lift-efctr ℂ G)
+disc-ecat-lift-transf ℂ {F} {G} t = record
+  { fnc = λ {a} → t a
+  ; nat = λ {a} → =J (λ b ab → t b ℂ.∘ F.ₐ ab ℂ.~ G.ₐ ab ℂ.∘ t a) (ridgen lidˢ)
+  }
+  where module ℂ = ecat ℂ
+        module F = efctr (disc-ecat-lift-efctr ℂ F)
+        module G = efctr (disc-ecat-lift-efctr ℂ G)
+        open ecategory-aux-only ℂ using (ridgen; lidˢ)
 
+disc-ecat-lift-full : {ℓ : Level}{A : Set ℓ}{ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)
+                      {F G : efunctorₗₑᵥ (discrete-ecat A) ℂ}
+                           → ((a : A) → || ecat.Hom ℂ (efctr.ₒ F a) (efctr.ₒ G a) ||)
+                             → natural-transformation F G
+disc-ecat-lift-full ℂ {F} {G} t = record
+  { fnc = λ {a} → t a
+  ; nat = λ {a} → =J (λ b ab → (t b ℂ.∘ F.ₐ ab) ℂ.~ (G.ₐ ab ℂ.∘ t a)) (ridgg (lidggˢ r G.id) F.id)
+  }
+  where module ℂ = ecat ℂ
+        module F = efctr F
+        module G = efctr G
+        open ecategory-aux-only ℂ using (r; ridgg; lidggˢ)
+                                        
+-- codiscrete ecategories
 
 codiscrete-ecat : {ℓ : Level} → Set ℓ → ecategoryₗₑᵥ ℓ 0ₗₑᵥ 0ₗₑᵥ
 -- ℓ₁ ≤ ℓ₂ ; 0ₗₑᵥ ≤ ℓ₃
