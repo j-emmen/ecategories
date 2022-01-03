@@ -19,7 +19,7 @@ open import ecats.small-limits.defs.pullback-not
 open import ecats.concr-ecats.finite-ecat
 
 
-module pullback-diag-locsm (ℂ : ecategory) where
+module pullback-diags-as-pullback-squares (ℂ : ecategory) where
   private
     module ℂ where
       open ecat ℂ public
@@ -108,4 +108,4 @@ module pullback-diag-locsm (ℂ : ecategory) where
     pbsq.×/uq
     where module pbsq = ℂ.is-pb-square ispbsq
 
--- end pullback-diag-props
+-- end pullback-diags-as-pullback-squares
