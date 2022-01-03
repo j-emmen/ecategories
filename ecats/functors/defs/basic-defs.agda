@@ -20,7 +20,8 @@ record is-equivalence-pair {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategory
   field
     ι1 : natural-iso (F ○ G) IdF
     ι2 : natural-iso (G ○ F) IdF
-
+  module ι1 = natural-iso ι1
+  module ι2 = natural-iso ι2
 
 record is-equivalence {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
                       {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
