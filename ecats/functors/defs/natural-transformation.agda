@@ -5,7 +5,6 @@ module ecats.functors.defs.natural-transformation where
 
 open import tt-basics.setoids using (setoid) --hiding (||_||; _⇒_)
 open import ecats.basic-defs.ecat-def&not
---open import ecats.isomorphism
 open import ecats.functors.defs.efunctor-d&n
 
 ---------------------------
@@ -36,10 +35,10 @@ record natural-transformation {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ �
     module 𝔻 = ecat 𝔻
     module F = efctr F
     module G = efctr G
+  open natural-trans-defs F G
   field
     fnc : {A : ℂ.Obj} → || 𝔻.Hom (F.ₒ A) (G.ₒ A) ||
-    nat : {A B : ℂ.Obj}(f : || ℂ.Hom A B ||)
-             → fnc 𝔻.∘ F.ₐ f 𝔻.~ G.ₐ f 𝔻.∘ fnc
+    nat : is-natural fnc
   natˢ : {A B : ℂ.Obj}(f : || ℂ.Hom A B ||)
              → G.ₐ f 𝔻.∘ fnc 𝔻.~ fnc 𝔻.∘ F.ₐ f
   natˢ f = nat f ˢ
