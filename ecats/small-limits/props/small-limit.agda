@@ -6,20 +6,162 @@ module ecats.small-limits.props.small-limit where
 open import Agda.Primitive
 open import tt-basics.basics
 open import ecats.basic-defs.ecat-def&not
+open import ecats.basic-defs.isomorphism
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
+open import ecats.functors.defs.cone
+open import ecats.functors.defs.basic-defs
 open import ecats.constructions.functor-ecat
 open import ecats.constructions.slice-ecat
+open import ecats.constructions.discrete-ecat
 open import ecats.finite-limits.defs.terminal
+open import ecats.finite-limits.props.terminal
 open import ecats.finite-limits.defs.equaliser
 open import ecats.small-limits.defs.small-limit
 
-module small-limit-props {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~} where
+module small-limit-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
   private
     module ℂ where
       open ecat ℂ public
       open equaliser-defs ℂ public
       open small-limit-defs ℂ public
+
+  -- limit is invariant under iso of cones
+
+  module limit-invariant-under-coneiso {𝕀 : small-ecategory}{D : 𝕀 diag-in ℂ}
+                                       (cn₁ cn₂ : Cone/.Obj D)
+                                       where
+    private
+      module 𝕀 = ecat 𝕀
+      module D = efctr D
+      module Cn/D where
+        open Cone/ D public
+        open iso-defs (Cone/ D) public
+        open terminal-defs (Cone/ D) public
+        open terminal-props (Cone/ D) public
+      module cn₁ = Cn/D.ₒ cn₁
+      module cn₂ = Cn/D.ₒ cn₂
+
+  -- end limit-invariant-under-coneiso
+
+  isolim-is-lim : {𝕀 : small-ecategory}{D : 𝕀 diag-in ℂ}{cn₁ cn₂ : Cone/.Obj D}
+                     → iso-defs._≅ₒ_ (Cone/ D) cn₁ cn₂ → ℂ.is-limit-cone cn₁ → ℂ.is-limit-cone cn₂
+  isolim-is-lim {𝕀} {D} = iso!-is!
+                         where open terminal-props (Cone/ D)
+
+
+  -- limit is invariant under natural iso of diagrams
+
+  module limit-invariant-under-natiso {𝕀 : small-ecategory}{D D' : 𝕀 diag-in ℂ}(D≅D' : D ≅ₐ D') where
+    private
+      module 𝕀 = ecat 𝕀
+      module D = efctr D
+      module D' = efctr D'
+      module D≅D' where
+        open natural-iso D≅D' public
+        open _≡ᶜᵃᵗ_ (cone-iso-trsp D≅D') renaming (a12 to trsp; a21 to trsp⁻¹) public
+        module trsp = efctr trsp
+        module trsp⁻¹ = efctr trsp⁻¹
+      module Cn/D where
+        open Cone/ D public
+        open iso-defs (Cone/ D) public
+      module Cn/D' where
+        open Cone/ D' public
+        open iso-defs (Cone/ D') public
+
+    trsp-lim : {cn : Cn/D.Obj} → ℂ.is-limit-cone cn → ℂ.is-limit-cone (D≅D'.trsp.ₒ cn)
+    trsp-lim {cn} islim = record
+      { ! = λ cn' → record
+          { arL = cn.unv.ar (D≅D'.trsp⁻¹.ₒ cn')
+          ; tr = λ I → ~proof
+               (D≅D'.fnc ℂ.∘ cn.leg I) ℂ.∘ cn.unv.ar (D≅D'.trsp⁻¹.ₒ cn')
+                                                     ~[ assˢ ⊙ ∘e (cn.unv.tr (D≅D'.trsp⁻¹.ₒ cn') I) r ] /
+               D≅D'.fnc ℂ.∘ D≅D'.fnc⁻¹ ℂ.∘ Cn/D'.ₒ.leg cn' I            ~[ ass ⊙ lidgg r D≅D'.idcod ]∎
+               Cn/D'.ₒ.leg cn' I ∎
+          }
+      ; !uniq = λ {cn'} f → lidˢ ⊙ cn.unv.uq-cn (D≅D'.trsp⁻¹.ₒ cn')
+                                                 (D≅D'.ι2.fnc {cn} Cn/D.∘ D≅D'.trsp⁻¹.ₐ f)
+      }
+      where open ecategory-aux-only ℂ
+            module cn where
+              open Cn/D.ₒ cn public
+              open ℂ.is-limit-cone islim public
+
+    trsp-lim-conv : {cn' : Cn/D'.Obj} → ℂ.is-limit-cone (D≅D'.trsp⁻¹.ₒ cn') → ℂ.is-limit-cone cn'
+    trsp-lim-conv {cn'} islim = isolim-is-lim iso (trsp-lim islim)
+                              where iso : D≅D'.trsp.ₒ (D≅D'.trsp⁻¹.ₒ cn') Cn/D'.≅ₒ cn'
+                                    iso = record
+                                      { a12 = D≅D'.ι1.fnc {cn'}
+                                      ; a21 = D≅D'.ι1.fnc⁻¹ {cn'} 
+                                      ; isop = D≅D'.ι1.isiso {cn'}
+                                      }
+  
+    trsp⁻¹-lim : {cn' : Cn/D'.Obj} → ℂ.is-limit-cone cn' → ℂ.is-limit-cone (D≅D'.trsp⁻¹.ₒ cn')
+    trsp⁻¹-lim {cn'} islim = record
+      { ! = λ cn → record
+          { arL = cn'.unv.ar (D≅D'.trsp.ₒ cn)
+          ; tr = λ I → ~proof
+               (D≅D'.fnc⁻¹ ℂ.∘ cn'.leg I) ℂ.∘ cn'.unv.ar (D≅D'.trsp.ₒ cn)
+                                                     ~[ assˢ ⊙ ∘e (cn'.unv.tr (D≅D'.trsp.ₒ cn) I) r ] /
+               D≅D'.fnc⁻¹ ℂ.∘ D≅D'.fnc ℂ.∘ Cn/D.ₒ.leg cn I            ~[ ass ⊙ lidgg r D≅D'.iddom ]∎
+               Cn/D.ₒ.leg cn I ∎
+          }
+      ; !uniq = λ {cn} f → lidˢ ⊙ cn'.unv.uq-cn (D≅D'.trsp.ₒ cn)
+                                                 (D≅D'.ι1.fnc {cn'} Cn/D'.∘ D≅D'.trsp.ₐ f)
+      }
+      where open ecategory-aux-only ℂ
+            module cn' where
+              open Cn/D'.ₒ cn' public
+              open ℂ.is-limit-cone islim public
+            
+  -- end limit-invariant-under-natiso
+
+  module small-prod-is-small-limit {I : Set}(D : I → ecat.Obj ℂ) where
+    ↑I : small-ecategory
+    ↑I = small-disc-ecat I    
+    ↑Dg : efunctorₗₑᵥ ↑I ℂ
+    ↑Dg = disc-ecat-lift-efctr ℂ D
+    private
+      module ↑I = ecat ↑I
+      module ↑D = efctr ↑Dg
+
+    is-prod→is-lim : {span : Span/.Obj ℂ D} → ℂ.is-product span
+                           → ℂ.is-limit-cone (span→cone ℂ span)
+    is-prod→is-lim isprd = record
+      { ! = λ cn → record
+          { arL = ×sp.unv.ar (cone→span cn)
+          ; tr = ×sp.unv.tr (cone→span cn)
+          }
+      ; !uniq = λ {cn} f → ×sp.unv.uq (cone→span cn) (Cone/.ₐ.tr f)
+      }
+      where module ×sp = ℂ.is-product isprd
+
+    is-lim→is-prod : {cone : Cone/.Obj ↑Dg} → ℂ.is-limit-cone cone
+                           → ℂ.is-product (cone→span cone)
+    is-lim→is-prod islim = record
+      { ! = λ sp → record
+          { arL = ×sp.unv.ar (span→cone ℂ sp)
+          ; tr = ×sp.unv.tr (span→cone ℂ sp)
+          }
+      ; !uniq = λ {sp} f → ×sp.unv.uq (span→cone ℂ sp) (Span/.ₐ.tr f)
+      }
+      where module ×sp = ℂ.is-limit-cone islim
+    prod-of→lim-of : ℂ.product-of D → ℂ.limit-of ↑Dg
+    prod-of→lim-of prdof = record
+      { cone = span→cone ℂ ×sp.span/
+      ; islim = is-prod→is-lim ×sp.isprd
+      }
+      where module ×sp = ℂ.product-of prdof    
+    lim-of→prod-of : ℂ.limit-of ↑Dg → ℂ.product-of D
+    lim-of→prod-of limof = record
+      { span/ = cone→span ×sp.cone
+      ; isprd = is-lim→is-prod ×sp.islim
+      }
+      where module ×sp = ℂ.limit-of limof
+  -- end small-prod-is-small-limit
+
+
 
   module limit-as-eql (hasprd : has-small-products ℂ){𝕀 : small-ecategory}(D : 𝕀 diag-in ℂ) where
     open has-small-products hasprd using (prd-of)
@@ -162,8 +304,8 @@ module small-limit-props {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ �
 
     
     is-eql→is-lim : {E : ℂ.Obj}{e : || ℂ.Hom E dom.Vx ||}
-                    {eqleq : ar₁ ℂ.∘ e ℂ.~ ar₂ ℂ.∘ e}(iseql : ℂ.is-equaliser eqleq)
-                      → ℂ.is-limit-cone (eqleq→cone eqleq)
+                     {eqleq : ar₁ ℂ.∘ e ℂ.~ ar₂ ℂ.∘ e}(iseql : ℂ.is-equaliser eqleq)
+                       → ℂ.is-limit-cone (eqleq→cone eqleq)
     is-eql→is-lim iseql = record
       { ! = unv-ar
       ; !uniq = unv-uq
@@ -195,3 +337,15 @@ module small-limit-props {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ �
   --- end limit-as-eql
   
 -- end small-limit-props
+
+
+lim→prod :  {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}
+                → has-small-limits ℂ → has-small-products ℂ
+lim→prod {ℂ = ℂ} limℂ = record
+  { prd-of = λ {I} D → lim-of→prod-of D (lim-of (disc-ecat-lift-efctr ℂ D))
+  }
+  where open small-limit-defs ℂ
+        open small-limit-props ℂ
+        open small-prod-is-small-limit
+        open has-small-limits limℂ using (lim-of)
+        

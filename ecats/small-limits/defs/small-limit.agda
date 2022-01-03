@@ -26,6 +26,7 @@ module small-limit-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ 
                        (islim : is-limit-cone L)
                        where
     private
+      module D = efctr D
       module Cone/D where
         open Cone/ D public
         open terminal-defs (Cone/ D) public
@@ -36,6 +37,8 @@ module small-limit-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ 
     module unv (cn : Cone/.Obj D) where
       private module cn = Cone/D.ₒ cn
       open Cone/D.ₐ (L.! cn) public
+      uq-cn : (f : || Cone/D.Hom cn L ||) → f Cone/D.~ unv cn
+      uq-cn = L.!uniq {cn}
       uq : {f : || ℂ.Hom cn.Vx L.Vx ||}(trf : ∀ i → L.π i ℂ.∘ f ℂ.~ cn.leg i)
               → f ℂ.~ ar
       uq {f} tr = L.!uniq {cn} (Cone/.if-tr-then-ar D cn L tr)
@@ -86,9 +89,9 @@ module small-limit-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ 
   record product-of {I : Set}(D : I → ecat.Obj ℂ) : Set ℂ.ℓₐₗₗ where
     private module Sp/D = Span/ ℂ D
     field
-      ×span/ : Sp/D.Obj
-      isprd : is-product ×span/
-    open Sp/D.ₒ ×span/ renaming (leg to π) public
+      span/ : Sp/D.Obj
+      isprd : is-product span/
+    open Sp/D.ₒ span/ renaming (leg to π) public
     open is-product isprd public
 
 -- end small-limit-defs
