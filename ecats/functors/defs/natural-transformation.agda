@@ -66,9 +66,9 @@ NatTr {ℂ = ℂ} {𝔻 = 𝔻} F G = record
   where module 𝔻 = ecategory-aux 𝔻
         open natural-transformation
 
-module NT {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
-          {F G : efunctorₗₑᵥ ℂ 𝔻}
-          where
+module NatTr {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+             {F G : efunctorₗₑᵥ ℂ 𝔻}
+             where
   open setoid (NatTr F G) public
   infix 20 _~_
   _~_ : (α β : object) → Set (ℓ₁ ⊔ ℓ₆)
