@@ -1,29 +1,23 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.finite-limits.props.terminal where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.commut-shapes
+--open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.isomorphism
 open import ecats.finite-limits.defs.terminal
-open import ecats.finite-limits.d&n-bin-product
-open import ecats.finite-limits.d&n-pullback
+--open import ecats.finite-limits.d&n-bin-product
+--open import ecats.finite-limits.d&n-pullback
 
 
-module terminal-props (ℂ : ecategory) where
+module terminal-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
   open ecategory-aux ℂ
-  open comm-shapes ℂ
+  --open comm-shapes ℂ
   open iso-defs ℂ
   open terminal-defs ℂ
-  open binary-products ℂ
-  open pullback-squares ℂ
-  private
-    module pbof = pullback-of-not
+  --open binary-products ℂ
+  --open pullback-squares ℂ
 
   !uq-iso : {T T' : Obj} → is-terminal T → is-terminal T' → T ≅ₒ T'
   !uq-iso {T} {T'} !T !T' = record
