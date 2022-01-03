@@ -17,165 +17,268 @@ open import ecats.functors.defs.natural-transformation
 
 
 
-module finite-linear-preorders-data where
-  𝔽Hom : (n : N) → Fin n → Fin n → setoid {0ₗₑᵥ} {0ₗₑᵥ}
-  𝔽Hom (s n) (inl x) (inl y) = 𝔽Hom n x y
-  𝔽Hom (s n) (inl x) (inr y) = Freestd N₁
-  𝔽Hom (s n) (inr x) (inl y) = Freestd N₀
-  𝔽Hom (s n) (inr x) (inr y) = Freestd N₁
-  {-
-  𝔽Hom (s n) = Finsrec n {λ _ → (_ : Fin (s n)) → setoid}
-                       -- one arrow from inl to inr
-                       (λ i₁ → Finsrec n {λ _ → setoid} (λ i₂ → 𝔽Hom n i₁ i₂) (Freestd N₁))
-                       -- no from inr to inl and one arrow from inr to inr
-                       (Finsrec n {λ _ → setoid} (λ _ → Freestd N₀) (Freestd N₁))
-  -}
+---------------------------
+--  the equaliser category
+---------------------------
 
-  𝔽id :  (n : N)(i : Fin n) → || 𝔽Hom n i i ||
-  𝔽id (s n) (inl x) = 𝔽id n x
-  𝔽id (s n) (inr x) = 0₁
-  -- Finsrec n {λ j → || 𝔽Hom (s n) j j ||} (λ j → 𝔽id n {j}) 0₁ i
+module equal-ecat where
 
-  𝔽cmp : (n : N){i j k : Fin n} → || 𝔽Hom n j k || → || 𝔽Hom n i j ||
-            → || 𝔽Hom n i k ||
-  𝔽cmp (s n) {inl x} {inl y} {inl z} jk ij = 𝔽cmp n jk ij
-  𝔽cmp (s n) {inl x} {inl y} {inr z} jk ij = 0₁
-  𝔽cmp (s n) {inl x} {inr y} {inr z} jk ij = 0₁
-  𝔽cmp (s n) {inr x} {inr y} {inr z} jk ij = 0₁
+  Ob : Set
+  Ob = N₁ + N₁
+  Ar : N₁ + N₁ → N₁ + N₁ → Set
+  Ar (inl x₁) (inl x) = N₁
+  Ar (inr x₁) (inl x) = N₀
+  Ar (inl x₁) (inr x) = N₁ + N₁
+  Ar (inr x₁) (inr x) = N₁
+  H : N₁ + N₁ → N₁ + N₁ → setoid
+  H i j = Freestd (Ar i j)
+  cmp : {i j k : N₁ + N₁} → || H j k || → || H i j || → || H i k ||
+  cmp {i} {inl 0₁} {inl 0₁} = λ _ f → f
+  cmp {i} {inr x₁} {inl x} = N₀rec
+  cmp {inl 0₁} {inl 0₁} {inr x} = λ g _ → g
+  cmp {inr x₂} {inl x₁} {inr x} = λ g → N₀rec
+  cmp {i} {inr 0₁} {inr 0₁} = λ _ f → f
+  idar : (i : N₁ + N₁) → || H i i ||
+  idar = sumrec {C = λ i → || H i i ||} (λ x → x) (λ x → x)
+  ext : {a b c : N₁ + N₁} (f f' : || H a b ||) (g g' : || H b c ||)
+           → < H a b > f ~ f' → < H b c > g ~ g'
+             → < H a c > cmp {a} {b} {c} g f ~ cmp {a} {b} {c} g' f'
+  ext {a} {inl 0₁} {inl 0₁} f f' g g' eqf eqg = eqf
+  ext {inl 0₁} {inl 0₁} {inr x} f f' g g' eqf eqg = eqg
+  ext {a} {inr 0₁} {inr 0₁} f f' g g' eqf eqg = eqf
+  lid : {a b : N₁ + N₁}(f : || H a b ||)
+           → < H a b > cmp {a} {b} {b} (idar b) f ~ f
+  lid {a} {inl 0₁} = λ _ → setoid-aux.r (H a (inl 0₁))
+  lid {a} {inr 0₁} = λ _ → setoid-aux.r (H a (inr 0₁))
+  rid : {a b : N₁ + N₁}(f : || H a b ||)
+           → < H a b > cmp {a} {a} {b} f (idar a) ~ f
+  rid {inl 0₁} {inl 0₁} = λ f → pj2 N₁-isContr f ⁻¹
+  rid {inr x₁} {inl x} = N₀rec
+  rid {inl 0₁} {inr x} = λ f → =rf
+  rid {inr 0₁} {inr 0₁} = λ f → pj2 N₁-isContr f ⁻¹
+  ass : {a b c d : N₁ + N₁}(f : || H a b ||)(g : || H b c ||)(h : || H c d ||)
+           → < H a d > cmp {a} {c} {d} h (cmp {a} {b} {c} g f)
+                           ~ cmp {a} {b} {d} (cmp {b} {c} {d} h g) f
+  ass {a} {b} {inl 0₁} {inl 0₁} = λ _ _ _ → setoid-aux.r (H a (inl 0₁))
+  ass {a} {b} {inr x₁} {inl x} = λ _ _ → N₀rec
+  ass {a} {inl 0₁} {inl 0₁} {inr x} = λ _ _ _ → setoid-aux.r (H a (inr x))
+  ass {a} {inr x₂} {inl x₁} {inr x} = λ _ → N₀rec
+  ass {a} {b} {inr 0₁} {inr 0₁} = λ _ _ _ → setoid-aux.r (H a (inr 0₁))
+-- end equal-ecat
 
-  ispreorder : (n : N){i j : Fin n}{ij ij' :  || 𝔽Hom n i j ||} → < 𝔽Hom n i j > ij ~ ij'
-  ispreorder (s n) {inl x} {inl x₁} {ij} {ij'} = ispreorder n {ij = ij} {ij'}
-  ispreorder (s n) {inl x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
-  ispreorder (s n) {inr x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
--- end finite-linear-preorders-data
+Eql-cat : small-ecategory
+Eql-cat = record
+     { Obj = Ob
+     ; Hom = H
+     ; isecat = record
+                  { _∘_ = λ {a} {b} {c} → cmp {a} {b} {c}
+                  ; idar = idar
+                  ; ∘ext = λ {a} {b} {c} → ext {a} {b} {c}
+                  ; lidax = λ {a} {b} → lid {a} {b}
+                  ; ridax = λ {a} {b} → rid {a} {b}
+                  ; assoc = λ {a} {b} {c} {d} → ass {a} {b} {c} {d}
+                  }
+     }
+     where open equal-ecat
+
+module Eql-cat where
+  open ecat Eql-cat hiding (_~_) public
+  <Hom_,_>_~_ : (A B : Obj)(f f' : || Hom A B ||) → Set
+  <Hom A , B > f ~ f' = < Hom A B > f ~ f'
+  [_,_,_]_∘_ : (A B C : Obj) → || Hom B C || → || Hom A B || → || Hom A C ||
+  [ A , B , C ] g ∘ f = _∘_ {A} {B} {C} g f
+  dom cod : Obj
+  dom = inl 0₁
+  cod = inr 0₁
+  a₁ a₂ : {x x' y : N₁} → || Hom (inl x) (inr x') ||
+  a₁ {x} {x'} {y} = inl y
+  a₂ {x} {x'} {y} = inr y
+  a₁0 a₂0 : || Hom dom cod ||
+  a₁0 = a₁ {0₁} {0₁} {0₁}
+  a₂0 = a₂ {0₁} {0₁} {0₁}
+
+module Eql-graph where
+  private module Eql = Eql-cat
+  V : Set
+  V = N₁ + N₁
+  E : V → V → Set
+  E v (inl x) = N₀
+  E (inl x₁) (inr x) = N₁ + N₁
+  E (inr x₁) (inr x) = N₀
+  dom cod : V
+  dom = inl 0₁
+  cod = inr 0₁
+  a₁ a₂ : E dom cod
+  a₁ = inl 0₁
+  a₂ = inr 0₁
+  IE : {u v : V} → E u v → || Eql.Hom u v ||
+  IE {u} {inl x} = N₀rec
+  IE {inl x₁} {inr x} = λ z → z
+  IE {inr x₁} {inr x} = N₀rec
+  ES :(u v : V) → setoid {0ₗₑᵥ} {0ₗₑᵥ}
+  ES u v = Freestd (E u v)
+  _~_ : {u v : V}(uv uv' : E u v) → Set
+  uv ~ uv' = ES._∼_ uv uv'
+           where module ES {u v : V} = setoid (ES u v)  
+  IE-ext : {u v : V}{uv uv' : E u v} → uv ~ uv' → < Eql-cat.Hom u v > IE uv ~ IE uv'
+  IE-ext {u} {v} {uv} = =J (λ uv' _ → < Eql-cat.Hom u v > IE uv ~ IE uv')
+                           (r {u} {v} {IE uv})
+                      where open ecategory-aux Eql-cat using (r)
+-- end Eql-graph
 
 
-FinLinOrd : (n : N) → small-ecategory
-FinLinOrd n = record
-            { Obj = Fin n
-            ; Hom = 𝔽Hom n
-            ; isecat = record
-                     { _∘_ = 𝔽cmp n
-                     ; idar = 𝔽id n
-                     ; ∘ext = λ f f' g g' x x₁ → ispreorder n
-                     ; lidax = λ f → ispreorder n
-                     ; ridax = λ f → ispreorder n
-                     ; assoc = λ f g h → ispreorder n
-                     }
-            }
-            where open finite-linear-preorders-data
+module Eql-cat-is-free-props {ℓ₁ ℓ₂ ℓ₃ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)
+                             {GO : Eql-cat.Obj → ecat.Obj 𝔻}
+                             {GE : {u v : Eql-cat.Obj} → Eql-graph.E u v
+                                        → || ecat.Hom 𝔻 (GO u) (GO v) ||}
+                             (GEext : {u v : Eql-cat.Obj}{uv uv' : Eql-graph.E u v}
+                                         → uv Eql-graph.~ uv'
+                                           → < ecat.Hom 𝔻 (GO u) (GO v) > GE uv ~ GE uv')
+                            where
+  private
+    module 𝔻 where
+      open ecat 𝔻 public
+      open ecategory-aux-only 𝔻 using (r) public
+      open iso-defs 𝔻 public
+      open iso-props 𝔻 public
+    module EqlC = Eql-cat
+    module EqlG = Eql-graph
+    GH : {A B : EqlC.Obj} → || EqlC.Hom A B || → || 𝔻.Hom (GO A) (GO B) ||
+    GH {inl 0₁} {inl 0₁} f = 𝔻.idar (GO (inl 0₁))
+    GH {inr x₁} {inl x} f = N₀rec f
+    GH {inl x₁} {inr x} f = sumrec (λ i → GE (inl i)) (λ i → GE (inr i)) f
+    GH {inr 0₁} {inr 0₁} f = 𝔻.idar (GO (inr 0₁))
 
-FinLinOrd-is-preorder : (n : N) → is-preorder (FinLinOrd n)
-FinLinOrd-is-preorder n = record { pf = ispreorder n }
-                      where open finite-linear-preorders-data
-
-𝔽inPreOrd : (n : N) → small-preorder
-𝔽inPreOrd n = record
-             { ℂ = FinLinOrd n
-             ; ispreord = FinLinOrd-is-preorder n
+  lift  : efunctorₗₑᵥ Eql-cat 𝔻
+  lift = record
+       { FObj = GO
+       ; FHom = GH
+       ; isF = record
+             { ext = λ {A} {B} → ext A B
+             ; id = λ {A} → id A
+             ; cmp = cmp
              }
+       }
+       where open ecategory-aux-only 𝔻 using (r; lid; rid)
+             ext : (A B : EqlC.Obj){f f' : || EqlC.Hom A B ||}
+                      → < EqlC.Hom A B > f ~ f' → GH f 𝔻.~ GH f'
+             ext A B = free-std-is-min-pf (𝔻.Hom (GO A) (GO B)) GH
+             id : (A : EqlC.Obj) → GH (EqlC.idar A) 𝔻.~ 𝔻.idar (GO A)
+             id (inl 0₁) = r
+             id (inr 0₁) = r
+             cmp : {A B C : EqlC.Obj}(f : || EqlC.Hom A B ||)(g : || EqlC.Hom B C ||)
+                      → < 𝔻.Hom (GO A) (GO C) > GH g 𝔻.∘ GH f ~ GH (EqlC.[ A , B , C ] g ∘ f)
+             cmp {A} {inl 0₁} {inl 0₁} = λ _ _ → lid
+             cmp {A} {inr x₁} {inl x} = λ _ → N₀rec
+             cmp {inl 0₁} {inl 0₁} {inr x} = λ _ _ → rid
+             cmp {inr x₂} {inl x₁} {inr x} = N₀rec
+             cmp {A} {inr 0₁} {inr 0₁} = λ _ _ → lid
+  private module lift = efunctorₗₑᵥ lift
 
-module FinLinOrd (n : N) where
-  open ecategory-aux (FinLinOrd n) public
-  module ispreord = is-preorder (FinLinOrd-is-preorder n)
+  ar : (A : EqlC.Obj) → || 𝔻.Hom (lift.ₒ A) (GO A) ||
+  ar A = 𝔻.idar (GO A)
+  nat : {A B : EqlC.Obj} (AB : EqlG.E A B)
+           → ar B 𝔻.∘ lift.ₐ (EqlG.IE AB) 𝔻.~  GE AB 𝔻.∘ ar A
+  nat {A} {inl x} = N₀rec
+  nat {inl 0₁} {inr 0₁} (inl x₂) = lidgen ridˢ
+    where open ecategory-aux-only 𝔻 using (lidgen; ridˢ)
+  nat {inl 0₁} {inr 0₁} (inr x₂) = lidgen ridˢ
+    where open ecategory-aux-only 𝔻 using (lidgen; ridˢ)
+  nat {inr x₁} {inr x} = N₀rec
 
+  iso : (A : EqlC.Obj) → 𝔻.is-iso (ar A)
+  iso A = 𝔻.idar-is-iso (GO A)
 
-[0] [1] [2] [3] [4] ⇨ : small-ecategory
-[0] = FinLinOrd O
-[1] = FinLinOrd (s O)
-[2] = FinLinOrd (s (s O))
-[3] = FinLinOrd (s (s (s O)))
-[4] = FinLinOrd (s (s (s (s O))))
-⇨ = [2]
-
-
-module ωCat-data where
-  Hom : N → N → setoid {0ₗₑᵥ} {0ₗₑᵥ}
-  Hom O O = Freestd N₁
-  Hom O (s n) = Freestd N₁
-  Hom (s m) O = Freestd N₀
-  Hom (s m) (s n) = Hom m n
-
-  suc :  (n : N) → || Hom n (s n) ||
-  suc O = 0₁
-  suc (s n) = suc n
-
-  idar : (n : N) → || Hom n n ||
-  idar O = 0₁
-  idar (s n) = idar n
-
-  cmp : {a b c : N} → || Hom b c || → || Hom a b || → || Hom a c ||
-  cmp {O} {O} {O} bc ab = 0₁
-  cmp {O} {O} {s c} bc ab = 0₁
-  cmp {O} {s b} {s c} bc ab = 0₁
-  cmp {s a} {s b} {s c} bc ab = cmp {a} bc ab
-
-  ispreorder : {m n : N}{f f' : || Hom m n ||} → < Hom m n > f ~ f'
-  ispreorder {O} {O} {f} {f'} = isContr→isProp N₁-isContr f f'
-  ispreorder {O} {s n} {f} {f'} = isContr→isProp N₁-isContr f f'
-  ispreorder {s m} {s n} {f} {f'} = ispreorder {m} {n} {f} {f'}
--- end ωCat-data
-
-ω : small-ecategory
-ω = record
-  { Obj = N
-  ; Hom = Hom
-  ; isecat = record
-           { _∘_ = λ {a} → cmp {a}
-           ; idar = idar
-           ; ∘ext = λ {m} f f' g g' eqf eqg → ispreorder {m}
-           ; lidax = λ {m} f → ispreorder {m}
-           ; ridax = λ {m} f → ispreorder {m}
-           ; assoc = λ {m} f g h → ispreorder {m}
-           }
-  }
-  where open ωCat-data
-
-ω-is-preorder : is-preorder ω
-ω-is-preorder = record { pf =  λ {m} {n} {f} {f'} → ispreorder {m} {n} {f} {f'} }
-              where open ωCat-data
-
-ωPreOrd : small-preorder
-ωPreOrd = record
-        { ℂ = ω
-        ; ispreord = ω-is-preorder
-        }
-
-module ω where
-  open ecategory-aux ω public
-  open ωCat-data using (suc) public
-  module ispreord = is-preorder ω-is-preorder
-
-
--- embedding of finite linear preorders into ω
-
-Ι : (n : N) → efunctor (FinLinOrd n) ω
-Ι n = record
-    { FObj = frgt n
-    ; FHom = fctr n
-    ; isF = record
-          { ext = λ {i} _ → ω.ispreord.pf {frgt n i}
-          ; id = λ {i} → ω.ispreord.pf {frgt n i}
-          ; cmp = λ {i} _ _ → ω.ispreord.pf {frgt n i}
-          }
+  uq : {H : efunctorₗₑᵥ Eql-cat 𝔻}
+       (Hfnc : {A : EqlC.Obj} → || 𝔻.Hom (efctr.ₒ H A) (GO A) ||)
+       (Hnat : {A B : EqlC.Obj}(AB : Eql-graph.E A B)
+                   → Hfnc {B} 𝔻.∘ efctr.ₐ H (Eql-graph.IE AB) 𝔻.~ GE AB 𝔻.∘ Hfnc {A})
+       (Hiso : {A : EqlC.Obj} → 𝔻.is-iso (Hfnc {A}))
+          → H ≅ₐ lift
+  uq {H} Hfnc Hnat Hiso = record
+    { natt = record
+             { fnc = Hfnc
+             ; nat = λ {A} {B} → natfnc A B
+             }
+    ; natt⁻¹ = record
+             { fnc = λ {A} → Hiso.invf A
+             ; nat = λ {A} {B} f → 𝔻.iso-sq (Hiso.isisopair A) (Hiso.isisopair B) (natfnc A B f) 
+             }
+    ; isiso = λ {A} → Hiso.isisopair A
     }
-    where frgt : (n : N) → Fin n → N
-          frgt (s n) (inl x) = frgt n x
-          frgt (s n) (inr x) = n -- this one maps e.g. 'inr : Fin 1' to 'O : N'
-          
-          frgt-ar : (n : N)(i : Fin n) → || ωCat-data.Hom (frgt n i) n ||
-          frgt-ar (s n) (inl x) = ω._∘_ {a = frgt n x} (ω.suc n) (frgt-ar n x)
-          frgt-ar (s n) (inr x) = ω.suc n
-          fctr : (n : N){i j : Fin n} → || ecategoryₗₑᵥ.Hom (FinLinOrd n) i j ||
-                    → || ωCat-data.Hom (frgt n i) (frgt n j) ||
-          fctr (s n) {inl x} {inl x₁} ij = fctr n ij
-          fctr (s n) {inl x} {inr x₁} ij = frgt-ar n x
-          fctr (s n) {inr x} {inr x₁} ij = ω.idar n
+    where module H = efctr H
+          module Hiso (A : EqlC.Obj) = 𝔻.is-iso (Hiso {A})
+          open ecategory-aux-only 𝔻
+          natfnc : (A B : EqlC.Obj)(f : || EqlC.Hom A B ||)
+                      → Hfnc {B} 𝔻.∘ H.ₐ f 𝔻.~ GH f 𝔻.∘ Hfnc {A}
+          natfnc (inl 0₁) (inl 0₁) 0₁ = ridgg lidˢ H.id
+          natfnc (inr x₁) (inl x) = N₀rec
+          natfnc (inl 0₁) (inr 0₁) (inl x₂) = Hnat (inl x₂)
+          natfnc (inl 0₁) (inr 0₁) (inr x₂) = Hnat (inr x₂)
+          natfnc (inr 0₁) (inr 0₁) 0₁ = ridgg lidˢ H.id
+-- end Eql-cat-is-free-props
+
+Eql-cat-is-free : (ℓ₁ ℓ₂ ℓ₃ : Level)
+  → Eql-cat is-free-category-on-graph Eql-graph.ES via Eql-graph.IE at-lev[ ℓ₁ , ℓ₂ , ℓ₃ ]
+Eql-cat-is-free ℓ₁ ℓ₂ ℓ₃ = record
+  { ext = IE-ext
+  ; unvprop = λ 𝔻 GEext → record
+            { fctr = lift 𝔻 GEext
+            ; tr-fnc = λ {A} → ar 𝔻 GEext A
+            ; tr-nat = nat 𝔻 GEext
+            ; tr-iso = λ {A} → iso 𝔻 GEext A
+            ; uq = uq 𝔻 GEext
+            }
+  }
+  where open Eql-cat-is-free-props
+        open Eql-graph using (IE-ext)
+
+module Eql-cat-is-free {ℓ₁ ℓ₂ ℓ₃ : Level} = _is-free-category-on-graph_via_at-lev[_,_,_] (Eql-cat-is-free ℓ₁ ℓ₂ ℓ₃)
 
 
+-- equaliser diagrams in a category
+
+module Eql-in-ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+  private
+    module ℂ where
+      open ecategory-aux ℂ public
+      open comm-shapes ℂ public
+    module EqlC = Eql-cat
+    module EqlG = Eql-graph
+
+  module diag2arr (E : Eql-cat diag-in ℂ) where
+    module E = efctr E
+    src trg : ℂ.Obj
+    src = E.ₒ Eql-cat.dom
+    trg = E.ₒ Eql-cat.cod
+    ar₁ ar₂ : || ℂ.Hom src trg ||
+    ar₁ = E.ₐ Eql-cat.a₁0
+    ar₂ = E.ₐ Eql-cat.a₂0
+  -- end diag2arr
+  
+  arr2diag : {A B : ℂ.Obj}(f g : || ℂ.Hom A B ||) → Eql-cat diag-in ℂ
+  arr2diag {A} {B} f g = Eql-cat-is-free.unv.fctr ℂ {FV} {FE} FEext
+    where FV : EqlG.V → ℂ.Obj
+          FV (inl x) = A
+          FV (inr x) = B
+          FE : {u v : EqlG.V} → EqlG.E u v → || ℂ.Hom (FV u) (FV v) ||
+          FE {u} {inl x} = N₀rec
+          FE {inl x₁} {inr x} = sumrec (λ _ → f) (λ _ → g)
+          FE {inr x₁} {inr x} = N₀rec
+          FEext : {u v : EqlG.V}{uv uv' : EqlG.E u v}
+                     → uv EqlG.~ uv' → FE uv ℂ.~ FE uv'
+          FEext {u} {v} = free-std-is-min-pf (ℂ.Hom (FV u) (FV v)) (FE {u} {v})
+-- end Eql-in-ecat
+
+
+
+-----------------------
 -- the cospan category
+-----------------------
+
 module cospan-category where
 -- inr (inl 0₁) → inl 0₁ ← inr (inr 0₁)
+
   Ob : Set
   Ob = N₁ + (N₁ + N₁)
   H : Ob → Ob → Set
@@ -315,8 +418,8 @@ module Cospan-is-free-props {ℓ₁ ℓ₂ ℓ₃ : Level}(𝔻 : ecategoryₗ�
     GH {inr (inr x)} {inl y} f = GE CspG.a₂
     GH {inr (inr 0₁)} {inr (inr 0₁)} f = 𝔻.idar (GO (inr (inr 0₁)))
     
-  fctr  : efunctorₗₑᵥ Cospan 𝔻
-  fctr = record
+  lift  : efunctorₗₑᵥ Cospan 𝔻
+  lift = record
        { FObj = GO
        ; FHom = GH
        ; isF = record
@@ -345,12 +448,12 @@ module Cospan-is-free-props {ℓ₁ ℓ₂ ℓ₃ : Level}(𝔻 : ecategoryₗ�
              cmp {inr (inr x)} {inl 0₁} {inl 0₁} f g = lid
              cmp {inr (inr 0₁)} {inr (inr 0₁)} {inl z} f g = rid
              cmp {inr (inr 0₁)} {inr (inr 0₁)} {inr (inr 0₁)} f g = rid
-  private module fctr = efunctorₗₑᵥ fctr
+  private module lift = efunctorₗₑᵥ lift
 
-  ar : {v : CspC.Obj} → || 𝔻.Hom (fctr.ₒ v) (GO v) ||
+  ar : {v : CspC.Obj} → || 𝔻.Hom (lift.ₒ v) (GO v) ||
   ar {v} = 𝔻.idar (GO v)
   nat : {u v : CspC.Obj} (uv : Cospan-graph.E u v)
-           → ar 𝔻.∘ fctr.ₐ (CspG.IE uv) 𝔻.~  GE uv 𝔻.∘ ar
+           → ar 𝔻.∘ lift.ₐ (CspG.IE uv) 𝔻.~  GE uv 𝔻.∘ ar
   nat {inr (inl x)} {inl y} 0₁ = lidgen ridˢ
                                where open ecategory-aux-only 𝔻 using (lidgen; ridˢ)
   nat {inr (inr x)} {inl y} 0₁ = lidgen ridˢ
@@ -363,7 +466,7 @@ module Cospan-is-free-props {ℓ₁ ℓ₂ ℓ₃ : Level}(𝔻 : ecategoryₗ�
        (Hnat : {u v : CspC.Obj}(uv : Cospan-graph.E u v)
                    → Hfnc 𝔻.∘ efctr.ₐ H (Cospan-graph.IE uv) 𝔻.~ GE uv 𝔻.∘ Hfnc)
        (Hiso : {v : CspC.Obj} → 𝔻.is-iso (Hfnc {v}))
-          → H ≅ₐ fctr
+          → H ≅ₐ lift
   uq {H} Hfnc Hnat Hiso = record
     { natt = record
              { fnc = Hfnc
@@ -379,12 +482,12 @@ module Cospan-is-free-props {ℓ₁ ℓ₂ ℓ₃ : Level}(𝔻 : ecategoryₗ�
           module Hiso {v : CspC.Obj} = 𝔻.is-iso (Hiso {v})
           open ecategory-aux-only 𝔻
           natfnc : {A B : CspC.Obj} (f : || CspC.Hom A B ||)
-                      → Hfnc 𝔻.∘ H.ₐ f 𝔻.~ fctr.ₐ f 𝔻.∘ Hfnc
-          natfnc {inl 0₁} {inl 0₁} 0₁ = ridgg (lidggˢ r fctr.id) H.id
+                      → Hfnc 𝔻.∘ H.ₐ f 𝔻.~ lift.ₐ f 𝔻.∘ Hfnc
+          natfnc {inl 0₁} {inl 0₁} 0₁ = ridgg (lidggˢ r lift.id) H.id
           natfnc {inr (inl x)} {inl x₁} 0₁ = Hnat CspG.a₁
-          natfnc {inr (inl 0₁)} {inr (inl 0₁)} 0₁ = ridgg (lidggˢ r fctr.id) H.id
+          natfnc {inr (inl 0₁)} {inr (inl 0₁)} 0₁ = ridgg (lidggˢ r lift.id) H.id
           natfnc {inr (inr x)} {inl x₁} 0₁ = Hnat CspG.a₂
-          natfnc {inr (inr 0₁)} {inr (inr 0₁)} 0₁ = ridgg (lidggˢ r fctr.id) H.id          
+          natfnc {inr (inr 0₁)} {inr (inr 0₁)} 0₁ = ridgg (lidggˢ r lift.id) H.id          
 -- end Cospan-is-free-props
 
 
@@ -395,7 +498,7 @@ Cospan-free : (ℓ₁ ℓ₂ ℓ₃ : Level)
 Cospan-free ℓ₁ ℓ₂ ℓ₃ = record
   { ext = IE-ext
   ; unvprop = λ 𝔻 GEext → record
-            { fctr = fctr 𝔻 GEext
+            { fctr = lift 𝔻 GEext
             ; tr-fnc = ar 𝔻 GEext
             ; tr-nat = nat 𝔻 GEext
             ; tr-iso = iso 𝔻 GEext
@@ -454,6 +557,7 @@ module cospan-in-ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ �
                                   → uv CspG.~ uv' → FE uv ℂ.~ FE uv'
                        FEext {inr (inl x)} {inl x₁} {uv} {uv'} eq = ℂ.r
                        FEext {inr (inr x)} {inl x₁} {uv} {uv'} eq = ℂ.r
+
 {-
                        FH : {A B : CspC.Obj} → || CspC.Hom A B || → || ℂ.Hom (FO A) (FO B) ||
                        FH {inl x} {inl y} f = ℂ.idar cosp.O12
@@ -469,7 +573,6 @@ module cospan-in-ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ �
                        FHext {inr (inr x)} {inl y} {f} {f'} eq = ℂ.r
                        FHext {inr (inr x)} {inr (inr y)} {f} {f'} eq = ℂ.r
 -}
-
 {-
 record
     { FObj = FO
@@ -562,3 +665,163 @@ record
   𝔽assoc (s n) {inl x} {inr x₁} {inr x₂} {inr x₃} ij jk kl = =rf
   𝔽assoc (s n) {inr x} {inr x₁} {inr x₂} {inr x₃} ij jk kl = =rf
   -}
+
+
+---------------------------
+-- Countable linear orders
+---------------------------
+
+module finite-linear-preorders-data where
+  𝔽Hom : (n : N) → Fin n → Fin n → setoid {0ₗₑᵥ} {0ₗₑᵥ}
+  𝔽Hom (s n) (inl x) (inl y) = 𝔽Hom n x y
+  𝔽Hom (s n) (inl x) (inr y) = Freestd N₁
+  𝔽Hom (s n) (inr x) (inl y) = Freestd N₀
+  𝔽Hom (s n) (inr x) (inr y) = Freestd N₁
+  {-
+  𝔽Hom (s n) = Finsrec n {λ _ → (_ : Fin (s n)) → setoid}
+                       -- one arrow from inl to inr
+                       (λ i₁ → Finsrec n {λ _ → setoid} (λ i₂ → 𝔽Hom n i₁ i₂) (Freestd N₁))
+                       -- no from inr to inl and one arrow from inr to inr
+                       (Finsrec n {λ _ → setoid} (λ _ → Freestd N₀) (Freestd N₁))
+  -}
+
+  𝔽id :  (n : N)(i : Fin n) → || 𝔽Hom n i i ||
+  𝔽id (s n) (inl x) = 𝔽id n x
+  𝔽id (s n) (inr x) = 0₁
+  -- Finsrec n {λ j → || 𝔽Hom (s n) j j ||} (λ j → 𝔽id n {j}) 0₁ i
+
+  𝔽cmp : (n : N){i j k : Fin n} → || 𝔽Hom n j k || → || 𝔽Hom n i j ||
+            → || 𝔽Hom n i k ||
+  𝔽cmp (s n) {inl x} {inl y} {inl z} jk ij = 𝔽cmp n jk ij
+  𝔽cmp (s n) {inl x} {inl y} {inr z} jk ij = 0₁
+  𝔽cmp (s n) {inl x} {inr y} {inr z} jk ij = 0₁
+  𝔽cmp (s n) {inr x} {inr y} {inr z} jk ij = 0₁
+
+  ispreorder : (n : N){i j : Fin n}{ij ij' :  || 𝔽Hom n i j ||} → < 𝔽Hom n i j > ij ~ ij'
+  ispreorder (s n) {inl x} {inl x₁} {ij} {ij'} = ispreorder n {ij = ij} {ij'}
+  ispreorder (s n) {inl x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
+  ispreorder (s n) {inr x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
+-- end finite-linear-preorders-data
+
+
+FinLinOrd : (n : N) → small-ecategory
+FinLinOrd n = record
+            { Obj = Fin n
+            ; Hom = 𝔽Hom n
+            ; isecat = record
+                     { _∘_ = 𝔽cmp n
+                     ; idar = 𝔽id n
+                     ; ∘ext = λ f f' g g' x x₁ → ispreorder n
+                     ; lidax = λ f → ispreorder n
+                     ; ridax = λ f → ispreorder n
+                     ; assoc = λ f g h → ispreorder n
+                     }
+            }
+            where open finite-linear-preorders-data
+
+FinLinOrd-is-preorder : (n : N) → is-preorder (FinLinOrd n)
+FinLinOrd-is-preorder n = record { pf = ispreorder n }
+                      where open finite-linear-preorders-data
+
+𝔽inPreOrd : (n : N) → small-preorder
+𝔽inPreOrd n = record
+             { ℂ = FinLinOrd n
+             ; ispreord = FinLinOrd-is-preorder n
+             }
+
+module FinLinOrd (n : N) where
+  open ecategory-aux (FinLinOrd n) public
+  module ispreord = is-preorder (FinLinOrd-is-preorder n)
+
+
+[0] [1] [2] [3] [4] ⇨ : small-ecategory
+[0] = FinLinOrd O
+[1] = FinLinOrd (s O)
+[2] = FinLinOrd (s (s O))
+[3] = FinLinOrd (s (s (s O)))
+[4] = FinLinOrd (s (s (s (s O))))
+⇨ = [2]
+
+
+module ωCat-data where
+  Hom : N → N → setoid {0ₗₑᵥ} {0ₗₑᵥ}
+  Hom O O = Freestd N₁
+  Hom O (s n) = Freestd N₁
+  Hom (s m) O = Freestd N₀
+  Hom (s m) (s n) = Hom m n
+
+  suc :  (n : N) → || Hom n (s n) ||
+  suc O = 0₁
+  suc (s n) = suc n
+
+  idar : (n : N) → || Hom n n ||
+  idar O = 0₁
+  idar (s n) = idar n
+
+  cmp : {a b c : N} → || Hom b c || → || Hom a b || → || Hom a c ||
+  cmp {O} {O} {O} bc ab = 0₁
+  cmp {O} {O} {s c} bc ab = 0₁
+  cmp {O} {s b} {s c} bc ab = 0₁
+  cmp {s a} {s b} {s c} bc ab = cmp {a} bc ab
+
+  ispreorder : {m n : N}{f f' : || Hom m n ||} → < Hom m n > f ~ f'
+  ispreorder {O} {O} {f} {f'} = isContr→isProp N₁-isContr f f'
+  ispreorder {O} {s n} {f} {f'} = isContr→isProp N₁-isContr f f'
+  ispreorder {s m} {s n} {f} {f'} = ispreorder {m} {n} {f} {f'}
+-- end ωCat-data
+
+ω : small-ecategory
+ω = record
+  { Obj = N
+  ; Hom = Hom
+  ; isecat = record
+           { _∘_ = λ {a} → cmp {a}
+           ; idar = idar
+           ; ∘ext = λ {m} f f' g g' eqf eqg → ispreorder {m}
+           ; lidax = λ {m} f → ispreorder {m}
+           ; ridax = λ {m} f → ispreorder {m}
+           ; assoc = λ {m} f g h → ispreorder {m}
+           }
+  }
+  where open ωCat-data
+
+ω-is-preorder : is-preorder ω
+ω-is-preorder = record { pf =  λ {m} {n} {f} {f'} → ispreorder {m} {n} {f} {f'} }
+              where open ωCat-data
+
+ωPreOrd : small-preorder
+ωPreOrd = record
+        { ℂ = ω
+        ; ispreord = ω-is-preorder
+        }
+
+module ω where
+  open ecategory-aux ω public
+  open ωCat-data using (suc) public
+  module ispreord = is-preorder ω-is-preorder
+
+
+-- embeddings of finite linear preorders into ω
+
+Ι : (n : N) → efunctor (FinLinOrd n) ω
+Ι n = record
+    { FObj = frgt n
+    ; FHom = fctr n
+    ; isF = record
+          { ext = λ {i} _ → ω.ispreord.pf {frgt n i}
+          ; id = λ {i} → ω.ispreord.pf {frgt n i}
+          ; cmp = λ {i} _ _ → ω.ispreord.pf {frgt n i}
+          }
+    }
+    where frgt : (n : N) → Fin n → N
+          frgt (s n) (inl x) = frgt n x
+          frgt (s n) (inr x) = n -- this one maps e.g. 'inr : Fin 1' to 'O : N'
+          
+          frgt-ar : (n : N)(i : Fin n) → || ωCat-data.Hom (frgt n i) n ||
+          frgt-ar (s n) (inl x) = ω._∘_ {a = frgt n x} (ω.suc n) (frgt-ar n x)
+          frgt-ar (s n) (inr x) = ω.suc n
+          fctr : (n : N){i j : Fin n} → || ecategoryₗₑᵥ.Hom (FinLinOrd n) i j ||
+                    → || ωCat-data.Hom (frgt n i) (frgt n j) ||
+          fctr (s n) {inl x} {inl x₁} ij = fctr n ij
+          fctr (s n) {inl x} {inr x₁} ij = frgt-ar n x
+          fctr (s n) {inr x} {inr x₁} ij = ω.idar n
