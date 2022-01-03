@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.finite-limits.props.equaliser where
 
@@ -17,11 +13,9 @@ open import ecats.finite-limits.defs.equaliser
 
 
 
-module equaliser-props (ℂ : ecategory) where
+module equaliser-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
   open ecategory-aux ℂ
   open iso-defs ℂ
-  open epi&mono-defs ℂ
-  open comm-shapes ℂ
   open equaliser-defs ℂ
 
   iseql-ext : {A B E : Obj} {f f' g g' : || Hom A B ||} {e : || Hom E A ||}
@@ -59,5 +53,4 @@ module equaliser-props (ℂ : ecategory) where
     ; iseql = iseql-ext (∘e r (pff ˢ) ⊙ eqleq ⊙ ∘e r pfg) pff pfg iseql
     }
     where open equaliser-of eqlof
-
 -- end equaliser-props
