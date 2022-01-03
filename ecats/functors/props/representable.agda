@@ -406,7 +406,7 @@ module repres-at-props-ls (ℂ : ecategory)(X : ecat.Obj ℂ) where
   
   pres-lim : preserves-limits [X,─]
   pres-lim = record
-    { pres-lim = islim
+    { pres-lim = λ {𝕀} {D} → islim D
     }
     where open pres-lim
 
