@@ -153,14 +153,18 @@ prod-std A B = record
   }
   where module A = setoid A
         module B = setoid B
+
 module prod-std {ℓo₁ ℓr₁ : Level}(A : setoid {ℓo₁} {ℓr₁}){ℓo₂ ℓr₂ : Level}(B : setoid {ℓo₂} {ℓr₂})
-                (z : || prod-std A B ||)where
+                (z : || prod-std A B ||)
+                where
   ₁ : || A ||
   ₁ = prj1 z
   ₂ : || B ||
   ₂ = prj2 z
+
 module prod-stdeq {ℓo₁ ℓr₁ : Level}(A : setoid {ℓo₁} {ℓr₁}){ℓo₂ ℓr₂ : Level}(B : setoid {ℓo₂} {ℓr₂})
-                  {z z' : || prod-std A B ||}(eq : < prod-std A B > z ~ z')where
+                  {z z' : || prod-std A B ||}(eq : < prod-std A B > z ~ z')
+                  where
   private
     module A = setoid-aux A
     module B = setoid-aux B
