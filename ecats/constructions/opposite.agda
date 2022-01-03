@@ -70,7 +70,7 @@ F ᵒ = record
   where module F = efctr F
 
 
--- The two functors in 'opop' have the same definition of the identity functor IdF
+-- The two functors in 'opop' have the same action of the identity functor IdF
 
 opop : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~)
             → ecat.isecat ((ℂ ᵒᵖ) ᵒᵖ) ≅ᶜᵃᵗ ecat.isecat ℂ
