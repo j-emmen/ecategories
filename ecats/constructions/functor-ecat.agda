@@ -1,5 +1,5 @@
 
-{-# OPTIONS --without-K --show-implicit #-}
+{-# OPTIONS --without-K #-}
 
 module ecats.constructions.functor-ecat where
 
@@ -44,7 +44,8 @@ Fctrₗₑᵥ ℂ 𝔻 = record
   ; isecat = fctr-and-natt-is-ecat ℂ 𝔻
   }
 [_,_]ᶜᵃᵗ = Fctrₗₑᵥ
-
+  
+  
 
 -------------------------------------------------------------
 -- Small category of efunctors between two small ecategories
