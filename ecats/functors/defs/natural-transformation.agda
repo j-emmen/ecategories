@@ -44,12 +44,15 @@ record natural-transformation {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ �
   natˢ f = nat f ˢ
          where open ecategory-aux-only 𝔻 using (_ˢ)
 
+private module nt = natural-transformation
+
 infixr 60 _⇒_
 _⇒_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
         (F G : efunctorₗₑᵥ ℂ 𝔻)
            → Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
 F ⇒ G = natural-transformation F G
 
+-- setoid of natural transformations
 
 NatTr : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
         (F G : efunctorₗₑᵥ ℂ 𝔻)
