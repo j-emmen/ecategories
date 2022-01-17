@@ -24,65 +24,14 @@ module free-category-on-graph-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategor
   private
     ||E|| : V → V → Set ℓ₂
     ||E|| u v = || E u v ||
+    module E {u v : V} = setoid-aux (E u v)
     module ℂ = ecat ℂ
     module unvprop-aux {ℓ₁' ℓ₂' ℓ₃' : Level}(𝕏 : ecategoryₗₑᵥ ℓ₁' ℓ₂' ℓ₃') where
       open ecat 𝕏 public
       open iso-defs 𝕏 public
       open iso-props 𝕏 public
 
-  data fin-path  (u v : V) : Set (ℓ₁ ⊔ ℓ₂) where
-    indv : ||E|| u v → fin-path u v
-    apnd : {w : V} → fin-path u w → ||E|| w v → fin-path u v
 
-  path-rec : {u v : V}{ℓ : Level}{PP : fin-path u v → Set ℓ}
-                → ((e : ||E|| u v) → PP (indv e))
-                → ({w : V}(p : fin-path u w)(e : ||E|| w v) → PP (apnd p e))
-                  → (p : fin-path u v) → PP p
-  path-rec {PP = PP} Pᵢ Pₐ (indv e) = Pᵢ e
-  path-rec {PP = PP} Pᵢ Pₐ (apnd p e) = Pₐ p e
-
-  path-rec-all : {ℓ : Level}{PP : {u v : V} → fin-path u v → Set ℓ}
-                    → ({u v : V}(e : ||E|| u v) → PP (indv e))
-                    → ({u v w : V}(p : fin-path u v)(e : ||E|| v w) → PP (apnd p e))
-                      → {u v : V}(p : fin-path u v) → PP p
-  path-rec-all {PP = PP} Pᵢ Pₐ (indv e) = Pᵢ e
-  path-rec-all {PP = PP} Pᵢ Pₐ (apnd p e) = Pₐ p e
-
-
-  module path-eq-defs (u v : V) where
-  
-    record indv-eq (e e' : ||E|| u v) : Set (ℓ₁ ⊔ ℓ₂) where
-      field
-        pf : e == e'
-
-    record lid-inv (e : ||E|| u v)(p' : fin-path u u)(e' : ||E|| u v) : Set (ℓ₁ ⊔ ℓ₂) where
-      field
-        pf : e == e'
-        -- p' = refl, refl, ..., refl
-
-    record rid-inv (p p' : fin-path u v)(e' : ||E|| v v) : Set (ℓ₁ ⊔ ℓ₂) where
-      field
-        r-pf : e' == refl v
-        -- p = p'
-
-
-  -- end path-eq-defs
-  
-  path-eq : {u v : V}(p₁ p₂ : fin-path u v) → Set (ℓ₁ ⊔ ℓ₂)
-  path-eq {u} {v} = path-rec {PP = λ p → fin-path u v → Set (ℓ₁ ⊔ ℓ₂)}
-                             ( λ e → path-rec {PP = λ p' → Set (ℓ₁ ⊔ ℓ₂)}
-                                               (indv-eq e)
-                                               (λ p' e' → {!!}) )
-                             {!!}
-                  where open path-eq-defs u v
-
-{-
-  path-rec {PP = λ {x} {y} p → fin-path x y → Set ℓ₂}
-                     ( λ {u} {v} e → path-rec {PP = λ {x} {y} p → Set ℓ₂}
-                                               {!λ e' → e == e'!}
-                                               {!!} )
-                     {!!}
--}
 
   record pos-path (u v : V) : Set (ℓ₁ ⊔ ℓ₂) where
     field

@@ -77,3 +77,97 @@ record _is-free-category-on-graph_via_at-lev[_,_,_]
              (GEext : {u v : V}{uv uv' : || E u v ||} → < E u v > uv ~ uv'
                         → < ecat.Hom 𝔻 (GO u) (GO v) > GE uv ~ GE uv')
              = is-free-on-graph-prop ext (unvprop 𝔻 GEext)
+
+
+
+module free-ecat-on-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level}{V : Set ℓ₁}
+                                              (E : V → V → setoid {ℓ₂} {ℓ₃})
+                                              where
+  private
+    ||E|| : V → V → Set ℓ₂
+    ||E|| u v = || E u v ||
+    module E {u v : V} = setoid-aux (E u v)
+
+  -- inductive type of finite paths
+  data fin-path  (u : V) : V → Set (ℓ₁ ⊔ ℓ₂) where
+    --indv : ||E|| u v → fin-path u v
+    emty : fin-path u u
+    apnd : {w v : V} → fin-path u w → ||E|| w v → fin-path u v
+  indv : {u v : V} → ||E|| u v → fin-path u v
+  indv e = apnd emty e
+
+  path-rec : {u : V}{ℓ : Level}{PP : {v : V} → fin-path u v → Set ℓ}
+                --→ ((e : ||E|| u v) → PP (indv e))
+                → (PP emty)
+                → ({w v : V}(p : fin-path u w)(e : ||E|| w v) → PP (apnd p e))
+                  → {v : V}(p : fin-path u v) → PP p
+  path-rec {PP = PP} P∅ Pₐ emty = P∅
+  path-rec {PP = PP} P∅ Pₐ (apnd p e) = Pₐ p e
+
+  path-rec-all : {ℓ : Level}{PP : {u v : V} → fin-path u v → Set ℓ}
+                    → ({u : V} → PP (emty {u}))
+                    → ({u v w : V}(p : fin-path u v)(e : ||E|| v w) → PP (apnd p e))
+                      → {u v : V}(p : fin-path u v) → PP p
+  path-rec-all {PP = PP} P∅ Pₐ emty = P∅
+  path-rec-all {PP = PP} P∅ᵢ Pₐ (apnd p e) = Pₐ p e
+
+{-
+  module path-eq-defs (u v : V) where
+  
+    record indv-eq (e e' : ||E|| u v) : Set (ℓ₁ ⊔ ℓ₂) where
+      field
+        pf : e == e'
+
+    record lid-inv (e : ||E|| u v)(p' : fin-path u u)(e' : ||E|| u v) : Set (ℓ₁ ⊔ ℓ₂) where
+      field
+        pf : e == e'
+        -- p' = refl, refl, ..., refl
+
+    record rid-inv (p p' : fin-path u v)(e' : ||E|| v v) : Set (ℓ₁ ⊔ ℓ₂) where
+      field
+        r-pf : e' == refl v
+        -- p = p'
+-}
+
+  -- end path-eq-defs
+
+
+  -- setoid of finite paths (doing w/o refl of E)
+  data path-eq {u : V} : {v : V}(p₁ p₂ : fin-path u v) → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃) where
+    emty-eq : path-eq emty emty
+    apnd-eq : {w v : V}{p₁ p₂ : fin-path u w}{e₁ e₂ : ||E|| w v}
+                  → path-eq p₁ p₂ → e₁ E.~ e₂ → path-eq (apnd p₁ e₁) (apnd p₂ e₂)
+{-
+    apnd-eeq : {w v : V}{p : fin-path u w}{e₁ e₂ : ||E|| w v}
+                  → e₁ E.~ e₂ → path-eq (apnd p e₁) (apnd p e₂)
+    apnd-peq : {w v : V}{p₁ p₂ : fin-path u w}{e : ||E|| w v}
+                  → path-eq p₁ p₂ → path-eq (apnd p₁ e) (apnd p₂ e)
+                  -- maybe provable?
+-}
+  indv-eq : {u v : V}{e₁ e₂ : ||E|| u v}→ e₁ E.~ e₂ → path-eq (indv e₁) (indv e₂)
+  indv-eq {u} = apnd-eq emty-eq
+
+  path-eq-refl : {u v : V}(p : fin-path u v) → path-eq p p
+  path-eq-refl emty = emty-eq
+  path-eq-refl (apnd p e) = apnd-eq (path-eq-refl p) E.r
+{- the definition via path-rec does not pass the termination check...
+                  path-rec {PP = λ p → path-eq p p}
+                           emty-eq
+                           (λ p _ → apnd-eq (path-eq-refl p) E.r)
+-}
+
+  path-eq-trans : {u v : V}{p₁ p₂ p₃ : fin-path u v}
+                     → path-eq p₁ p₂ → path-eq p₂ p₃ → path-eq p₁ p₃
+  path-eq-trans {u} {u} {emty} {emty} {emty} emty-eq emty-eq = emty-eq
+  path-eq-trans {u} {v} {apnd p₁ e₁} {apnd p₂ e₂} {apnd p₃ e₃}
+                (apnd-eq eq₁ eeq) (apnd-eq eq₂ eeq')
+                = apnd-eq (path-eq-trans eq₁ eq₂) (eeq E.⊙ eeq')
+
+  path-eq-sym : {u v : V}{p₁ p₂ : fin-path u v}
+                     → path-eq p₁ p₂ → path-eq p₂ p₁
+  path-eq-sym {u} {u} {emty} {emty} emty-eq = emty-eq
+  path-eq-sym {u} {v} {apnd p₁ e₁} {apnd p₂ e₂} (apnd-eq eq eeq)
+              = apnd-eq (path-eq-sym eq) (eeq E.ˢ)
+
+
+--- end free-ecat-on-graph-via-inductive-paths
