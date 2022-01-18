@@ -3,7 +3,7 @@
 
 module ecats.functors.defs.presheaf where
 
-import tt-basics.setoids using (setoid)
+open import tt-basics.setoids using (setoid)
 open import ecats.basic-defs.ecat-def&not
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-iso
@@ -54,8 +54,9 @@ module copresheafₗₑᵥ {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ
   module ₐ {Z Z' : Obj}(g : || Hom Z Z' ||) = StdHom (ₐ g)
 
 psheaf-morₗₑᵥ : {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}
-                 → presheafₗₑᵥ ℂ → presheafₗₑᵥ ℂ → Set (ℓₒ ⊔ ℓₐ ⊔ ℓ~)
-psheaf-morₗₑᵥ {ℂ = ℂ} = natural-transformation {ℂ = ℂ ᵒᵖ} {𝔻 = Stdₗₑᵥ ℂ.ℓₐᵣᵣ ℂ.ℓ~}
+                 → presheafₗₑᵥ ℂ → presheafₗₑᵥ ℂ → setoid {ℓₒ ⊔ ℓₐ ⊔ ℓ~} {ℓₒ ⊔ ℓₐ ⊔ ℓ~}
+psheaf-morₗₑᵥ {ℓₒ} {ℓₐ} {ℓ~} {ℂ = ℂ} = NatTr {ℂ = ℂ ᵒᵖ} {𝔻 = Stdₗₑᵥ ℓₐ ℓ~}
+--natural-transformation {ℂ = ℂ ᵒᵖ} {𝔻 = Stdₗₑᵥ ℂ.ℓₐᵣᵣ ℂ.ℓ~}
                      where module ℂ = ecat ℂ
 
 module psheaf-morₗₑᵥ {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}{F G : presheafₗₑᵥ ℂ}(μ : F ⇒ G) where
@@ -85,8 +86,8 @@ presheaf ℂ = presheafₗₑᵥ ℂ
 module presheaf = presheafₗₑᵥ
 
 psheaf-mor : {ℓₒ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ 0ₗₑᵥ 0ₗₑᵥ}
-                 → presheaf ℂ → presheaf ℂ → tt-basics.setoids.setoid {ℓₒ} {ℓₒ}
-psheaf-mor {ℂ = ℂ} = NatTr {ℂ = ℂ ᵒᵖ} {𝔻 = Std} 
+                 → presheaf ℂ → presheaf ℂ → setoid {ℓₒ} {ℓₒ}
+psheaf-mor {ℓₒ} = psheaf-morₗₑᵥ {ℓₒ} {0ₗₑᵥ} {0ₗₑᵥ}
 
 module psheaf-mor {ℂ : ecategory}{F G : presheaf ℂ}(μ : F ⇒ G) where
   open ecat ℂ using (Obj)
@@ -95,4 +96,4 @@ module psheaf-mor {ℂ : ecategory}{F G : presheaf ℂ}(μ : F ⇒ G) where
   open ar public
 
 PSh : (ℂ : ecategory) → large-ecategory
-PSh ℂ = Fctrₗₛ (ℂ ᵒᵖ) Std
+PSh = PShₗₑᵥ {1ₗₑᵥ} {0ₗₑᵥ} {0ₗₑᵥ}
