@@ -151,7 +151,7 @@ module representable-psheaf-props {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategory
     -- end repr-to-term
   -- end private
   
-  repres→term : is-represble-copsheaf F → has-terminal ∫F
+  repres→term : is-represble-psheaf F → has-terminal ∫F
   repres→term isrepr = record
     { trmOb = ob
     ; istrm = isterm
@@ -173,7 +173,7 @@ module representable-copsheaf-props {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecatego
       --open small-limit-defs (Stdₗₑᵥ ℂ.ℓₐᵣᵣ ℂ.ℓ~) public
     module F = copresheafₗₑᵥ F
 
-    -- F is representable iff its category of elements ∫F has initial object.
+    -- F is representable iff its category of coelements ∫F has initial object.
     
     ∫F : ecategoryₗₑᵥ ℂ.ℓₙₒ~ ℂ.ℓₕₒₘ ℂ.ℓ~
     ∫F = ecat-coelmts F
@@ -320,7 +320,7 @@ module representable-copsheaf-props {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecatego
 
 
 
-
+-- this proves preservation of limits for copresheaves on loc small cats
 module repres-at-props-ls (ℂ : ecategory)(X : ecat.Obj ℂ) where
   private
     module ℂ where
