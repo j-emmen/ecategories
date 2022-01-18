@@ -67,9 +67,9 @@ NatTr {ℂ = ℂ} {𝔻 = 𝔻} F G = record
         open natural-transformation
 
 
-natt-id : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
-          {F : efunctorₗₑᵥ ℂ 𝔻}
-            → F ⇒ F
+ιd natt-id : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+             {F : efunctorₗₑᵥ ℂ 𝔻}
+               → F ⇒ F
 natt-id {ℂ = ℂ} {𝔻 = 𝔻} {F} = record
                 { fnc = λ {A} → 𝔻.idar (F.ₒ A)
                 ; nat = λ f → lidgen ridˢ
@@ -77,6 +77,7 @@ natt-id {ℂ = ℂ} {𝔻 = 𝔻} {F} = record
                 where module 𝔻 = ecat 𝔻
                       module F = efctr F
                       open ecategory-aux-only 𝔻
+ιd = natt-id
 
 natt-vcmp : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
             {F G H : efunctorₗₑᵥ ℂ 𝔻}
@@ -110,3 +111,13 @@ natt-hcmp {𝔼 = 𝔼} {F} {G} {H} {K} β α = record
         module β = natural-transformation β
         open ecategory-aux-only 𝔼
 
+infix 70 _○ᵥ_
+_○ᵥ_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+       {F G H : efunctorₗₑᵥ ℂ 𝔻} → G ⇒ H → F ⇒ G → F ⇒ H
+_○ᵥ_ = natt-vcmp
+
+infix 80 _○ₕ_
+_○ₕ_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+       {ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}{F G : efunctorₗₑᵥ ℂ 𝔻}{H K : efunctorₗₑᵥ 𝔻 𝔼}
+               → H ⇒ K → F ⇒ G → H ○ F ⇒ K ○ G
+_○ₕ_ = natt-hcmp
