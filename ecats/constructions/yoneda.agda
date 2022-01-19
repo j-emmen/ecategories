@@ -84,9 +84,10 @@ module yoneda-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ
       -- end private
       
       -- Note that 'NatTr [─, X ] F) : setoid (ℂ.ℓₙₒ~ ⊔ Std.ℓₕₒₘ) (ℂ.ℓₒ ⊔ Std.ℓ~)'
-      -- i.e. 'NatTr [─, X ] F) : setoid ℂ.ℓₐₗₗ ℂ.ℓₐₗₗ', while 'F.ₒ : setoid ℂ.ℓₐᵣᵣ ℂ.ℓ~'.
+      -- i.e. 'NatTr [─, X ] F) : setoid ℂ.ℓₐₗₗ ℂ.ℓₐₗₗ', while 'F.ₒ X : setoid ℂ.ℓₐᵣᵣ ℂ.ℓ~'.
       -- So setoidmap below cannot be replaced by Stdₗₑᵥ.Hom in general (and at any level),
-      -- not even when ℂ is locally small.
+      -- not even when ℂ is locally small. It can be replaced by Stdₗₑᵥ.Hom just when ℓₒ ≤ ℓₐᵣᵣ = ℓ~.
+      -- In particular when ℂ is small.
       natt2el : setoidmap (NatTr ℂ[─, X ] F) (F.ₒ X)
       natt2el = record
               { op = yo-el
@@ -122,6 +123,29 @@ module yoneda-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ
     ; full-pf = λ {X} {Y} {μ} → id-natt ℂ[─, Y ] X μ
     }
     where open Lemma
+
+  module Yo-full-props where
+    open is-full Yo-full
+    private module NT {X Y : ℂ.Obj} = NatTr (ℂ [─, X ₒ]) (ℂ [─, Y ₒ])
+    ext : {X Y : ℂ.Obj}{μ μ' : ℂ [─, X ₒ] ⇒ ℂ [─, Y ₒ]} → μ NT.~ μ' → full-ar μ ℂ.~ full-ar μ'
+    ext {X} {Y} {μ} {μ'} eq = natt2el.ext {x = μ} {μ'} eq
+                            where open Lemma (ℂ [─, Y ₒ]) X
+    id : {X : ℂ.Obj}{μ : ℂ [─, X ₒ] ⇒ ℂ [─, X ₒ]}
+            → μ NT.~ ιd {F = ℂ [─, X ₒ]} → full-ar μ ℂ.~ ℂ.idar X
+    id {X} eq = eq X (ℂ.idar X)
+    cmp :  {X Y Z : ℂ.Obj}{μ : ℂ [─, X ₒ] ⇒ ℂ [─, Y ₒ]}{ν : ℂ [─, Y ₒ] ⇒ ℂ [─, Z ₒ]}{ζ : ℂ [─, X ₒ] ⇒ ℂ [─, Z ₒ]}
+      → ν ○ᵥ μ NT.~ ζ → full-ar ν ℂ.∘ full-ar μ ℂ.~ full-ar ζ
+    cmp {X} {Y} {Z} {μ} {ν} {ζ} eq = ~proof
+      ν.ap {Y} (ℂ.idar Y) ℂ.∘ μ.ap {X} (ℂ.idar X)   ~[ ν.natˢ (μ.ap {X} (ℂ.idar X)) (ℂ.idar Y) ] /
+      ν.ap {X} (ℂ.idar Y ℂ.∘ μ.ap {X} (ℂ.idar X))   ~[ ν.ext {X} lid ] /
+      ν○μ.ap (ℂ.idar X)                             ~[ eq X (ℂ.idar X) ]∎
+      ζ.ap (ℂ.idar X) ∎
+                        where open ecategory-aux-only ℂ
+                              module μ = psheaf-morₗₑᵥ μ
+                              module ν = psheaf-morₗₑᵥ ν
+                              module ζ = psheaf-morₗₑᵥ ζ
+                              module ν○μ = psheaf-morₗₑᵥ (ν ○ᵥ μ)
+  -- end Yo-full-props
 
   Yo-conserv : is-conservative (Yo ℂ)
   Yo-conserv = f&f-is-conservative Yo-full Yo-faith
