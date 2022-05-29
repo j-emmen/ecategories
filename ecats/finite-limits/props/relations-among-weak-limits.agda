@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.finite-limits.props.relations-among-weak-limits where
 
@@ -21,6 +17,7 @@ module relations-among-weak-limit-diagrams (ℂ : ecategory) where
   open finite-weak-limits ℂ
   private
     module sp = span/
+    module sq/ = square/cosp
     module w×/of = wpullback-of-not
     module ×of = product-of-not
     module ×sp = bin-product
@@ -29,87 +26,151 @@ module relations-among-weak-limit-diagrams (ℂ : ecategory) where
     syntax <>pf prdof f g = < f , g >[ prdof ]
 
 
-  module square-is-wpullback↔subprod-is-wequaliser {A B : Obj} (A×B : product-of A B)
-                                                    {C : Obj} {f : || Hom A C ||} {g : || Hom B C ||}
-                                                    (cone : square/cosp f g)
-                                                    where
-    open product-of-not A×B
+  module square-is-wpullback↔wsubprod-is-wequaliser {I A B : Obj} {a : || Hom A I ||} {b : || Hom B I ||}
+                                                     (cone : square/cosp a b)
+                                                     (A×B : product-of A B)
+                                                     {e : || Hom (sq/.ul cone) (×of.O12 A×B) ||}
+                                                     (eq : (a ∘ ×of.π₁ A×B) ∘ e ~ (b ∘ ×of.π₂ A×B) ∘ e)
+                                                     (etr₁ : ×of.π₁ A×B ∘ e ~ sq/.left cone)
+                                                     (etr₂ : ×of.π₂ A×B ∘ e ~ sq/.up cone)
+                                                     where
+    open product-of-not A×B renaming (O12 to AxB)
     open square/cosp cone
 
-    weqlar : || Hom ul O12 ||
-    weqlar = < left , up >
-    weqleq : (f ∘ π₁) ∘ weqlar ~ (g ∘ π₂) ∘ weqlar
-    weqleq = assˢ ⊙ ∘e ×tr₁ r ⊙ sq-pf ⊙ ∘e (×tr₂ˢ {f = left}) r ⊙ ass
-
-    is-wpb→is-weql : is-wpb-square (mksq cone) → is-wequaliser weqleq
+    is-wpb→is-weql : is-wpb-square (mksq cone) → is-wequaliser eq
     is-wpb→is-weql iswpb = record
-      { _|weql[_] = λ h pf → w⟨ π₁ ∘ h , π₂ ∘ h ⟩[ ass ⊙ pf ⊙ assˢ ]
-      ; weqltr = λ pf → <>ar~ar (w×/tr₁ (ass ⊙ pf ⊙ assˢ) ˢ) (w×/tr₂ (ass ⊙ pf ⊙ assˢ) ˢ)
+      { _|weql[_] = λ h pf → w⟨ π₁ ∘ h , π₂ ∘ h ⟩[ unpf pf ]
+      ; weqltr = λ pf → ×uq (ass ⊙ ∘e r etr₁ ⊙ w×/tr₁ (unpf pf)) (ass ⊙ ∘e r etr₂ ⊙ w×/tr₂ (unpf pf))
       }
-      where open wpullback-sq-not (mkwpb-sq iswpb)      
-  -- end square-is-pullback↔subprod-is-equaliser
-    
+      where open wpullback-sq-not (mkwpb-sq iswpb)
+            unpf : {X : Obj} {h : || Hom X AxB ||} → (a ∘ π₁) ∘ h ~ (b ∘ π₂) ∘ h
+                      → a ∘ π₁ ∘ h ~ b ∘ π₂ ∘ h
+            unpf pf = ass ⊙ pf ⊙ assˢ
+            
+    is-weql→is-wpb : is-wequaliser eq → is-wpb-square (mksq cone)
+    is-weql→is-wpb isweql = record
+      { w⟨_,_⟩[_] = λ h k pf → < h , k > |weql[ unpf pf ]
+      ; w×/tr₁ = λ pf → ∘e r (etr₁ ˢ) ⊙ (assˢ ⊙ ∘e (weqltr (unpf pf)) r ⊙ ×tr₁) 
+      ; w×/tr₂ = λ pf → ∘e r (etr₂ ˢ) ⊙ (assˢ ⊙ ∘e (weqltr (unpf pf)) r ⊙ ×tr₂) 
+      }
+      where open is-wequaliser isweql
+            unpf : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||} → a ∘ h ~ b ∘ k
+                      → (a ∘ π₁) ∘ < h , k > ~ (b ∘ π₂) ∘ < h , k >
+            unpf {h = h} pf = assˢ ⊙ ∘e ×tr₁ r ⊙ pf ⊙ ∘e (×tr₂ˢ {f = h}) r ⊙ ass
+            
+  -- end square-is-wpullback↔wsubprod-is-wequaliser
 
-  wpbof→weqlof : {A B : Obj} (A×B : product-of A B) {I : Obj} {f : || Hom A I ||} {g : || Hom B I ||} 
-                    → wpullback-of f g → wequaliser-of (f ∘ ×of.π₁ A×B) (g ∘ ×of.π₂ A×B)
-  wpbof→weqlof A×B wpbof = record
+
+  wpbof→weqlofπ's : {A B : Obj} (A×B : product-of A B) {I : Obj} {f : || Hom A I ||} {g : || Hom B I ||} 
+                       → wpullback-of f g → wequaliser-of (f ∘ ×of.π₁ A×B) (g ∘ ×of.π₂ A×B)
+  wpbof→weqlofπ's A×B {f = f} {g} wpbof = record
     { wEql = ul
     ; weqlar = < wπ/₁ , wπ/₂ >
-    ; weqleq = weqleq
+    ; weqleq = eq
     ; isweql = is-wpb→is-weql w×/iswpbsq
     }
     where open wpullback-of-not wpbof
           open ×of A×B
-          open square-is-wpullback↔subprod-is-wequaliser A×B  w×/sq/
+          eq : (f ∘ π₁) ∘ < wπ/₁ , wπ/₂ > ~ (g ∘ π₂) ∘ < wπ/₁ , wπ/₂ >
+          eq = assˢ ⊙ ∘e ×tr₁ r ⊙ w×/sqpf ⊙ ∘e (×tr₂ˢ {f = wπ/₁}) r ⊙ ass
+          open square-is-wpullback↔wsubprod-is-wequaliser w×/sq/ A×B eq ×tr₁ ×tr₂
 
 
+  weqlofπ's→wpbof : {A B : Obj} (A×B : product-of A B) {I : Obj} {f : || Hom A I ||} {g : || Hom B I ||} 
+                       → wequaliser-of (f ∘ ×of.π₁ A×B) (g ∘ ×of.π₂ A×B) → wpullback-of f g
+  weqlofπ's→wpbof A×B {_} {f} {g} weqlof = record
+    { w×/sq/ = cone
+    ; w×/iswpbsq = is-weql→is-wpb isweql
+    }
+    where open wequaliser-of weqlof
+          cone : square/cosp f g
+          cone = record
+               { upleft = mkspan/ (×of.π₁ A×B ∘ weqlar) (×of.π₂ A×B ∘ weqlar)
+               ; sq-pf = ass ⊙ weqleq ⊙ assˢ
+               }
+          open square-is-wpullback↔wsubprod-is-wequaliser cone A×B {weqlar} weqleq r r
+
+
+
+
+  module wequaliser↔wpullback-of-diag-aux {B : Obj} (B×B : product-of B B)
+                                           {A : Obj} (f f' : || Hom A B ||)
+                                           where
+    open product-of-not B×B
+    open prod-Δ B×B
+    sq2eq₁ : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
+              → < f , f' > ∘ h ~ Δ ∘ k → f ∘ h ~ k
+    sq2eq₁ {C} {h} {k} pf =
+                 ~proof f ∘ h                    ~[ ∘e r (×tr₁ˢ {g = f'}) ⊙ assˢ ] /
+                        π₁ ∘ < f , f' > ∘ h      ~[ ∘e pf r ⊙ ass ⊙ lidgg r ×tr₁ ]∎
+                        k ∎
+    sq2eq₂ : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
+              → < f , f' > ∘ h ~ Δ ∘ k → f' ∘ h ~ k
+    sq2eq₂ {C} {h} {k} pf =
+                 ~proof f' ∘ h                    ~[ ∘e r (×tr₂ˢ {f = f}) ⊙ assˢ ] /
+                        π₂ ∘ < f , f' > ∘ h       ~[ ∘e pf r ⊙ ass ⊙ lidgg r ×tr₂ ]∎
+                        k ∎
+    sq2eql : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
+                → < f , f' > ∘ h ~ Δ ∘ k → f ∘ h ~ f' ∘ h
+    sq2eql {C} {h} {k} pf = sq2eq₁ pf ⊙ sq2eq₂ pf ˢ
+  -- end wequaliser↔wpullback-of-diag-aux
 
   module wequaliser↔wpullback-of-diag {B : Obj} (B×B : product-of B B)
                                        {A E : Obj} {f f' : || Hom A B ||} {e : || Hom E A ||}
-                                       (pf : f ∘ e ~ f' ∘ e)                                     
+                                       (eq : f ∘ e ~ f' ∘ e)
+                                       {up : || Hom E B ||} (sqpf : < f , f' >[ B×B ] ∘ e ~ Δpf B×B ∘ up)
                                        where
     open product-of-not B×B
     open prod-Δ B×B
+    open wequaliser↔wpullback-of-diag-aux B×B f f'
+    tr₁ : up ~ f ∘ e
+    tr₂ : up ~ f' ∘ e
+    tr₁ = sq2eq₁ sqpf ˢ
+    tr₂ = sq2eq₂ sqpf ˢ    
 
-    up : || Hom E B ||
-    up = f ∘ e
-    sqpf : < f , f' > ∘ e ~ Δ ∘ up
-    sqpf = <>ar~<>ar lidˢ (lidgenˢ (pf ˢ))
-
-    is-weql→is-wpb : is-wequaliser pf → is-wpb-square (mksq (mksq/ sqpf))
+    is-weql→is-wpb : is-wequaliser eq → is-wpb-square (mksq (mksq/ sqpf))
     is-weql→is-wpb isweql = record
       { w⟨_,_⟩[_] = λ h k pf → h |weql[ sq2eql pf ]
       ; w×/tr₁ = λ pf → weqltr (sq2eql pf)
-      ; w×/tr₂ = λ pf → assˢ ⊙ ∘e (weqltr (sq2eql pf)) r ⊙ aux₁ pf
+      ; w×/tr₂ = λ pf → ∘e r tr₁ ⊙ (assˢ ⊙ ∘e (weqltr (sq2eql pf)) r ⊙ sq2eq₁ pf)
       }
-      where open is-wequaliser isweql
-            aux₁ : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
-                      → < f , f' > ∘ h ~ Δ ∘ k → f ∘ h ~ k
-            aux₁ {C} {h} {k} pf =
-                         ~proof f ∘ h                    ~[ ∘e r (×tr₁ˢ {g = f'}) ⊙ assˢ ] /
-                                π₁ ∘ < f , f' > ∘ h      ~[ ∘e pf r ⊙ ass ⊙ lidgg r ×tr₁ ]∎
-                                k ∎
-                                
-            aux₂ : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
-                      → < f , f' > ∘ h ~ Δ ∘ k → f' ∘ h ~ k
-            aux₂ {C} {h} {k} pf =
-                         ~proof f' ∘ h                    ~[ ∘e r (×tr₂ˢ {f = f}) ⊙ assˢ ] /
-                                π₂ ∘ < f , f' > ∘ h       ~[ ∘e pf r ⊙ ass ⊙ lidgg r ×tr₂ ]∎
-                                k ∎
-            
-            sq2eql : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}
-                        → < f , f' > ∘ h ~ Δ ∘ k → f ∘ h ~ f' ∘ h
-            sq2eql {C} {h} {k} pf = aux₁ pf ⊙ aux₂ pf ˢ
+      where open is-wequaliser isweql            
+    
+    is-wpb→is-weql : is-wpb-square (mksq (mksq/ sqpf)) → is-wequaliser eq
+    is-wpb→is-weql iswpb = record
+      { _|weql[_] = λ h pf → w⟨ h , f ∘ h ⟩[ unpf pf ]
+      ; weqltr = λ pf → w×/tr₁ (unpf pf)
+      }
+      where open wpullback-of-not (mkwpb-of iswpb)
+            unpf : {C : Obj} {h : || Hom C A ||} (pf : f ∘ h ~ f' ∘ h)
+                      → < f , f' >[ B×B ] ∘ h ~ Δpf B×B ∘ f ∘ h
+            unpf pf = <>ar~<>ar lidˢ (pf ˢ ⊙ lidˢ)
+
   -- end wequaliser↔wpullback-of-diag
 
 
-  weqlof2wpbof : {B : Obj} (B×B : product-of B B) {A : Obj} {f f' : || Hom A B ||}
+
+  weqlof→wpbof<> : {B : Obj} (B×B : product-of B B) {A : Obj} {f f' : || Hom A B ||}
                     → wequaliser-of f f' → wpullback-of < f , f' >[ B×B ] (Δpf B×B)
-  weqlof2wpbof B×B weqlof = record
+  weqlof→wpbof<> B×B {f = f} weqlof = record
     { w×/iswpbsq = is-weql→is-wpb isweql
     }
     where open wequaliser-of weqlof
-          open wequaliser↔wpullback-of-diag B×B weqleq
+          open product-of-not B×B
+          open wequaliser↔wpullback-of-diag B×B weqleq {f ∘ weqlar} (<>ar~<>ar lidˢ (lidgenˢ (weqleq ˢ)))
+
+
+  wpbof<>→weqlof : {B : Obj} (B×B : product-of B B) {A : Obj} {f f' : || Hom A B ||}
+                    → wpullback-of < f , f' >[ B×B ] (Δpf B×B) → wequaliser-of f f'
+  wpbof<>→weqlof B×B {f = f} {f'} wpbof = mkweql-of (is-wpb→is-weql w×/iswpbsq)
+                                     where open wpullback-of-not wpbof
+                                           open wequaliser↔wpullback-of-diag-aux B×B f f'
+                                           eq : f ∘ wπ/₁ ~ f' ∘ wπ/₁
+                                           eq = sq2eql w×/sqpf
+                                           open wequaliser↔wpullback-of-diag B×B eq {wπ/₂} w×/sqpf
+
+
+
 
 
 

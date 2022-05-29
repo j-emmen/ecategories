@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-defs.isomorphism where
 
@@ -22,6 +18,26 @@ module iso-defs (ℂ : ecategory) where
       iddom : invf ∘ f ~ idar a
       idcod : f ∘ invf ~ idar b
 
+  inv-uq : {a b : Obj}{f : || Hom a b ||}{g g' : || Hom b a ||}
+              → is-iso-pair f g → is-iso-pair f g' → g ~ g'
+  inv-uq {f = f} {g} {g'} isop isop' = ~proof g           ~[ ridggˢ r g'.idcod ] /
+                                              g ∘ f ∘ g'   ~[ ass ⊙ lidgg r g.iddom ]∎
+                                              g' ∎
+                                     where open ecategory-aux-only ℂ
+                                           module g = is-iso-pair isop
+                                           module g' = is-iso-pair isop'
+
+  inv-uqg : {a b : Obj}{f f' : || Hom a b ||}{g g' : || Hom b a ||}
+               → is-iso-pair f g → is-iso-pair f' g' → f ~ f' → g ~ g'
+  inv-uqg {f = f} {f'} {g} {g'} isop isop' eq = ~proof
+                                              g            ~[ ridggˢ r g'.idcod ] /
+                                              g ∘ f' ∘ g'   ~[ ∘e (∘e r (eq ˢ)) r  ] /
+                                              g ∘ f ∘ g'    ~[ ass ⊙ lidgg r g.iddom ]∎
+                                              g' ∎
+                                              where open ecategory-aux-only ℂ
+                                                    module g = is-iso-pair isop
+                                                    module g' = is-iso-pair isop'
+
 
   inv-iso-pair : {a b : Obj} {f : || Hom a b ||} {invf : || Hom b a ||}
                     → is-iso-pair f invf → is-iso-pair invf f
@@ -30,6 +46,38 @@ module iso-defs (ℂ : ecategory) where
     ; idcod = iddom
     }
     where open is-iso-pair isop
+
+  iso-pair-ext : {a b : Obj}{f g : || Hom a b ||}{f' g' : || Hom b a ||}
+                    → is-iso-pair f f' → g ~ f → g' ~ f' → is-iso-pair g g'
+  iso-pair-ext isop eq eq' = record
+    { iddom = ∘e eq eq' ⊙ f.iddom
+    ; idcod = ∘e eq' eq ⊙ f.idcod
+    }
+    where module f = is-iso-pair isop
+          open ecategory-aux-only ℂ
+
+  iso-pair-cmp : {a b c : Obj}{f : || Hom a b ||}{f' : || Hom b a ||}
+                 {g : || Hom b c ||}{g' : || Hom c b ||}
+                    → is-iso-pair f f' → is-iso-pair g g'
+                      → is-iso-pair (g ∘ f) (f' ∘ g')
+  iso-pair-cmp isopf isopg = record
+    { iddom = assˢ ⊙ ∘e (ass ⊙ lidgg r g.iddom) r ⊙ f.iddom
+    ; idcod = assˢ ⊙ ∘e (ass ⊙ lidgg r f.idcod) r ⊙ g.idcod
+    }
+    where module f = is-iso-pair isopf
+          module g = is-iso-pair isopg
+          open ecategory-aux-only ℂ
+
+  iso-pair-tricmp : {a b c d : Obj}{f : || Hom a b ||}{f' : || Hom b a ||}
+                    {g : || Hom b c ||}{g' : || Hom c b ||}
+                    {h : || Hom c d ||}{h' : || Hom d c ||}
+                    → is-iso-pair f f' → is-iso-pair g g' → is-iso-pair h h'
+                      → is-iso-pair (h ∘ g ∘ f) (f' ∘ g' ∘ h')
+  iso-pair-tricmp isopf isopg isoph = iso-pair-ext (iso-pair-cmp (iso-pair-cmp isopf isopg) isoph) r ass
+    where module f = is-iso-pair isopf
+          module g = is-iso-pair isopg
+          module h = is-iso-pair isoph
+          open ecategory-aux-only ℂ
     
 
   record is-iso {a b : Obj} (f : || Hom a b ||) : Set where
@@ -55,7 +103,7 @@ module iso-defs (ℂ : ecategory) where
                                        { iddom = ∘e pf r ⊙ iddom
                                        ; idcod = ∘e r pf ⊙ idcod
                                        }
-
+  
 {-
   inverses : {a b : Obj} → (f : || Hom a b ||) → (f⁻¹ : || Hom b a ||) → Set
   inverses {a} {b} f f⁻¹ = prod (< Hom a a > f⁻¹ ∘ f ~ idar a)
@@ -74,6 +122,32 @@ module iso-defs (ℂ : ecategory) where
       {a21} : || Hom b a ||
       isop : is-iso-pair a12 a21
     open is-iso-pair isop public
+
+
+  idar-is-iso : (a : Obj) → is-iso (idar a)
+  idar-is-iso a = record
+    { invf = idar a
+    ; isisopair = record
+            { iddom = lid {f = idar a}
+            ; idcod = rid {f = idar a}
+            }
+    }
+    where open ecategory-aux-only ℂ using (lid; rid)
+
+
+  iso-trdom : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
+              {g : || Hom b c ||} {h : || Hom a  c ||}
+                → g ∘ f ~ h → h ∘ f' ~ g
+  iso-trdom isop pf = ∘e r (pf ˢ) ⊙ ass ˢ ⊙ ridgg r idcod
+                    where open is-iso-pair isop
+                          open ecategory-aux-only ℂ
+
+  iso-trcod : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
+              {g : || Hom c a ||} {h : || Hom c b ||}
+                → f ∘ g ~ h → f' ∘ h ~ g
+  iso-trcod isop pf = ∘e (pf ˢ) r ⊙ ass ⊙ lidgg r iddom
+                    where open is-iso-pair isop
+                          open ecategory-aux-only ℂ
 
 -- end module iso-defs
 
@@ -116,15 +190,15 @@ module iso-transports (ℂ : ecategory) where
 -- transport along isomorphisms
 
 
-  record iso-transportable (Prop : {X Y : Obj} → || Hom X Y || → Set₁) : Set₁ where
+  record iso-transportable (Propos : {X Y : Obj} → || Hom X Y || → Set₁) : Set₁ where
     constructor mkiso-transp
     field
-      congr : is-ecat-congr ℂ Prop
-      on-iso : {X Y : Obj} → (f :  || Hom X Y ||) → is-iso f → Prop f
+      congr : is-ecat-congr ℂ Propos
+      on-iso : {X Y : Obj} → (f :  || Hom X Y ||) → is-iso f → Propos f
     open is-ecat-congr congr public             
 
 
-  module iso-transp (Prop : {X Y : Obj} → || Hom X Y || → Set₁) (trn : iso-transportable Prop) where
+  module iso-transp (Propos : {X Y : Obj} → || Hom X Y || → Set₁) (trn : iso-transportable Propos) where
     --open is-ext-prop
     open is-iso
     open iso-transportable
@@ -151,20 +225,20 @@ module iso-transports (ℂ : ecategory) where
 
     module iso-transp-tr-domrl (tr : comm-triang) where
       open comm-triang tr
-      trnsp-tr-domrl : is-iso a12 → Prop a23 → Prop a13
+      trnsp-tr-domrl : is-iso a12 → Propos a23 → Propos a13
       trnsp-tr-domrl a12⁻¹ pf = trnsp trn pftr (∘c trn pf (on-iso trn a12 a12⁻¹)) --
 
 
     module iso-transp-tr-domlr (tr : comm-triang) where
       open comm-triang tr
-      trnsp-tr-domlr : is-iso a12 → Prop a13 → Prop a23
+      trnsp-tr-domlr : is-iso a12 → Propos a13 → Propos a23
       trnsp-tr-domlr a12⁻¹ pf = trnsp-tr-domrl (invf-is-iso a12⁻¹) pf
                                                where open iso-transp-tr-domrl (invtr-dom tr a12⁻¹)
 
 
     module iso-transp-tr-codrl (tr : comm-triang) where
       open comm-triang tr
-      trnsp-tr-codrl : is-iso a23 → Prop a13 → Prop a12
+      trnsp-tr-codrl : is-iso a23 → Propos a13 → Propos a12
       trnsp-tr-codrl a13⁻¹ pf = trnsp trn {x = invf a13⁻¹ ∘ a13}
                                       (∘e (pftr ˢ) r ⊙ ass ⊙ lidgg r (iddom a13⁻¹))
                                       (∘c trn (on-iso trn (invf a13⁻¹) (invf-is-iso a13⁻¹)) pf)
@@ -172,14 +246,14 @@ module iso-transports (ℂ : ecategory) where
 
     module iso-transp-tr-codlr (tr : comm-triang) where
       open comm-triang tr
-      trnsp-tr-codlr : is-iso a23 → Prop a12 → Prop a13
+      trnsp-tr-codlr : is-iso a23 → Propos a12 → Propos a13
       trnsp-tr-codlr a23⁻¹ pf = trnsp-tr-codrl (invf-is-iso a23⁻¹) pf
                                                where open iso-transp-tr-codrl (invtr-cod tr a23⁻¹)
   
 
     module iso-transp-sq-rl (sq : comm-square) where
       open comm-square sq
-      trnsp-sq-rl : is-iso down → is-iso up → Prop right → Prop left
+      trnsp-sq-rl : is-iso down → is-iso up → Propos right → Propos left
       trnsp-sq-rl d⁻¹ u⁻¹ pf = trnsp-tr-codrl d⁻¹ (trnsp-tr-domrl u⁻¹ pf)
                                               where uptr : comm-triang
                                                     uptr = record

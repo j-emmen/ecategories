@@ -1,13 +1,10 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.functors.defs.efunctor-not where
 
 open import ecats.basic-defs.ecat-def&not
+open import ecats.basic-defs.isomorphism
 open import ecats.basic-defs.commut-shapes
 open import ecats.functors.defs.efunctor
 
@@ -19,6 +16,7 @@ module efunctor-aux-only {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
   private    
     module catnot (ℂ : ecategory) where
       open ecategory ℂ public
+      open iso-defs ℂ public
       open comm-shapes ℂ public
     module ℂ = catnot ℂ
     module 𝔻 = catnot 𝔻
@@ -61,7 +59,17 @@ module efunctor-aux-only {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
                        → < 𝔻.Hom (F.ₒ A) (F.ₒ C) > F.ₐ (g ℂ.∘ f) ~ F.ₐ (g' ℂ.∘ f')
   F∘tactˢ {A} {B} {C} {f} {f'} {g} {g'} pf = {!!} --F∘ˢ ⊙ pf ⊙ F∘
 -}
-    
+
+
+  ᵢₛₒ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||}{f' : || ℂ.Hom B A ||}
+           → ℂ.is-iso-pair f f' → 𝔻.is-iso-pair (F.ₐ f) (F.ₐ f')
+  ᵢₛₒ {f = f} {invf} isopair = record
+    { iddom = ∘ax iddom ⊙ F.id
+    ; idcod = ∘ax idcod ⊙ F.id
+    }
+    where open ℂ.is-iso-pair isopair
+
+
 
   -- shapes
   
@@ -72,6 +80,11 @@ module efunctor-aux-only {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
   span : ℂ.span → 𝔻.span
   span spC = 𝔻.mkspan (F.ₐ a1) (F.ₐ a2)
             where open ℂ.span spC
+
+  sq/ : {I A B : ℂ.Obj}{a : || ℂ.Hom A I ||}{b : || ℂ.Hom B I ||}
+           →  ℂ.square/cosp a b → 𝔻.square/cosp (F.ₐ a) (F.ₐ b)
+  sq/ sqC = 𝔻.mksq/ (∘∘ sq-pf)
+          where open ℂ.square/cosp sqC
 
   sq : ℂ.comm-square → 𝔻.comm-square
   sq sqC = 𝔻.mksq (𝔻.mksq/ (∘∘ sq-pf))

@@ -1,12 +1,9 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
 
--- Agda version 2.5.4.1
-
 module ecats.finite-limits.props.pullback where
 
+open import Agda.Primitive
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.isomorphism
@@ -36,17 +33,50 @@ module pullback-props (ℂ : ecategory) where
 
   -- pullback extensionality
 
-  ×/sqpf-irr : {I A B P : Obj} {a : || Hom A I ||}{b : || Hom B I ||} {p₁ : || Hom P A ||} {p₂ : || Hom P B ||}
-               (pf pf' : a ∘ p₁ ~ b ∘ p₂)
-                 → is-pb-square (mksq (mksq/ pf)) → is-pb-square (mksq (mksq/ pf'))
-  ×/sqpf-irr {a = a} {b} {p₁} {p₂} pf pf' ispb = record
+  ×/sqpf-irr : {I A B P : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
+               {p : || Hom P A ||}{q : || Hom P B ||}{pf : a ∘ p ~ b ∘ q}
+                 → is-pullback pf  → (pf' : a ∘ p ~ b ∘ q) → is-pullback pf'
+  ×/sqpf-irr ispb pf' = record
+    { ⟨_,_⟩[_] = ⟨_,_⟩[_]
+    ; ×/tr₁ = ×/tr₁
+    ; ×/tr₂ = ×/tr₂
+    ; ×/uq = ×/uq
+    }
+    where open is-pullback ispb
+
+
+  ×/sqpf-irr-of : {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}{sq/ : square/cosp a b}
+                     → is-pullback-of sq/ → (pf' : a ∘ sq/ₙ.left sq/ ~ b ∘ sq/ₙ.up sq/)
+                       → is-pullback-of (mksq/ pf')
+  ×/sqpf-irr-of {a = a} {b} {sq/} ispbof pf' = record
+    { ispb = record
+           { ⟨_,_⟩[_] = ⟨_,_⟩[_]
+           ; ×/tr₁ = ×/tr₁
+           ; ×/tr₂ = ×/tr₂
+           ; ×/uq = ×/uq
+           }
+    }
+    where open is-pullback-of ispbof
+    -- Agda complains that pf != pf' when trying to use ×/sqpf-irr
+{-
+          module sq/ = sq/ₙ sq/
+          module ispbof = is-pullback-of ispbof
+          ispb' : is-pullback pf'
+          ispb' = ×/sqpf-irr {pf = sq/.sq-pf} ispbof.ispb pf'
+          module ispb' = is-pullback ispb'
+-}
+    
+
+  ×/sqpf-irr-sq : {I A B P : Obj}{a : || Hom A I ||}{b : || Hom B I ||}{p₁ : || Hom P A ||}{p₂ : || Hom P B ||}
+                  (pf pf' : a ∘ p₁ ~ b ∘ p₂)
+                    → is-pb-square (mksq (mksq/ pf)) → is-pb-square (mksq (mksq/ pf'))
+  ×/sqpf-irr-sq {a = a} {b} {p₁} {p₂} pf pf' ispb = record
     { ⟨_,_⟩[_] = pbpf.⟨_,_⟩[_]
     ; ×/tr₁ = pbpf.×/tr₁
     ; ×/tr₂ = pbpf.×/tr₂
     ; ×/uq = pbpf.×/uq
     }
     where module pbpf = pullback-sq-not (mkpb-sq ispb)
-
 
   ×/ext-dr : {I A B : Obj} {a a' : || Hom A I ||}{b b' : || Hom B I ||} {sq/ : square/cosp a b}
              (pbsq/ : is-pb-square (mksq sq/)) (pfa : a ~ a') (pfb : b ~ b')
@@ -96,35 +126,58 @@ module pullback-props (ℂ : ecategory) where
 
 
   -- pb squares on same cospan are isomorphic
-  
-  pbs-iso-ar : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+
+  pbs-unv12 : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
                   → || Hom (pbofₙ.ul pb1) (pbofₙ.ul pb2) ||
-  pbs-iso-ar pb1 pb2 = pb2.⟨ pb1.π/₁ , pb1.π/₂ ⟩[ pb1.×/sqpf ]
-                     where module pb1 = pullback-of pb1
-                           module pb2 = pullback-of pb2
-                           
+  pbs-unv12 pb1 pb2 = pb2.⟨ pb1.π/₁ , pb1.π/₂ ⟩[ pb1.×/sqpf ]
+                    where module pb1 = pullback-of pb1
+                          module pb2 = pullback-of pb2
 
-  pbs-iso-inv : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
-                   → || Hom (pbofₙ.ul pb2) (pbofₙ.ul pb1) ||
-  pbs-iso-inv pb1 pb2 = pb1.⟨ pb2.π/₁ , pb2.π/₂ ⟩[ pb2.×/sqpf ]
-                      where module pb1 = pullback-of pb1
-                            module pb2 = pullback-of pb2
+  pbs-unv21 : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+                  → || Hom (pbofₙ.ul pb2) (pbofₙ.ul pb1) ||
+  pbs-unv21 pb1 pb2 = pb1.⟨ pb2.π/₁ , pb2.π/₂ ⟩[ pb2.×/sqpf ]
+                    where module pb1 = pullback-of pb1
+                          module pb2 = pullback-of pb2
 
-
-  pbs-iso : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
-               → is-iso (pbs-iso-ar pb1 pb2)
-  pbs-iso pb1 pb2 = record
-    { invf = pbs-iso-inv pb1 pb2
-    ; isisopair = record
-            { iddom = pb1.×/uq (ass ⊙  ∘e r (pb1.×/tr₁ pb2.×/sqpf) ⊙ ridggˢ (pb2.×/tr₁ pb1.×/sqpf) r)
-                               (ass ⊙  ∘e r (pb1.×/tr₂ pb2.×/sqpf) ⊙ ridggˢ (pb2.×/tr₂ pb1.×/sqpf) r)
-            ; idcod = pb2.×/uq (ass ⊙  ∘e r (pb2.×/tr₁ pb1.×/sqpf) ⊙ ridggˢ (pb1.×/tr₁ pb2.×/sqpf) r)
-                               (ass ⊙  ∘e r (pb2.×/tr₂ pb1.×/sqpf) ⊙ ridggˢ (pb1.×/tr₂ pb2.×/sqpf) r)
-            }
+  pbs-unvar-is-isop : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+                      {uar12 : || Hom (pbofₙ.ul pb1) (pbofₙ.ul pb2) ||}{uar21 : || Hom (pbofₙ.ul pb2) (pbofₙ.ul pb1) ||}
+                        → pbofₙ.π/₁ pb2 ∘ uar12 ~ pbofₙ.π/₁ pb1 → pbofₙ.π/₂ pb2 ∘ uar12 ~ pbofₙ.π/₂ pb1
+                        → pbofₙ.π/₁ pb1 ∘ uar21 ~ pbofₙ.π/₁ pb2 → pbofₙ.π/₂ pb1 ∘ uar21 ~ pbofₙ.π/₂ pb2
+                          → is-iso-pair uar12 uar21
+  pbs-unvar-is-isop pb1 pb2 {uar12} {uar21} 12tr₁ 12tr₂ 21tr₁ 21tr₂ = record
+    { iddom = pb1.×/uq (ass ⊙  ∘e r 21tr₁ ⊙ ridggˢ 12tr₁ r)
+                       (ass ⊙  ∘e r 21tr₂ ⊙ ridggˢ 12tr₂ r)
+    ; idcod = pb2.×/uq (ass ⊙  ∘e r 12tr₁ ⊙ ridggˢ 21tr₁ r)
+                               (ass ⊙  ∘e r 12tr₂ ⊙ ridggˢ 21tr₂ r)
     }
     where module pb1 = pullback-of pb1
           module pb2 = pullback-of pb2
 
+  pbs-unvar-is-iso : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+                     {uar : || Hom (pbofₙ.ul pb1) (pbofₙ.ul pb2) ||}
+                       → pbofₙ.π/₁ pb2 ∘ uar ~ pbofₙ.π/₁ pb1 → pbofₙ.π/₂ pb2 ∘ uar ~ pbofₙ.π/₂ pb1
+                         → is-iso uar
+  pbs-unvar-is-iso pb1 pb2 {uar} tr₁ tr₂ = record
+    { invf = pbs-unv21 pb1 pb2
+    ; isisopair = pbs-unvar-is-isop pb1 pb2 tr₁ tr₂ (pb1.×/tr₁ pb2.×/sqpf) (pb1.×/tr₂ pb2.×/sqpf)
+    }
+    where module pb1 = pullback-of pb1
+          module pb2 = pullback-of pb2
+
+  pbs-unv-is-isop : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+                       → is-iso-pair (pbs-unv12 pb1 pb2) (pbs-unv21 pb1 pb2)
+  pbs-unv-is-isop pb1 pb2 = pbs-unvar-is-isop pb1 pb2
+                                              (pb2.×/tr₁ pb1.×/sqpf) (pb2.×/tr₂ pb1.×/sqpf)
+                                              (pb1.×/tr₁ pb2.×/sqpf) (pb1.×/tr₂ pb2.×/sqpf)
+                          where module pb1 = pullback-of pb1
+                                module pb2 = pullback-of pb2
+
+  pbs-unv-is-iso : {A B I : Obj} {a : || Hom A I ||} {b : || Hom B I ||} (pb1 pb2 : pullback-of a b)
+                       → is-iso (pbs-unv12 pb1 pb2)
+  pbs-unv-is-iso pb1 pb2 = record
+    { invf = pbs-unv21 pb1 pb2
+    ; isisopair = pbs-unv-is-isop pb1 pb2
+    }
 
 
   -- span isomorphic to a pb is pb
@@ -298,6 +351,20 @@ module pullback-props (ℂ : ecategory) where
       module lowpb = pullback-of low-pb
       module outpb = pullback-of out-pb
 
+    can-l-fill-pf : {r-fill : || Hom UUR UR ||} (r-tr : right ∘ r-fill ~ right')
+                            → down ∘ outpb.π/₁ ~ right ∘ r-fill ∘ outpb.π/₂
+    can-l-fill-pf r-tr = outpb.×/sqpf ⊙ ∘e r (r-tr ˢ) ⊙ assˢ
+    can-l-fill : {r-fill : || Hom UUR UR ||} (r-tr : right ∘ r-fill ~ right')
+                         → || Hom outpb.ul lowpb.ul ||
+    can-l-fill {r-fill} r-tr = lowpb.⟨ outpb.π/₁ , r-fill ∘ outpb.π/₂ ⟩[ can-l-fill-pf r-tr ]
+    can-l-fill-tr : {r-fill : || Hom UUR UR ||} (r-tr : right ∘ r-fill ~ right')
+                            → lowpb.π/₁ ∘ can-l-fill r-tr ~ outpb.π/₁
+    can-l-fill-tr r-tr = lowpb.×/tr₁ (can-l-fill-pf r-tr)
+
+    can-upsq-pf : {r-fill : || Hom UUR UR ||} (r-tr : right ∘ r-fill ~ right')
+                          → lowpb.π/₂ ∘ can-l-fill r-tr ~ r-fill ∘ outpb.π/₂
+    can-upsq-pf r-tr = lowpb.×/tr₂ (can-l-fill-pf r-tr)
+    
     upper-is-pbsq : {r-fill : || Hom UUR UR ||} {l-fill : || Hom outpb.ul lowpb.ul ||}
                     (r-tr : right ∘ r-fill ~ right') (l-tr : lowpb.π/₁ ∘ l-fill ~ outpb.π/₁)
                     (up-comm : lowpb.π/₂ ∘ l-fill ~ r-fill ∘ outpb.π/₂)
@@ -333,6 +400,9 @@ module pullback-props (ℂ : ecategory) where
                    → pullback-of lowpb.π/₂ r-fill
     upper-pbof r-tr l-tr up-comm = mkpb-of (upper-is-pbsq r-tr l-tr up-comm)
     
+    can-up-pbof : {r-fill : || Hom UUR UR ||} (r-tr : right ∘ r-fill ~ right')
+                            → pullback-of lowpb.π/₂ r-fill
+    can-up-pbof r-tr = upper-pbof r-tr (can-l-fill-tr r-tr) (can-upsq-pf r-tr)
   -- end lower-and-outer-so-upper
 
 
@@ -437,7 +507,7 @@ module pullback-props (ℂ : ecategory) where
     }
     
   triv-pbsqˢ : {A I : Obj} (a : || Hom A I ||) → is-pb-square (mksq (mksq/ (ridgen (lidˢ {f = a}))))
-  triv-pbsqˢ a = ×/sqpf-irr (trsqˢ.sq-pf) (ridgen lidˢ) (diag-sym-pb-sq trpb.×/ispbsq)
+  triv-pbsqˢ a = ×/sqpf-irr-sq (trsqˢ.sq-pf) (ridgen lidˢ) (diag-sym-pb-sq trpb.×/ispbsq)
                where module trpb = pullback-of-not (mkpb-of (triv-pbsq a))
                      module trsqˢ = comm-square (diag-sym-square (mksq trpb.×/sq/))
 
@@ -517,38 +587,57 @@ module pullback-props (ℂ : ecategory) where
 
   -- preservation of property under pullback
 
-  record is-pbsq-stable (Prop : {X Y : Obj} → || Hom X Y || → Set₁) : Set₁ where
+  record is-pbsq-stable {ℓ} (Propos : {X Y : Obj} → || Hom X Y || → Set ℓ) : Set (lsuc lzero ⊔ ℓ) where
     open pb-square
     field
-      pres-rl : (pbsq : pb-square) → Prop (pbsqₙ.right pbsq) → Prop (pbsqₙ.π/₁ pbsq)
-    pres-du : (pbsq : pb-square) → Prop (pbsqₙ.down pbsq) → Prop (pbsqₙ.π/₂ pbsq)
+      pres-rl : (pbsq : pb-square) → Propos (pbsqₙ.right pbsq) → Propos (pbsqₙ.π/₁ pbsq)
+    pres-du : (pbsq : pb-square) → Propos (pbsqₙ.down pbsq) → Propos (pbsqₙ.π/₂ pbsq)
     pres-du pbsq pf = pres-rl (mkpb-sq (diag-sym-pb-sq (pbsqₙ.×/ispbsq pbsq))) pf
 
-  record is-pbof-stable (Prop : {X Y : Obj} → || Hom X Y || → Set₁) : Set₁ where
+  record is-pbof-stable {ℓ} (Propos : {X Y : Obj} → || Hom X Y || → Set ℓ) : Set (lsuc lzero ⊔ ℓ) where
     open pullback-of
     field
       pres-rl : {A B : Obj} {c : || Hom A B ||} {C : Obj} {f : || Hom C B ||} (pbof : pullback-of f c)
-                   → Prop c → Prop (π/₁ pbof)
+                   → Propos c → Propos (π/₁ pbof)
     pres-du : {A B : Obj} {c : || Hom A B ||} {C : Obj} {f : || Hom C B ||} (pbof : pullback-of c f)
-                   → Prop c → Prop (π/₂ pbof)
+                   → Propos c → Propos (π/₂ pbof)
     pres-du pbof = pres-rl (diag-sym-pbof pbof)
 
-  pbsq-stb→pbof-stb : {Prop : {X Y : Obj} → || Hom X Y || → Set₁}
-                           → is-pbsq-stable Prop → is-pbof-stable Prop
-  pbsq-stb→pbof-stb {Prop} pbsqstb = record
-    { pres-rl = λ pbof isProp → pres-rl (×/pbsq pbof) isProp
+  pbsq-stb→pbof-stb : {ℓ : Level} {Propos : {X Y : Obj} → || Hom X Y || → Set ℓ}
+                           → is-pbsq-stable Propos → is-pbof-stable Propos
+  pbsq-stb→pbof-stb {Propos} pbsqstb = record
+    { pres-rl = λ pbof isPropos → pres-rl (×/pbsq pbof) isPropos
     }
     where open is-pbsq-stable pbsqstb
           open pullback-of-not 
 
-  pbof-stb→pbsq-stb : {Prop : {X Y : Obj} → || Hom X Y || → Set₁}
-                           → is-pbof-stable Prop → is-pbsq-stable Prop
-  pbof-stb→pbsq-stb {Prop} pbofstb = record
-    { pres-rl = λ pbsq isProp → pres-rl (×/of pbsq) isProp
+  pbof-stb→pbsq-stb : {ℓ : Level} {Propos : {X Y : Obj} → || Hom X Y || → Set ℓ}
+                           → is-pbof-stable Propos → is-pbsq-stable Propos
+  pbof-stb→pbsq-stb {Propos} pbofstb = record
+    { pres-rl = λ pbsq isPropos → pres-rl (×/of pbsq) isPropos
     }
     where open is-pbof-stable pbofstb
           open pullback-sq-not
 
+  pbof-stb-trsp : {ℓ₁ ℓ₂ : Level} {P : {X Y : Obj} → || Hom X Y || → Set ℓ₁}
+                  {Q : {X Y : Obj} → || Hom X Y || → Set ℓ₂}
+                  (P→Q : ∀ {X Y} → ∀ {f : || Hom X Y ||} → P f → Q f)
+                  (Q→P : ∀ {X Y} → ∀ {f : || Hom X Y ||} → Q f → P f)
+                      → is-pbof-stable P → is-pbof-stable Q
+  pbof-stb-trsp P→Q Q→P stbP = record
+    { pres-rl = λ pbof pfQ → P→Q (stbP.pres-rl pbof (Q→P pfQ))
+    }
+    where module stbP = is-pbof-stable stbP
+
+  pbsq-stb-trsp :  {ℓ₁ ℓ₂ : Level} {P : {X Y : Obj} → || Hom X Y || → Set ℓ₁}
+                   {Q : {X Y : Obj} → || Hom X Y || → Set ℓ₂}
+                   (P→Q : ∀ {X Y} → ∀ {f : || Hom X Y ||} → P f → Q f)
+                   (Q→P : ∀ {X Y} → ∀ {f : || Hom X Y ||} → Q f → P f)
+                      → is-pbsq-stable P → is-pbsq-stable Q
+  pbsq-stb-trsp P→Q Q→P stbP = record
+    { pres-rl = λ pbsq pfQ → P→Q (stbP.pres-rl pbsq (Q→P pfQ))
+    }
+    where module stbP = is-pbsq-stable stbP
 
 
   module pb-over-pbof (haspb : has-pullbacks ℂ)
@@ -638,13 +727,13 @@ module pullback-props (ℂ : ecategory) where
 
 
 {-
-  module ×/ₐ-of-pbstb-Prop-is-Prop-aux {Prop : {X Y : Obj} → || Hom X Y || → Set₁}
-                                       --(Prop-ext : is-hom-ext ℂ Prop)
-                                       (Prop-pbstb : is-pbof-stable Prop)
+  module ×/ₐ-of-pbstb-Propos-is-Propos-aux {Propos : {X Y : Obj} → || Hom X Y || → Set₁}
+                                       --(Propos-ext : is-hom-ext ℂ Propos)
+                                       (Propos-pbstb : is-pbof-stable Propos)
                                        {I A' B' : Obj} {a' : || Hom A' I ||} {b' : || Hom B' I ||} (inpb : pullback-of a' b')
                                        {A B : Obj} {a : || Hom A I ||} {b : || Hom B I ||}(outpb : pullback-of a b)
                                        {f : || Hom A A' ||} {g : || Hom B B' ||} (f-tr : a' ∘ f ~ a) (g-tr : b' ∘ g ~ b)
-                                       (ldpb : pullback-of a b') (fProp : Prop f) (gProp : Prop g)
+                                       (ldpb : pullback-of a b') (fPropos : Propos f) (gPropos : Propos g)
                                        where
     private
       module inpb = pullback-of-not inpb
@@ -657,30 +746,30 @@ module pullback-props (ℂ : ecategory) where
       fst-pf = ass ⊙ ∘e r f-tr ⊙ a×/b'.×/sqpf
       fst : || Hom a×/b'.ul inpb.ul ||
       fst = inpb.⟨ f ∘ a×/b'.π/₁ , a×/b'.π/₂ ⟩[ fst-pf ]
-    sndProp : Prop snd
-    sndProp = pres-rl (mkpb-of snd-pbsq) gProp
-                 where open is-pbof-stable Prop-pbstb
+    sndPropos : Propos snd
+    sndPropos = pres-rl (mkpb-of snd-pbsq) gPropos
+                 where open is-pbof-stable Propos-pbstb
                        snd-sq : a×/b'.π/₂ ∘ snd ~ g ∘ outpb.π/₂
                        snd-sq = a×/b'.×/tr₂ snd-pf
                        snd-pbsq : is-pb-square (mksq (mksq/ snd-sq))
                        snd-pbsq = upper-is-pbsq {g} {snd} g-tr (a×/b'.×/tr₁ snd-pf) snd-sq
                                  where open lower-and-outer-so-upper ldpb outpb
-    fstProp : Prop fst
-    fstProp = pres-du (mkpb-of fst-pbsq) fProp
-           where open is-pbof-stable Prop-pbstb
+    fstPropos : Propos fst
+    fstPropos = pres-du (mkpb-of fst-pbsq) fPropos
+           where open is-pbof-stable Propos-pbstb
                  fst-sq : f ∘ a×/b'.π/₁ ~ inpb.π/₁ ∘ fst
                  fst-sq = inpb.×/tr₁ fst-pf ˢ
                  fst-pbsq : is-pb-square (mksq (mksq/ fst-sq))
                  fst-pbsq = left-is-pbsq {f} {fst} f-tr (inpb.×/tr₂ fst-pf) fst-sq
                         where open right-and-outer-so-left inpb ldpb
-  -- end ×/ₐ-of-pbstb-Prop-is-Prop-aux
+  -- end ×/ₐ-of-pbstb-Propos-is-Propos-aux
 
 
-  module ×/ₐ-of-pbstb-Prop-is-Prop-aux2 {Prop : {X Y : Obj} → || Hom X Y || → Set₁} (Prop-congr : is-ecat-congr ℂ Prop)
+  module ×/ₐ-of-pbstb-Propos-is-Propos-aux2 {Propos : {X Y : Obj} → || Hom X Y || → Set₁} (Propos-congr : is-ecat-congr ℂ Propos)
                                         {I A' B' : Obj} {a' : || Hom A' I ||} {b' : || Hom B' I ||} (inpb : pullback-of a' b')
                                         {A B : Obj} {a : || Hom A I ||} {b : || Hom B I ||}(outpb : pullback-of a b)
                                         {f : || Hom A A' ||} {g : || Hom B B' ||} (f-tr : a' ∘ f ~ a) (g-tr : b' ∘ g ~ b)
-                                        (ldpb : pullback-of a b') (fProp : Prop f) (gProp : Prop g)
+                                        (ldpb : pullback-of a b') (fPropos : Propos f) (gPropos : Propos g)
                                         where
     private
       module inpb = pullback-of-not inpb
@@ -708,41 +797,41 @@ module pullback-props (ℂ : ecategory) where
               a×/b'.π/₂ ∘ snd          ~[ a×/b'.×/tr₂ snd-pf ] /
               g ∘ outpb.π/₂              ~[ pf2 ˢ ]∎
               inpb.π/₂ ∘ h ∎)                      
-    ×/arProp-cond : {h : || Hom outpb.ul inpb.ul ||}
+    ×/arPropos-cond : {h : || Hom outpb.ul inpb.ul ||}
                    → inpb.π/₁ ∘ h ~ f ∘ outpb.π/₁ → inpb.π/₂ ∘ h ~ g ∘ outpb.π/₂
-                     → Prop fst → Prop snd → Prop h
-    ×/arProp-cond pf1 pf2 fstProp sndProp = ∘ce (×/ar-tr pf1 pf2) fstProp sndProp
-                                          where open is-ecat-congr Prop-congr
-    ×/arcanProp-cond : Prop fst → Prop snd → Prop ×/arcan
-    ×/arcanProp-cond = ×/arProp-cond {×/arcan} (inpb.×/tr₁ (×/ₐcanpf f-tr g-tr)) (inpb.×/tr₂ (×/ₐcanpf f-tr g-tr))
+                     → Propos fst → Propos snd → Propos h
+    ×/arPropos-cond pf1 pf2 fstPropos sndPropos = ∘ce (×/ar-tr pf1 pf2) fstPropos sndPropos
+                                          where open is-ecat-congr Propos-congr
+    ×/arcanPropos-cond : Propos fst → Propos snd → Propos ×/arcan
+    ×/arcanPropos-cond = ×/arPropos-cond {×/arcan} (inpb.×/tr₁ (×/ₐcanpf f-tr g-tr)) (inpb.×/tr₂ (×/ₐcanpf f-tr g-tr))
                      where open ×/ₐdef inpb outpb
-  -- end ×/ₐ-of-pbstb-Prop-is-Prop-aux2
+  -- end ×/ₐ-of-pbstb-Propos-is-Propos-aux2
 
 
-  module ×/ₐ-of-pbstb-Prop-is-Prop {Prop : {X Y : Obj} → || Hom X Y || → Set₁}
-                                   (Prop-congr : is-ecat-congr ℂ Prop) (Prop-pbstb : is-pbof-stable Prop)
+  module ×/ₐ-of-pbstb-Propos-is-Propos {Propos : {X Y : Obj} → || Hom X Y || → Set₁}
+                                   (Propos-congr : is-ecat-congr ℂ Propos) (Propos-pbstb : is-pbof-stable Propos)
                                    {I A' B' : Obj} {a' : || Hom A' I ||} {b' : || Hom B' I ||} (inpb : pullback-of a' b')
                                    {A B : Obj} {a : || Hom A I ||} {b : || Hom B I ||}(outpb : pullback-of a b)
                                    {f : || Hom A A' ||} {g : || Hom B B' ||} (f-tr : a' ∘ f ~ a) (g-tr : b' ∘ g ~ b)
-                                   (ldpb : pullback-of a b') (fProp : Prop f) (gProp : Prop g)
+                                   (ldpb : pullback-of a b') (fPropos : Propos f) (gPropos : Propos g)
                                    where
     private
       module inpb = pullback-of-not inpb
       module outpb = pullback-of-not outpb
       module a×/b' =  pullback-of-not ldpb
-    --open is-ecat-congr Prop-congr
-    open ×/ₐ-of-pbstb-Prop-is-Prop-aux Prop-pbstb inpb outpb f-tr g-tr ldpb fProp gProp
-    open ×/ₐ-of-pbstb-Prop-is-Prop-aux2 Prop-congr inpb outpb f-tr g-tr ldpb fProp gProp
-    ×/arProp : {h : || Hom outpb.ul inpb.ul ||}
-                   → inpb.π/₁ ∘ h ~ f ∘ outpb.π/₁ → inpb.π/₂ ∘ h ~ g ∘ outpb.π/₂ → Prop h
-    ×/arProp pf1 pf2 = ×/arProp-cond pf1 pf2 fstProp sndProp
+    --open is-ecat-congr Propos-congr
+    open ×/ₐ-of-pbstb-Propos-is-Propos-aux Propos-pbstb inpb outpb f-tr g-tr ldpb fPropos gPropos
+    open ×/ₐ-of-pbstb-Propos-is-Propos-aux2 Propos-congr inpb outpb f-tr g-tr ldpb fPropos gPropos
+    ×/arPropos : {h : || Hom outpb.ul inpb.ul ||}
+                   → inpb.π/₁ ∘ h ~ f ∘ outpb.π/₁ → inpb.π/₂ ∘ h ~ g ∘ outpb.π/₂ → Propos h
+    ×/arPropos pf1 pf2 = ×/arPropos-cond pf1 pf2 fstPropos sndPropos
     ×/arcan : || Hom outpb.ul inpb.ul ||
     ×/arcan = f ×/ₐ g [ f-tr , g-tr ]
             where open ×/ₐdef inpb outpb
-    ×/arcanProp : Prop ×/arcan
-    ×/arcanProp = ×/arProp {×/arcan} (inpb.×/tr₁ (×/ₐcanpf f-tr g-tr)) (inpb.×/tr₂ (×/ₐcanpf f-tr g-tr))
+    ×/arcanPropos : Propos ×/arcan
+    ×/arcanPropos = ×/arPropos {×/arcan} (inpb.×/tr₁ (×/ₐcanpf f-tr g-tr)) (inpb.×/tr₂ (×/ₐcanpf f-tr g-tr))
                 where open ×/ₐdef inpb outpb
-  -- end ×/ₐ-of-pbstb-Prop-is-Prop
+  -- end ×/ₐ-of-pbstb-Propos-is-Propos
 -}
 
 
