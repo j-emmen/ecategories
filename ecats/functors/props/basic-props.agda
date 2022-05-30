@@ -123,8 +123,8 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
                               where open pullback-props 𝔻
                                     module F× = 𝔻.product-of-not (F×of Y Y)
                                     open 𝔻.equaliser-of eqlD
-                                    open 𝔻l.equaliser↔pullback-of-diag (F×of Y Y) eqleq {F.ₐ f 𝔻.∘ eqlar}
-                                                                         (F×.<>ar~<>ar lidˢ (lidgenˢ (eqleq ˢ)))
+                                    open 𝔻l.equaliser↔pullback-of-diag (F×of Y Y) eq {F.ₐ f 𝔻.∘ ar}
+                                                                         (F×.<>ar~<>ar lidˢ (lidgenˢ (eq ˢ)))
 
 
 
