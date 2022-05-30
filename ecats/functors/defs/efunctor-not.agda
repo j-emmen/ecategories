@@ -83,10 +83,14 @@ module efunctor-aux-only {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆}{ℂ : ecate
   span spC = 𝔻.mkspan (F.ₐ a1) (F.ₐ a2)
             where open ℂ.span spC
 
+  sq/ : {I A B : ℂ.Obj} {a : || ℂ.Hom A I ||} {b : || ℂ.Hom B I ||}
+           → ℂ.square/cosp a b → 𝔻.square/cosp (F.ₐ a) (F.ₐ b)
+  sq/ sqC = 𝔻.mksq/ (∘∘ sq-pf)
+          where open ℂ.square/cosp sqC
+
   sq : ℂ.comm-square → 𝔻.comm-square
-  sq sqC = 𝔻.mksq (𝔻.mksq/ (∘∘ sq-pf))
-  -- {F.ₒ dl} {F.ₒ ur} {F.ₒ dr} {F.ₐ down} {F.ₐ right}  --{F.ₒ ul} {F.ₐ left} {F.ₐ up} 
-          where open ℂ.comm-square sqC
+  sq sqC = 𝔻.mksq (sq/ sqC.sq/)
+          where module sqC = ℂ.comm-square sqC
 
 -- end module efunctor-aux-only
 
