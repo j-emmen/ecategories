@@ -611,8 +611,8 @@ module epi&mono-props-lim-defs (ℂ : ecategory) where
   -- limit projections are (jointly) monic
   
   eqlof-is-monic : {A B : Obj} {f g : || Hom A B ||} (eqlof : equaliser-of f g)
-                            → is-monic (eqlof.eqlar eqlof)
-  eqlof-is-monic eqlof = record { mono-pf = eqluq }
+                            → is-monic (eqlof.ar eqlof)
+  eqlof-is-monic eqlof = record { mono-pf = uq }
                        where open equaliser-of eqlof
 
   πs-are-jointly-monic/ : (prdsp : bin-product) → is-jointly-monic/ (mkspan/ (prd.π₁ prdsp) (prd.π₂ prdsp))
@@ -657,14 +657,14 @@ module epi&mono-props-lim-defs (ℂ : ecategory) where
   -- same as above but with pb and eql instead
   jm/-via-pb+eq : {O1 O2 : Obj} {sp : span/ O1 O2} (kpO1 : pullback-of (sp/.a1 sp) (sp/.a1 sp))
                   (eqlO2 : equaliser-of (sp/.a2 sp ∘ pbof.π/₁ kpO1) (sp/.a2 sp ∘ pbof.π/₂ kpO1))
-                    → pbof.π/₁ kpO1 ∘ eqlof.eqlar eqlO2 ~ pbof.π/₂ kpO1 ∘ eqlof.eqlar eqlO2
+                    → pbof.π/₁ kpO1 ∘ eqlof.ar eqlO2 ~ pbof.π/₂ kpO1 ∘ eqlof.ar eqlO2
                       → is-jointly-monic/ sp
   jm/-via-pb+eq {sp = sp} kpO1 eqlO2 pf = record
-    { jm-pf = λ {_} {h} {h'} pf1 pf2 → 
-            ~proof h                                                         ~[ ×/tr₁ pf1 ˢ ⊙ ∘e (eqltr (|eql-pf pf1 pf2) ˢ) r ] /
-                   π/₁ ∘ eqlar ∘ ⟨ h , h' ⟩[ pf1 ] |eql[ |eql-pf pf1 pf2 ]    ~[ ass ⊙ ∘e r pf ⊙ assˢ ] /
-                   π/₂ ∘ eqlar ∘ ⟨ h , h' ⟩[ pf1 ] |eql[ |eql-pf pf1 pf2 ]    ~[ ∘e (eqltr (|eql-pf pf1 pf2)) r ⊙ ×/tr₂ pf1 ]∎
-                   h' ∎
+    { jm-pf = λ {_} {h} {h'} pf1 pf2 → ~proof
+                h                                                   ~[ ×/tr₁ pf1 ˢ ⊙ ∘e (tr (|eql-pf pf1 pf2) ˢ) r ] /
+                π/₁ ∘ ar ∘ ⟨ h , h' ⟩[ pf1 ] |[ |eql-pf pf1 pf2 ]    ~[ ass ⊙ ∘e r pf ⊙ assˢ ] /
+                π/₂ ∘ ar ∘ ⟨ h , h' ⟩[ pf1 ] |[ |eql-pf pf1 pf2 ]    ~[ ∘e (tr (|eql-pf pf1 pf2)) r ⊙ ×/tr₂ pf1 ]∎
+                h' ∎
     }
     where open span/ sp
           open equaliser-of eqlO2
@@ -775,15 +775,15 @@ module epi&mono-props-lim-defs (ℂ : ecategory) where
   cover-is-epi : (haseql : has-equalisers ℂ){A B : Obj}{cov : || Hom A B ||}
                          → is-cover cov → is-epic cov
   cover-is-epi haseql {A} {B} {cov} is-cov = record
-    { epi-pf = λ pf → ridggˢ r (idcod (eqlar-is-iso pf)) ⊙ ass ⊙ ∘e r eqleq ⊙ assˢ
+    { epi-pf = λ pf → ridggˢ r (idcod (eqlar-is-iso pf)) ⊙ ass ⊙ ∘e r eq ⊙ assˢ
                        ⊙ ridgg r (idcod (eqlar-is-iso pf)) 
     }
     where open is-cover is-cov
           open has-equalisers haseql
           open is-iso
           eqlar-is-iso : {C : Obj} {g g' : || Hom B C ||}
-                           → g ∘ cov ~ g' ∘ cov → is-iso (eqlar {f = g} {g'})
-          eqlar-is-iso pf = cov-pf (eqltr pf) (record { mono-pf = eqluq })
+                           → g ∘ cov ~ g' ∘ cov → is-iso (ar {f = g} {g'})
+          eqlar-is-iso pf = cov-pf (tr pf) (record { mono-pf = uq })
 
   strong-epi-is-epi : has-equalisers ℂ → {A B : Obj} → {f : || Hom A B ||} → is-strong-epi f → is-epic f
   strong-epi-is-epi hasEql fstr = cover-is-epi hasEql (strong-epi-is-cover fstr)

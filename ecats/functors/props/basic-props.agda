@@ -262,8 +262,8 @@ module efunctor-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
 ess-equiv-is-equiv : {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻}
                         → is-ess-equivalence F → is-equivalence F
 ess-equiv-is-equiv {F = F} eeqv = record
-  { invF = invF
-  ; iseqv = eqv
+  { inv = invF
+  ; iseqvp = eqv
   }
   where open efunctor-props F
         open eeqv-is-eqv eeqv

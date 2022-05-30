@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.finite-limits.props.equaliser where
 
@@ -29,9 +25,9 @@ module equaliser-props (ℂ : ecategory) where
                  → f ~ f' → g ~ g' → is-equaliser pfeq
                    → is-equaliser pfeq'
   iseql-ext {A} {f = f} {f'} {g} {g'} {e} {pfeq} pfeq' pff pfg eql = record
-    { _|eql[_] = λ h pf → h |eql[ eq' pf ]
-    ; eqltr = λ pf → eqltr (eq' pf)
-    ; eqluq = eqluq
+    { _|[_] = λ h pf → h |[ eq' pf ]
+    ; tr = λ pf → tr (eq' pf)
+    ; uq = uq
     }
     where open is-equaliser eql
           eq' : {C : Obj} {h : || Hom C A ||} → f' ∘ h ~ g' ∘ h → f ∘ h ~ g ∘ h
@@ -43,9 +39,9 @@ module equaliser-props (ℂ : ecategory) where
                 → e ~ e' → is-equaliser pfeq
                   → is-equaliser pfeq'
   eqlar-ext {A} {f = f} {g} {e} {e'} {pfeq} pfeq' pfe eql = record
-    { _|eql[_] = _|eql[_]
-    ; eqltr = λ pf → ∘e r (pfe ˢ) ⊙ eqltr pf
-    ; eqluq = λ pf → eqluq (∘e r pfe ⊙ pf ⊙ ∘e r (pfe ˢ))
+    { _|[_] = _|[_]
+    ; tr = λ pf → ∘e r (pfe ˢ) ⊙ tr pf
+    ; uq = λ pf → uq (∘e r pfe ⊙ pf ⊙ ∘e r (pfe ˢ))
     }
     where open is-equaliser eql
 
@@ -53,10 +49,10 @@ module equaliser-props (ℂ : ecategory) where
                  → f ~ f' → g ~ g' → equaliser-of f g
                    → equaliser-of f' g'
   eqlof-ext pff pfg eqlof = record
-    { Eql = Eql
-    ; eqlar = eqlar
-    ; eqleq = ∘e r (pff ˢ) ⊙ eqleq ⊙ ∘e r pfg
-    ; iseql = iseql-ext (∘e r (pff ˢ) ⊙ eqleq ⊙ ∘e r pfg) pff pfg iseql
+    { Ob = Ob
+    ; ar = ar
+    ; eq = ∘e r (pff ˢ) ⊙ eq ⊙ ∘e r pfg
+    ; iseql = iseql-ext (∘e r (pff ˢ) ⊙ eq ⊙ ∘e r pfg) pff pfg iseql
     }
     where open equaliser-of eqlof
 

@@ -22,8 +22,8 @@ module equaliser→weak-equaliser (ℂ : ecategory) where
   is-eql⇒is-weql : {A B E : Obj} {f f' : || Hom A B ||} {e : || Hom E A ||} {pfeq : f ∘ e ~ f' ∘ e}
                       → is-equaliser pfeq → is-wequaliser pfeq
   is-eql⇒is-weql iseql = record
-    { _|weql[_] = _|eql[_]
-    ; weqltr = eqltr
+    { _|w[_] = _|[_]
+    ; wtr = tr
     }
     where open is-equaliser iseql
 

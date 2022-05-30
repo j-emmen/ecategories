@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.finite-limits.defs.equaliser where
 
@@ -21,19 +17,19 @@ module equaliser-defs (ℂ : ecategory) where
                       (pfeq : f ∘ e ~ f' ∘ e) : Set₁ where
     --constructor mkis-weql
     field
-      _|eql[_] : {C : Obj} (h : || Hom C A ||) → f ∘ h ~ f' ∘ h → || Hom C E ||
-      eqltr : {C : Obj} {h : || Hom C A ||} (pf : f ∘ h ~ f' ∘ h)
-                  → e ∘ h |eql[ pf ] ~ h
-      eqluq : {C : Obj} {h h' : || Hom C E ||} → e ∘ h ~ e ∘ h' → h ~ h'
+      _|[_] : {C : Obj} (h : || Hom C A ||) → f ∘ h ~ f' ∘ h → || Hom C E ||
+      tr : {C : Obj} {h : || Hom C A ||} (pf : f ∘ h ~ f' ∘ h)
+                  → e ∘ h |[ pf ] ~ h
+      uq : {C : Obj} {h h' : || Hom C E ||} → e ∘ h ~ e ∘ h' → h ~ h'
                   
 
   record equaliser-of {A B : Obj} (f f' : || Hom A B ||) : Set₁ where
     constructor mkeql-of
     field
-      {Eql} : Obj
-      {eqlar} : || Hom Eql A ||
-      {eqleq} : f ∘ eqlar ~ f' ∘ eqlar
-      iseql : is-equaliser eqleq
+      {Ob} : Obj
+      {ar} : || Hom Ob A ||
+      {eq} : f ∘ ar ~ f' ∘ ar
+      iseql : is-equaliser eq
     open is-equaliser iseql public
   
 -- end equaliser-defs
@@ -47,7 +43,7 @@ record has-equalisers (ℂ : ecategory) : Set₁ where
   module eql-of {A B : Obj} {f f' : || Hom A B ||} = equaliser-of (eql-of f f')
   open eql-of public
   [_~_] : {A B : Obj} (f f' : || Hom A B ||) → Obj
-  [ f ~ f' ] = Eql {f = f} {f'}
+  [ f ~ f' ] = Ob {f = f} {f'}
 
 
 {-
