@@ -242,8 +242,8 @@ CVex-faith {ℂ} hasfwl = record
 CVex-full : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
            → is-full CVex ℂ [ hasfwl ]
 CVex-full {ℂ} hasfwl = record
-  { full-ar = λ f → lo f
-  ; full-pf = λ {_} {_} {f} → record { hty = lo f ; hty₀ = lid ; hty₁ = lid }
+  { ar = λ f → lo f
+  ; pf = λ {_} {_} {f} → record { hty = lo f ; hty₀ = lid ; hty₁ = lid }
   }
   where open ecategory-aux-only ℂ
         open pseudo-eq-rel-defs ℂ

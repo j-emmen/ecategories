@@ -12,26 +12,11 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
+
+
+-- Properties from other files
 open import ecats.functors.props.left-covering.left-covering-basic public
 open import ecats.functors.props.left-covering.left-covering-regular public
-
-{-
-open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.arrows
-open import ecats.basic-defs.eqv-rel
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.arrows
-open import ecats.finite-limits.all
-open import ecats.functors.defs.efunctor-d&n
-open import ecats.functors.defs.natural-transformation
-open import ecats.functors.defs.basic-defs
-open import ecats.functors.defs.preserving-functor
-open import ecats.functors.defs.left-covering
-open import ecats.functors.props.left-covering.left-covering-regular public
-open import ecats.functors.props.left-covering.left-covering-basic public
--}
-
 
 
 -- Postcomposing a left covering functor with an exact functor yields a left covering functor
