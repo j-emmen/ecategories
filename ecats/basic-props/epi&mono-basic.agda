@@ -43,6 +43,23 @@ module epi&mono-props-basic (ℂ : ecategory) where
             where module m = is-monic pfm
                   module m' = is-monic pfm'
 
+  ar-iso-to-mono-is-monic : {A A' B : Obj}{f : || Hom A' B ||}{m : || Hom A B ||}{i : || Hom A' A ||}
+                               → m ∘ i ~ f → is-iso i → is-monic m → is-monic f
+  ar-iso-to-mono-is-monic {A} {A'} {B} {f = f} {m} {i} tr isiso ism = record
+    { mono-pf = λ {_} {g} {g'} pf → ~proof g                ~[ lidˢ ⊙ ∘e r (i.iddom ˢ) ⊙ assˢ  ] /
+                                            i.invf ∘ i ∘ g   ~[ ∘e (aux pf) r ] /
+                                            i.invf ∘ i ∘ g'  ~[ ass ⊙ ∘e r i.iddom ⊙ lid ]∎
+                                            g' ∎
+    }
+    where module m = is-monic ism
+          module i = is-iso isiso
+          aux : {C : Obj}{g g' : || Hom C A' ||} → f ∘ g ~ f ∘ g' → i ∘ g ~ i ∘ g'
+          aux {C} {g} {g'} pf = m.mono-pf (~proof m ∘ i ∘ g   ~[ ass ⊙ ∘e r tr ] /
+                                                  f ∘ g       ~[ pf ] /
+                                                  f ∘ g'      ~[ ∘e r (tr ˢ) ⊙ assˢ ]∎
+                                                  m ∘ i ∘ g' ∎)
+
+
 {-
   mono-ext : {A B : Obj} {m m' : || Hom A B ||} → m ~ m' → is-monic m → is-monic m'
   mono-ext pfeq pfm = record

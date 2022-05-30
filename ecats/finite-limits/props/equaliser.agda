@@ -7,6 +7,8 @@ open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.isomorphism
 open import ecats.basic-defs.epi&mono
+open import ecats.basic-props.isomorphism
+open import ecats.basic-props.epi&mono-basic
 open import ecats.finite-limits.defs.equaliser
 
 
@@ -16,7 +18,9 @@ open import ecats.finite-limits.defs.equaliser
 module equaliser-props (ℂ : ecategory) where
   open ecategory-aux ℂ
   open iso-defs ℂ
+  open iso-props ℂ
   open epi&mono-defs ℂ
+  open epi&mono-props ℂ
   open comm-shapes ℂ
   open equaliser-defs ℂ
 
@@ -55,5 +59,23 @@ module equaliser-props (ℂ : ecategory) where
     ; iseql = iseql-ext (∘e r (pff ˢ) ⊙ eq ⊙ ∘e r pfg) pff pfg iseql
     }
     where open equaliser-of eqlof
+
+  ar-iso-to-eql-is-eql : {A B E E' : Obj}{f g : || Hom A B ||}{e' : || Hom E' A ||}
+                         (eq' : f ∘ e' ~ g ∘ e'){e : || Hom E A ||}{eq : f ∘ e ~ g ∘ e}
+                         {med : || Hom E' E ||} → e ∘ med ~ e' → is-iso med
+                              → is-equaliser eq → is-equaliser eq'
+  ar-iso-to-eql-is-eql {A} {B} {E} {E'} {f} {g} {e'} eq' {e} {eq} {med} tr isiso iseql = record
+    { _|[_] = λ h pf →  med.invf ∘ h eql.|[ pf ]
+    ; tr = λ {_} {h} pf → ~proof e' ∘ med.invf ∘ h eql.|[ pf ]   ~[ ass ⊙ ∘e r (iso-trdom med.isisopair tr) ] /
+                                  e ∘ h eql.|[ pf ]               ~[ eql.tr pf ]∎
+                                  h ∎
+    ; uq = f.mono-pf
+    }
+    where module eql = equaliser-of (mkeql-of iseql)
+          module med = is-iso isiso
+          fism : is-monic e'
+          fism = ar-iso-to-mono-is-monic tr isiso (eqlof-is-monic (mkeql-of iseql))
+          module f = is-monic fism
+          
 
 -- end equaliser-props
