@@ -205,21 +205,21 @@ record is-full {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ �
     module 𝔻 = ecat 𝔻
     module F = efunctorₗₑᵥ F
   field
-    full-ar : {X Y : ℂ.Obj} → || 𝔻.Hom (F.ₒ X) (F.ₒ Y) || → || ℂ.Hom X Y ||
-    full-pf : {X Y : ℂ.Obj} {g : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
-                    → F.ₐ (full-ar g) 𝔻.~ g
-  full-pfˢ : {X Y : ℂ.Obj} {g : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
-                    → g 𝔻.~ F.ₐ (full-ar g)
-  full-pfˢ =  full-pf ˢ
-           where open ecategory-aux-only 𝔻
-  full-pfg : {X Y : ℂ.Obj} {g g' : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
-                    → g 𝔻.~ g' → F.ₐ (full-ar g) 𝔻.~ g'
-  full-pfg pf = full-pf ⊙ pf
-              where open ecategory-aux-only 𝔻
-  full-pfgˢ : {X Y : ℂ.Obj} {g g' : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
-                    → g 𝔻.~ g' → g' 𝔻.~ F.ₐ (full-ar g)
-  full-pfgˢ pf = full-pfg pf ˢ
-              where open ecategory-aux-only 𝔻
+    ar : {X Y : ℂ.Obj} → || 𝔻.Hom (F.ₒ X) (F.ₒ Y) || → || ℂ.Hom X Y ||
+    pf : {X Y : ℂ.Obj} {g : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
+                    → F.ₐ (ar g) 𝔻.~ g
+  pfˢ : {X Y : ℂ.Obj} {g : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
+                    → g 𝔻.~ F.ₐ (ar g)
+  pfˢ =  pf ˢ
+      where open ecategory-aux-only 𝔻
+  pfg : {X Y : ℂ.Obj} {g g' : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
+                    → g 𝔻.~ g' → F.ₐ (ar g) 𝔻.~ g'
+  pfg eq = pf ⊙ eq
+         where open ecategory-aux-only 𝔻
+  pfgˢ : {X Y : ℂ.Obj} {g g' : || 𝔻.Hom (F.ₒ X) (F.ₒ Y) ||}
+                    → g 𝔻.~ g' → g' 𝔻.~ F.ₐ (ar g)
+  pfgˢ eq = pfg eq ˢ
+          where open ecategory-aux-only 𝔻
 
 
 record is-faithful {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
@@ -283,15 +283,15 @@ f&f-is-conservative {ℂ = ℂ} {𝔻 = 𝔻} {F} isfull isfaith = record
         module 𝔻 = cat-iso 𝔻
         module F where
           open efunctor-aux F public
-          open is-full isfull public
+          module full = is-full isfull
           open is-faithful isfaith public
         inv : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||}
                  → 𝔻.is-iso (F.ₐ f) → || ℂ.Hom B A ||
-        inv isiso = F.full-ar Ff.⁻¹
+        inv isiso = F.full.ar Ff.⁻¹
                   where module Ff = 𝔻.is-iso isiso
         Finv~invF : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||}(isiso : 𝔻.is-iso (F.ₐ f))
                        → F.ₐ (inv isiso) 𝔻.~ 𝔻.is-iso.invf isiso
-        Finv~invF isiso = F.full-pf
+        Finv~invF isiso = F.full.pf
         isop : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||}(isiso : 𝔻.is-iso (F.ₐ f))
                   → ℂ.is-iso-pair f (inv isiso)
         isop {A} {B} {f = f} isiso = record
@@ -314,11 +314,11 @@ f&f-creates-isos {ℂ = ℂ} {𝔻 = 𝔻} {F} isfull isfaith {X} {Y} isoF = rec
   ; a21 = a21
   ; isop = record
          { iddom = F.faith-pf (~proof F.ₐ (a21 ℂ.∘ a12)        ~[ F.cmpˢ a12 a21 ] /
-                                      F.ₐ a21 𝔻.∘ F.ₐ a12      ~[ ∘e F.full-pf F.full-pf ] /
+                                      F.ₐ a21 𝔻.∘ F.ₐ a12      ~[ ∘e F.full.pf F.full.pf ] /
                                       ni.a21 𝔻.∘ ni.a12       ~[ ni.iddom ⊙ F.idˢ {X} ]∎
                                       F.ₐ (ℂ.idar X) ∎)
          ; idcod = F.faith-pf (~proof F.ₐ (a12 ℂ.∘ a21)        ~[ F.cmpˢ a21 a12 ] /
-                                      F.ₐ a12 𝔻.∘ F.ₐ a21      ~[ ∘e F.full-pf F.full-pf ] /
+                                      F.ₐ a12 𝔻.∘ F.ₐ a21      ~[ ∘e F.full.pf F.full.pf ] /
                                       ni.a12 𝔻.∘ ni.a21       ~[ ni.idcod ⊙ F.idˢ {Y} ]∎
                                       F.ₐ (ℂ.idar Y) ∎)
          }
@@ -328,13 +328,13 @@ f&f-creates-isos {ℂ = ℂ} {𝔻 = 𝔻} {F} isfull isfaith {X} {Y} isoF = rec
         module 𝔻 = cat-iso 𝔻
         module F where
           open efunctor-aux F public
-          open is-full isfull public
+          module full = is-full isfull
           open is-faithful isfaith public
         module ni = 𝔻._≅ₒ_ isoF
         a12 : || ℂ.Hom X Y ||
-        a12 = F.full-ar ni.a12
+        a12 = F.full.ar ni.a12
         a21 : || ℂ.Hom Y X ||
-        a21 = F.full-ar ni.a21
+        a21 = F.full.ar ni.a21
 
 
 
