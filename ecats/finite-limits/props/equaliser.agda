@@ -69,13 +69,28 @@ module equaliser-props (ℂ : ecategory) where
     ; tr = λ {_} {h} pf → ~proof e' ∘ med.invf ∘ h eql.|[ pf ]   ~[ ass ⊙ ∘e r (iso-trdom med.isisopair tr) ] /
                                   e ∘ h eql.|[ pf ]               ~[ eql.tr pf ]∎
                                   h ∎
-    ; uq = f.mono-pf
+    ; uq = e'.mono-pf
     }
     where module eql = equaliser-of (mkeql-of iseql)
           module med = is-iso isiso
-          fism : is-monic e'
-          fism = ar-iso-to-mono-is-monic tr isiso (eqlof-is-monic (mkeql-of iseql))
-          module f = is-monic fism
+          ism' : is-monic e'
+          ism' = ar-iso-to-mono-is-monic tr isiso (eqlof-is-monic (mkeql-of iseql))
+          module e' = is-monic ism'
+
+  same-eql-is-iso : {A B E E' : Obj}{f g : || Hom A B ||}{e : || Hom E A ||}{eq : f ∘ e ~ g ∘ e}
+                    {e' : || Hom E' A ||}{eq' : f ∘ e' ~ g ∘ e'}
+                    {med : || Hom E' E ||} → e ∘ med ~ e'
+                              → is-equaliser eq → is-equaliser eq' → is-iso med
+  same-eql-is-iso {A} {B} {E} {E'} {f} {g} {e} {eq} {e'} {eq'} {med} tr iseql iseql' = record
+    { invf = e e'.|[ e.eq ]
+    ; isisopair = record
+                { iddom = e'.uq (ass ⊙ ∘e r (e'.tr e.eq) ⊙ tr ⊙ ridˢ)
+                ; idcod = e.uq (ass ⊙ ∘e r tr ⊙ e'.tr e.eq ⊙ ridˢ)
+                }
+    }
+    where module e = equaliser-of (mkeql-of iseql)
+          module e' = equaliser-of (mkeql-of iseql')
+
           
 
 -- end equaliser-props

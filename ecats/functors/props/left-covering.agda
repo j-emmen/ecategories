@@ -102,7 +102,10 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       GcovD : 𝔼.is-regular-epi (G.ₐ covD-ar)
       GcovD = G.ex.pres-repi-pf covD
       TE≅GTD : 𝔼.is-iso (TE.! (G.ₒ TD))
-      TE≅GTD = 𝔼.mkis-iso (𝔼.!uq-iso (G.ex.pres-!-pf fl𝔻.istrm) trmTE)
+      TE≅GTD = 𝔼.mkis-iso GTD≅TE.isop
+             where GTD≅TE : G.ₒ TD 𝔼.≅ₒ TE
+                   GTD≅TE = 𝔼.!uq-iso (G.ex.pres-!-pf fl𝔻.istrm) trmTE
+                   module GTD≅TE = 𝔼._≅ₒ_ GTD≅TE 
       eq : TE.! (G.ₒ TD) 𝔼.∘ G.ₐ covD-ar 𝔼.~ cov!
       eq = TE.!uqg
     cov!-repi : 𝔼.is-regular-epi cov!
@@ -176,7 +179,7 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       med : || 𝔼.Hom (G.ₒ eqlD.Ob) eqlE.Ob ||
       med = G.ₐ eqlD.ar eqlE.|[ G.∘∘ eqlD.eq ]
       E≅GD : 𝔼.is-iso med
-      E≅GD = ? --𝔼.eqls-unv-is-iso eqlE.iseql GeqlD.iseql {med} (eqlE.tr (G.∘∘ eqlD.eq))
+      E≅GD = 𝔼.same-eql-is-iso (eqlE.tr (G.∘∘ eqlD.eq)) eqlE.iseql GeqlD.iseql
       isotr : med 𝔼.∘ G.ₐ covD-ar 𝔼.~ coveql
       isotr = eqlE.uq (~proof
         eqlE.ar 𝔼.∘ med 𝔼.∘ G.ₐ covD-ar    ~[ ass ⊙ ∘e r (eqlE.tr (G.∘∘ eqlD.eq)) ] /
@@ -201,7 +204,7 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       module pbD = 𝔻.pullback-of-not pbD
       module pbE = 𝔼.pullback-of-not pbE
       GpbD : 𝔼.pullback-of (G○F.ₐ f) (G○F.ₐ g)
-      GpbD = ? --𝔼.pbof-is2sq (G.ex.pres-ispbof-pf (𝔻.pbof-sq2is pbD))
+      GpbD = 𝔼.mkpb-of (G.ex.pres-pbsq-pf pbD.×/ispbsq)
       module GpbD = 𝔼.pullback-of-not GpbD
       covD-ar : || 𝔻.Hom (F.ₒ wpbC.ul) pbD.ul ||
       covD-ar = pbD.⟨ F.ₐ wpbC.wπ/₁ , F.ₐ wpbC.wπ/₂ ⟩[ F.∘∘ wpbC.w×/sqpf ]
@@ -210,9 +213,10 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       GcovD : 𝔼.is-regular-epi (G.ₐ covD-ar)
       GcovD = G.ex.pres-repi-pf covD
       med : || 𝔼.Hom (G.ₒ pbD.ul) pbE.ul ||
-      med = pbE.⟨ G.ₐ pbD.π/₁ , G.ₐ pbD.π/₂ ⟩[ G.∘∘ pbD.×/sqpf ]
+      med = 𝔼.pbs-iso-ar GpbD pbE
+      -- pbE.⟨ G.ₐ pbD.π/₁ , G.ₐ pbD.π/₂ ⟩[ G.∘∘ pbD.×/sqpf ]
       E≅GD : 𝔼.is-iso med
-      E≅GD = ? --𝔼.pbs-unvar-is-iso GpbD pbE (pbE.×/tr₁ (G.∘∘ pbD.×/sqpf)) (pbE.×/tr₂ (G.∘∘ pbD.×/sqpf))
+      E≅GD = 𝔼.pbs-iso GpbD pbE
       isotr : med 𝔼.∘ G.ₐ covD-ar 𝔼.~ covpb
       isotr = pbE.×/uq
         (~proof pbE.π/₁ 𝔼.∘ med 𝔼.∘ G.ₐ covD-ar   ~[ ass ⊙ ∘e r (pbE.×/tr₁ (G.∘∘ pbD.×/sqpf)) ] /
