@@ -4,11 +4,8 @@
 module ecats.functors.props.left-covering.left-covering-regular where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-defs.eqv-rel
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.all
+open import ecats.arrows
+open import ecats.reg&ex
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
@@ -26,8 +23,8 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
     module ℂ where
       open ecategory ℂ public
       open comm-shapes ℂ public
-      open epis&monos-defs ℂ public
-      open epis&monos-props ℂ public
+      open epi&mono-d&p ℂ public
+      --open epis&monos-props ℂ public
       open finite-limits-d&p ℂ public
       open finite-weak-limits-d&p ℂ public
       open limits→weak-limits ℂ public
@@ -35,9 +32,8 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
     module 𝔼 where
       open ecategory 𝔼 public
       open comm-shapes 𝔼 public
-      open iso-defs 𝔼 public
-      open epis&monos-defs 𝔼 public
-      open epis&monos-props 𝔼 public
+      open iso-d&p 𝔼 public
+      open epi&mono-d&p 𝔼 public
       open finite-limits-d&p 𝔼 public
       open finite-weak-limits-d&p 𝔼 public
       open limits→weak-limits 𝔼 public
@@ -101,10 +97,10 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
                                g ℂ.∘ wpbC.wπ/₂                             ~[ ∘e (X×Y.×tr₂ˢ {f = wpbC.wπ/₁}) r ⊙ ass ]∎
                                (g ℂ.∘ X×Y.π₂) ℂ.∘ X×Y.< wpbC.wπ/₁ , wpbC.wπ/₂ > ∎)
                  where open ecategory-aux-only ℂ
-      coveqlF : || 𝔼.Hom (F.ₒ wpbC.ul) eqlF.Eql ||
-      coveqlF = F.ₐ (X×Y.< wpbC.wπ/₁ , wpbC.wπ/₂ >) eqlF.|eql[ coveqlF-pf ]
+      coveqlF : || 𝔼.Hom (F.ₒ wpbC.ul) eqlF.Ob ||
+      coveqlF = F.ₐ (X×Y.< wpbC.wπ/₁ , wpbC.wπ/₂ >) eqlF.|[ coveqlF-pf ]
       coveqlF-repi : 𝔼.is-regular-epi coveqlF
-      coveqlF-repi = eqluniv-is-repi weql eqlF (eqlF.eqltr coveqlF-pf)
+      coveqlF-repi = eqluniv-is-repi weql eqlF (eqlF.tr coveqlF-pf)
 
       eqlD : 𝔼.equaliser-of (F.ₐ f 𝔼.∘ FX×FY.π₁) (F.ₐ g 𝔼.∘ FX×FY.π₂)
       eqlD = 𝔼.pbof→eqlofπ's FX×FY.×of pbE
@@ -114,40 +110,40 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
       covprd-repi : 𝔼.is-regular-epi covprd
       covprd-repi = prduniv-is-repi (ℂ.prd-of⇒wprd-of X×Y.×of) FX×FY.×of FX×FY.×tr₁ FX×FY.×tr₂
 
-      coveqlD-pf : (F.ₐ f 𝔼.∘ FX×FY.π₁) 𝔼.∘ covprd 𝔼.∘ eqlF.eqlar
-                        𝔼.~ (F.ₐ g 𝔼.∘ FX×FY.π₂) 𝔼.∘ covprd 𝔼.∘ eqlF.eqlar
+      coveqlD-pf : (F.ₐ f 𝔼.∘ FX×FY.π₁) 𝔼.∘ covprd 𝔼.∘ eqlF.ar
+                        𝔼.~ (F.ₐ g 𝔼.∘ FX×FY.π₂) 𝔼.∘ covprd 𝔼.∘ eqlF.ar
       coveqlD-pf = epi-pf (~proof
-        ((F.ₐ f 𝔼.∘ FX×FY.π₁) 𝔼.∘ covprd 𝔼.∘ eqlF.eqlar) 𝔼.∘ coveqlF
-                              ~[ ∘e r ass ⊙ assˢ ⊙ ∘e (eqlF.eqltr coveqlF-pf) (assˢ ⊙ ∘e FX×FY.×tr₁ r) ] /
+        ((F.ₐ f 𝔼.∘ FX×FY.π₁) 𝔼.∘ covprd 𝔼.∘ eqlF.ar) 𝔼.∘ coveqlF
+                              ~[ ∘e r ass ⊙ assˢ ⊙ ∘e (eqlF.tr coveqlF-pf) (assˢ ⊙ ∘e FX×FY.×tr₁ r) ] /
         (F.ₐ f 𝔼.∘ F.ₐ X×Y.π₁) 𝔼.∘ F.ₐ (X×Y.< wpbC.wπ/₁ , wpbC.wπ/₂ >)
                               ~[ ∘e r F.∘ax-rf ⊙ coveqlF-pf ⊙ ∘e r F.∘ax-rfˢ ] /
         (F.ₐ g 𝔼.∘ F.ₐ X×Y.π₂) 𝔼.∘ F.ₐ (X×Y.< wpbC.wπ/₁ , wpbC.wπ/₂ >)
-           ~[ ∘e (eqlF.eqltr coveqlF-pf ˢ) (∘e (FX×FY.×tr₂ˢ {f = F.ₐ X×Y.π₁}) r ⊙ ass) ⊙ ass ⊙ ∘e r assˢ ]∎
-        ((F.ₐ g 𝔼.∘ FX×FY.π₂) 𝔼.∘ covprd 𝔼.∘ eqlF.eqlar) 𝔼.∘ coveqlF ∎)
+           ~[ ∘e (eqlF.tr coveqlF-pf ˢ) (∘e (FX×FY.×tr₂ˢ {f = F.ₐ X×Y.π₁}) r ⊙ ass) ⊙ ass ⊙ ∘e r assˢ ]∎
+        ((F.ₐ g 𝔼.∘ FX×FY.π₂) 𝔼.∘ covprd 𝔼.∘ eqlF.ar) 𝔼.∘ coveqlF ∎)
                  where open 𝔼.is-epic (𝔼.repi-is-epic coveqlF-repi)
                        open ecategory-aux-only 𝔼
-      coveqlD : || 𝔼.Hom eqlF.Eql eqlD.Eql ||
-      coveqlD = (covprd 𝔼.∘ eqlF.eqlar) eqlD.|eql[ coveqlD-pf ]
-      coveqlD-pb : 𝔼.pullback-of eqlD.eqlar covprd
+      coveqlD : || 𝔼.Hom eqlF.Ob eqlD.Ob ||
+      coveqlD = (covprd 𝔼.∘ eqlF.ar) eqlD.|[ coveqlD-pf ]
+      coveqlD-pb : 𝔼.pullback-of eqlD.ar covprd
       coveqlD-pb = record
-        { ×/sq/ = 𝔼.mksq/ (eqlD.eqltr coveqlD-pf)
+        { ×/sq/ = 𝔼.mksq/ (eqlD.tr coveqlD-pf)
         ; ×/ispbsq = record
-                   { ⟨_,_⟩[_] = λ h k pf → eqlF._|eql[_] k (⟨⟩pf pf)
-                   ; ×/tr₁ = λ pf → eqlD.eqluq (ass ⊙ ∘e r (eqlD.eqltr coveqlD-pf) ⊙ assˢ ⊙ ∘e (eqlF.eqltr (⟨⟩pf pf)) r ⊙ pf ˢ)
-                   ; ×/tr₂ = λ pf → eqlF.eqltr (⟨⟩pf pf)
-                   ; ×/uq = λ pf1 pf2 → eqlF.eqluq pf2
+                   { ⟨_,_⟩[_] = λ h k pf → eqlF._|[_] k (⟨⟩pf pf)
+                   ; ×/tr₁ = λ pf → eqlD.uq (ass ⊙ ∘e r (eqlD.tr coveqlD-pf) ⊙ assˢ ⊙ ∘e (eqlF.tr (⟨⟩pf pf)) r ⊙ pf ˢ)
+                   ; ×/tr₂ = λ pf → eqlF.tr (⟨⟩pf pf)
+                   ; ×/uq = λ pf1 pf2 → eqlF.uq pf2
                    }
         }
         where open ecategory-aux-only 𝔼
-              ⟨⟩pf : {C : 𝔼.Obj} {h : || 𝔼.Hom C eqlD.Eql ||} {k : || 𝔼.Hom C (F.ₒ X×Y.O12) ||}
-                     (pf : eqlD.eqlar 𝔼.∘ h 𝔼.~ covprd 𝔼.∘ k)
+              ⟨⟩pf : {C : 𝔼.Obj} {h : || 𝔼.Hom C eqlD.Ob ||} {k : || 𝔼.Hom C (F.ₒ X×Y.O12) ||}
+                     (pf : eqlD.ar 𝔼.∘ h 𝔼.~ covprd 𝔼.∘ k)
                        → F.ₐ (f ℂ.∘ X×Y.π₁) 𝔼.∘ k 𝔼.~ F.ₐ (g ℂ.∘ X×Y.π₂) 𝔼.∘ k
               ⟨⟩pf {C} {h} {k} pf = ~proof
                    F.ₐ (f ℂ.∘ X×Y.π₁) 𝔼.∘ k
                       ~[ ∘e r (F.∘ax-rfˢ ⊙ ∘e (FX×FY.×tr₁ˢ {g = F.ₐ X×Y.π₂}) r) ⊙ assˢ ⊙ ∘e assˢ r ] /
                    F.ₐ f 𝔼.∘ FX×FY.π₁ 𝔼.∘ covprd 𝔼.∘ k          ~[ ass ⊙ ∘e (pf ˢ) r ] /
-                   (F.ₐ f 𝔼.∘ FX×FY.π₁) 𝔼.∘ eqlD.eqlar 𝔼.∘ h    ~[ ass ⊙ ∘e r eqlD.eqleq ⊙ assˢ ] /
-                   (F.ₐ g 𝔼.∘ FX×FY.π₂) 𝔼.∘ eqlD.eqlar 𝔼.∘ h    ~[ ∘e pf r ⊙ assˢ ] /
+                   (F.ₐ f 𝔼.∘ FX×FY.π₁) 𝔼.∘ eqlD.ar 𝔼.∘ h    ~[ ass ⊙ ∘e r eqlD.eq ⊙ assˢ ] /
+                   (F.ₐ g 𝔼.∘ FX×FY.π₂) 𝔼.∘ eqlD.ar 𝔼.∘ h    ~[ ∘e pf r ⊙ assˢ ] /
                    F.ₐ g 𝔼.∘ FX×FY.π₂ 𝔼.∘ covprd 𝔼.∘ k
                                             ~[ ∘e (ass ⊙ ∘e r FX×FY.×tr₂) r ⊙ ass ⊙ ∘e r F.∘ax-rf ]∎
                    F.ₐ (g ℂ.∘ X×Y.π₂) 𝔼.∘ k ∎
@@ -156,12 +152,12 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
                    where open 𝔼.is-pbof-stable r𝔼.repi-pbof-stable
 
       covtr : coveqlD 𝔼.∘ coveqlF 𝔼.~ covpb
-      covtr = eqlD.eqluq (~proof
-        eqlD.eqlar 𝔼.∘ coveqlD 𝔼.∘ coveqlF      ~[ ass ⊙ ∘e r (eqlD.eqltr coveqlD-pf) ⊙ assˢ ] /
-        covprd 𝔼.∘ eqlF.eqlar 𝔼.∘ coveqlF       ~[ ∘e (eqlF.eqltr coveqlF-pf) r ] /
+      covtr = eqlD.uq (~proof
+        eqlD.ar 𝔼.∘ coveqlD 𝔼.∘ coveqlF      ~[ ass ⊙ ∘e r (eqlD.tr coveqlD-pf) ⊙ assˢ ] /
+        covprd 𝔼.∘ eqlF.ar 𝔼.∘ coveqlF       ~[ ∘e (eqlF.tr coveqlF-pf) r ] /
         covprd 𝔼.∘ F.ₐ (X×Y.< wpbC.wπ/₁ , wpbC.wπ/₂ >)
                            ~[ FX×FY.<>ar~<>ar (F.∘ax X×Y.×tr₁ ⊙ tr₁ ˢ) (F.∘ax X×Y.×tr₂ ⊙ tr₂ ˢ) ]∎
-        eqlD.eqlar 𝔼.∘ covpb ∎ )
+        eqlD.ar 𝔼.∘ covpb ∎ )
             where open ecategory-aux-only 𝔼
       covpb-repi : 𝔼.is-regular-epi covpb
       covpb-repi =  r𝔼.repi-cmp coveqlF-repi coveqlD-repi covtr      
@@ -238,11 +234,11 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
         module weql = ℂ.wequaliser-of weql
         module eqlF = 𝔼.equaliser-of eqlF
 
-      med-ar-pf : f ℂ.∘ Xw×Y.wπ₁ ℂ.∘ weql.weqlar ℂ.~ g ℂ.∘ Xw×Y.wπ₂ ℂ.∘ weql.weqlar
-      med-ar-pf = ass ⊙ weql.weqleq ⊙ assˢ
+      med-ar-pf : f ℂ.∘ Xw×Y.wπ₁ ℂ.∘ weql.war ℂ.~ g ℂ.∘ Xw×Y.wπ₂ ℂ.∘ weql.war
+      med-ar-pf = ass ⊙ weql.weq ⊙ assˢ
                 where open ecategory-aux-only ℂ
-      med-ar : || ℂ.Hom weql.wEql fw×g.ul ||
-      med-ar = fw×g.w⟨ Xw×Y.wπ₁ ℂ.∘ weql.weqlar , Xw×Y.wπ₂ ℂ.∘ weql.weqlar ⟩[ med-ar-pf ]
+      med-ar : || ℂ.Hom weql.wOb fw×g.ul ||
+      med-ar = fw×g.w⟨ Xw×Y.wπ₁ ℂ.∘ weql.war , Xw×Y.wπ₂ ℂ.∘ weql.war ⟩[ med-ar-pf ]
 
       covprd : || 𝔼.Hom (F.ₒ Xw×Y.O12) FX×FY.O12 ||
       covprd = FX×FY.< F.ₐ Xw×Y.wπ₁ , F.ₐ Xw×Y.wπ₂ >
@@ -258,65 +254,65 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
                        F.ₐ g 𝔼.∘ F.ₐ Xw×Y.wπ₂    ~[ F.∘ax-rf ]∎
                        F.ₐ gwπ ∎
               where open ecategory-aux-only 𝔼
-      coveqlF : || 𝔼.Hom (F.ₒ weql.wEql) eqlF.Eql ||
-      coveqlF = F.ₐ weql.weqlar  eqlF.|eql[ F.∘∘ weql.weqleq ]
+      coveqlF : || 𝔼.Hom (F.ₒ weql.wOb) eqlF.Ob ||
+      coveqlF = F.ₐ weql.war  eqlF.|[ F.∘∘ weql.weq ]
       coveqlF-repi : 𝔼.is-regular-epi coveqlF
-      coveqlF-repi = eqluniv-is-repi weql eqlF (eqlF.eqltr (F.∘∘ weql.weqleq))
+      coveqlF-repi = eqluniv-is-repi weql eqlF (eqlF.tr (F.∘∘ weql.weq))
 
-      covEql-pf = ~proof Ffπ 𝔼.∘ covprd 𝔼.∘ eqlF.eqlar       ~[ ass ⊙ ∘e r covf-pf ] /
-                         F.ₐ fwπ 𝔼.∘ eqlF.eqlar              ~[ eqlF.eqleq ] /
-                         F.ₐ gwπ 𝔼.∘ eqlF.eqlar              ~[ ∘e r (covg-pf ˢ) ⊙ assˢ ]∎
-                         Fgπ 𝔼.∘ covprd 𝔼.∘ eqlF.eqlar ∎
+      covEql-pf = ~proof Ffπ 𝔼.∘ covprd 𝔼.∘ eqlF.ar       ~[ ass ⊙ ∘e r covf-pf ] /
+                         F.ₐ fwπ 𝔼.∘ eqlF.ar              ~[ eqlF.eq ] /
+                         F.ₐ gwπ 𝔼.∘ eqlF.ar              ~[ ∘e r (covg-pf ˢ) ⊙ assˢ ]∎
+                         Fgπ 𝔼.∘ covprd 𝔼.∘ eqlF.ar ∎
                 where open ecategory-aux-only 𝔼
 
-      covEql : || 𝔼.Hom eqlF.Eql eql.Eql ||
-      covEql = (covprd 𝔼.∘ eqlF.eqlar) eql.|eql[ covEql-pf ]
+      covEql : || 𝔼.Hom eqlF.Ob eql.Ob ||
+      covEql = (covprd 𝔼.∘ eqlF.ar) eql.|[ covEql-pf ]
       covEql-sq : 𝔼.comm-square
-      covEql-sq = 𝔼.mksq (𝔼.mksq/ (eql.eqltr covEql-pf))
+      covEql-sq = 𝔼.mksq (𝔼.mksq/ (eql.tr covEql-pf))
       
-      covEql-pb : 𝔼.pullback-of eql.eqlar covprd
+      covEql-pb : 𝔼.pullback-of eql.ar covprd
       covEql-pb = record
-        { ×/sq/ = 𝔼.mksq/ (eql.eqltr covEql-pf)
+        { ×/sq/ = 𝔼.mksq/ (eql.tr covEql-pf)
         ; ×/ispbsq = record
           { ⟨_,_⟩[_] = λ h k pf → un {_} {h} {k} pf
-          ; ×/tr₁ = λ {_} {h} {k} pf → eql.eqluq (~proof
-                  eql.eqlar 𝔼.∘ covEql 𝔼.∘ un pf            ~[ ass ⊙ ∘e r (eql.eqltr covEql-pf) ⊙ assˢ ] /
-                  covprd 𝔼.∘ eqlF.eqlar 𝔼.∘ un pf           ~[ ∘e (eqlF.eqltr (un-pf pf)) r ] /
-                  covprd 𝔼.∘ k                             ~[ pf ˢ ]∎
-                  eql.eqlar 𝔼.∘ h ∎)
-          ; ×/tr₂ = λ pf → eqlF.eqltr (un-pf pf)
-          ; ×/uq = λ _ pf₂ → eqlF.eqluq pf₂
+          ; ×/tr₁ = λ {_} {h} {k} pf → eql.uq (~proof
+                  eql.ar 𝔼.∘ covEql 𝔼.∘ un pf            ~[ ass ⊙ ∘e r (eql.tr covEql-pf) ⊙ assˢ ] /
+                  covprd 𝔼.∘ eqlF.ar 𝔼.∘ un pf           ~[ ∘e (eqlF.tr (un-pf pf)) r ] /
+                  covprd 𝔼.∘ k                            ~[ pf ˢ ]∎
+                  eql.ar 𝔼.∘ h ∎)
+          ; ×/tr₂ = λ pf → eqlF.tr (un-pf pf)
+          ; ×/uq = λ _ pf₂ → eqlF.uq pf₂
           }
         }
         where open ecategory-aux-only 𝔼
-              un-pf : {C : 𝔼.Obj} {h : || 𝔼.Hom C eql.Eql ||} {k : || 𝔼.Hom C (F.ₒ Xw×Y.O12) ||}
-                      (pf : eql.eqlar 𝔼.∘ h 𝔼.~ covprd 𝔼.∘ k)
+              un-pf : {C : 𝔼.Obj} {h : || 𝔼.Hom C eql.Ob ||} {k : || 𝔼.Hom C (F.ₒ Xw×Y.O12) ||}
+                      (pf : eql.ar 𝔼.∘ h 𝔼.~ covprd 𝔼.∘ k)
                         → F.ₐ fwπ 𝔼.∘ k 𝔼.~ F.ₐ gwπ 𝔼.∘ k
               un-pf {_} {h} {k} pf = ~proof F.ₐ fwπ 𝔼.∘ k               ~[ ∘e r (covf-pf ˢ) ⊙ assˢ ] /
                                             Ffπ 𝔼.∘ covprd 𝔼.∘ k        ~[ ∘e (pf ˢ) r ] /
-                                            Ffπ 𝔼.∘ eql.eqlar 𝔼.∘ h     ~[ ass ⊙ ∘e r eql.eqleq ⊙ assˢ ] /
-                                            Fgπ 𝔼.∘ eql.eqlar 𝔼.∘ h     ~[ ∘e pf r ] /
+                                            Ffπ 𝔼.∘ eql.ar 𝔼.∘ h     ~[ ass ⊙ ∘e r eql.eq ⊙ assˢ ] /
+                                            Fgπ 𝔼.∘ eql.ar 𝔼.∘ h     ~[ ∘e pf r ] /
                                             Fgπ 𝔼.∘ covprd 𝔼.∘ k        ~[ ass ⊙ ∘e r covg-pf ]∎
                                             F.ₐ gwπ 𝔼.∘ k ∎
               
-              un : {C : 𝔼.Obj} {h : || 𝔼.Hom C eql.Eql ||} {k : || 𝔼.Hom C (F.ₒ Xw×Y.O12) ||} (pf : eql.eqlar 𝔼.∘ h 𝔼.~ covprd 𝔼.∘ k)
-                       → || 𝔼.Hom C eqlF.Eql ||
-              un {_} {h} {k} pf = k eqlF.|eql[ un-pf pf ]
+              un : {C : 𝔼.Obj} {h : || 𝔼.Hom C eql.Ob ||} {k : || 𝔼.Hom C (F.ₒ Xw×Y.O12) ||} (pf : eql.ar 𝔼.∘ h 𝔼.~ covprd 𝔼.∘ k)
+                       → || 𝔼.Hom C eqlF.Ob ||
+              un {_} {h} {k} pf = k eqlF.|[ un-pf pf ]
 
       covEql-repi : 𝔼.is-regular-epi covEql
       covEql-repi = pres-rl covEql-pb covprd-repi
                   where open 𝔼.is-pbof-stable r𝔼.repi-pbof-stable
       covcovE-repi : 𝔼.is-regular-epi (covEql 𝔼.∘ coveqlF)
-      covcovE-repi = ∘c covEql-repi coveqlF-repi
-                   where open is-ecat-congr r𝔼.regular-epi-is-congr
+      covcovE-repi = r𝔼.repi-cmp coveqlF-repi covEql-repi r
+                   where open ecategory-aux-only 𝔼 using (r)
       covpb-pf : covpb 𝔼.∘ F.ₐ med-ar 𝔼.~ covEql 𝔼.∘ coveqlF
-      covpb-pf = eql.eqluq (~proof
-        eql.eqlar 𝔼.∘ covpb 𝔼.∘ F.ₐ med-ar            ~[ ass ⊙ ∘e r (FX×FY.<>ar~<> tr₁ tr₂) ] /
+      covpb-pf = eql.uq (~proof
+        eql.ar 𝔼.∘ covpb 𝔼.∘ F.ₐ med-ar            ~[ ass ⊙ ∘e r (FX×FY.<>ar~<> tr₁ tr₂) ] /
         FX×FY.< F.ₐ fw×g.wπ/₁ , F.ₐ fw×g.wπ/₂ > 𝔼.∘  F.ₐ med-ar
                     ~[ FX×FY.<>ar~<>ar (F.∘∘ (fw×g.w×/tr₁ med-ar-pf)) (F.∘∘ (fw×g.w×/tr₂ med-ar-pf)) ] /
-        covprd 𝔼.∘ F.ₐ weql.weqlar                     ~[ ∘e (eqlF.eqltr (F.∘∘ weql.weqleq) ˢ) r ] /
-        covprd 𝔼.∘ eqlF.eqlar 𝔼.∘ coveqlF             ~[ ass ⊙ ∘e r (eql.eqltr covEql-pf ˢ) ⊙ assˢ ]∎
-        eql.eqlar 𝔼.∘ covEql 𝔼.∘ coveqlF ∎)
+        covprd 𝔼.∘ F.ₐ weql.war                     ~[ ∘e (eqlF.tr (F.∘∘ weql.weq) ˢ) r ] /
+        covprd 𝔼.∘ eqlF.ar 𝔼.∘ coveqlF             ~[ ass ⊙ ∘e r (eql.tr covEql-pf ˢ) ⊙ assˢ ]∎
+        eql.ar 𝔼.∘ covEql 𝔼.∘ coveqlF ∎)
                 where open ecategory-aux-only 𝔼
       covpb-repi : 𝔼.is-regular-epi covpb
       covpb-repi = r𝔼.repi-triang covpb-pf covcovE-repi      
@@ -378,23 +374,23 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
         module pbFa1 = 𝔼.pullback-of-not (r𝔼.pb-of Fsp₁.a1 Fsp₂.a1)
         module eqlFa2 = 𝔼.equaliser-of (r𝔼.eql-of (F.ₐ (sp₁.a2 ℂ.∘ wpba1.wπ/₁)) (F.ₐ (sp₂.a2 ℂ.∘ wpba1.wπ/₂)))
 
-      med-wbw-pf₁ : sp₁.a1 ℂ.∘ wpba1.wπ/₁ ℂ.∘ weqla2.weqlar ℂ.~ sp₂.a1 ℂ.∘ wpba1.wπ/₂ ℂ.∘ weqla2.weqlar
+      med-wbw-pf₁ : sp₁.a1 ℂ.∘ wpba1.wπ/₁ ℂ.∘ weqla2.war ℂ.~ sp₂.a1 ℂ.∘ wpba1.wπ/₂ ℂ.∘ weqla2.war
       med-wbw-pf₁ = ass ⊙ ∘e r wpba1.w×/sqpf ⊙ assˢ
                   where open ecategory-aux-only ℂ
-      med-wbw-pf₂ : sp₁.a2 ℂ.∘ wpba1.wπ/₁ ℂ.∘ weqla2.weqlar ℂ.~ sp₂.a2 ℂ.∘ wpba1.wπ/₂ ℂ.∘ weqla2.weqlar
-      med-wbw-pf₂ = ass ⊙ weqla2.weqleq ⊙ assˢ
+      med-wbw-pf₂ : sp₁.a2 ℂ.∘ wpba1.wπ/₁ ℂ.∘ weqla2.war ℂ.~ sp₂.a2 ℂ.∘ wpba1.wπ/₂ ℂ.∘ weqla2.war
+      med-wbw-pf₂ = ass ⊙ weqla2.weq ⊙ assˢ
                   where open ecategory-aux-only ℂ      
-      med-wbw : || ℂ.Hom weqla2.wEql wbw.Ob ||
-      med-wbw = wbw.⟨ wpba1.wπ/₁ ℂ.∘ weqla2.weqlar , wpba1.wπ/₂ ℂ.∘ weqla2.weqlar ⟩[ med-wbw-pf₁ , med-wbw-pf₂ ]
+      med-wbw : || ℂ.Hom weqla2.wOb wbw.Ob ||
+      med-wbw = wbw.⟨ wpba1.wπ/₁ ℂ.∘ weqla2.war , wpba1.wπ/₂ ℂ.∘ weqla2.war ⟩[ med-wbw-pf₁ , med-wbw-pf₂ ]
       med-bw : || 𝔼.Hom bw.Ob pbFa1.ul ||
       med-bw = pbFa1.⟨ bw.π//₁ , bw.π//₂ ⟩[ bw.sqpf₁ ]
 
-      covEql : || 𝔼.Hom (F.ₒ weqla2.wEql) eqlFa2.Eql ||
-      covEql = F.ₐ weqla2.weqlar eqlFa2.|eql[ F.∘∘ weqla2.weqleq ]
+      covEql : || 𝔼.Hom (F.ₒ weqla2.wOb) eqlFa2.Ob ||
+      covEql = F.ₐ weqla2.war eqlFa2.|[ F.∘∘ weqla2.weq ]
       covEql-repi : 𝔼.is-regular-epi covEql
       covEql-repi = eqluniv-is-repi (wbw-aux.weql-a2 sp₁ sp₂)
                                     (r𝔼.eql-of (F.ₐ (sp₁.a2 ℂ.∘ wpba1.wπ/₁)) (F.ₐ (sp₂.a2 ℂ.∘ wpba1.wπ/₂)))
-                                    (eqlFa2.eqltr (F.∘∘ weqla2.weqleq))
+                                    (eqlFa2.tr (F.∘∘ weqla2.weq))
 
       covPb : || 𝔼.Hom (F.ₒ wpba1.ul) pbFa1.ul ||
       covPb = pbFa1.⟨ F.ₐ wpba1.wπ/₁ , F.ₐ wpba1.wπ/₂ ⟩[ F.∘∘ wpba1.w×/sqpf ]
@@ -404,38 +400,38 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
                                   (pbFa1.×/tr₁ (F.∘∘ wpba1.w×/sqpf))
                                   (pbFa1.×/tr₂ (F.∘∘ wpba1.w×/sqpf))
 
-      covBw-pf₁ : F.ₐ sp₁.a1 𝔼.∘ F.ₐ wpba1.wπ/₁ 𝔼.∘ eqlFa2.eqlar 𝔼.~ F.ₐ sp₂.a1 𝔼.∘ F.ₐ wpba1.wπ/₂ 𝔼.∘ eqlFa2.eqlar
+      covBw-pf₁ : F.ₐ sp₁.a1 𝔼.∘ F.ₐ wpba1.wπ/₁ 𝔼.∘ eqlFa2.ar 𝔼.~ F.ₐ sp₂.a1 𝔼.∘ F.ₐ wpba1.wπ/₂ 𝔼.∘ eqlFa2.ar
       covBw-pf₁ = ass ⊙ ∘e r (F.∘∘ wpba1.w×/sqpf) ⊙ assˢ
                 where open ecategory-aux-only 𝔼
-      covBw-pf₂ : F.ₐ sp₁.a2 𝔼.∘ F.ₐ wpba1.wπ/₁ 𝔼.∘ eqlFa2.eqlar 𝔼.~ F.ₐ sp₂.a2 𝔼.∘ F.ₐ wpba1.wπ/₂ 𝔼.∘ eqlFa2.eqlar
-      covBw-pf₂ = ass ⊙ ∘e r F.∘ax-rf ⊙ eqlFa2.eqleq ⊙ ∘e r F.∘ax-rfˢ ⊙ assˢ 
+      covBw-pf₂ : F.ₐ sp₁.a2 𝔼.∘ F.ₐ wpba1.wπ/₁ 𝔼.∘ eqlFa2.ar 𝔼.~ F.ₐ sp₂.a2 𝔼.∘ F.ₐ wpba1.wπ/₂ 𝔼.∘ eqlFa2.ar
+      covBw-pf₂ = ass ⊙ ∘e r F.∘ax-rf ⊙ eqlFa2.eq ⊙ ∘e r F.∘ax-rfˢ ⊙ assˢ 
                 where open ecategory-aux-only 𝔼
-      covBw : || 𝔼.Hom eqlFa2.Eql bw.Ob ||
-      covBw = bw.⟨ F.ₐ wpba1.wπ/₁ 𝔼.∘ eqlFa2.eqlar , F.ₐ wpba1.wπ/₂ 𝔼.∘ eqlFa2.eqlar ⟩[ covBw-pf₁ , covBw-pf₂ ]      
-      covBw-sq-aux₁ : bw.π//₁ 𝔼.∘ covBw 𝔼.~ pbFa1.π/₁ 𝔼.∘ covPb 𝔼.∘ eqlFa2.eqlar
+      covBw : || 𝔼.Hom eqlFa2.Ob bw.Ob ||
+      covBw = bw.⟨ F.ₐ wpba1.wπ/₁ 𝔼.∘ eqlFa2.ar , F.ₐ wpba1.wπ/₂ 𝔼.∘ eqlFa2.ar ⟩[ covBw-pf₁ , covBw-pf₂ ]      
+      covBw-sq-aux₁ : bw.π//₁ 𝔼.∘ covBw 𝔼.~ pbFa1.π/₁ 𝔼.∘ covPb 𝔼.∘ eqlFa2.ar
       covBw-sq-aux₁ = ~proof bw.π//₁ 𝔼.∘ covBw                     ~[ bw.tr₁ covBw-pf₁ covBw-pf₂ ] /
-                             F.ₐ wpba1.wπ/₁ 𝔼.∘ eqlFa2.eqlar        ~[ ∘e r (pbFa1.×/tr₁ (F.∘∘ wpba1.w×/sqpf) ˢ) ⊙ assˢ ]∎
-                             pbFa1.π/₁ 𝔼.∘ covPb 𝔼.∘ eqlFa2.eqlar ∎
+                             F.ₐ wpba1.wπ/₁ 𝔼.∘ eqlFa2.ar        ~[ ∘e r (pbFa1.×/tr₁ (F.∘∘ wpba1.w×/sqpf) ˢ) ⊙ assˢ ]∎
+                             pbFa1.π/₁ 𝔼.∘ covPb 𝔼.∘ eqlFa2.ar ∎
                     where open ecategory-aux-only 𝔼
-      covBw-sq-aux₂ : bw.π//₂ 𝔼.∘ covBw 𝔼.~ pbFa1.π/₂ 𝔼.∘ covPb 𝔼.∘ eqlFa2.eqlar
+      covBw-sq-aux₂ : bw.π//₂ 𝔼.∘ covBw 𝔼.~ pbFa1.π/₂ 𝔼.∘ covPb 𝔼.∘ eqlFa2.ar
       covBw-sq-aux₂ = ~proof bw.π//₂ 𝔼.∘ covBw                     ~[ bw.tr₂ covBw-pf₁ covBw-pf₂ ] /
-                             F.ₐ wpba1.wπ/₂ 𝔼.∘ eqlFa2.eqlar        ~[ ∘e r (pbFa1.×/tr₂ (F.∘∘ wpba1.w×/sqpf) ˢ) ⊙ assˢ ]∎
-                             pbFa1.π/₂ 𝔼.∘ covPb 𝔼.∘ eqlFa2.eqlar ∎
+                             F.ₐ wpba1.wπ/₂ 𝔼.∘ eqlFa2.ar        ~[ ∘e r (pbFa1.×/tr₂ (F.∘∘ wpba1.w×/sqpf) ˢ) ⊙ assˢ ]∎
+                             pbFa1.π/₂ 𝔼.∘ covPb 𝔼.∘ eqlFa2.ar ∎
                     where open ecategory-aux-only 𝔼
-      covBw-sqpf : med-bw 𝔼.∘ covBw 𝔼.~ covPb 𝔼.∘ eqlFa2.eqlar
+      covBw-sqpf : med-bw 𝔼.∘ covBw 𝔼.~ covPb 𝔼.∘ eqlFa2.ar
       covBw-sqpf = pbFa1.×/uq (~proof pbFa1.π/₁ 𝔼.∘ med-bw 𝔼.∘ covBw         ~[ ass ⊙ ∘e r (pbFa1.×/tr₁ bw.sqpf₁) ] /
                                       bw.π//₁ 𝔼.∘ covBw                     ~[ covBw-sq-aux₁ ]∎
-                                      pbFa1.π/₁ 𝔼.∘ covPb 𝔼.∘ eqlFa2.eqlar ∎)
+                                      pbFa1.π/₁ 𝔼.∘ covPb 𝔼.∘ eqlFa2.ar ∎)
                               (~proof pbFa1.π/₂ 𝔼.∘ med-bw 𝔼.∘ covBw         ~[ ass ⊙ ∘e r (pbFa1.×/tr₂ bw.sqpf₁) ] /
                                       bw.π//₂ 𝔼.∘ covBw                     ~[ covBw-sq-aux₂ ]∎
-                                      pbFa1.π/₂ 𝔼.∘ covPb 𝔼.∘ eqlFa2.eqlar ∎)
+                                      pbFa1.π/₂ 𝔼.∘ covPb 𝔼.∘ eqlFa2.ar ∎)
                  where open ecategory-aux-only 𝔼
       covBw-ispb : 𝔼.is-pb-square (𝔼.mksq (𝔼.mksq/ covBw-sqpf))
       covBw-ispb = record
-        { ⟨_,_⟩[_] = λ h k pf → k eqlFa2.|eql[ un-pf pf ]
+        { ⟨_,_⟩[_] = λ h k pf → k eqlFa2.|[ un-pf pf ]
         ; ×/tr₁ = tr₁-pf
-        ; ×/tr₂ = λ pf → eqlFa2.eqltr (un-pf pf)
-        ; ×/uq = λ _ pf₂ → eqlFa2.eqluq pf₂
+        ; ×/tr₂ = λ pf → eqlFa2.tr (un-pf pf)
+        ; ×/uq = λ _ pf₂ → eqlFa2.uq pf₂
         }
         where open ecategory-aux-only 𝔼
               un-pf : {C : 𝔼.Obj} {h : || 𝔼.Hom C bw.Ob ||} {k : || 𝔼.Hom C (F.ₒ wpba1.ul) ||} (pf : med-bw 𝔼.∘ h 𝔼.~ covPb 𝔼.∘ k)
@@ -451,15 +447,15 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
                 F.ₐ (sp₂.a2 ℂ.∘ wpba1.wπ/₂) 𝔼.∘ k ∎
 
               tr₁-pf : {C : 𝔼.Obj} {h : || 𝔼.Hom C bw.Ob ||} {k : || 𝔼.Hom C (F.ₒ wpba1.ul) ||} (pf : med-bw 𝔼.∘ h 𝔼.~ covPb 𝔼.∘ k)
-                          → covBw 𝔼.∘ k eqlFa2.|eql[ un-pf pf ] 𝔼.~ h
+                          → covBw 𝔼.∘ k eqlFa2.|[ un-pf pf ] 𝔼.~ h
               tr₁-pf {_} {h} {k} pf = bw.uq
-                (~proof bw.π//₁ 𝔼.∘ covBw 𝔼.∘ k eqlFa2.|eql[ un-pf pf ]                     ~[ ass ⊙ ∘e r covBw-sq-aux₁ ⊙ assˢ ⊙ ∘e assˢ r ] /
-                        pbFa1.π/₁ 𝔼.∘ covPb 𝔼.∘ eqlFa2.eqlar 𝔼.∘ k eqlFa2.|eql[ un-pf pf ]   ~[ ∘e (∘e (eqlFa2.eqltr (un-pf pf)) r) r ] /
+                (~proof bw.π//₁ 𝔼.∘ covBw 𝔼.∘ k eqlFa2.|[ un-pf pf ]                     ~[ ass ⊙ ∘e r covBw-sq-aux₁ ⊙ assˢ ⊙ ∘e assˢ r ] /
+                        pbFa1.π/₁ 𝔼.∘ covPb 𝔼.∘ eqlFa2.ar 𝔼.∘ k eqlFa2.|[ un-pf pf ]   ~[ ∘e (∘e (eqlFa2.tr (un-pf pf)) r) r ] /
                         pbFa1.π/₁ 𝔼.∘ covPb 𝔼.∘ k                                           ~[ ∘e (pf ˢ) r ] /
                         pbFa1.π/₁ 𝔼.∘ med-bw 𝔼.∘ h                                          ~[ ass ⊙ ∘e r (pbFa1.×/tr₁ bw.sqpf₁) ]∎
                         bw.π//₁ 𝔼.∘ h ∎)
-                (~proof bw.π//₂ 𝔼.∘ covBw 𝔼.∘ k eqlFa2.|eql[ un-pf pf ]                     ~[ ass ⊙ ∘e r covBw-sq-aux₂ ⊙ assˢ ⊙ ∘e assˢ r ] /
-                        pbFa1.π/₂ 𝔼.∘ covPb 𝔼.∘ eqlFa2.eqlar 𝔼.∘ k eqlFa2.|eql[ un-pf pf ]   ~[ ∘e (∘e (eqlFa2.eqltr (un-pf pf)) r) r ] /
+                (~proof bw.π//₂ 𝔼.∘ covBw 𝔼.∘ k eqlFa2.|[ un-pf pf ]                     ~[ ass ⊙ ∘e r covBw-sq-aux₂ ⊙ assˢ ⊙ ∘e assˢ r ] /
+                        pbFa1.π/₂ 𝔼.∘ covPb 𝔼.∘ eqlFa2.ar 𝔼.∘ k eqlFa2.|[ un-pf pf ]   ~[ ∘e (∘e (eqlFa2.tr (un-pf pf)) r) r ] /
                         pbFa1.π/₂ 𝔼.∘ covPb 𝔼.∘ k                                           ~[ ∘e (pf ˢ) r ] /
                         pbFa1.π/₂ 𝔼.∘ med-bw 𝔼.∘ h                                          ~[ ass ⊙ ∘e r (pbFa1.×/tr₂ bw.sqpf₁) ]∎
                         bw.π//₂ 𝔼.∘ h ∎)
@@ -477,18 +473,18 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
       cov-eq = bw.uq
         (~proof bw.π//₁ 𝔼.∘ covbw 𝔼.∘ F.ₐ med-wbw              ~[ ass ⊙ ∘e r pf₁ ] /
                 F.ₐ wbw.wπ//₁ 𝔼.∘ F.ₐ med-wbw                  ~[ F.∘∘ (wbw.tr₁ med-wbw-pf₁ med-wbw-pf₂) ] /
-                F.ₐ wpba1.wπ/₁ 𝔼.∘ F.ₐ weqla2.weqlar           ~[ ∘e (eqlFa2.eqltr (F.∘∘ weqla2.weqleq) ˢ) r ] /
-                F.ₐ wpba1.wπ/₁ 𝔼.∘ eqlFa2.eqlar 𝔼.∘ covEql     ~[ ass ⊙ ∘e r (bw.tr₁ covBw-pf₁ covBw-pf₂ ˢ) ⊙ assˢ ]∎
+                F.ₐ wpba1.wπ/₁ 𝔼.∘ F.ₐ weqla2.war           ~[ ∘e (eqlFa2.tr (F.∘∘ weqla2.weq) ˢ) r ] /
+                F.ₐ wpba1.wπ/₁ 𝔼.∘ eqlFa2.ar 𝔼.∘ covEql     ~[ ass ⊙ ∘e r (bw.tr₁ covBw-pf₁ covBw-pf₂ ˢ) ⊙ assˢ ]∎
                 bw.π//₁ 𝔼.∘ covBw 𝔼.∘ covEql ∎)
         (~proof bw.π//₂ 𝔼.∘ covbw 𝔼.∘ F.ₐ med-wbw              ~[ ass ⊙ ∘e r pf₂ ] /
                 F.ₐ wbw.wπ//₂ 𝔼.∘ F.ₐ med-wbw                  ~[ F.∘∘ (wbw.tr₂ med-wbw-pf₁ med-wbw-pf₂) ] /
-                F.ₐ wpba1.wπ/₂ 𝔼.∘ F.ₐ weqla2.weqlar           ~[ ∘e (eqlFa2.eqltr (F.∘∘ weqla2.weqleq) ˢ) r ] /
-                F.ₐ wpba1.wπ/₂ 𝔼.∘ eqlFa2.eqlar 𝔼.∘ covEql     ~[ ass ⊙ ∘e r (bw.tr₂ covBw-pf₁ covBw-pf₂ ˢ) ⊙ assˢ ]∎
+                F.ₐ wpba1.wπ/₂ 𝔼.∘ F.ₐ weqla2.war           ~[ ∘e (eqlFa2.tr (F.∘∘ weqla2.weq) ˢ) r ] /
+                F.ₐ wpba1.wπ/₂ 𝔼.∘ eqlFa2.ar 𝔼.∘ covEql     ~[ ass ⊙ ∘e r (bw.tr₂ covBw-pf₁ covBw-pf₂ ˢ) ⊙ assˢ ]∎
                 bw.π//₂ 𝔼.∘ covBw 𝔼.∘ covEql ∎)
              where open ecategory-aux-only 𝔼
       covbw-repi : 𝔼.is-regular-epi covbw
-      covbw-repi = r𝔼.repi-triang cov-eq (∘c covBw-repi covEql-repi)
-                 where open is-ecat-congr r𝔼.regular-epi-is-congr      
+      covbw-repi = r𝔼.repi-triang cov-eq (r𝔼.repi-cmp covEql-repi covBw-repi r)
+                 where open ecategory-aux-only 𝔼 using (r)
     -- end bwuniv-is-repi
 
     is-lcbw : is-left-covering-bw F
@@ -521,43 +517,43 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
     open is-left-covering-pb lcpb
     open has-weak-pullbacks Cwpb using (wpb-of)
 
-    module preserves-monic {X Y : ℂ.Obj} {f : || ℂ.Hom X Y ||}(ismono : ℂ.is-monic f)
-                           where
-      kp : ℂ.pullback-of f f
-      kp = ℂ.mkpb-of (ℂ.mono→idiskp ismono)
-      kpF : 𝔼.pullback-of (F.ₐ f) (F.ₐ f)
-      kpF = r𝔼.pb-of (F.ₐ f) (F.ₐ f)
+    module pres-monic {X Y : ℂ.Obj} {m : || ℂ.Hom X Y ||} (ism : ℂ.is-monic m) where
+      Fm : || 𝔼.Hom (F.ₒ X) (F.ₒ Y) ||
+      Fm = F.ₐ m
+      kpm : ℂ.pullback-of m m
+      kpm = record { ×/ispbsq = ℂ.mono→idiskp ism }
+      kpFm : 𝔼.pullback-of Fm Fm
+      kpFm = r𝔼.pb-of Fm Fm
       private
-        module f where
-          open ℂ.is-monic ismono public
-        module kp = ℂ.pullback-of-not kp
-        module kpF = 𝔼.pullback-of-not kpF
-      covpb : || 𝔼.Hom (F.ₒ kp.ul) kpF.ul ||
-      covpb = kpF.⟨ F.ₐ kp.π/₁ , F.ₐ kp.π/₂ ⟩[ F.∘∘ kp.×/sqpf ]
+        module m = ℂ.is-monic ism
+        module kpm = ℂ.pullback-of-not kpm
+        module kpFm = 𝔼.pullback-of-not kpFm
+      covpb : || 𝔼.Hom (F.ₒ X) kpFm.ul ||
+      covpb = kpFm.⟨ F.ₐ kpm.π/₁ , F.ₐ kpm.π/₂ ⟩[ F.∘∘ kpm.×/sqpf ]
       covpb-repi : 𝔼.is-regular-epi covpb
-      covpb-repi = pbuniv-is-repi (ℂ.pbof⇒wpbof kp)
-                                  kpF
-                                  (kpF.×/tr₁ (F.∘∘ kp.×/sqpf))
-                                  (kpF.×/tr₂ (F.∘∘ kp.×/sqpf))
+      covpb-repi = pbuniv-is-repi (ℂ.pbof⇒wpbof kpm)
+                                  kpFm
+                                  (kpFm.×/tr₁ (F.∘∘ kpm.×/sqpf))
+                                  (kpFm.×/tr₂ (F.∘∘ kpm.×/sqpf))
       private module cpb = 𝔼.is-regular-epi covpb-repi
-      kp₁~kp₂ : kpF.π/₁ 𝔼.~ kpF.π/₂
-      kp₁~kp₂ = cpb.epi-pf (kpF.×/tr₁ (F.∘∘ kp.×/sqpf) ⊙ kpF.×/tr₂ (F.∘∘ kp.×/sqpf) ˢ)
-              where open ecategory-aux-only 𝔼              
-      F-monic : 𝔼.is-monic (F.ₐ f)
-      F-monic = 𝔼.π/₁~π/₂→mono kpF kp₁~kp₂
-    -- end preserves-monic
+      kp₁~kp₂ : kpFm.π/₁ 𝔼.~ kpFm.π/₂
+      kp₁~kp₂ = cpb.epi-pf (kpFm.×/tr₁ (F.∘∘ kpm.×/sqpf) ⊙ kpFm.×/tr₂ (F.∘∘ kpm.×/sqpf) ˢ)
+              where open ecategory-aux-only 𝔼
+      Fm-is-m : 𝔼.is-monic Fm
+      Fm-is-m = 𝔼.π/₁~π/₂→mono kpFm kp₁~kp₂      
+    -- end pres-monic
 
-    pres-monos : preserves-monos F
-    pres-monos = record { pres-monos-pf = F-monic }
-             where open preserves-monic
+    pres-monic : preserves-monic F
+    pres-monic = record
+               { pres-monic-pf = Fm-is-m
+               }
+               where open pres-monic
   -- end lc-pb2pres-monic
-                                                                                                         
 
-  lcov-pb→pres-monos : (Cwbp : has-weak-pullbacks ℂ) 
-                           → is-left-covering-pb F → preserves-monos F
-  lcov-pb→pres-monos wbpC lcpb = pres-monos
-                                where open lc-pb2pres-monic wbpC lcpb
-
+  lcov-pb→pres-monic : (Cwpb : has-weak-pullbacks ℂ) 
+                           → is-left-covering-pb F → preserves-monic F
+  lcov-pb→pres-monic wpbC lcpb = pres-monic
+                              where open lc-pb2pres-monic wpbC lcpb
 
 
   module lc-bw2pres-jm (Cwbw : has-weak-bows ℂ)  (lcbw : is-left-covering-bw F)
@@ -683,7 +679,7 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
         where open ecategory-aux-only 𝔼
       covprd-iso : 𝔼.is-iso covprd
       covprd-iso = cov-pf (𝔼.ridax covprd) covprd-mono
-                 where open epis&monos-props 𝔼
+                 where open epi&mono-props-all 𝔼
                        open 𝔼.is-cover (repi-is-cover covprd-repi)
 
       covtrm-kp : 𝔼.pullback-of covtrm covtrm
@@ -782,37 +778,44 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
 
 
 
+
   module lc-eql-pb-preserves-eql (Cweql : has-weak-equalisers ℂ) (Cwpb : has-weak-pullbacks ℂ)
                                  (lceql : is-left-covering-eql F) (lcpb : is-left-covering-pb F)
                                 where
-    open is-left-covering-pb lcpb
+    open is-left-covering-eql lceql
 
-    module pres-eql {A B E : ℂ.Obj}{f f' : || ℂ.Hom A B ||}{e : || ℂ.Hom E A ||}{pfeq : f ℂ.∘ e ℂ.~ f' ℂ.∘ e}
-                    (iseql : ℂ.is-equaliser pfeq)
+    module pres-eql {X Y V : ℂ.Obj}{f f' : || ℂ.Hom X Y ||}{e : || ℂ.Hom V X ||}
+                    {eq : f ℂ.∘ e ℂ.~ f' ℂ.∘ e}(iseql : ℂ.is-equaliser eq)
                     where
       private
-        module eql = ℂ.is-equaliser iseql
-        eqlF : 𝔼.equaliser-of (F.ₐ f) (F.ₐ f')
-        eqlF = r𝔼.eql-of (F.ₐ f) (F.ₐ f')
+        eql : ℂ.equaliser-of f f'
+        eql = ℂ.mkeql-of iseql
+        module eql = ℂ.equaliser-of eql
+        Ff Ff' : || 𝔼.Hom (F.ₒ X) (F.ₒ Y) ||
+        Ff = F.ₐ f
+        Ff' = F.ₐ f'
+        eqlF : 𝔼.equaliser-of Ff Ff'
+        eqlF = r𝔼.eql-of Ff Ff'
         module eqlF = 𝔼.equaliser-of eqlF
-      coveql-pf = F.∘∘ pfeq
-      coveql : || 𝔼.Hom (F.ₒ E) eqlF.Eql ||
-      coveql = F.ₐ e eqlF.|eql[ coveql-pf ]
+      coveql : || 𝔼.Hom (F.ₒ eql.Ob) eqlF.Ob ||
+      coveql = (F.ₐ eql.ar) eqlF.|[ F.∘∘ eql.eq ]
+      coveql-tr : eqlF.ar 𝔼.∘ coveql 𝔼.~ F.ₐ eql.ar
+      coveql-tr = eqlF.tr (F.∘∘ eql.eq)
       coveql-repi : 𝔼.is-regular-epi coveql
-      coveql-repi = eqluniv-is-repi (ℂ.eql-of⇒weql-of (ℂ.mkeql-of iseql)) eqlF (eqlF.eqltr coveql-pf)
-                  where open is-left-covering-eql lceql
+      coveql-repi = eqluniv-is-repi (ℂ.eql-of⇒weql-of eql) eqlF coveql-tr
       coveql-mono : 𝔼.is-monic coveql
-      coveql-mono = 𝔼.mono-tr (eqlF.eqltr coveql-pf) (pres-monos-pf (ℂ.eqlar-mono iseql))
-                 where open preserves-monos (lcov-pb→pres-monos Cwpb lcpb)
+      coveql-mono = 𝔼.mono-tr coveql-tr (pres-monic-pf (ℂ.eqlof-is-monic eql))
+                 where open preserves-monic (lcov-pb→pres-monic Cwpb lcpb)
       coveql-iso : 𝔼.is-iso coveql
       coveql-iso = 𝔼.monic-cover-is-iso coveql-mono (𝔼.repi-is-cover coveql-repi)
-      Feql-is-eql : 𝔼.is-equaliser (F.∘∘ pfeq)
-      Feql-is-eql = 𝔼.ar≅eqlar-is-eql eqlF.iseql coveql-pf (eqlF.eqltr coveql-pf) coveql-iso
+
+      Feql-is-eql : 𝔼.is-equaliser (F.∘∘ eql.eq)
+      Feql-is-eql = 𝔼.ar-iso-to-eql-is-eql (F.∘∘ eql.eq) coveql-tr coveql-iso eqlF.iseql
     -- end pres-eql
 
     pres-eql : preserves-equalisers F
     pres-eql = record
-             { pres-eql-pf = λ iseql → pres-eql.Feql-is-eql iseql
+             { pres-eql-pf = pres-eql.Feql-is-eql
              }
   -- end lc-eql-pb-preserves-eql
 
@@ -825,9 +828,8 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
 
 
 
-
   module lc-eql-pb-preserves-pb (Cweql : has-weak-equalisers ℂ) (Cwpb : has-weak-pullbacks ℂ)
-                                (lceql : is-left-covering-eql F) (lcpb : is-left-covering-pb F)
+                                 (lceql : is-left-covering-eql F) (lcpb : is-left-covering-pb F)
                                 where
     open is-left-covering-pb lcpb
 
@@ -842,8 +844,7 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
       covpb : || 𝔼.Hom (F.ₒ ×/sq.ul) ×/F.ul ||
       covpb = ×/F.⟨ F.ₐ ×/sq.π/₁ , F.ₐ ×/sq.π/₂ ⟩[ covpb-pf ]
       covpb-repi : 𝔼.is-regular-epi covpb
-      covpb-repi = pbuniv-is-repi (ℂ.pbof⇒wpbof (ℂ.mkpb-of is×/)) ×/F.×/of
-                                  (×/F.×/tr₁ covpb-pf) (×/F.×/tr₂ covpb-pf)
+      covpb-repi = pbuniv-is-repi (ℂ.pbof⇒wpbof (ℂ.mkpb-of is×/)) ×/F.×/of (×/F.×/tr₁ covpb-pf) (×/F.×/tr₂ covpb-pf)
       covpb-mono : 𝔼.is-monic covpb
       covpb-mono = 𝔼.jointly-monic-tr (×/F.×/tr₁ covpb-pf) (×/F.×/tr₂ covpb-pf)
                                        (pres-jm/-pf (ℂ.π/s-are-jointly-monic/ (ℂ.mkpb-sq is×/)))
@@ -857,10 +858,8 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
 
     pres-pb : preserves-pullbacks F
     pres-pb = record
-            { pres-ispbof-pf = λ ispbof → 𝔼.mkis-pb-of (𝔼.pb-sq2is (pres-pb.Fsq-is×/ (
-                                                                   ℂ.pb-is2sq (ℂpb.ispb ispbof) )))
+            { pres-pbsq-pf = pres-pb.Fsq-is×/
             }
-            where module ℂpb = ℂ.is-pullback-of
   -- end lc-eql-pb-preserves-pb
 
 
@@ -873,6 +872,7 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
                                             where open lc-eql-pb-preserves-pb weqlC wpbC lceql lcpb
 
 -- end left-cov-relations-into-regular-cat
+
 
 
 
@@ -915,13 +915,6 @@ lcov-bw→pres-jm/ {F = F} regE = lp.lcov-bw→pres-jm/
                                where module lp = left-cov-relations-into-regular-cat F regE
 
 
-lcov-pb→pres-monos : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
-                      (Cwpb : has-weak-pullbacks ℂ) → is-left-covering-pb F
-                        → preserves-monos F
-lcov-pb→pres-monos {F = F} regE = lp.lcov-pb→pres-monos
-                                  where module lp = left-cov-relations-into-regular-cat F regE
-
-
 lcov-eql+pb→pres-jm/ : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
                         (Cweql : has-weak-equalisers ℂ) (Cwpb : has-weak-pullbacks ℂ)
                           → is-left-covering-eql F → is-left-covering-pb F
@@ -945,6 +938,7 @@ lcov!×→pres-trm {F = F} regE = lp.lcov!×→pres-trm
                               where module lp = left-cov-relations-into-regular-cat F regE
 
 
+
 lcov-×+eql→pres-× : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
                      (Cwprd : has-bin-weak-products ℂ) (Cweql : has-weak-equalisers ℂ)
                        → is-left-covering-prd F → is-left-covering-eql F
@@ -953,12 +947,15 @@ lcov-×+eql→pres-× {F = F} regE = lp.lcov-×+eql→pres-×
                                 where module lp = left-cov-relations-into-regular-cat F regE
 
 
+
+
 lcov-eql+pb→pres-eql : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
-                        (Cweql : has-weak-equalisers ℂ) (Cwpb : has-weak-pullbacks ℂ)
-                          → is-left-covering-eql F → is-left-covering-pb F
-                            → preserves-equalisers F
+                       (Cweql : has-weak-equalisers ℂ) (Cwpb : has-weak-pullbacks ℂ)
+                         → is-left-covering-eql F → is-left-covering-pb F
+                           → preserves-equalisers F
 lcov-eql+pb→pres-eql {F = F} regE = lp.lcov-eql+pb→pres-eql
                                   where module lp = left-cov-relations-into-regular-cat F regE
+
 
 
 lcov-eql+pb→pres-pb : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
@@ -967,7 +964,6 @@ lcov-eql+pb→pres-pb : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : i
                            → preserves-pullbacks F
 lcov-eql+pb→pres-pb {F = F} regE = lp.lcov-eql+pb→pres-pb
                                   where module lp = left-cov-relations-into-regular-cat F regE
-
 
 
 lcov→pres-flim : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼}
@@ -981,4 +977,3 @@ lcov→pres-flim {F = F} regE fwlC lcovF = record
   }
   where open has-fin-weak-limits fwlC
         open is-left-covering lcovF
-

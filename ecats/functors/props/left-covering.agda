@@ -4,11 +4,24 @@
 module ecats.functors.props.left-covering where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
+open import ecats.arrows
+open import ecats.reg&ex
+open import ecats.finite-limits.all
+open import ecats.functors.defs.efunctor-d&n
+open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.basic-defs
+open import ecats.functors.defs.preserving-functor
+open import ecats.functors.defs.left-covering
+open import ecats.functors.props.left-covering.left-covering-basic public
+open import ecats.functors.props.left-covering.left-covering-regular public
+
+{-
+open import ecats.basic-defs.ecat-def&not
+open import ecats.basic-defs.arrows
 open import ecats.basic-defs.eqv-rel
 open import ecats.basic-defs.regular-ecat
 open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.all
+open import ecats.basic-props.arrows
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
@@ -17,7 +30,7 @@ open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
 open import ecats.functors.props.left-covering.left-covering-regular public
 open import ecats.functors.props.left-covering.left-covering-basic public
-
+-}
 
 
 
@@ -31,8 +44,8 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
     module ℂ where
       open ecategory ℂ public
       open comm-shapes ℂ public
-      open epis&monos-defs ℂ public
-      open epis&monos-props ℂ public
+      open epi&mono-defs ℂ public
+      open epi&mono-props-all ℂ public
       open finite-limits-d&p ℂ public
       open finite-weak-limits-d&p ℂ public
       open limits→weak-limits ℂ public
@@ -41,8 +54,8 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       open ecategory 𝔻 public
       open comm-shapes 𝔻 public
       open iso-defs 𝔻 public
-      open epis&monos-defs 𝔻 public
-      open epis&monos-props 𝔻 public
+      open epi&mono-defs 𝔻 public
+      open epi&mono-props-all 𝔻 public
       open finite-limits-d&p 𝔻 public
       open finite-weak-limits-d&p 𝔻 public
       open limits→weak-limits 𝔻 public
@@ -51,8 +64,8 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       open ecategory 𝔼 public
       open comm-shapes 𝔼 public
       open iso-defs 𝔼 public
-      open epis&monos-defs 𝔼 public
-      open epis&monos-props 𝔼 public
+      open epi&mono-defs 𝔼 public
+      open epi&mono-props-all 𝔼 public
       open finite-limits-d&p 𝔼 public
       open finite-weak-limits-d&p 𝔼 public
       open limits→weak-limits 𝔼 public
@@ -89,7 +102,7 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       GcovD : 𝔼.is-regular-epi (G.ₐ covD-ar)
       GcovD = G.ex.pres-repi-pf covD
       TE≅GTD : 𝔼.is-iso (TE.! (G.ₒ TD))
-      TE≅GTD = 𝔼.mkis-iso (𝔼.!uq-isop (G.ex.pres-!-pf fl𝔻.istrm) trmTE)
+      TE≅GTD = 𝔼.mkis-iso (𝔼.!uq-iso (G.ex.pres-!-pf fl𝔻.istrm) trmTE)
       eq : TE.! (G.ₒ TD) 𝔼.∘ G.ₐ covD-ar 𝔼.~ cov!
       eq = TE.!uqg
     cov!-repi : 𝔼.is-regular-epi cov!
@@ -140,10 +153,10 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
 
   module cmp-lcov-eql {X Y : ℂ.Obj}{f f' : || ℂ.Hom X Y ||}(weqlC : ℂ.wequaliser-of f f')
                       (eqlE : 𝔼.equaliser-of (G○F.ₐ f) (G○F.ₐ f'))
-                      {coveql : || 𝔼.Hom (G○F.ₒ (ℂ.wequaliser-of.wEql weqlC))
-                                          (𝔼.equaliser-of.Eql eqlE) ||}
-                      (tr : 𝔼.equaliser-of.eqlar eqlE 𝔼.∘ coveql
-                                     𝔼.~ G○F.ₐ (ℂ.wequaliser-of.weqlar weqlC))
+                      {coveql : || 𝔼.Hom (G○F.ₒ (ℂ.wequaliser-of.wOb weqlC))
+                                          (𝔼.equaliser-of.Ob eqlE) ||}
+                      (tr : 𝔼.equaliser-of.ar eqlE 𝔼.∘ coveql
+                                     𝔼.~ G○F.ₐ (ℂ.wequaliser-of.war weqlC))
                       where
     private
       module weqlC = ℂ.wequaliser-of weqlC
@@ -154,22 +167,22 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       GeqlD : 𝔼.equaliser-of (G○F.ₐ f) (G○F.ₐ f')
       GeqlD = 𝔼.mkeql-of (G.ex.pres-eql-pf eqlD.iseql)
       module GeqlD = 𝔼.equaliser-of GeqlD
-      covD-ar : || 𝔻.Hom (F.ₒ weqlC.wEql) eqlD.Eql ||
-      covD-ar = F.ₐ weqlC.weqlar eqlD.|eql[ F.∘∘ weqlC.weqleq  ]
+      covD-ar : || 𝔻.Hom (F.ₒ weqlC.wOb) eqlD.Ob ||
+      covD-ar = F.ₐ weqlC.war eqlD.|[ F.∘∘ weqlC.weq  ]
       covD : 𝔻.is-regular-epi covD-ar
-      covD = F.lcov.eqluniv-is-repi weqlC eqlD (eqlD.eqltr (F.∘∘ weqlC.weqleq) )
+      covD = F.lcov.eqluniv-is-repi weqlC eqlD (eqlD.tr (F.∘∘ weqlC.weq) )
       GcovD : 𝔼.is-regular-epi (G.ₐ covD-ar)
       GcovD = G.ex.pres-repi-pf covD
-      med : || 𝔼.Hom (G.ₒ eqlD.Eql) eqlE.Eql ||
-      med = G.ₐ eqlD.eqlar eqlE.|eql[ G.∘∘ eqlD.eqleq ]
+      med : || 𝔼.Hom (G.ₒ eqlD.Ob) eqlE.Ob ||
+      med = G.ₐ eqlD.ar eqlE.|[ G.∘∘ eqlD.eq ]
       E≅GD : 𝔼.is-iso med
-      E≅GD = 𝔼.eqls-unv-is-iso eqlE.iseql GeqlD.iseql {med} (eqlE.eqltr (G.∘∘ eqlD.eqleq))
+      E≅GD = ? --𝔼.eqls-unv-is-iso eqlE.iseql GeqlD.iseql {med} (eqlE.tr (G.∘∘ eqlD.eq))
       isotr : med 𝔼.∘ G.ₐ covD-ar 𝔼.~ coveql
-      isotr = eqlE.eqluq (~proof
-        eqlE.eqlar 𝔼.∘ med 𝔼.∘ G.ₐ covD-ar    ~[ ass ⊙ ∘e r (eqlE.eqltr (G.∘∘ eqlD.eqleq)) ] /
-        G.ₐ eqlD.eqlar 𝔼.∘ G.ₐ covD-ar         ~[ G.∘ax (eqlD.eqltr (F.∘∘ weqlC.weqleq)) ] /
-        G○F.ₐ weqlC.weqlar                      ~[ tr ˢ ]∎
-        eqlE.eqlar 𝔼.∘ coveql ∎)
+      isotr = eqlE.uq (~proof
+        eqlE.ar 𝔼.∘ med 𝔼.∘ G.ₐ covD-ar    ~[ ass ⊙ ∘e r (eqlE.tr (G.∘∘ eqlD.eq)) ] /
+        G.ₐ eqlD.ar 𝔼.∘ G.ₐ covD-ar         ~[ G.∘ax (eqlD.tr (F.∘∘ weqlC.weq)) ] /
+        G○F.ₐ weqlC.war                      ~[ tr ˢ ]∎
+        eqlE.ar 𝔼.∘ coveql ∎)
             where open ecategory-aux-only 𝔼
     coveql-repi : 𝔼.is-regular-epi coveql
     coveql-repi = 𝔼.iso-to-repi-is-repi-cod E≅GD isotr GcovD    
@@ -188,7 +201,7 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       module pbD = 𝔻.pullback-of-not pbD
       module pbE = 𝔼.pullback-of-not pbE
       GpbD : 𝔼.pullback-of (G○F.ₐ f) (G○F.ₐ g)
-      GpbD = 𝔼.pbof-is2sq (G.ex.pres-ispbof-pf (𝔻.pbof-sq2is pbD))
+      GpbD = ? --𝔼.pbof-is2sq (G.ex.pres-ispbof-pf (𝔻.pbof-sq2is pbD))
       module GpbD = 𝔼.pullback-of-not GpbD
       covD-ar : || 𝔻.Hom (F.ₒ wpbC.ul) pbD.ul ||
       covD-ar = pbD.⟨ F.ₐ wpbC.wπ/₁ , F.ₐ wpbC.wπ/₂ ⟩[ F.∘∘ wpbC.w×/sqpf ]
@@ -199,7 +212,7 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       med : || 𝔼.Hom (G.ₒ pbD.ul) pbE.ul ||
       med = pbE.⟨ G.ₐ pbD.π/₁ , G.ₐ pbD.π/₂ ⟩[ G.∘∘ pbD.×/sqpf ]
       E≅GD : 𝔼.is-iso med
-      E≅GD = 𝔼.pbs-unvar-is-iso GpbD pbE (pbE.×/tr₁ (G.∘∘ pbD.×/sqpf)) (pbE.×/tr₂ (G.∘∘ pbD.×/sqpf))
+      E≅GD = ? --𝔼.pbs-unvar-is-iso GpbD pbE (pbE.×/tr₁ (G.∘∘ pbD.×/sqpf)) (pbE.×/tr₂ (G.∘∘ pbD.×/sqpf))
       isotr : med 𝔼.∘ G.ₐ covD-ar 𝔼.~ covpb
       isotr = pbE.×/uq
         (~proof pbE.π/₁ 𝔼.∘ med 𝔼.∘ G.ₐ covD-ar   ~[ ass ⊙ ∘e r (pbE.×/tr₁ (G.∘∘ pbD.×/sqpf)) ] /
