@@ -5,6 +5,7 @@ module ecats.functors.defs.basic-defs where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.isomorphism
+open import ecats.basic-props.isomorphism
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
@@ -20,6 +21,12 @@ record is-equivalence-pair {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategory
   field
     ι1 : natural-iso (F ○ G) IdF
     ι2 : natural-iso (G ○ F) IdF
+  module ι1 = natural-iso ι1
+  module ι2 = natural-iso ι2
+  ι1⁻¹ : IdF ≅ₐ F ○ G
+  ι1⁻¹ = ≅ₐsym ι1
+  ι2⁻¹ :  IdF ≅ₐ G ○ F
+  ι2⁻¹ = ≅ₐsym ι2
 
 inv-is-eqv : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
              {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
@@ -62,13 +69,12 @@ record is-adj-equivalence-pair {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecate
   eq₂ : {Y : 𝔻.Obj} → G.ₐ (ι1.fnc {Y}) ℂ.~ ι2.fnc {G.ₒ Y}
   eq₂ {X} = ridggˢ r ι2.iddom ⊙ ass ⊙ lidgg r trid₂
           where open ecategory-aux-only ℂ
-  {-eq⁻¹₁ : {X : ℂ.Obj} → F.ₐ (ι2.fnc⁻¹ {X}) 𝔻.~ ι1.fnc⁻¹ {F.ₒ X}
+  eq⁻¹₁ : {X : ℂ.Obj} → F.ₐ (ι2.fnc⁻¹ {X}) 𝔻.~ ι1.fnc⁻¹ {F.ₒ X}
   eq⁻¹₁ {X} = inv-uq (F.ᵢₛₒ ι2.isiso) ι1.isiso eq₁
             where open iso-props 𝔻
   eq⁻¹₂ : {Y : 𝔻.Obj} → G.ₐ (ι1.fnc⁻¹ {Y}) ℂ.~ ι2.fnc⁻¹ {G.ₒ Y}
-  eq⁻¹₂ {X} = inv-uqg (G.ᵢₛₒ ι1.isiso) ι2.isiso eq₂
-            where open iso-props ℂ-}
-
+  eq⁻¹₂ {X} = inv-uq (G.ᵢₛₒ ι1.isiso) ι2.isiso eq₂
+            where open iso-props ℂ
   {-isop₁ : {X : ℂ.Obj} → iso-defs.is-iso-pair 𝔻 (ι1.fnc {F.ₒ X}) (F.ₐ (ι2.fnc⁻¹ {X}))
   isop₁ {X} = record
             { iddom = ∘e eq₁ r ⊙ (F.∘ax ι2.iddom ⊙ F.id)
