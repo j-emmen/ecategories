@@ -193,8 +193,11 @@ module everywhere-local-is-global-kan-extension {ℓₒ₁ ℓₐ₁ ℓ~₁}{�
                                             module Lγ+η = natural-transformation (gLar.nt γ F.+η)
                                             open ecategory-aux-only 𝕏
 
+            module NT {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}
+                      {ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}{F G : efunctorₗₑᵥ ℂ 𝔻}
+                      = NatTr F G
             id-aux : (F : [𝔸,𝕏].Obj)
-                        → lL._+η F ([𝔹,𝕏].idar (lL.Lan F)) NatTr.~ gLar.fill ([𝔸,𝕏].idar F)
+                        → lL._+η F ([𝔹,𝕏].idar (lL.Lan F)) NT.~ gLar.fill ([𝔸,𝕏].idar F)
             id-aux F A = lidgg ridˢ (lidgen F.Lan.id)
                        where open ecategory-aux-only 𝕏
                              module F where
@@ -202,7 +205,7 @@ module everywhere-local-is-global-kan-extension {ℓₒ₁ ℓₐ₁ ℓ~₁}{�
                                open lL F public
 
             cmp-aux : {F G H : [𝔸,𝕏].Obj}(γ : || [𝔸,𝕏].Hom F G ||)(γ' : || [𝔸,𝕏].Hom G H ||)
-                         → lL._+η F (gLar.nt γ' [𝔹,𝕏].∘ gLar.nt γ) NatTr.~ gLar.fill (γ' [𝔸,𝕏].∘ γ)
+                         → lL._+η F (gLar.nt γ' [𝔹,𝕏].∘ gLar.nt γ) NT.~ gLar.fill (γ' [𝔸,𝕏].∘ γ)
             cmp-aux {F} {G} {H} γ γ' A = ~proof
               F[LγLγ']η.fnc {A}
                           ~[ ∘e r assˢ ⊙ assˢ ] /

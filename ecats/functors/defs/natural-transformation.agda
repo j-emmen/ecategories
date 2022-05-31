@@ -48,7 +48,7 @@ private module nt = natural-transformation
 
 infixr 60 _⇒_
 _⇒_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
-        (F G : efunctorₗₑᵥ ℂ 𝔻)
+       (F G : efunctorₗₑᵥ ℂ 𝔻)
            → Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
 F ⇒ G = natural-transformation F G
 
@@ -71,7 +71,6 @@ NatTr {ℂ = ℂ} {𝔻 = 𝔻} F G = record
 module NatTr {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
              (F G : efunctorₗₑᵥ ℂ 𝔻)
              = tt-basics.setoids.setoid-aux (NatTr F G)
-
 
 ιd natt-id : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
              {F : efunctorₗₑᵥ ℂ 𝔻}
