@@ -37,6 +37,12 @@ two = s one
 three = s two
 four = s three
 
+infixr 3 _+N_
+_+N_ : N → N → N
+n +N m = Nrec n (λ x n+x → s n+x) m
+
+
+
 -- disjoint sum of a family of types
 
 infix 3 _,_
@@ -62,6 +68,19 @@ prj1 (pair a b) = a
 prj2 : ∀ {i j} {A : Set i} → {B : Set j}  → prod A B → B
 prj2 (pair a b) = b
 
+infixr 50 _×_ _×ₕ_ _×/_
+_×_ : {i j : Level} (A : Set i)(B : Set j) → Set (i ⊔ j)
+A × B = prod A B
+
+_×/_ : {i j k : Level} {A : Set i}(B : A → Set j)(C : A → Set k) → A → Set (j ⊔ k)
+_×/_ {A = A} B C a = B a × C a
+
+_×ₕ_ : {i j i' j' : Level}{A : Set i}{A' : Set i'}{B : Set j}{B' : Set j'}
+          → (A → B) → (A' → B')
+            → A × A' → B × B'
+(f ×ₕ g) aa = pair (f (prj1 aa)) (g (prj2 aa))
+--f +ₕ g = sumrec (λ a → inl (f a)) λ a' → inr (g a')
+
 
 -- disjoint sums
 
@@ -74,9 +93,12 @@ sumrec : {i j k : Level}{A : Set i}{B : Set j}{C : sum A B → Set k}
 sumrec d e (inl a) = d a
 sumrec d e (inr b) = e b
 
-infix 50 _+_ _+ₕ_
+infixr 50 _+_ _+ₕ_ _+/_
 _+_ : {i j : Level} (A : Set i)(B : Set j) → Set (i ⊔ j)
 A + B = sum A B
+
+_+/_ : {i j k : Level} {A : Set i}(B : A → Set j)(C : A → Set k) → A → Set (j ⊔ k)
+_+/_ {A = A} B C a = B a + C a
 
 _+ₕ_ : {i j i' j' : Level}{A : Set i}{A' : Set i'}{B : Set j}{B' : Set j'}
           → (A → B) → (A' → B')
@@ -113,9 +135,13 @@ Fin-emb n = inl
 Fin-max : (n : N) → Fin (s n)
 Fin-max n = inr 0₁
 
+-- singl element
+Fin-singlel : Fin (s O)
+Fin-singlel = Fin-max O
+
 -- least element
 Fin-min : (n : N) → Fin (s n)
-Fin-min O = Fin-max O
+Fin-min O = Fin-singlel
 Fin-min (s n) = Fin-emb (s n) (Fin-min n)
 
 Fin0rec : {ℓ : Level}{C : Fin O → Set ℓ} (i : Fin O) → C i
@@ -143,66 +169,92 @@ Fin-suc : (n : N) → Fin n → Fin (s n)
 Fin-suc (s n) (inl x) = inl (Fin-suc n x)
 Fin-suc (s n) (inr x) = Fin-max (s n)
 
+
 -- shifts right: k |--> k+1 (mod (s n))
 shiftr : (n : N) → Fin (s n) → Fin (s n)
 shiftr n = Finsrec n {λ _ → Fin (s n)} (Fin-suc n) (Fin-min n)
 -- (inl x) = Fin-suc n x
 -- shiftr n (inr x) = Fin-min n
 
-
-
-shiftl : (n : N) → Fin (s n) → Fin (s n)
-shiftl n (inl x) = Fin-suc n x
-shiftl n (inr x) = Fin-min n
+-- looks like it's equal to shiftr
+--shiftl : (n : N) → Fin (s n) → Fin (s n)
+--shiftl n (inl x) = Fin-suc n x
+--shiftl n (inr x) = Fin-min n
 --shiftl O x = x
 --shiftl (s n) x = Finsrec (s n) (λ i → Fin-suc (s n) (shiftl n i) ) (Fin-min (s n)) x
 
+
+-- coproduct inclusions
+Fin-inl : (n m : N) → Fin n → Fin (n +N m)
+Fin-inl n = Nrec {C = λ x → Fin n → Fin (n +N x)}
+                 (λ i → i)
+                 (λ x inls i → Fin-emb (n +N x) (inls i))
+
+Fin-inr : (n m : N) → Fin m → Fin (n +N m)
+Fin-inr n = Nrec {C = λ x → Fin x → Fin (n +N x)}
+                 N₀rec
+                 (λ x inrs → Finsrec x
+                                      { λ _ → Fin (n +N s x) }
+                                      ( λ i → Fin-emb (n +N x) (inrs i) )
+                                      ( Fin-max (n +N x) ))
+-- the embedding of a left coproduct inclusion is a left coproduct inclusion
+-- Fin-inl (n +N m) one (Fin-inl n m i) = Fin-inl n (s m) i
+-- also
+-- Fin-inl (n +N m) one (Fin-inr n m i) = Fin-inr n (s m) (Fin-emb m i)
+-- and
+-- Fin-inr (n +N m) one Fin-singlel == Fin-inr n (s m) (Fin-max m)
+
+
+Fin-+rec : (n m : N){ℓ : Level}{A : Fin (n +N m) → Set ℓ}
+                  → ((i : Fin n) → A (Fin-inl n m i)) → ((i : Fin m) → A (Fin-inr n m i))
+                    → (i : Fin (n +N m)) → A i
+Fin-+rec n m {ℓ} = Nrec {C = λ x → {A : Fin (n +N x) → Set ℓ} → ((i : Fin n) → A (Fin-inl n x i)) → ((i : Fin x) → A (Fin-inr n x i)) → (i : Fin (n +N x)) → A i}
+                               (λ {A} f _ → f)
+                               (λ x hi {A} f g → Finsrec (n +N x)
+                                                          {A}
+                                                          (hi {λ i → A (Fin-emb (n +N x) i)}
+                                                              f
+                                                              (λ i → g (Fin-emb x i)))
+                                                          (g (Fin-max x)))
+                               m
+
+
+Fin-+unvar : (n m : N){ℓ : Level}{A : Set ℓ}
+                  → (Fin n → A) → (Fin m → A) → Fin (n +N m) → A
+Fin-+unvar n m {A = A} = Fin-+rec n m {A = λ _ → A}
+
+-- Extending a simple section from 'Fin n' to 'Fin (s n)' on the right and on the left.
+
+Fin-insr : (n : N){ℓ : Level}{A : Set ℓ}
+                  → ((i : Fin n) → A) → A → (i : Fin (s n)) → A
+Fin-insr n f a = Fin-+unvar n one f (λ i → a)
+
+Fin-insl : (n : N){ℓ : Level}{A : Set ℓ}
+              → ((i : Fin n) → A) → A → (i : Fin (one +N n)) → A
+Fin-insl n {C} f a  = Fin-+unvar one n (λ _ → a) f
+
+
+
+-- type-theoretic equivalence relations
+
+record is-tt-eqrel {ℓo ℓr : Level} {A : Set ℓo} (R : A → A → Set ℓr) : Set (ℓo ⊔ ℓr) where
+  field
+    refl : (x : A) → R x x
+    sym : {x₁ x₂ : A} → R x₁ x₂ → R x₂ x₁
+    tra : {x₁ x₂ x₃ : A} → R x₁ x₂ → R x₂ x₃ → R x₁ x₃
+
+tt-eqrel-stable :  {ℓ ℓo ℓr : Level}{A' : Set ℓ}{A : Set ℓo}(f : A' → A)
+                   {R : A → A → Set ℓr}(tteqrel : is-tt-eqrel R)
+                     → is-tt-eqrel (λ x₁ x₂ → R (f x₁) (f x₂))
+tt-eqrel-stable {A' = A'} {A} f {R} tteqrel = record
+  { refl = λ x → R.refl (f x)
+  ; sym = λ {x₁} {x₂} → R.sym {f x₁} {f x₂}
+  ; tra = λ {x₁} {x₂} {x₃} → R.tra {f x₁} {f x₂} {f x₃}
+  }
+  where module R = is-tt-eqrel tteqrel
+
+
 {-
-Fin' : N → Set
-Fin' n = N₁ + (Nrec N₀ (λ m F → F + N₁) n)
-
-Fin'-emb : (n : N) → Fin' n → Fin' (s n)
-Fin'-emb n = (λ x → x) +ₕ inl
-
-Fin'-min : (n : N) → Fin' n
-Fin'-min n = inl 0₁
-
-Fin'-max : (n : N) → Fin' (s n)
-Fin'-max n = inr (inr 0₁)
-
-Fin'-suc : (n : N) → Fin' n → Fin' (s n)
-Fin'-suc n x = {!!}
-
-shift'r : (n : N) → Fin' n → Fin' n
-shift'r n = {!!}
--}
-
-
--- Extending a section from 'Fin n' to 'Fin (s n)' on the right.
-Fin-insr : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
-              → ((i : Fin n) → C (Fin-emb n i)) → C (Fin-max n)
-                → (i : Fin (s n)) → C i
-Fin-insr = Finsrec
-
--- Extending a section from 'Fin n' to 'Fin (s n)' on the left.
-Fin-insl : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
-              → ((i : Fin n) → C (Fin-suc n i)) → C (Fin-min n)
-                → (i : Fin (s n)) → C i
-Fin-insl O {C} f c₀ (inr 0₁) = c₀
-Fin-insl (s n) {C} f c₀ (inl x) = Fin-insl n {λ i → C (inl i)}
-                                           (λ i → f (Fin-emb n i)) c₀ x
-Fin-insl (s n) {C} f c₀ (inr 0₁) = f (Fin-max n)
--- 'Fin-insl n f c Fin-min' reduces to 'c₀' only when 'n' is a numeral.
-{-
-Fin-insl n {C} f c₀ = Finsrec n {C'} f c₀ ?
-                    where C' : Fin (s n) → Set _
-                          C' y = C (shiftl n y)
-                          lr : (i : Fin (s n)) → C (shiftl n (shiftr n i)) → C i
-                          lr i c = {!!}
--}
-
-
-
 -- Logic using propositions as types
 
 False : Set
@@ -276,23 +328,4 @@ triviff A = andI (impI (λ x → x)) (impI (λ x → x))
 
 not : (A : Set) → Set
 not A = implies A False
-
-
-
--- type-theoretic equivalence relations
-
-record is-tt-eqrel {ℓo ℓr : Level} {A : Set ℓo} (R : A → A → Set ℓr) : Set (ℓo ⊔ ℓr) where
-  field
-    refl : (x : A) → R x x
-    sym : {x₁ x₂ : A} → R x₁ x₂ → R x₂ x₁
-    tra : {x₁ x₂ x₃ : A} → R x₁ x₂ → R x₂ x₃ → R x₁ x₃
-
-tt-eqrel-stable :  {ℓ ℓo ℓr : Level}{A' : Set ℓ}{A : Set ℓo}(f : A' → A)
-                   {R : A → A → Set ℓr}(tteqrel : is-tt-eqrel R)
-                     → is-tt-eqrel (λ x₁ x₂ → R (f x₁) (f x₂))
-tt-eqrel-stable {A' = A'} {A} f {R} tteqrel = record
-  { refl = λ x → R.refl (f x)
-  ; sym = λ {x₁} {x₂} → R.sym {f x₁} {f x₂}
-  ; tra = λ {x₁} {x₂} {x₃} → R.tra {f x₁} {f x₂} {f x₃}
-  }
-  where module R = is-tt-eqrel tteqrel
+-}

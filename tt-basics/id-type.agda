@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module tt-basics.id-type where
 
@@ -13,7 +9,7 @@ open import tt-basics.basics
 
 -- Identity type
 
-infix 8 _==_
+infix 1 _==_
 data _==_ {ℓ : Level}{A : Set ℓ}(a : A) : A → Set ℓ where
   =rf : a == a
 
@@ -34,34 +30,48 @@ check =rf = {!!}
 
 =ap : {ℓ ℓ' : Level}{A : Set ℓ}{B : Set ℓ'}(f : A → B){a a' : A}
          → a == a' → f a == f a'
-=ap f p = =J (λ x _ → f _ == f x) =rf p
+=ap f {a} = =J (λ x _ → f _ == f x) =rf
 
 =transp : {ℓ ℓ' : Level}{A : Set ℓ}(B : A → Set ℓ'){a a' : A}
              → a == a' → B a → B a'
-=transp B p b = =J (λ x _ → B _ → B x) (λ y → y) p b
+=transp B {a} = =J (λ x _ → B a → B x) (λ y → y)
 
-infix 40 _•_
+infix 40 _●_
 
-_•_ : {ℓ ℓ' : Level}{A : Set ℓ}(B : A → Set ℓ'){a a' : A}
+_●_ : {ℓ ℓ' : Level}{A : Set ℓ}(B : A → Set ℓ'){a a' : A}
          → a == a' → B a → B a'
-B • p = =transp B p
+B ● p = =transp B p
 
 =transpcnst : {ℓ ℓ' : Level}{A : Set ℓ}(B : Set ℓ'){a a' : A}
-              (p : a == a')(b : B) → ((λ _ → B) • p) b == b
-=transpcnst B p b = =J (λ x q → ( ((λ _ → B) • q) b == b )) =rf p
+              (p : a == a')(b : B) → ((λ _ → B) ● p) b == b
+=transpcnst B p b = =J (λ x q → ( ((λ _ → B) ● q) b == b )) =rf p
 
 =apd : {ℓ ℓ' : Level}{A : Set ℓ}{B : A → Set ℓ'}
        (f : (a : A) → B a){a a' : A}(p : a == a')
-         → (B • p) (f a) == f a'
-=apd f p = =J (λ x p → (_ • p) (f _) == f x) =rf p
+         → (B ● p) (f a) == f a'
+=apd f p = =J (λ x p → (_ ● p) (f _) == f x) =rf p
 
 =sym : {ℓ : Level}{A : Set ℓ}{a a' : A}
           → a == a' → a' == a
-=sym p = ((λ x → x == _) • p) =rf
+=sym p = ((λ x → x == _) ● p) =rf
 
 =tra : {ℓ : Level}{A : Set ℓ}{a₁ a₂ a₃ : A}
           → a₁ == a₂ → a₂ == a₃ → a₁ == a₃
-=tra p q = ((λ x → _ == x) • q) p
+=tra p q = ((λ x → _ == x) ● q) p
+
+=transp² : {ℓ₁ ℓ₂ ℓ₃ : Level}{A : Set ℓ₁}{B : A → Set ℓ₂}(C : (x : A) → B x → Set ℓ₃)
+           {a a' : A}{b : B a}{b' : B a'}(p : a == a')
+             → (B ● p) b == b' → C a b → C a' b'
+=transp² {A = A} {B} C {a} {a'} {b} {b'} p q c =
+  =transp (λ y → C a' y) q (=J (λ x u → C x ((B ● u) b)) c p)
+-- it is the composite C a b → C a' (B●p b) → C a' b'
+
+=transp²cnst¹ : {ℓ₁ ℓ₂ ℓ₃ : Level}{A : Set ℓ₁}{B : Set ℓ₂}(C : A → B → Set ℓ₃){a a' : A}{b b' : B}
+                 → a == a' →  b == b' → C a b → C a' b'
+=transp²cnst¹ {A = A} {B} C {a} {a'} {b} {b'} p q = =transp² {B = λ _ → B}
+                                                             C
+                                                             p
+                                                             (=tra (=transpcnst B p b) q)
 
 
 -- Equational reasoning
@@ -88,6 +98,7 @@ infixr 1 =proof_==[_]_
 
 syntax =eqreasend a b pf = / a ==[ pf ]∎ b ∎
 
+
 -- Notation for inverses and concatenation
 
 infix 60 _⁻¹
@@ -105,8 +116,8 @@ p ■ q = =tra p q
 
 ■tr : {ℓ ℓ' : Level}{A : Set ℓ}(B : A → Set ℓ'){a₁ a₂ a₃ : A}
       (p₁ : a₁ == a₂)(p₂ : a₂ == a₃)(b : B a₁)
-         → (B • (p₁ ■ p₂)) b == (B • p₂) ((B • p₁) b)
-■tr B p₁ p₂ b = =J (λ x u → (B • p₁ ■ u) b == (B • u) ((B • p₁) b)) =rf p₂
+         → (B ● (p₁ ■ p₂)) b == (B ● p₂) ((B ● p₁) b)
+■tr B p₁ p₂ b = =J (λ x u → (B ● p₁ ■ u) b == (B ● u) ((B ● p₁) b)) =rf p₂
 
 ■idr : {ℓ : Level}{A : Set ℓ}{a a' : A}(p : a == a') → p ■ =rf == p
 ■idr p = =rf
@@ -130,7 +141,7 @@ p ■ q = =tra p q
 ■ass⁻¹ p₁ p₂ p₃ = ■ass p₁ p₂ p₃ ⁻¹
 
 
--- Some equations between proof of equations
+-- Some equations between proofs of equations
 
 ■extl : {ℓ : Level}{A : Set ℓ}{a₁ a₂ : A}(p : a₁ == a₂){a₃ : A}{p₁ : a₂ == a₃}{p₂ : a₂ == a₃}
            → p₁ == p₂ → p ■ p₁ == p ■ p₂
@@ -180,35 +191,33 @@ p ■ q = =tra p q
 
 =2htpy : {ℓ ℓ' : Level}{A : Set ℓ}{B : A → Set ℓ'}{f g : (a : A) → B a}
             → f == g → (a : A) → f a == g a
-=2htpy {f = f} p a = ((λ x → f a == x a) • p) =rf
+=2htpy {f = f} p a = ((λ x → f a == x a) ● p) =rf
 
-
-
---part of Lemma 2.9.6 in HoTT book
+-- part of Lemma 2.9.6 in HoTT book, i.e. same for indexed functions
 
 HoTTLemma2-9-6 : {ℓ ℓ' ℓ'' : Level}{A : Set ℓ}{B : A → Set ℓ'}{C : A → Set ℓ''}
                  {a a' : A}(p : a == a'){f : B a → C a}{g : B a' → C a'}
-                   → ((λ x → B x → C x) • p) f == g → (y : B a) → (C • p) (f y) == g ((B • p) y)
-HoTTLemma2-9-6 {ℓ} {ℓ'} {ℓ''} {A = A} {B} {C} {a} {a'} p = =J JEl JElrf p
-  where JEl : (x : A) → a == x → Set (ℓ' ⊔ ℓ'')
-        JEl x u = {f : B a → C a}{g : B x → C x} → ((λ x → B x → C x) • u) f == g
-                     → (y : B a) → (C • u) (f y) == g ((B • u) y)
-        JElrf : JEl a =rf
-        JElrf = =2htpy
+                   → ((λ x → B x → C x) ● p) f == g → (y : B a) → (C ● p) (f y) == g ((B ● p) y)
+HoTTLemma2-9-6 {ℓ} {ℓ'} {ℓ''} {A = A} {B} {C} {a} {a'} p = =J claim claim-rf p
+  where claim : (x : A) → a == x → Set (ℓ' ⊔ ℓ'')
+        claim x u = {f : B a → C a}{g : B x → C x} → ((λ x → B x → C x) ● u) f == g
+                     → (y : B a) → (C ● u) (f y) == g ((B ● u) y)
+        claim-rf : claim a =rf
+        claim-rf = =2htpy
 
 
 {-
 -- transport of fibrewise functions is pointwise
-•ptw : {ℓ : Level}{A : Set ℓ}{B C : A → Set}(f : (a : A) → B a → C a)
+●ptw : {ℓ : Level}{A : Set ℓ}{B C : A → Set}(f : (a : A) → B a → C a)
        {a a' : A}(p : a == a')(b : B a')
-          → ((λ x → B x → C x) • p) (f a) b == (C • p) (f a ((B • p ⁻¹) b))
-•ptw f p b = let ψ : _
+          → ((λ x → B x → C x) ● p) (f a) b == (C ● p) (f a ((B ● p ⁻¹) b))
+●ptw f p b = let ψ : _
                  ψ = {!!}
              in {!!}
 -}
 
 
--- Contractibility & Co.
+-- Contractibility and propositions
 
 isContr : {ℓ : Level}(A : Set ℓ) → Set ℓ
 isContr A = Σ A (λ a₀ → (a : A) → a == a₀ )
@@ -222,6 +231,9 @@ contr= = pj2
 
 N₁-isContr : isContr N₁
 N₁-isContr = 0₁ , N₁rec =rf
+
+Fin1-isContr : isContr (Fin one)
+Fin1-isContr = Fin-singlel , (Finsrec O {λ x → x == Fin-singlel} N₀rec =rf)
 
 isProp : {ℓ : Level}(A : Set ℓ) → Set ℓ
 isProp A = (a a' : A) → a == a'
@@ -247,15 +259,54 @@ prdη⁻¹ (pair a b) = =rf
              → prj1 z == prj1 z' → prj2 z == prj2 z'
                → z == z'
 =prdchar pf₁ pf₂ = auxAB pf₁ _ pf₂ ■ prdη _ where
-
                    auxB : {A B : Set}{z : prod A B}(b : B)
                              → prj2 z == b → z == pair (prj1 z) b
                    auxB {z = z} b pf = =J (λ b' pf' → z == pair (prj1 z) b') (prdη⁻¹ _) pf
-                   
                    auxAB : {A B : Set}{z : prod A B}{a : A} → prj1 z == a
                                → (b : B) → prj2 z == b → z == pair a b
                    auxAB {z = z} pf₁ = =J (λ a' pf' → (b' : _) → prj2 z == b' → z == pair a' b')
                                           (auxB) pf₁
+
+
+=inl+ : {ℓ₁ : Level}{A : Set ℓ₁}{ℓ₂ : Level}(B : A → Set ℓ₂){ℓ₃ : Level}(C : A → Set ℓ₃)
+        {a a' : A}(p : a == a')
+               → (λ b → (B +/ C ● p) (inl b)) == (λ b → inl ((B ● p) b))
+=inl+ {A = A} B C {a} = =J (λ a' p → (λ b → (B +/ C ● p) (inl b)) == (λ b → inl ((B ● p) b)))
+                           =rf
+
+=inl+-htpy : {ℓ₁ : Level}{A : Set ℓ₁}{ℓ₂ : Level}(B : A → Set ℓ₂){ℓ₃ : Level}(C : A → Set ℓ₃)
+             {a a' : A}(p : a == a')(b : B a)
+                 → (B +/ C ● p) (inl b) == inl ((B ● p) b)
+=inl+-htpy {A = A} B C p = =2htpy (=inl+ B C p)
+
+
+=inr+ : {ℓ₁ : Level}{A : Set ℓ₁}{ℓ₂ : Level}(B : A → Set ℓ₂){ℓ₃ : Level}(C : A → Set ℓ₃)
+         {a a' : A}(p : a == a')
+                → (λ c → (B +/ C ● p) (inr c)) == (λ c → inr ((C ● p) c))
+=inr+ {A = A} B C {a} = =J (λ a' p → (λ c → (B +/ C ● p) (inr c)) == (λ c → inr ((C ● p) c)))
+                           =rf
+
+=inr+-htpy : {ℓ₁ : Level}{A : Set ℓ₁}{ℓ₂ : Level}(B : A → Set ℓ₂){ℓ₃ : Level}(C : A → Set ℓ₃)
+             {a a' : A}(p : a == a')(c : C a)
+                → (B +/ C ● p) (inr c) == inr ((C ● p) c)
+=inr+-htpy {A = A} B C p = =2htpy (=inr+ B C p)
+
+
+
+Fin-emb-=nat : {x y : N}(p : x == y)
+             → (λ i → (Fin ● =ap s p) (Fin-emb x i)) == (λ i → Fin-emb y ((Fin ● p) i))
+Fin-emb-=nat {x} = =J (λ y p → (λ i → (Fin ● =ap s p) (Fin-emb x i)) == (λ i → Fin-emb y ((Fin ● p) i)))
+                      =rf
+
+Fin-emb-=nat-hty : {x y : N}(p : x == y)(i : Fin x)
+                      → (Fin ● =ap s p) (Fin-emb x i) == Fin-emb y ((Fin ● p) i)
+Fin-emb-=nat-hty p = =2htpy (Fin-emb-=nat p)
+
+
+Fin-max-=nat : {x y : N}(p : x == y)
+             → (Fin ● =ap s p) (Fin-max x) == Fin-max y
+Fin-max-=nat {x} = =J (λ y p → (Fin ● =ap s p) (Fin-max x) == Fin-max y)
+                      =rf
 
 
 -- UIP stuff
@@ -278,9 +329,9 @@ HoTT-Thm7-2-2-aux {ℓ} {ℓ'} {A = A} {R} Rrf Risprop R→== {a} p =
   ■lc {p = R→== a a (Rrf a)} (q' (Rrf a) ■ ■idr _ ⁻¹)
   where D : A → Set (ℓ ⊔ ℓ')
         D x = R a x → a == x
-        q : (D • p) (R→== a a) == R→== a a
+        q : (D ● p) (R→== a a) == R→== a a
         q = =apd {B = D} (R→== a) p
-        q' : (e : R a a) → ((_==_ a) • p) (R→== a a e) == R→== a a e --(((R a) • p) e)
+        q' : (e : R a a) → ((_==_ a) ● p) (R→== a a e) == R→== a a e --(((R a) ● p) e)
         q' e = HoTTLemma2-9-6 p q e ■ =ap (R→== a a) (Risprop a a _ _)
 
 
