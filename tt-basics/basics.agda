@@ -78,7 +78,10 @@ Finᵢsrec c0 cinj (finj i) = cinj i
 -- defined finite types
 
 Fin : N → Set
-Fin = Nrec N₀ (λ m F → Nrec N₁ (λ n F → F + N₁) m) -- (λ m F → F + N₁)
+Fin = Nrec N₀ (λ m F → Nrec N₁ (λ n F → F + N₁) m)
+-- Fin O = N₀
+-- Fin (s O) = N₁
+-- Fin (s (s n)) = Fin (S n) + N₁
 
 Fin-emb : (n : N) → Fin n → Fin (s n)
 --Fin-emb O = N₀rec

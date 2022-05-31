@@ -19,25 +19,19 @@ module FinCat-data where
   𝔽Hom (s (s n)) (inl x) (inr y) = Freestd N₁
   𝔽Hom (s (s n)) (inr x) (inl y) = Freestd N₀
   𝔽Hom (s (s n)) (inr x) (inr y) = Freestd N₁
-  {-
-  𝔽Hom (s n) = Finsrec n {λ _ → (_ : Fin (s n)) → setoid}
-                       -- one arrow from inl to inr
-                       (λ i₁ → Finsrec n {λ _ → setoid} (λ i₂ → 𝔽Hom n i₁ i₂) (Freestd N₁))
-                       -- no from inr to inl and one arrow from inr to inr
-                       (Finsrec n {λ _ → setoid} (λ _ → Freestd N₀) (Freestd N₁))
-  -}
 
   𝔽id :  (n : N)(i : Fin n) → || 𝔽Hom n i i ||
-  𝔽id (s n) (inl x) = 𝔽id n x
-  𝔽id (s n) (inr x) = 0₁
-  -- Finsrec n {λ j → || 𝔽Hom (s n) j j ||} (λ j → 𝔽id n {j}) 0₁ i
+  𝔽id (s O) i = i
+  𝔽id (s (s n)) (inl x) = 𝔽id (s n) x
+  𝔽id (s (s n)) (inr x) = x
 
   𝔽cmp : (n : N){i j k : Fin n} → || 𝔽Hom n j k || → || 𝔽Hom n i j ||
             → || 𝔽Hom n i k ||
-  𝔽cmp (s n) {inl x} {inl y} {inl z} jk ij = 𝔽cmp n jk ij
-  𝔽cmp (s n) {inl x} {inl y} {inr z} jk ij = 0₁
-  𝔽cmp (s n) {inl x} {inr y} {inr z} jk ij = 0₁
-  𝔽cmp (s n) {inr x} {inr y} {inr z} jk ij = 0₁
+  𝔽cmp (s O) {i} {j} {k} jk ij = 0₁
+  𝔽cmp (s (s n)) {inl x} {inl y} {inl z} jk ij = 𝔽cmp (s n) jk ij
+  𝔽cmp (s (s n)) {inl x} {inl y} {inr z} jk ij = 0₁
+  𝔽cmp (s (s n)) {inl x} {inr y} {inr z} jk ij = 0₁
+  𝔽cmp (s (s n)) {inr x} {inr x₁} {inr x₂} jk ij = 0₁
 
   {-
   𝔽cmp (s n) {i} {j} {k} jk ij =
@@ -56,10 +50,10 @@ module FinCat-data where
   -}
 
   ispreorder : (n : N){i j : Fin n}{ij ij' :  || 𝔽Hom n i j ||} → < 𝔽Hom n i j > ij ~ ij'
-  ispreorder (s n) {inl x} {inl x₁} {ij} {ij'} = ispreorder n {ij = ij} {ij'}
-  ispreorder (s n) {inl x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
-  ispreorder (s n) {inr x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
-
+  ispreorder (s O) {i} {j} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
+  ispreorder (s (s n)) {inl x} {inl x₁} {ij} {ij'} = ispreorder (s n) {ij = ij} {ij'}
+  ispreorder (s (s n)) {inl x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
+  ispreorder (s (s n)) {inr x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
 
 
 {-
@@ -111,12 +105,13 @@ module 𝔽inCat (n : N) where
   open FinCat-data using (ispreorder) public
 
 
-𝟘 𝟙 𝟚 : small-ecategory
-𝟘 = 𝔽inCat O
-𝟙 = 𝔽inCat (s O)
-𝟚 = 𝔽inCat (s (s O))
-𝟛 = 𝔽inCat (s (s (s O)))
-𝟜 = 𝔽inCat (s (s (s (s O))))
+0ᶜᵃᵗ 1ᶜᵃᵗ 2ᶜᵃᵗ 3ᶜᵃᵗ 4ᶜᵃᵗ : small-ecategory
+0ᶜᵃᵗ = 𝔽inCat O
+1ᶜᵃᵗ = 𝔽inCat (s O)
+2ᶜᵃᵗ = 𝔽inCat (s (s O))
+3ᶜᵃᵗ = 𝔽inCat (s (s (s O)))
+4ᶜᵃᵗ = 𝔽inCat (s (s (s (s O))))
+
 
 module ωCat-data where
   Hom : N → N → setoid {0ₗₑᵥ} {0ₗₑᵥ}
@@ -166,6 +161,7 @@ module ω where
 
 
 -- embedding of finite preorders into ω
+-- it maps Fin (s n) onto the initial segment <0,..,n>
 
 Ι : (n : N) → efunctor (𝔽inCat n) ω
 Ι n = record
@@ -178,14 +174,18 @@ module ω where
           }
     }
     where frgt : (n : N) → Fin n → N
-          frgt (s n) (inl x) = frgt n x
-          frgt (s n) (inr x) = n -- this one maps e.g. 'inr : Fin 1' to 'O : N'
-          
+          frgt (s O) i = O
+          frgt (s (s n)) (inl x) = frgt (s n) x
+          frgt (s (s n)) (inr x) = s n
+
           frgt-ar : (n : N)(i : Fin n) → || ωCat-data.Hom (frgt n i) n ||
-          frgt-ar (s n) (inl x) = ω._∘_ {a = frgt n x} (ω.suc n) (frgt-ar n x)
-          frgt-ar (s n) (inr x) = ω.suc n
+          frgt-ar (s O) i = i
+          frgt-ar (s (s n)) (inl x) = ω._∘_ {a = frgt (s n) x} (ω.suc (s n)) (frgt-ar (s n) x)
+          frgt-ar (s (s n)) (inr x) = ω.suc (s n)
+
           fctr : (n : N){i j : Fin n} → || ecategoryₗₑᵥ.Hom (𝔽inCat n) i j ||
                     → || ωCat-data.Hom (frgt n i) (frgt n j) ||
-          fctr (s n) {inl x} {inl x₁} ij = fctr n ij
-          fctr (s n) {inl x} {inr x₁} ij = frgt-ar n x
-          fctr (s n) {inr x} {inr x₁} ij = ω.idar n
+          fctr (s O) {i} {j} ij = 0₁
+          fctr (s (s n)) {inl x} {inl x₁} ij = fctr (s n) ij
+          fctr (s (s n)) {inl x} {inr x₁} ij = frgt-ar (s n) x
+          fctr (s (s n)) {inr x} {inr x₁} ij = ω.idar (s n)
