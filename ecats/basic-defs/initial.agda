@@ -7,7 +7,11 @@ open import ecats.basic-defs.ecat-def&not
 
 
 module initial-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
-  open ecategory-aux ℂ
+  open ecat ℂ
+
+  record is-weak-initial (I : Obj) : Set ℓₙₒ~ where
+    field
+      ar : (A : Obj) → || Hom I A ||
 
   record is-initial (I : Obj) : Set ℓₐₗₗ where
     field
@@ -16,6 +20,7 @@ module initial-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ�
     øuqg : {A : Obj} {f g : || Hom I A ||}
               → f ~ g
     øuqg {f = f} {g} = øuq f ⊙ øuq g ˢ
+                     where open ecategory-aux-only ℂ using (_⊙_; _ˢ)
 
 --end initial-defs
 

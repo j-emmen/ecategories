@@ -153,14 +153,18 @@ prod-std A B = record
   }
   where module A = setoid A
         module B = setoid B
+
 module prod-std {ℓo₁ ℓr₁ : Level}(A : setoid {ℓo₁} {ℓr₁}){ℓo₂ ℓr₂ : Level}(B : setoid {ℓo₂} {ℓr₂})
-                (z : || prod-std A B ||)where
+                (z : || prod-std A B ||)
+                where
   ₁ : || A ||
   ₁ = prj1 z
   ₂ : || B ||
   ₂ = prj2 z
+
 module prod-stdeq {ℓo₁ ℓr₁ : Level}(A : setoid {ℓo₁} {ℓr₁}){ℓo₂ ℓr₂ : Level}(B : setoid {ℓo₂} {ℓr₂})
-                  {z z' : || prod-std A B ||}(eq : < prod-std A B > z ~ z')where
+                  {z z' : || prod-std A B ||}(eq : < prod-std A B > z ~ z')
+                  where
   private
     module A = setoid-aux A
     module B = setoid-aux B
@@ -283,11 +287,15 @@ free-stdmap f = record
   ; ext = =ap f
   }
 
+free-std-is-min-pf : {ℓ ℓo ℓr : Level}{X : Set ℓ}(A : setoid {ℓo} {ℓr})(f : X → || A ||){x x' : X}
+                        → < Freestd X > x ~ x' → < A > f x ~ f x'
+free-std-is-min-pf A f pf = ==→~ A (=ap f pf)
+
 free-std-is-min : {ℓ ℓo ℓr : Level}{X : Set ℓ}{A : setoid {ℓo} {ℓr}}(f : X → || A ||)
                      → setoidmap (Freestd X) A
 free-std-is-min {X = X} {A} f = record
   { op = f
-  ; ext = λ pf → ==→~ A (=ap f pf)
+  ; ext = free-std-is-min-pf A f
   }
 
 can-cover : {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) → setoidmap (Freestd || A ||) A

@@ -69,10 +69,10 @@ data sum {i j} (A : Set i)(B : Set j) : Set (i ⊔ j) where
     inl : A → sum A B
     inr : B → sum A B
 
-sumEl : {i j k : Level}{A : Set i}{B : Set j}{C : sum A B → Set k}
+sumrec : {i j k : Level}{A : Set i}{B : Set j}{C : sum A B → Set k}
            → ((a : A) → C (inl a)) → ((b : B) → C (inr b)) → (c : sum A B) → C c
-sumEl d e (inl a) = d a
-sumEl d e (inr b) = e b
+sumrec d e (inl a) = d a
+sumrec d e (inr b) = e b
 
 infix 50 _+_ _+ₕ_
 _+_ : {i j : Level} (A : Set i)(B : Set j) → Set (i ⊔ j)
@@ -83,7 +83,7 @@ _+ₕ_ : {i j i' j' : Level}{A : Set i}{A' : Set i'}{B : Set j}{B' : Set j'}
             → A + A' → B + B'
 (f +ₕ g) (inl a) = inl (f a)
 (f +ₕ g) (inr a') = inr (g a')
---f +ₕ g = sumEl (λ a → inl (f a)) λ a' → inr (g a')
+--f +ₕ g = sumrec (λ a → inl (f a)) λ a' → inr (g a')
 
 
 -- inductive finite types
@@ -123,7 +123,7 @@ Fin0rec = N₀rec
 Finsrec : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
              → ((i : Fin n) → C (Fin-emb n i)) → (C (Fin-max n))
                → (i : Fin (s n)) → C i
-Finsrec n {C} d e = sumEl {C = C} d (N₁rec e)
+Finsrec n {C} d e = sumrec {C = C} d (N₁rec e)
 
 {-
 FinsInd : {ℓ : Level}(n : N){C : Fin (s (s n)) → Set ℓ}
@@ -265,7 +265,7 @@ orR b = inr b
 
 orE : {A B : Set} → {C : (or A B) → Set}
    → ((a : A) → C (orL a)) → ((b : B) → C (orR b)) → (c : or A B) → C c
-orE = sumEl
+orE = sumrec
 
 
 iff :  (A : Set) → (B : Set) → Set

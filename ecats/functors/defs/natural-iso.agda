@@ -6,6 +6,8 @@ module ecats.functors.defs.natural-iso where
 open import Agda.Primitive
 open import tt-basics.setoids using (setoid) --hiding (||_||; _⇒_)
 open import ecats.basic-defs.ecat-def&not
+open import ecats.basic-defs.isomorphism
+open import ecats.basic-props.isomorphism
 open import ecats.isomorphism
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
@@ -27,7 +29,7 @@ record natural-iso {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂
     natt : natural-transformation F G
     natt⁻¹ : natural-transformation G F
   open natural-transformation natt public
-  open natural-transformation natt⁻¹ renaming (fnc to fnc⁻¹; nat to nat⁻¹) public
+  open natural-transformation natt⁻¹ renaming (fnc to fnc⁻¹; nat to nat⁻¹; natˢ to nat⁻¹ˢ) public
   open iso-defs 𝔻
   field
     isiso : {A : ℂ.Obj} → is-iso-pair (fnc {A}) (fnc⁻¹ {A})
@@ -51,11 +53,38 @@ record natural-iso {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂
   C2Dₗˢ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → (fnc 𝔻.∘ F.ₐ f) 𝔻.∘ fnc⁻¹ 𝔻.~ G.ₐ f
   C2Dₗˢ {f = f} = ∘e r (nat f) ⊙ assˢ ⊙ ridgg r idcod 
 
-
 infixr 9 _≅ₐ_
 _≅ₐ_ :  {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
         (F G : efunctorₗₑᵥ ℂ 𝔻) → Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
 F ≅ₐ G = natural-iso F G
+
+
+module natural-iso-defs {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                        (F G : efunctorₗₑᵥ ℂ 𝔻)
+                        where
+  private
+    module ℂ = ecat ℂ
+    module 𝔻 where
+      open ecat 𝔻 public
+      open iso-defs 𝔻 public
+      open iso-props 𝔻 public
+    module F = efctr F
+    module G = efctr G
+  open natural-trans-defs F G
+  mk-natiso : {a : {X : ℂ.Obj} → || 𝔻.Hom (F.ₒ X) (G.ₒ X) ||}{a⁻¹ : {X : ℂ.Obj} → || 𝔻.Hom (G.ₒ X) (F.ₒ X) ||}(aiso : {X : ℂ.Obj} → 𝔻.is-iso-pair (a {X}) (a⁻¹ {X})) → is-natural a
+                   → F ≅ₐ G
+  mk-natiso {a} {a⁻¹} aiso anat = record
+    { natt = record
+           { fnc = a
+           ; nat = anat
+           }
+    ; natt⁻¹ = record
+             { fnc = a⁻¹
+             ; nat = λ {X} {Y} f → 𝔻.iso-sq (aiso {X}) (aiso {Y}) (anat f)
+             }
+    ; isiso = aiso
+    }
+-- end natural-iso-defs                   
 
 ≅ₐrefl : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
          {F : efunctorₗₑᵥ ℂ 𝔻} → F ≅ₐ F

@@ -10,11 +10,11 @@ open import ecats.basic-defs.ecat-def&not
 
 -- Equalisers
 
-module equaliser-defs (ℂ : ecategory) where
-  open ecategory ℂ
+module equaliser-defs {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
+  open ecat ℂ
 
   record is-equaliser {A B E : Obj} {f f' : || Hom A B ||} {e : || Hom E A ||}
-                      (pfeq : f ∘ e ~ f' ∘ e) : Set₁ where
+                      (pfeq : f ∘ e ~ f' ∘ e) : Set ℓₐₗₗ where
     --constructor mkis-weql
     field
       _|[_] : {C : Obj} (h : || Hom C A ||) → f ∘ h ~ f' ∘ h → || Hom C E ||
@@ -23,7 +23,7 @@ module equaliser-defs (ℂ : ecategory) where
       uq : {C : Obj} {h h' : || Hom C E ||} → e ∘ h ~ e ∘ h' → h ~ h'
                   
 
-  record equaliser-of {A B : Obj} (f f' : || Hom A B ||) : Set₁ where
+  record equaliser-of {A B : Obj} (f f' : || Hom A B ||) : Set ℓₐₗₗ where
     constructor mkeql-of
     field
       {Ob} : Obj
@@ -35,7 +35,7 @@ module equaliser-defs (ℂ : ecategory) where
 -- end equaliser-defs
 
 
-record has-equalisers (ℂ : ecategory) : Set₁ where
+record has-equalisers {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) : Set (ecat.ℓₐₗₗ ℂ) where
   open ecategory-aux ℂ
   open equaliser-defs ℂ
   field
