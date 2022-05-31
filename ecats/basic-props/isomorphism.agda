@@ -71,6 +71,27 @@ module iso-props {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ 
           module f = is-iso-pair isopf
           module g = is-iso-pair isopg
 
+  iso-pair-tricmp : {a b c d : Obj}{f₁ : || Hom a b ||}{f₁⁻¹ : || Hom b a ||}{f₂ : || Hom b c ||}
+                    {f₂⁻¹ : || Hom c b ||}{f₃ : || Hom c d ||}{f₃⁻¹ : || Hom d c ||}
+                      → is-iso-pair f₁ f₁⁻¹ → is-iso-pair f₂ f₂⁻¹ → is-iso-pair f₃ f₃⁻¹
+                        → is-iso-pair (f₃ ∘ f₂ ∘ f₁) (f₁⁻¹ ∘ f₂⁻¹ ∘ f₃⁻¹)
+  iso-pair-tricmp {f₁ = f₁} {f₁⁻¹} {f₂} {f₂⁻¹} {f₃} {f₃⁻¹} isop₁ isop₂ isop₃ = record
+    { iddom = ~proof (f₁⁻¹ ∘ f₂⁻¹ ∘ f₃⁻¹) ∘ f₃ ∘ f₂ ∘ f₁    ~[ assˢ ⊙ (∘e (assˢ ⊙ ∘e ass r) r ⊙ ass) ] /
+                     (f₁⁻¹ ∘ f₂⁻¹) ∘ (f₃⁻¹ ∘ f₃) ∘ f₂ ∘ f₁  ~[ ∘e (lidcmp f₃.iddom) r ⊙ assˢ ] /
+                     f₁⁻¹ ∘ f₂⁻¹ ∘ f₂ ∘ f₁                 ~[ ∘e (ass ⊙ lidcmp f₂.iddom) r ] /
+                     f₁⁻¹ ∘ f₁                            ~[ f₁.iddom ]∎
+                     idar _ ∎
+    ; idcod = ~proof (f₃ ∘ f₂ ∘ f₁) ∘ f₁⁻¹ ∘ f₂⁻¹ ∘ f₃⁻¹    ~[ assˢ ⊙ (∘e (assˢ ⊙ ∘e ass r) r ⊙ ass) ] /
+                     (f₃ ∘ f₂) ∘ (f₁ ∘ f₁⁻¹) ∘ f₂⁻¹ ∘ f₃⁻¹  ~[ ∘e (lidcmp f₁.idcod) r ⊙ assˢ ] /
+                     f₃ ∘ f₂ ∘ f₂⁻¹ ∘ f₃⁻¹                 ~[ ∘e (ass ⊙ lidcmp f₂.idcod) r ] /
+                     f₃ ∘ f₃⁻¹                            ~[ f₃.idcod ]∎
+                     idar _ ∎
+    }
+    where open ecategory-aux-only ℂ
+          module f₁ = is-iso-pair isop₁
+          module f₂ = is-iso-pair isop₂
+          module f₃ = is-iso-pair isop₃
+
   iso-cmp : {a b c : Obj}{f : || Hom a b ||}{g : || Hom b c ||}
                   → is-iso f → is-iso g → is-iso (g ∘ f)
   iso-cmp isof isog = mkis-iso (isopair-cmp f.isisopair g.isisopair)

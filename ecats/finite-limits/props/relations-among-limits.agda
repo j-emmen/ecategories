@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.finite-limits.props.relations-among-limits where
 
@@ -89,9 +85,9 @@ module relations-among-limit-diagrams (ℂ : ecategory) where
 
     is-pb→is-eql : is-pb-square (mksq cone) → is-equaliser eq
     is-pb→is-eql ispb = record
-      { _|eql[_] = λ h pf → ⟨ π₁ ∘ h , π₂ ∘ h ⟩[ unpf pf ]
-      ; eqltr = λ pf → ×uq (ass ⊙ ∘e r etr₁ ⊙ ×/tr₁ (unpf pf)) (ass ⊙ ∘e r etr₂ ⊙ ×/tr₂ (unpf pf))
-      ; eqluq = mono-pf
+      { _|[_] = λ h pf → ⟨ π₁ ∘ h , π₂ ∘ h ⟩[ unpf pf ]
+      ; tr = λ pf → ×uq (ass ⊙ ∘e r etr₁ ⊙ ×/tr₁ (unpf pf)) (ass ⊙ ∘e r etr₂ ⊙ ×/tr₂ (unpf pf))
+      ; uq = mono-pf
       }
       where open pullback-sq-not (mkpb-sq ispb)
             unpf : {X : Obj} {h : || Hom X AxB ||} → (a ∘ π₁) ∘ h ~ (b ∘ π₂) ∘ h
@@ -103,9 +99,9 @@ module relations-among-limit-diagrams (ℂ : ecategory) where
 
     is-eql→is-pb : is-equaliser eq → is-pb-square (mksq cone)
     is-eql→is-pb iseql = record
-      { ⟨_,_⟩[_] = λ h k pf → < h , k > |eql[ unpf pf ]
-      ; ×/tr₁ = λ pf → ∘e r (etr₁ ˢ) ⊙ (assˢ ⊙ ∘e (eqltr (unpf pf)) r ⊙ ×tr₁) 
-      ; ×/tr₂ = λ pf → ∘e r (etr₂ ˢ) ⊙ (assˢ ⊙ ∘e (eqltr (unpf pf)) r ⊙ ×tr₂) 
+      { ⟨_,_⟩[_] = λ h k pf → < h , k > |[ unpf pf ]
+      ; ×/tr₁ = λ pf → ∘e r (etr₁ ˢ) ⊙ (assˢ ⊙ ∘e (tr (unpf pf)) r ⊙ ×tr₁) 
+      ; ×/tr₂ = λ pf → ∘e r (etr₂ ˢ) ⊙ (assˢ ⊙ ∘e (tr (unpf pf)) r ⊙ ×tr₂) 
       ; ×/uq = jm-pf
       }
       where open is-equaliser iseql
@@ -124,9 +120,9 @@ module relations-among-limit-diagrams (ℂ : ecategory) where
   pbof→eqlofπ's : {A B : Obj} (A×B : product-of A B) {I : Obj} {f : || Hom A I ||} {g : || Hom B I ||} 
                     → pullback-of f g → equaliser-of (f ∘ ×of.π₁ A×B) (g ∘ ×of.π₂ A×B)
   pbof→eqlofπ's A×B {f = f} {g} pbof = record
-    { Eql = ul
-    ; eqlar = < π/₁ , π/₂ >
-    ; eqleq = eq
+    { Ob = ul
+    ; ar = < π/₁ , π/₂ >
+    ; eq = eq
     ; iseql = is-pb→is-eql ×/ispbsq
     }
     where open pullback-of-not pbof
@@ -144,10 +140,10 @@ module relations-among-limit-diagrams (ℂ : ecategory) where
     where open equaliser-of eqlof
           cone : square/cosp f g
           cone = record
-               { upleft = mkspan/ (×of.π₁ A×B ∘ eqlar) (×of.π₂ A×B ∘ eqlar)
-               ; sq-pf = ass ⊙ eqleq ⊙ assˢ
+               { upleft = mkspan/ (×of.π₁ A×B ∘ ar) (×of.π₂ A×B ∘ ar)
+               ; sq-pf = ass ⊙ eq ⊙ assˢ
                }
-          open square-is-pullback↔subprod-is-equaliser cone A×B {eqlar} eqleq r r
+          open square-is-pullback↔subprod-is-equaliser cone A×B {ar} eq r r
           
 
 
@@ -189,18 +185,18 @@ module relations-among-limit-diagrams (ℂ : ecategory) where
 
     is-eql→is-pb : is-equaliser eq → is-pb-square (mksq (mksq/ sqpf))
     is-eql→is-pb iseql = record
-      { ⟨_,_⟩[_] = λ h k pf → h |eql[ sq2eql pf ]
-      ; ×/tr₁ = λ pf → eqltr (sq2eql pf)
-      ; ×/tr₂ = λ pf → ∘e r tr₁ ⊙ (assˢ ⊙ ∘e (eqltr (sq2eql pf)) r ⊙ sq2eq₁ pf)
-      ; ×/uq = λ pf1 pf2 → eqluq pf1
+      { ⟨_,_⟩[_] = λ h k pf → h |[ sq2eql pf ]
+      ; ×/tr₁ = λ pf → tr (sq2eql pf)
+      ; ×/tr₂ = λ pf → ∘e r tr₁ ⊙ (assˢ ⊙ ∘e (tr (sq2eql pf)) r ⊙ sq2eq₁ pf)
+      ; ×/uq = λ pf1 pf2 → uq pf1
       }
       where open is-equaliser iseql            
     
     is-pb→is-eql : is-pb-square (mksq (mksq/ sqpf)) → is-equaliser eq
     is-pb→is-eql ispb = record
-      { _|eql[_] = λ h pf → ⟨ h , f ∘ h ⟩[ unpf pf ]
-      ; eqltr = λ pf → ×/tr₁ (unpf pf)
-      ; eqluq = λ pf → ×/uq pf (∘e r tr₁ ⊙ (assˢ ⊙ ∘e pf r ⊙ (ass ⊙ ∘e r (tr₁ ˢ))))
+      { _|[_] = λ h pf → ⟨ h , f ∘ h ⟩[ unpf pf ]
+      ; tr = λ pf → ×/tr₁ (unpf pf)
+      ; uq = λ pf → ×/uq pf (∘e r tr₁ ⊙ (assˢ ⊙ ∘e pf r ⊙ (ass ⊙ ∘e r (tr₁ ˢ))))
       }
       where open pullback-of-not (mkpb-of ispb)
             unpf : {C : Obj} {h : || Hom C A ||} (pf : f ∘ h ~ f' ∘ h)
@@ -218,7 +214,7 @@ module relations-among-limit-diagrams (ℂ : ecategory) where
     }
     where open equaliser-of eqlof
           open product-of-not B×B
-          open equaliser↔pullback-of-diag B×B eqleq {f ∘ eqlar} (<>ar~<>ar lidˢ (lidgenˢ (eqleq ˢ)))
+          open equaliser↔pullback-of-diag B×B eq {f ∘ ar} (<>ar~<>ar lidˢ (lidgenˢ (eq ˢ)))
 
   pbof<>→eqlof : {B : Obj} (B×B : product-of B B) {A : Obj} {f f' : || Hom A B ||}
                     → pullback-of < f , f' >[ B×B ] (Δpf B×B) → equaliser-of f f'
@@ -284,18 +280,18 @@ module eql+pb⇒bw {ℂ : ecategory} (has-eql : has-equalisers ℂ) (has-pb : ha
     private
       module eql-a2 = equaliser-of eql-a2
 
-    ×//sqpf₁ : sp₁.a1 ∘ a1×/a1.π/₁ ∘ eql-a2.eqlar ~ sp₂.a1 ∘ a1×/a1.π/₂ ∘ eql-a2.eqlar
+    ×//sqpf₁ : sp₁.a1 ∘ a1×/a1.π/₁ ∘ eql-a2.ar ~ sp₂.a1 ∘ a1×/a1.π/₂ ∘ eql-a2.ar
     ×//sqpf₁ = ass ⊙ ∘e r a1×/a1.×/sqpf ⊙ assˢ
 
-    ×//sqpf₂ : sp₁.a2 ∘ a1×/a1.π/₁ ∘ eql-a2.eqlar ~ sp₂.a2 ∘ a1×/a1.π/₂ ∘ eql-a2.eqlar
-    ×//sqpf₂ = ass ⊙ eql-a2.eqleq ⊙ assˢ
+    ×//sqpf₂ : sp₁.a2 ∘ a1×/a1.π/₁ ∘ eql-a2.ar ~ sp₂.a2 ∘ a1×/a1.π/₂ ∘ eql-a2.ar
+    ×//sqpf₂ = ass ⊙ eql-a2.eq ⊙ assˢ
 
     isbow : is-bow ×//sqpf₁ ×//sqpf₂
     isbow = record
-      { ⟨_,_⟩[_,_] = λ f₁ f₂ pf₁ pf₂ →  a1×/a1.⟨ f₁ , f₂ ⟩[ pf₁ ] eql-a2.|eql[ univpf pf₁ pf₂ ]
-      ; tr₁ = λ pf₁ pf₂ → assˢ ⊙ ∘e (eql-a2.eqltr (univpf pf₁ pf₂)) r ⊙ ×/tr₁ pf₁
-      ; tr₂ = λ pf₁ pf₂ → assˢ ⊙ ∘e (eql-a2.eqltr (univpf pf₁ pf₂)) r ⊙ ×/tr₂ pf₁
-      ; uq = λ pf₁ pf₂ → eql-a2.eqluq (a1×/a1.×/uq (ass ⊙ pf₁ ⊙ assˢ) (ass ⊙ pf₂ ⊙ assˢ))
+      { ⟨_,_⟩[_,_] = λ f₁ f₂ pf₁ pf₂ →  a1×/a1.⟨ f₁ , f₂ ⟩[ pf₁ ] eql-a2.|[ univpf pf₁ pf₂ ]
+      ; tr₁ = λ pf₁ pf₂ → assˢ ⊙ ∘e (eql-a2.tr (univpf pf₁ pf₂)) r ⊙ ×/tr₁ pf₁
+      ; tr₂ = λ pf₁ pf₂ → assˢ ⊙ ∘e (eql-a2.tr (univpf pf₁ pf₂)) r ⊙ ×/tr₂ pf₁
+      ; uq = λ pf₁ pf₂ → eql-a2.uq (a1×/a1.×/uq (ass ⊙ pf₁ ⊙ assˢ) (ass ⊙ pf₂ ⊙ assˢ))
       }
       where univpf : {X : Obj} {f₁ : || Hom X sp₁.O12 ||} {f₂ : || Hom X sp₂.O12 ||}
                      (pf₁ : sp₁.a1 ∘ f₁ ~ sp₂.a1 ∘ f₂) (pf₂ : sp₁.a2 ∘ f₁ ~ sp₂.a2 ∘ f₂)
@@ -309,7 +305,7 @@ module eql+pb⇒bw {ℂ : ecategory} (has-eql : has-equalisers ℂ) (has-pb : ha
     
     bw-of : bow-of sp₁ sp₂
     bw-of = record
-      { sp = mkspan/ (a1×/a1.π/₁ ∘ eql-a2.eqlar) (a1×/a1.π/₂ ∘ eql-a2.eqlar)
+      { sp = mkspan/ (a1×/a1.π/₁ ∘ eql-a2.ar) (a1×/a1.π/₂ ∘ eql-a2.ar)
       ; sqpf₁ = ×//sqpf₁
       ; sqpf₂ = ×//sqpf₂
       ; is-bw = isbow

@@ -1,19 +1,14 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K  #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.is-left-covering where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
-open import ecats.basic-defs.all-arrows
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.epi&mono-basic
 open import ecats.basic-props.epi&mono
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.exact-ecat
+open import ecats.reg&ex
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
@@ -41,8 +36,8 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       open ecategory Ex ℂ [ hasfwl ] public
       open comm-shapes Ex ℂ [ hasfwl ] public
       open iso-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
+      open epi&mono-props-basic Ex ℂ [ hasfwl ] public
       open finite-weak-limits Ex ℂ [ hasfwl ] public
       open finite-limits Ex ℂ [ hasfwl ] public
       open limits→weak-limits Ex ℂ [ hasfwl ] public
@@ -51,7 +46,7 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       open has-terminal hastrm public
       open has-bin-products hasprd public
     module CVex = efunctor-aux CVex ℂ [ hasfwl ]
-  open exact-compl-universal-def hasfwl
+  --open exact-compl-universal-def hasfwl
 
   module extension-is-left-cov {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                                {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
@@ -61,8 +56,8 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
         open ecategory 𝔼 public
         open comm-shapes 𝔼 public
         open iso-defs 𝔼 public
-        open epis&monos-defs 𝔼 public
-        open epis&monos-props 𝔼 public
+        open epi&mono-defs 𝔼 public
+        open epi&mono-props-all 𝔼 public
         open eq-rel-defs 𝔼 public
         open kernel-pairs-defs 𝔼 public
         open finite-limits-d&p 𝔼 public
@@ -77,14 +72,14 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       module F = efunctor-aux F
       module lcF = is-left-covering lcovF
       F↑ex : efunctor Ex ℂ [ hasfwl ] 𝔼
-      F↑ex = ↑ex ex𝔼 lcovF
+      F↑ex = F CV↑ex[ hasfwl , ex𝔼 , lcovF ]
       module F↑ex = efunctor-aux F↑ex
       reg𝔼 : is-regular 𝔼
       reg𝔼 = ex𝔼.is-reg
       -- it seems that declaring reg𝔼 explicitly is crucial
       -- for typechecking Q/F↑ex.Ob A = F↑ex.ₒ A
       FRel : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
-      FRel = Rel reg𝔼 lcovF
+      FRel = Peq2Rel hasfwl reg𝔼 lcovF
       module FRel where
         open efunctor-aux FRel public
         private
@@ -194,8 +189,9 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       covP : || 𝔼.Hom (F.ₒ Lo[A×B].O12) P ||
       covP = QA×QB.diag 𝔼.∘ covFLo
       covP-repi : 𝔼.is-regular-epi covP
-      covP-repi = ∘c QA×QB.covpb.is-repi covFLo-repi
-                where open is-ecat-congr ex𝔼.regular-epi-is-congr
+      covP-repi = ex𝔼.repi-cmp covFLo-repi QA×QB.covpb.is-repi r
+                where open ecategory-aux-only 𝔼 using (r)
+                --is-ecat-congr ex𝔼.regular-epi-is-congr
 
       medEx : || Exℂ.Hom A×B.O12 wP ||
       medEx = wP.w< A×B.π₁ , A×B.π₂ >
@@ -264,6 +260,7 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
           module wbw = ℂ.wbow-of eqlLo
         module E = 𝔼.is-equaliser Epf
         module CRFB where
+          open eqrel-from-peq-funct hasfwl
           open eqrel-from-peq-via-left-covering reg𝔼 lcovF
           open eqrel-as-repi-mono-fact B public
           open rmfF% using (C; C-is-repi) public
@@ -297,7 +294,7 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
         module covE1 where
           open 𝔼.pullback-of-not covE1-pb public
           mono : 𝔼.is-monic π/₂
-          mono = pres-du covE1-pb (record { mono-pf = E.eqluq })
+          mono = pres-du covE1-pb (record { mono-pf = E.uq })
                where open 𝔼.is-pbof-stable 𝔼.mono-pbof-stb
           repi : 𝔼.is-regular-epi π/₁
           repi = pres-rl covE1-pb (Q/F↑ex.repi A)
@@ -359,9 +356,9 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
               Q/F↑B.ar 𝔼.∘ F.ₐ g.lo 𝔼.∘ k      ~[ ass ⊙ ∘e r (q-sq (FRel.ₐ g) ˢ) ⊙ assˢ ]∎
               F↑ex.ₐ g 𝔼.∘ Q/F↑ex.ar A 𝔼.∘ k ∎
             unE : || 𝔼.Hom D E ||
-            unE = (Q/F↑ex.ar A 𝔼.∘ k) E.|eql[ unE-pf ]
+            unE = (Q/F↑ex.ar A 𝔼.∘ k) E.|[ unE-pf ]
             un-pfl :  e 𝔼.∘ unE 𝔼.~ Q/F↑ex.ar A 𝔼.∘ k
-            un-pfl = E.eqltr unE-pf
+            un-pfl = E.tr unE-pf
             unl : || 𝔼.Hom D covE1.ul ||
             unl = covE1.⟨ unE , k ⟩[ un-pfl ]
             un-pfr : bwπ 𝔼.∘ unl 𝔼.~ CFB 𝔼.∘ h
@@ -430,29 +427,29 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       covE : || 𝔼.Hom (F.ₒ Efg.wbw.Ob) E ||
       covE = covE1.π/₁ 𝔼.∘ covE2.π/₁ 𝔼.∘ covBw
       covE-repi : 𝔼.is-regular-epi covE
-      covE-repi = ∘c covE1.repi (∘c covE2.repi covBw-repi)
-                where open is-ecat-congr ex𝔼.regular-epi-is-congr
+      covE-repi = ex𝔼.repi-cmp (ex𝔼.repi-cmp covBw-repi covE2.repi r) covE1.repi r
+                where open ecategory-aux-only 𝔼 using (r)
 
-      medEx : || Exℂ.Hom Efg.eql.Eql wE ||
-      medEx = Efg.eql.eqlar wE.|weql[ Efg.eql.eqleq ]
+      medEx : || Exℂ.Hom Efg.eql.Ob wE ||
+      medEx = Efg.eql.ar wE.|w[ Efg.eql.eq ]
       F↑Efg-ob : 𝔼.Obj
-      F↑Efg-ob = F↑ex.ₒ Efg.eql.Eql
+      F↑Efg-ob = F↑ex.ₒ Efg.eql.Ob
       F↑medEx : || 𝔼.Hom F↑Efg-ob (F↑ex.ₒ wE) ||
-      F↑medEx = F↑ex.ₐ {Efg.eql.Eql} {wE} medEx
+      F↑medEx = F↑ex.ₐ {Efg.eql.Ob} {wE} medEx
       med : || 𝔼.Hom (F.ₒ Efg.wbw.Ob) (F↑ex.ₒ wE) ||
-      med = F↑medEx 𝔼.∘ Q/F↑ex.ar Efg.eql.Eql
+      med = F↑medEx 𝔼.∘ Q/F↑ex.ar Efg.eql.Ob
 
       F↑we : || 𝔼.Hom (F↑ex.ₒ wE) (F↑ex.ₒ A) ||
       F↑we = F↑ex.ₐ {wE} {A} we
       F↑Efg-ar : || 𝔼.Hom F↑Efg-ob (F↑ex.ₒ A) ||
-      F↑Efg-ar = F↑ex.ₐ {Efg.eql.Eql} {A} Efg.eql.eqlar
+      F↑Efg-ar = F↑ex.ₐ {Efg.eql.Ob} {A} Efg.eql.ar
       cov-tr-aux : F↑we 𝔼.∘  F↑medEx 𝔼.~ F↑Efg-ar
-      cov-tr-aux = F↑ex.∘ax {Efg.eql.Eql} {wE} {A} {medEx} {we} {Efg.eql.eqlar} (wE.weqltr Efg.eql.eqleq)
+      cov-tr-aux = F↑ex.∘ax {Efg.eql.Ob} {wE} {A} {medEx} {we} {Efg.eql.ar} (wE.wtr Efg.eql.eq)
       cov-tr : coveql 𝔼.∘ med 𝔼.~ covE
-      cov-tr = E.eqluq {F.ₒ Efg.wbw.Ob} {𝔼._∘_ coveql med} {covE} (~proof
+      cov-tr = E.uq {F.ₒ Efg.wbw.Ob} {𝔼._∘_ coveql med} {covE} (~proof
         e 𝔼.∘ coveql 𝔼.∘ med                                ~[ ass ⊙ ∘e r trpf ] /
         F↑we 𝔼.∘ med                                         ~[ ass ⊙ ∘e r cov-tr-aux ] /
-        F↑Efg-ar 𝔼.∘ Q/F↑ex.ar Efg.eql.Eql                   ~[ q-sq (FRel.ₐ Efg.eql.eqlar) ] /
+        F↑Efg-ar 𝔼.∘ Q/F↑ex.ar Efg.eql.Ob                   ~[ q-sq (FRel.ₐ Efg.eql.ar) ] /
         Q/F↑ex.ar A 𝔼.∘ F.ₐ Efg.wbw.wπ//₁                    ~[ ∘e (covBw-pf₁ ˢ ⊙ assˢ) r ] /
         Q/F↑ex.ar A 𝔼.∘ covE1.π/₂ 𝔼.∘ covE2.π/₁ 𝔼.∘ covBw   ~[ ass ⊙ ∘e r (covE1.×/sqpf ˢ) ⊙ assˢ ]∎
         e 𝔼.∘ covE ∎)
@@ -492,79 +489,9 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
 
 
 
-  ↑ex-is-left-covering : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
+  CV↑ex-is-left-covering : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                          {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
-                           → is-left-covering (↑ex ex𝔼 lcovF)
-  ↑ex-is-left-covering ex𝔼 lcovF = F↑ex-is-left-covering
+                           → is-left-covering (F CV↑ex[ hasfwl , ex𝔼 , lcovF ])
+  CV↑ex-is-left-covering ex𝔼 lcovF = F↑ex-is-left-covering
                                   where open extension-is-left-cov ex𝔼 lcovF using (F↑ex-is-left-covering)
 -- end exact-compl-universal-is-left-cov
-
-
-
-
-
-{-
-    module F↑ex-lcov-pullbacks {I A B wP : Exℂ.Obj} {a : || Exℂ.Hom A I ||} {b : || Exℂ.Hom B I ||}
-                               {wp₁ : || Exℂ.Hom wP A ||} {wp₂ : || Exℂ.Hom wP B ||}
-                               {wPsq : a Exℂ.∘ wp₁ Exℂ.~ b Exℂ.∘ wp₂}
-                               (wPpf : Exℂ.is-wpb-square (Exℂ.mksq (Exℂ.mksq/ {A} {I} {B} wPsq)))
-                               {P : 𝔼.Obj} {p₁ : || 𝔼.Hom P (F↑ex.ₒ A) ||} {p₂ : || 𝔼.Hom P (F↑ex.ₒ B) ||}
-                               {Psq : (F↑ex.ₐ a) 𝔼.∘ p₁ 𝔼.~ (F↑ex.ₐ b) 𝔼.∘ p₂}
-                               (Ppf : 𝔼.is-pb-square (𝔼.mksq (𝔼.mksq/ Psq)))
-                               {cov×/ : || 𝔼.Hom (F↑ex.ₒ wP) P ||}
-                               (pf₁ : p₁ 𝔼.∘ cov×/ 𝔼.~ F↑ex.ₐ wp₁) (pf₂ : p₂ 𝔼.∘ cov×/ 𝔼.~ F↑ex.ₐ wp₂)
-                               where
-      a×/b : Exℂ.pullback-of a b
-      a×/b = flExℂ.pb-of {I} {A} {B} a b
-      private
-        module I = ℂ.peq I
-        module A = ℂ.peq A
-        module B = ℂ.peq B
-        module a = ℂ.peq-mor a
-        module b = ℂ.peq-mor b
-        module wP where
-          open Exℂ.wpullback-of-not (Exℂ.mkwpb-of wPpf) public
-          module Ob = ℂ.peq wP
-          module wπ/₁ = ℂ.peq-mor wπ/₁
-          module wπ/₂ = ℂ.peq-mor wπ/₂
-        module a×/b where
-          open Exℂ.pullback-of-not a×/b public
-          module Ob = ℂ.peq ul
-          module π/₁ = ℂ.peq-mor π/₁
-          module π/₂ = ℂ.peq-mor π/₂
-        module P = 𝔼.pullback-of-not (𝔼.mkpb-of Ppf)
-
-      Lo[a×/b] : ℂ.wWlim-of a.lo I.sp/ b.lo
-      Lo[a×/b] = fwlℂ.wW-of a.lo I.sp/ b.lo
-              --where open has-fin-weak-limits hasfwl
-                --    open has-bin-weak-products haswprd using (wprd-of)
-                  --  open ℂ.wproduct-of (wprd-of A.Lo B.Lo)
-      Fa×/Fb : 𝔼.pullback-of (F.ₐ a.lo) (F.ₐ b.lo)
-      Fa×/Fb = ex𝔼.pb-of (F.ₐ a.lo) (F.ₐ b.lo)
-      private
-        module Lo[a×/b] = ℂ.wWlim-of Lo[a×/b]
-        module Fa×/Fb = 𝔼.pullback-of-not Fa×/Fb
-      covFLo : || 𝔼.Hom (F.ₒ a×/b.Ob.Lo) Fa×/Fb.ul ||
-      covFLo = Fa×/Fb.⟨ F.ₐ a×/b.π₁.lo , F.ₐ a×/b.π₂.lo ⟩[ ? ]
-      covFLo-repi : 𝔼.is-regular-epi covFLo
-      covFLo-repi = lcF.prduniv-is-repi (ℂ.mkw×of Lo[a×/b]) Fa×/Fb Fa×/Fb.×tr₁ Fa×/Fb.×tr₂
-      QA×QB : || 𝔼.Hom Fa×/Fb.O12 P ||
-      QA×QB = {!!}
-            where open ex𝔼.pb-of-reg-covers-is-reg-cover-of-pb (𝔼.mkpb-of (𝔼.×is-pb-on! ex𝔼.istrm Ppf))
-                                                                (𝔼.repi-is-reg-cov {!!})
-                                                                {!!}
-
-      medEx : || Exℂ.Hom a×/b.O12 wP ||
-      medEx = wP.w< a×/b.π₁ , a×/b.π₂ >
-      med : || 𝔼.Hom (F.ₒ Lo[a×/b].O12) (F↑ex.ₒ wP) ||
-      med = F↑ex.ₐ {a×/b.O12} {wP} medEx 𝔼.∘ Q/F↑ex.ar a×/b.O12
-
-      --covP-tr
-    -- end F↑ex-lcov-pullbacks
-
-    F↑ex-is-left-covering-pb : is-left-covering-pb F↑ex
-    F↑ex-is-left-covering-pb = record
-      { pbuniv-is-repi = {!!}
-      }
-      where open F↑ex-lcov-pullbacks
--}
