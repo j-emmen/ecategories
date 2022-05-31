@@ -3,9 +3,8 @@
 
 module ecats.concr-ecats.Std where
 
-open import Agda.Primitive
 open import tt-basics.basics
-open import tt-basics.id-type
+--open import tt-basics.id-type
 open import tt-basics.setoids renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.arrows
@@ -114,7 +113,7 @@ module equalisers-in-Std {A B : setoid} (f f' : || setoidmaps A B ||) where
     module B = setoid-aux B
     module f = setoidmap f
     module f' = setoidmap f'
-  Ob : setoid {lzero}
+  Ob : setoid {0ₗₑᵥ}
   Ob = record
     { object = Σ || A ||std (λ x →  < B > f.op x ~ f'.op x)
     ; _∼_ = λ z z' → < A > pj1 z ~ pj1 z'
@@ -231,7 +230,7 @@ module coeq-of-eqv-rel-in-Std {A : Std.Obj} (eqr : Std.eqrel-over A) where
       module τpb = Std.pullback-of-not τpb
     Rel : (a a' : || A ||std) → || eqr.relOb ||std → Set
     Rel a a' p = prod (< A > eqr.r₁.op p ~ a) (< A > eqr.r₂.op p ~ a')
-    Ob : setoid {lzero}
+    Ob : setoid {0ₗₑᵥ}
     Ob = record
        { object = || A ||std
        ; _∼_ = λ a a' → Σ || eqr.relOb ||std (Rel a a')

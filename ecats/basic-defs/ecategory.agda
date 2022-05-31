@@ -40,6 +40,7 @@ record is-ecategory {ℓ₁ ℓ₂ ℓ₃ : Level}(Obj : Set ℓ₁)
   ℓₙₒ~ = ℓₒ ⊔ ℓₐᵣᵣ
   ℓₐₗₗ = ℓₒ ⊔ ℓₕₒₘ
 
+
 record ecategoryₗₑᵥ (ℓ₁ ℓ₂ ℓ₃ : Level) : Set (sucₗₑᵥ (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃)) where
   field
     Obj : Set ℓ₁

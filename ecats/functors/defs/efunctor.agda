@@ -74,7 +74,7 @@ module diagram {𝕀 : small-ecategory}{ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecat
                = efunctorₗₑᵥ F
 
 
-IdF : {ℓₒ ℓₕ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~} → efunctorₗₑᵥ ℂ ℂ
+IdF : {ℓₒ ℓₕ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~} → efunctor ℂ ℂ
 IdF {ℂ = ℂ} = record
   { FObj = λ A → A
   ; FHom = λ f → f
@@ -85,6 +85,21 @@ IdF {ℂ = ℂ} = record
         }
   }
   where open ecategory-aux ℂ
+
+
+cnstF :  {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~)
+         {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~)
+              → ecat.Obj 𝔻 → efunctorₗₑᵥ ℂ 𝔻
+cnstF ℂ 𝔻 Y = record
+  { FObj = λ _ → Y
+  ; FHom = λ _ → 𝔻.idar Y
+  ; isF = record
+        { ext = λ _ → 𝔻.r
+        ; id = λ {_} → 𝔻.r
+        ; cmp = λ _ _ → 𝔻.rid
+        }
+  }
+  where module 𝔻 = ecategory-aux 𝔻
 
 
 efunctor-cmpₗₑᵥ : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
@@ -111,16 +126,4 @@ _○_ : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ₒ
           → efunctorₗₑᵥ 𝔻 𝔼 → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ ℂ 𝔼
 G ○ F = efunctor-cmpₗₑᵥ G F
 
-cnstF :  {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~)
-         {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~)
-              → ecat.Obj 𝔻 → efunctorₗₑᵥ ℂ 𝔻
-cnstF ℂ 𝔻 Y = record
-  { FObj = λ _ → Y
-  ; FHom = λ _ → 𝔻.idar Y
-  ; isF = record
-        { ext = λ _ → 𝔻.r
-        ; id = λ {_} → 𝔻.r
-        ; cmp = λ _ _ → 𝔻.rid
-        }
-  }
-  where module 𝔻 = ecategory-aux 𝔻
+

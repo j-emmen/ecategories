@@ -13,7 +13,7 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.preserving-functor
-
+open import ecats.functors.props.efunctor
 
 
 module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
@@ -26,7 +26,9 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
         open finite-weak-limits 𝕏 public
     module ℂ = macros ℂ
     module 𝔻 = macros 𝔻
-    module F = efunctor-aux F
+    module F where
+      open efunctor-aux F public
+      open efunctor-lev-props F public
 
   Fpres-iso : {A B : ℂ.Obj} {f : || ℂ.Hom A B ||}
                  → ℂ.is-iso f → 𝔻.is-iso (F.ₐ f)
@@ -43,7 +45,6 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     ; nat = λ f → F.∘∘ (α.nat f)
     }
     where module α = natural-transformation α
-
 
   Fridx-natt : {𝔼 : ecategory}{H K : efunctor 𝔻 𝔼}(α : natural-transformation H K)
                   → natural-transformation (H ○ F) (K ○ F)

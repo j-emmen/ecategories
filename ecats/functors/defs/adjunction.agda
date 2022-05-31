@@ -242,11 +242,6 @@ private
   module coelem-aux {ℓₒ₁ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ ℓ~}{ℓₒ₂}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ ℓ~}
                     (L : efunctorₗₑᵥ ℂ 𝔻)(R : efunctorₗₑᵥ 𝔻 ℂ)
                     (A : ecat.Obj ℂ) where
-      private
-        module ℂ = ecat ℂ
-        module 𝔻 = ecat 𝔻
-        module L = efctr L
-        module R = efctr R
       [A,R─] : copresheafₗₑᵥ 𝔻
       [A,R─] = ℂ [ₒ A ,─] ○ R
       open ecategory-aux (ecat-coelmts [A,R─]) public
@@ -256,11 +251,6 @@ private
   module elem-aux {ℓₒ₁ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ ℓ~}{ℓₒ₂}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ ℓ~}
                   (L : efunctorₗₑᵥ ℂ 𝔻)(R : efunctorₗₑᵥ 𝔻 ℂ)
                   (B : ecat.Obj 𝔻) where
-      private
-        module ℂ = ecat ℂ
-        module 𝔻 = ecat 𝔻
-        module L = efctr L
-        module R = efctr R
       [L─,B] : presheafₗₑᵥ ℂ 
       [L─,B] = 𝔻 [─, B ₒ] ○ L ᵒ      
       open ecategory-aux (ecat-elmts [L─,B]) public
