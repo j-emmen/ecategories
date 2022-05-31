@@ -1,23 +1,16 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-defs.quotient-ecat where
 
-open import basics
-open import setoids
+open import tt-basics.basics
+open import tt-basics.setoids using (setoid)
 open import ecats.basic-defs.ecat-def&not
---open import ecats.basic-defs.epi&mono
---open import ecats.basic-defs.image-fact
---open import ecats.finite-limits.defs.pullback
 open import ecats.functors.defs.efunctor-d&n
 
 
 module HomEqvrel-defs (ℂ : ecategory) where
-  open ecategory ℂ
+  open ecategory-aux ℂ
 
   record isHomEqvrel (R : {X Y : Obj} → || Hom X Y || → || Hom X Y || → Set) : Set₁ where
     field
@@ -67,8 +60,8 @@ module quotient-ecategory (ℂ : ecategory) where
                { _∘_ = ℂ._∘_
                ; idar = ℂ.idar
                ; ∘ext = λ f f' g g' → HR.is∘cngr {f = f} {f'} {g} {g'}
-               ; lid = λ f → HR.isext (ℂ.lid f)
-               ; rid = λ f → HR.isext (ℂ.rid f)
+               ; lidax = λ f → HR.isext (ℂ.lidax f)
+               ; ridax = λ f → HR.isext (ℂ.ridax f)
                ; assoc = λ f g h → HR.isext (ℂ.assoc f g h)
                }
       }
@@ -77,9 +70,11 @@ module quotient-ecategory (ℂ : ecategory) where
     qℂ = record
       { FObj = λ X → X
       ; FHom = λ f → f
-      ; ext = HR.isext
-      ; id = λ {_} → r
-      ; cmp = λ _ _ → r
+      ; isF = record
+            { ext = HR.isext
+            ; id = λ {_} → r
+            ; cmp = λ _ _ → r
+            }
       }
       where open ecategory-aux-only Qℂ
 
