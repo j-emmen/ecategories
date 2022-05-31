@@ -37,6 +37,32 @@ two = s one
 three = s two
 four = s three
 
+-- disjoint sum of a family of types
+
+infix 3 _,_
+
+data Σ {i j} (A : Set i) (B : A → Set j) : Set (i ⊔ j) where
+   _,_ : (a : A) → B a → Σ A B
+
+pj1 : ∀ {i j} {A : Set i} → {B : A → Set j} → Σ A B → A
+pj1 (a , b) = a
+
+pj2 : ∀ {i j} {A : Set i} → {B : A → Set j}  → (u : Σ A B) → (B (pj1 u))
+pj2 (a , b) = b
+
+
+-- binary product
+
+data prod {i j} (A : Set i) (B : Set j) : Set (i ⊔ j) where
+   pair : A → B → prod A B
+
+prj1 : ∀ {i j} {A : Set i} → {B : Set j}  → prod A B → A
+prj1 (pair a b) = a
+
+prj2 : ∀ {i j} {A : Set i} → {B : Set j}  → prod A B → B
+prj2 (pair a b) = b
+
+
 -- disjoint sums
 
 data sum {i j} (A : Set i)(B : Set j) : Set (i ⊔ j) where
@@ -175,30 +201,6 @@ Fin-insl n {C} f c₀ = Finsrec n {C'} f c₀ ?
                           lr i c = {!!}
 -}
 
--- disjoint sum of a family of types
-
-infix 3 _,_
-
-data Σ {i j} (A : Set i) (B : A → Set j) : Set (i ⊔ j) where
-   _,_ : (a : A) → B a → Σ A B
-
-pj1 : ∀ {i j} {A : Set i} → {B : A → Set j} → Σ A B → A
-pj1 (a , b) = a
-
-pj2 : ∀ {i j} {A : Set i} → {B : A → Set j}  → (u : Σ A B) → (B (pj1 u))
-pj2 (a , b) = b
-
-
--- binary product
-
-data prod {i j} (A : Set i) (B : Set j) : Set (i ⊔ j) where
-   pair : A → B → prod A B
-
-prj1 : ∀ {i j} {A : Set i} → {B : Set j}  → prod A B → A
-prj1 (pair a b) = a
-
-prj2 : ∀ {i j} {A : Set i} → {B : Set j}  → prod A B → B
-prj2 (pair a b) = b
 
 
 -- Logic using propositions as types
