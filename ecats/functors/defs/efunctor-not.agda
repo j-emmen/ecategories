@@ -18,12 +18,8 @@ module efunctor-aux-only {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆}{ℂ : ecate
       open ecat ℂ public
       open iso-defs ℂ public
       open comm-shapes ℂ public
-    module ℂ where
-      open catnot ℂ public
-      open iso-defs ℂ public
-    module 𝔻 where
-      open catnot 𝔻 public
-      open iso-defs 𝔻 public
+    module ℂ = catnot ℂ
+    module 𝔻 = catnot 𝔻
     module F = efctr F
     
   -- only equational reasoning in 𝔻 is needed

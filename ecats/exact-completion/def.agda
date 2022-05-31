@@ -9,6 +9,7 @@ open import ecats.basic-defs.exact-ecat
 open import ecats.basic-props.exact-ecat
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
@@ -57,7 +58,7 @@ record is-exwlex-completion {ℂ : ecategory}(hasfwl : has-fin-weak-limits ℂ)
      (unv'.uq exG α)
      where open has-fin-weak-limits hasfwl using (hasweql; haswpb)
            open is-exact cat-ex using () renaming (hasfl to flExℂ)
-           open exact-cat-props ex𝔼 using () renaming (is-reg to reg𝔼)
+           open exact-cat-props-only ex𝔼 using () renaming (is-reg to reg𝔼)
            module unv' = emb-unv ex𝔼 {G' ○ emb} (ex○lcov-is-lcov hasweql haswpb flExℂ reg𝔼 emb-lcov exG')
 
 syntax is-exwlex-completion {ℂ} hasfwl emb = emb is-exact-completion-of ℂ [ hasfwl ]

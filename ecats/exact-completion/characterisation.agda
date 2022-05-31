@@ -10,6 +10,7 @@ open import ecats.basic-props.exact-ecat
 open import ecats.finite-limits.defs.collective
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.projective-cover
@@ -92,7 +93,6 @@ module exwlex-completion-is-unique {ℂ : ecategory}(fwlℂ : has-fin-weak-limit
   adjeqv↑ adjeqv↑direct : is-adj-equivalence-pair D↑.fctr E↑.fctr
   adjeqv↑ = eqv-is-adj-eqv-ε eqv↑
           where open equivalence-props D↑.fctr E↑.fctr
-
   adjeqv↑direct = record
     { ι1 = idcod
     ; ι2 = iddom

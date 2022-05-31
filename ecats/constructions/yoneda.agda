@@ -118,8 +118,8 @@ module yoneda-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ
 
   Yo-full : is-full (Yo ℂ)
   Yo-full = record
-    { full-ar = λ {X} {Y} → natt2el.ap ℂ[─, Y ] X
-    ; full-pf = λ {X} {Y} {μ} → id-natt ℂ[─, Y ] X μ
+    { ar = λ {X} {Y} → natt2el.ap ℂ[─, Y ] X
+    ; pf = λ {X} {Y} {μ} → id-natt ℂ[─, Y ] X μ
     }
     where open Lemma
 

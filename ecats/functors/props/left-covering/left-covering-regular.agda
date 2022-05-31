@@ -827,7 +827,7 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
 
 
   module lc-eql-pb-preserves-pb (Cweql : has-weak-equalisers ℂ) (Cwpb : has-weak-pullbacks ℂ)
-                                 (lceql : is-left-covering-eql F) (lcpb : is-left-covering-pb F)
+                                (lceql : is-left-covering-eql F) (lcpb : is-left-covering-pb F)
                                 where
     open is-left-covering-pb lcpb
 
@@ -907,14 +907,14 @@ lcov-eql+pb→lcov-bw {F = F} regE = lp.lcov-eql+pb→lcov-bw
 lcov-pb→pres-monic : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
                       (Cwpb : has-weak-pullbacks ℂ) → is-left-covering-pb F
                         → preserves-monic F
-lcov-pb→pres-monic {F = F} regE = lp.lcov-pb→pres-monos
+lcov-pb→pres-monic {F = F} regE = lp.lcov-pb→pres-monic
                                   where module lp = left-cov-relations-into-regular-cat F regE
 
 
 lcov-bw→pres-jm/ : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
                     (Cwbw : has-weak-bows ℂ)
                          → is-left-covering-bw F → preserves-jointly-monic/ F
-lcov-bw→pres-jm/ {F = F} regE = lp.lcov-pb→pres-monic
+lcov-bw→pres-jm/ {F = F} regE = lp.lcov-bw→pres-jm/
                                where module lp = left-cov-relations-into-regular-cat F regE
 
 

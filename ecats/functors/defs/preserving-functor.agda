@@ -59,23 +59,6 @@ record preserves-equalisers {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set
 
 
 private
-  module peql-macros (𝕏 : ecategory) where
-    open ecategory 𝕏 public
-    --open comm-shapes 𝕏 public
-    open equaliser-defs 𝕏 public
-    
-record preserves-equalisers {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
-  private
-    module ℂ = peql-macros ℂ
-    module 𝔻 = peql-macros 𝔻
-    module F = efunctor-aux F
-  field
-    pres-eql-pf : {A B E : ℂ.Obj}{f f' : || ℂ.Hom A B ||}{e : || ℂ.Hom E A ||}
-                  {pfeq : f ℂ.∘ e ℂ.~ f' ℂ.∘ e} → ℂ.is-equaliser pfeq
-                     → 𝔻.is-equaliser (F.∘∘ pfeq)
-
-
-private
   module ppb-macros (𝕏 : ecategory) where
     open ecategory 𝕏 public
     open comm-shapes 𝕏 public
@@ -88,14 +71,11 @@ record preserves-pullbacks {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set�
     module 𝔻 = ppb-macros 𝔻
     module F = efunctor-aux F
   field
-    pres-ispbof-pf : {I A B : ℂ.Obj}{a : || ℂ.Hom A I ||}{b : || ℂ.Hom B I ||}{sq/ : ℂ.square/cosp a b}
-                      → ℂ.is-pullback-of sq/ → 𝔻.is-pullback-of (F.sq/ sq/)
-
--- pbof-pf :  {I A B : ℂ.Obj}{a : || ℂ.Hom A I ||}{b : || ℂ.Hom B I ||} → ℂ.pullback-of a b → 
-
-
-{-
     pres-pbsq-pf : {sqC : ℂ.comm-square} → ℂ.is-pb-square sqC → 𝔻.is-pb-square (F.sq sqC)
+    {-pres-ispbof-pf : {I A B : ℂ.Obj}{a : || ℂ.Hom A I ||}{b : || ℂ.Hom B I ||}{sq/ : ℂ.square/cosp a b}
+                      → ℂ.is-pullback-of sq/ → 𝔻.is-pullback-of (F.sq/ sq/)-}
+
+{-    
   pres-pbsq-gen :  {sqC : ℂ.comm-square}
                    {p₁ : || 𝔻.Hom (F.ₒ (ℂ.sq.ul sqC)) (F.ₒ (ℂ.sq.dl sqC)) ||}
                    {p₂ : || 𝔻.Hom (F.ₒ (ℂ.sq.ul sqC)) (F.ₒ (ℂ.sq.ur sqC)) ||}
@@ -171,6 +151,7 @@ record preserves-jointly-monic/ {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) :
 private
   module ex-macros (𝕏 : ecategory) where
     open ecategory 𝕏 public
+    open comm-shapes 𝕏 public
     open kernel-pairs-defs 𝕏 public
     open pullback-squares 𝕏 public
     open epi&mono-defs 𝕏 public
@@ -183,20 +164,19 @@ record is-exact-functor {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ 
     module F = efunctor-aux F
   field
     presfl : preserves-fin-limits F
-    presrepi : preserves-regular-epis F
+    presre : preserves-regular-epis F
   open preserves-fin-limits presfl public
-  open preserves-regular-epis presrepi public
+  open preserves-regular-epis presre public
   pres-ex-seq-pf : {R A Q : ℂ.Obj} {r₁ r₂ : || ℂ.Hom R A ||} {q : || ℂ.Hom A Q ||}
                       → ℂ.is-exact-seq r₁ r₂ q → 𝔻.is-exact-seq (F.ₐ r₁) (F.ₐ r₂) (F.ₐ q)
   pres-ex-seq-pf {R} {A} {Q} {r₁} {r₂} {q} isex = record
-    { iscoeq = repi-is-coeq-of-ker-pair (pres-repi-pf repi) (𝔻.pbof-is2sq Fpb)
-    ; iskerpair = 𝔻.pb-is2sq Fpb.ispb
+    { iscoeq = repi-is-coeq-of-ker-pair (pres-repi-pf repi) (𝔻.mkpb-of Fpb)
+    ; iskerpair = Fpb
     }
     where module exs = ℂ.is-exact-seq isex
           repi : ℂ.is-regular-epi q
           repi = record { coeq = exs.iscoeq }
-          Fpb : 𝔻.is-pullback-of (F.sq/ exs.sq/)
-          Fpb = pres-ispbof-pf (ℂ.mkis-pb-of (ℂ.pb-sq2is exs.iskerpair))
-          module Fpb = 𝔻.is-pullback-of Fpb
-          open epis&monos-props 𝔻 using (repi-is-coeq-of-ker-pair)
+          Fpb : 𝔻.is-pb-square (𝔻.mksq (F.sq/ exs.sq/))
+          Fpb = pres-pbsq-pf exs.iskerpair
+          open epi&mono-props-all 𝔻 using (repi-is-coeq-of-ker-pair)
 

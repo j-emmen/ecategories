@@ -110,19 +110,19 @@ module small-limit-props (ℂ : ecategory) where
       unv-ar C = record
         { arL = ar
         ; tr = λ I → ~proof
-                L.leg I ℂ.∘ ar             ~[ assˢ ⊙ ∘e (eql.eqltr (cone→eqleq C)) r ] /
+                L.leg I ℂ.∘ ar             ~[ assˢ ⊙ ∘e (eql.tr (cone→eqleq C)) r ] /
                 dom.π I ℂ.∘ cone→eqlar C    ~[ dom.unv.tr (cone→span C) I ]∎
                 C.leg I ∎
         }
         where open ecategory-aux-only ℂ
               module C = Cone/D.ₒ C
               ar : || ℂ.Hom C.Vx L.Vx ||
-              ar = cone→eqlar C eql.|eql[ cone→eqleq C ]
+              ar = cone→eqlar C eql.|[ cone→eqleq C ]
 
 
       unv-uq : {C : Cone/D.Obj}(f : || Cone/D.Hom C L ||)
                   → f Cone/D.~ unv-ar C
-      unv-uq {C} f = eql.eqluq (dom.π-jm (cone→span C)
+      unv-uq {C} f = eql.uq (dom.π-jm (cone→span C)
                                          (λ I → ass ⊙ f.tr I)
                                          λ I → ass ⊙ unvar.tr I )
                    where open ecategory-aux-only ℂ using (ass; _⊙_)
@@ -171,23 +171,23 @@ module small-limit-props (ℂ : ecategory) where
 
     is-lim→is-eql : {L : Cone/D.Obj} → ℂ.is-limit-cone L → ℂ.is-equaliser (cone→eqleq L)
     is-lim→is-eql {L} islim = record
-        { _|eql[_] = unv-ar
-        ; eqltr = unv-tr
-        ; eqluq = unv-uq
+        { _|[_] = unv-ar
+        ; tr = unv-tr
+        ; uq = unv-uq
         }
         where open is-lim→is-eql islim
 
     lim-of→eql-of : ℂ.limit-of D → ℂ.equaliser-of ar₁ ar₂
     lim-of→eql-of lim = record
-      { eqlar = cone→eqlar lim.cone
-      ; eqleq = cone→eqleq lim.cone
+      { ar = cone→eqlar lim.cone
+      ; eq = cone→eqleq lim.cone
       ; iseql = is-lim→is-eql lim.islim
       }
       where module lim = ℂ.limit-of lim
 
     eql-of→lim-of : ℂ.equaliser-of ar₁ ar₂ → ℂ.limit-of D
     eql-of→lim-of eql = record
-      { cone = eqleq→cone eql.eqleq
+      { cone = eqleq→cone eql.eq
       ; islim = is-eql→is-lim eql.iseql
       }
       where module eql = ℂ.equaliser-of eql

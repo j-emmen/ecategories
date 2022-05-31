@@ -10,6 +10,7 @@ open import ecats.finite-limits.defs.collective
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.left-covering
 open import ecats.functors.defs.projective-cover
 open import ecats.exact-completion.def
@@ -43,7 +44,7 @@ module proj-cover-universal-comm {𝔼 : ecategory}(ex𝔼 : is-exact 𝔼)
       open pjc-eqv-CV ex𝔼 fwlℙ lcovPC pjcPC public
 
   pjc↑ex-tr : {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻){F : efunctor ℙ 𝔻}(lcovF : is-left-covering F)
-                 → F pjc↑ex[ ex𝔻 , lcovF ] ○ PC ≅ₐ F
+                 → (F pjc↑ex[ ex𝔻 , lcovF ]) ○ PC ≅ₐ F
   pjc↑ex-tr {𝔻}ex𝔻 {F} lcovF = natiso-vcmp
     ↑F.tr
     (natiso-vcmp (natiso-hcmp (≅ₐrefl {F = ↑F.fctr})

@@ -4,11 +4,13 @@
 module ecats.functors.props.projective-cover where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.arrows
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.epi&mono-basic
 open import ecats.reg&ex
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.projective-cover
@@ -30,8 +32,8 @@ module projective-cover-props {ℂ : ecategory}{ℙ : ecategory}
     module ℂ where
       open ecategory ℂ public
       open iso-defs ℂ public
-      open epis&monos-defs ℂ public
-      open epis&monos-props ℂ public
+      open epi&mono-defs ℂ public
+      open epi&mono-props-basic ℂ public
     module PC where
       open efunctor-aux PC public
       open is-projective-cover ispjcov public
@@ -80,7 +82,7 @@ module projective-cover-props {ℂ : ecategory}{ℙ : ecategory}
     private
       module 𝔻 where
         open ecategory 𝔻 public
-        open epis&monos-defs 𝔻 public
+        open epi&mono-defs 𝔻 public
       module F where
         open efunctor-props F public
         open is-adj-equivalence isaeqv public
@@ -100,12 +102,12 @@ module projective-cover-props {ℂ : ecategory}{ℙ : ecategory}
          {repi : 𝔻.is-regular-epi f} {g : || 𝔻.Hom (F○PC.ₒ X) B ||}
            → f 𝔻.∘ lift repi g 𝔻.~ g
     tr {f = f} {repi} {g} = ~proof
-      f 𝔻.∘ lift repi g                                   ~[ ass ⊙ ∘e r (F.ι1.natt.nat f ˢ) ⊙ assˢ ] /
+      f 𝔻.∘ lift repi g                                   ~[ ass ⊙ ∘e r (F.ι1.nat f ˢ) ⊙ assˢ ] /
       F.ι1.fnc 𝔻.∘ F.ₐ (F.inv.ₐ f) 𝔻.∘ F.ₐ (PC.rprj.lift X {_} {_} {F.inv.ₐ f}
                                                          (F.inv.pres-repi-pf repi)
                                                          (F.inv.ₐ g ℂ.∘ F.ι2.fnc⁻¹))
                                                            ~[ ∘e (F.∘∘ (PC.rprj.lift-tr X)) r ] /
-      F.ι1.fnc 𝔻.∘ F.ₐ (F.inv.ₐ g) 𝔻.∘ F.ₐ F.ι2.fnc⁻¹      ~[ ass ⊙ ∘e r (F.ι1.natt.nat g) ⊙ assˢ ] /
+      F.ι1.fnc 𝔻.∘ F.ₐ (F.inv.ₐ g) 𝔻.∘ F.ₐ F.ι2.fnc⁻¹      ~[ ass ⊙ ∘e r (F.ι1.nat g) ⊙ assˢ ] /
       g 𝔻.∘ F.ι1.fnc 𝔻.∘ F.ₐ F.ι2.fnc⁻¹                   ~[ ridgg r F.trid₁ ]∎
       g ∎
                           where open ecategory-aux-only 𝔻
@@ -119,8 +121,8 @@ module projective-cover-props {ℂ : ecategory}{ℙ : ecategory}
       module 𝔻 where
         open ecategory 𝔻 public
         open iso-defs 𝔻 public
-        open epis&monos-defs 𝔻 public
-        open epis&monos-props 𝔻 public
+        open epi&mono-defs 𝔻 public
+        open epi&mono-props-basic 𝔻 public
       module F where
         open efunctor-props F public
         open is-adj-equivalence isaeqv public
@@ -177,7 +179,8 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
     module ℙ where
       open ecategory ℙ public
       open comm-shapes ℙ public
-      open epi&mono-d&p ℙ public
+      open epi&mono-defs ℙ public
+      open epi&mono-props-basic ℙ public
       --open epis&monos-props ℙ public
       open kernel-pairs-defs ℙ public
       open finite-limits-d&p ℙ public
@@ -188,7 +191,8 @@ module prj-cover-of-lex-is-wlex {ℂ : ecategory} (hasfl : has-fin-limits ℂ)
       open ecategory ℂ public
       open comm-shapes ℂ public
       open iso-defs ℂ public
-      open epi&mono-d&p ℂ public
+      open epi&mono-defs ℂ public
+      open epi&mono-props-basic ℂ public
       --open epis&monos-props ℂ public
       open kernel-pairs-defs ℂ public
       open eq-rel-defs ℂ public
@@ -442,7 +446,8 @@ module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : i
     module ℙ where
       open ecategory ℙ public
       open comm-shapes ℙ public
-      open epi&mono-d&p ℙ public
+      open epi&mono-defs ℙ public
+      open epi&mono-props-basic ℙ public
       open kernel-pairs-defs ℙ public
       open pseudo-eq-rel-defs ℙ public
       open finite-limits-d&p ℙ public
@@ -452,7 +457,8 @@ module projective-cover-of-reg-cat-is-left-cov {𝔼 : ecategory} (𝔼isreg : i
       open ecategory 𝔼 public
       open comm-shapes 𝔼 public
       open iso-defs 𝔼 public
-      open epi&mono-d&p 𝔼 public
+      open epi&mono-defs 𝔼 public
+      open epi&mono-props 𝔼 public
       open kernel-pairs-defs 𝔼 public
       open eq-rel-defs 𝔼 public
       open finite-limits-d&p 𝔼 public

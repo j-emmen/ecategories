@@ -221,7 +221,7 @@ record is-full {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ �
 
 full-cmp : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{𝔹 : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
            {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
-           {ℓₒ ℓₐ ℓ~ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+           {ℓₒ₃ ℓₐ₃ ℓ~₃ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₃ ℓₐ₃ ℓ~₃}
            {F : efunctorₗₑᵥ 𝔹 ℂ}{G : efunctorₗₑᵥ ℂ 𝔻}
                → is-full F → is-full G → is-full (G ○ F)
 full-cmp {𝔻 = 𝔻} {F} {G} fullF fullG = record
@@ -234,11 +234,11 @@ full-cmp {𝔻 = 𝔻} {F} {G} fullF fullG = record
           open is-full fullG public
         open ecategory-aux-only 𝔻 using (_⊙_)
 
-full-ext : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{𝔹 : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
-           {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+full-ext : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+           {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
            {F G : efunctorₗₑᵥ ℂ 𝔻}
                → is-full F → F ≅ₐ G → is-full G
-full-ext {ℂ} {𝔻} {F} {G} fullF α = record
+full-ext {𝔻 = 𝔻} {F} {G} fullF α = record
   { ar = λ g → F.full.ar (α.fnc⁻¹ ∘ g ∘ α.fnc)
   ; pf = λ {X} {Y} {g} → ~proof
             G.ₐ (F.full.ar (α.fnc⁻¹ ∘ g ∘ α.fnc))                     ~[ α.C2Dₗ ] /

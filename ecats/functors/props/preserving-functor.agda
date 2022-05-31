@@ -5,8 +5,8 @@ module ecats.functors.props.preserving-functor where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.epi&mono-basic
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
@@ -51,15 +51,24 @@ pres-eql-cmp {𝔹} {ℂ} {𝔻} {F = F} {G} Fpreseql Gpreseql = record
 pres-pb-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor ℂ 𝔻}
                  → preserves-pullbacks F → preserves-pullbacks G
                    → preserves-pullbacks (G ○ F)
-pres-pb-cmp {𝔹} {ℂ} {𝔻} {F = F} {G} Fprespb Gprespb = record
-  { pres-ispbof-pf = λ {_} {_} {_} {_} {_} {sq/} ispbof
+pres-pb-cmp {𝔻 = 𝔻} {F = F} {G} Fprespb Gprespb = record
+  { pres-pbsq-pf = λ {sq} ispbsq → 𝔻.×/sqpf-irr-sq (𝔻sq.sq-pf (G.sq (F.sq sq)))
+                                                     (𝔻sq.sq-pf (G○F.sq sq))
+                                                     (Gpbpf (Fpbpf ispbsq))
+{-
+pres-ispbof-pf = λ {_} {_} {_} {_} {_} {sq/} ispbof
                        → 𝔻.×/sqpf-irr-of (Gpbpf (Fpbpf ispbof))
                                            (𝔻sq/.sq-pf (G○F.sq/ sq/))
+-}
   }
-  where open preserves-pullbacks Fprespb renaming (pres-ispbof-pf to Fpbpf)
-        open preserves-pullbacks Gprespb renaming (pres-ispbof-pf to Gpbpf)
-        module 𝔻sq/ = comm-shapes.square/cosp {𝔻}
-        module 𝔻 = pullback-props 𝔻
+  where open preserves-pullbacks Fprespb renaming (pres-pbsq-pf to Fpbpf)
+        open preserves-pullbacks Gprespb renaming (pres-pbsq-pf to Gpbpf)
+        module 𝔻sq = comm-shapes.comm-square {ℂ = 𝔻}
+        module 𝔻 where
+          open pullback-defs 𝔻 public
+          open pullback-props 𝔻 public
+        module F = efunctor-aux F
+        module G = efunctor-aux G
         module G○F = efunctor-aux (G ○ F)
 
 
@@ -104,37 +113,42 @@ exact-cmp : {𝔹 ℂ 𝔻 : ecategory}{F : efunctor 𝔹 ℂ}{G : efunctor ℂ 
                  → is-exact-functor (G ○ F)
 exact-cmp Fex Gex = record
   { presfl = pres-fl-cmp Fex.presfl Gex.presfl
-  ; presrepi = pres-repi-cmp Fex.presrepi Gex.presrepi
+  ; presre = pres-repi-cmp Fex.presre Gex.presre
   }
   where module Fex = is-exact-functor Fex
         module Gex = is-exact-functor Gex
 
 
-IdF-pres-fin-limits : {ℂ : ecategory} → preserves-fin-limits (IdF {ℂ})
+IdF-pres-fin-limits : {ℂ : ecategory} → preserves-fin-limits (IdF {ℂ = ℂ})
 IdF-pres-fin-limits {ℂ} = record
   { prestrm = record { pres-!-pf = λ istrm → istrm }
   ; presprd = record { pres-×-pf = λ isprd → isprd }
   ; preseql = record { pres-eql-pf = λ {_} {_} {_} {_} {_} {_} {pfeq} iseql
                                    → pfeq-irr iseql (Id.∘∘ pfeq) }
-  ; prespb = record { pres-ispbof-pf = λ {_} {_} {_} {_} {_} {sq/} ispbof
-                      → pullback-defs.mkis-pb-of (×/sqpf-irr (ispb ispbof) (Id.∘∘ (sq-pf sq/) )) }
+  ; prespb = record { pres-pbsq-pf = λ {sq} ispbsq → ×/sqpf-irr-sq (sq-pf sq)
+                                                                    (Id.∘∘ (sq-pf sq))
+                                                                    ispbsq }
+{-
+  pres-ispbof-pf = λ {_} {_} {_} {_} {_} {sq/} ispbof
+                      → pullback-defs.mkis-pb-of (×/sqpf-irr (ispb ispbof) (Id.∘∘ (sq-pf sq/) ))
+-}
   }
   where open equaliser-props ℂ
         open pullback-props ℂ
-        module Id = efunctor-aux (IdF {ℂ})
-        open comm-shapes.square/cosp {ℂ}
-        open pullback-defs.is-pullback-of {ℂ}
+        module Id = efunctor-aux (IdF {ℂ = ℂ})
+        open comm-shapes.comm-square {ℂ = ℂ}
+        open pullback-defs.is-pb-square {ℂ}
 
 
 
-IdF-pres-reg-epis : {ℂ : ecategory} → preserves-regular-epis (IdF {ℂ})
+IdF-pres-reg-epis : {ℂ : ecategory} → preserves-regular-epis (IdF {ℂ = ℂ})
 IdF-pres-reg-epis {ℂ} = record
   { pres-repi-pf = λ repi → repi
   }
 
 
-IdF-is-exact : {ℂ : ecategory} → is-exact-functor (IdF {ℂ})
+IdF-is-exact : {ℂ : ecategory} → is-exact-functor (IdF {ℂ = ℂ})
 IdF-is-exact {ℂ} = record
   { presfl = IdF-pres-fin-limits {ℂ}
-  ; presrepi = IdF-pres-reg-epis {ℂ}
+  ; presre = IdF-pres-reg-epis {ℂ}
   }

@@ -37,7 +37,7 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
       reg𝔼 : is-regular 𝔼
       reg𝔼 = ex𝔼.is-reg
       module F↑ex = efunctor-aux (F CV↑ex[ hasfwl , 𝔼isex , Flcov ])
-      module F↑exCVex = efunctor-aux (F CV↑ex[ hasfwl , 𝔼isex , Flcov ] ○ CVex ℂ [ hasfwl ])
+      module F↑exCVex = efunctor-aux ((F CV↑ex[ hasfwl , 𝔼isex , Flcov ]) ○ CVex ℂ [ hasfwl ])
       FRel : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
       FRel = Peq2Rel hasfwl reg𝔼 Flcov
       FRel-sq : natural-iso (FRel ○ CVex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
@@ -47,7 +47,7 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
       module RΓ≅ΔF = natural-iso FRel-sq
       module QΔ≅Id = natural-iso (ex-retr-EqR 𝔼isex)
 
-    red : natural-transformation (F CV↑ex[ hasfwl , 𝔼isex , Flcov ] ○ CVex ℂ [ hasfwl ]) F
+    red : natural-transformation ((F CV↑ex[ hasfwl , 𝔼isex , Flcov ]) ○ CVex ℂ [ hasfwl ]) F
     red = record
       { fnc = λ {X} → QΔ≅Id.fnc {F.ₒ X} 𝔼.∘ Q.ₐ (RΓ≅ΔF.fnc {X})
       ; nat = λ {X} {Y} f → ~proof
@@ -57,7 +57,7 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
       }
       where open ecategory-aux-only 𝔼
 
-    exp : natural-transformation F (F CV↑ex[ hasfwl , 𝔼isex , Flcov ] ○ CVex ℂ [ hasfwl ])
+    exp : natural-transformation F ((F CV↑ex[ hasfwl , 𝔼isex , Flcov ]) ○ CVex ℂ [ hasfwl ])
     exp = record
       { fnc = λ {X} → Q.ₐ (RΓ≅ΔF.fnc⁻¹ {X}) 𝔼.∘ QΔ≅Id.fnc⁻¹ {F.ₒ X}
       ; nat = λ {X} {Y} f → ~proof
@@ -67,7 +67,7 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
       }
       where open ecategory-aux-only 𝔼
 
-    tr-iso : natural-iso (F CV↑ex[ hasfwl , 𝔼isex , Flcov ] ○ CVex ℂ [ hasfwl ]) F
+    tr-iso : natural-iso ((F CV↑ex[ hasfwl , 𝔼isex , Flcov ]) ○ CVex ℂ [ hasfwl ]) F
     tr-iso = record
            { natt = red
            ; natt⁻¹ = exp
@@ -89,7 +89,7 @@ module exact-compl-universal-commut {ℂ : ecategory} (hasfwl : has-fin-weak-lim
 
   CV↑ex-tr : {𝔼 : ecategory} (𝔼isex : is-exact 𝔼)  
               {F : efunctor ℂ 𝔼} (islcov : is-left-covering F)
-                → natural-iso (F CV↑ex[ hasfwl , 𝔼isex , islcov ] ○ CVex ℂ [ hasfwl ]) F
+                → natural-iso ((F CV↑ex[ hasfwl , 𝔼isex , islcov ]) ○ CVex ℂ [ hasfwl ]) F
   CV↑ex-tr 𝔼isex islcov = tr-iso
                        where open ↑ex-commut 𝔼isex islcov
 -- end exact-compl-universal-commut

@@ -25,7 +25,7 @@ CV↑ex : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
              → efunctor Ex ℂ [ hasfwl ] 𝔼
 CV↑ex hasfwl {𝔼} exE Flcov = QER exE ○ Peq2Rel hasfwl 𝔼-is-regular Flcov
                              where 𝔼-is-regular : is-regular 𝔼
-                                   𝔼-is-regular = exact-cat-props.is-reg exE
+                                   𝔼-is-regular = exact-cat-props-only.is-reg exE
 
 syntax CV↑ex hasfwl exE {F} Flcov = F CV↑ex[ hasfwl , exE , Flcov ]
 

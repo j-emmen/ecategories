@@ -28,9 +28,9 @@ module equaliser-props (ℂ : ecategory) where
              {pfeq : f ∘ e ~ g ∘ e}(iseql : is-equaliser pfeq)
              (pfeq' : f ∘ e ~ g ∘ e) → is-equaliser pfeq'
   pfeq-irr {pfeq = pfeq} iseql pfeq' = record
-    { _|eql[_] = _|eql[_]
-    ; eqltr = eqltr
-    ; eqluq = eqluq
+    { _|[_] = _|[_]
+    ; tr = tr
+    ; uq = uq
     }
     where open is-equaliser iseql
 
@@ -107,6 +107,6 @@ module equaliser-props (ℂ : ecategory) where
 
   eqlar-mono : {A B E : Obj} {f g : || Hom A B ||} {e : || Hom E A ||}
                {pfeq : f ∘ e ~ g ∘ e} → is-equaliser pfeq → is-monic e
-  eqlar-mono iseql = record { mono-pf = eqluq }
+  eqlar-mono iseql = record { mono-pf = uq }
                    where open is-equaliser iseql
 -- end equaliser-props

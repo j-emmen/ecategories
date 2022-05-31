@@ -201,10 +201,10 @@ module exact+lcov-is-lcov {ℂ 𝔻 𝔼 : ecategory}(fl𝔻 : has-fin-limits �
       GcovD : 𝔼.is-regular-epi (G.ₐ covD-ar)
       GcovD = G.ex.pres-repi-pf covD
       med : || 𝔼.Hom (G.ₒ pbD.ul) pbE.ul ||
-      med = 𝔼.pbs-iso-ar GpbD pbE
+      med = 𝔼.pbs-unv12 GpbD pbE
       -- pbE.⟨ G.ₐ pbD.π/₁ , G.ₐ pbD.π/₂ ⟩[ G.∘∘ pbD.×/sqpf ]
       E≅GD : 𝔼.is-iso med
-      E≅GD = 𝔼.pbs-iso GpbD pbE
+      E≅GD = 𝔼.pbs-unv-is-iso GpbD pbE
       isotr : med 𝔼.∘ G.ₐ covD-ar 𝔼.~ covpb
       isotr = pbE.×/uq
         (~proof pbE.π/₁ 𝔼.∘ med 𝔼.∘ G.ₐ covD-ar   ~[ ass ⊙ ∘e r (pbE.×/tr₁ (G.∘∘ pbD.×/sqpf)) ] /

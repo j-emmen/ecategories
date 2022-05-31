@@ -6,6 +6,7 @@ module ecats.basic-props.arrows where
 open import ecats.basic-defs.ecategory
 open import ecats.basic-defs.arrows
 open import ecats.basic-props.isomorphism public
+open import ecats.basic-props.epi&mono-basic public
 open import ecats.basic-props.epi&mono public
 
 
