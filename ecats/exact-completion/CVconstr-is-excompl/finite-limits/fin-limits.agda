@@ -1,15 +1,11 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.CVconstr-is-excompl.finite-limits.fin-limits where
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.finite-limits.defs.collective
-open import ecats.finite-limits.props.relations-among-limits
+open import ecats.finite-limits.props.relations-among-limits using (has-eql+pb⇒has-bw)
 open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.CVconstr-is-excompl.finite-limits.terminal using (exact-compl-has-terminal
                                                                 ; exact-compl-qcart-has-terminal) public

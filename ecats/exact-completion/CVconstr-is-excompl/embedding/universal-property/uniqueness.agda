@@ -1,21 +1,16 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.uniqueness where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.exact-ecat
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.epi&mono-basic
+open import ecats.reg&ex
 open import ecats.finite-limits.defs.collective
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
@@ -47,8 +42,8 @@ module exact-compl-universal-uniq {ℂ : ecategory} (hasfwl : has-fin-weak-limit
       module 𝔼 where
         open ecategory 𝔼 public
         open iso-defs 𝔼 public
-        open epis&monos-defs 𝔼 public
-        open epis&monos-props 𝔼 public
+        open epi&mono-defs 𝔼 public
+        open epi&mono-props-basic 𝔼 public
         open eq-rel-defs 𝔼 public
         open kernel-pairs-defs 𝔼 public
       module ex𝔼 where

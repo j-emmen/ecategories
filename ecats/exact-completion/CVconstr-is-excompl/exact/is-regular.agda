@@ -1,15 +1,13 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.CVconstr-is-excompl.exact.is-regular where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.isomorphism
+open import ecats.basic-props.epi&mono-basic
+open import ecats.basic-defs.image-fact
 open import ecats.basic-props.image-fact
 open import ecats.basic-defs.regular-ecat
 open import ecats.finite-limits.all
@@ -33,9 +31,9 @@ module exact-compl-has-repi-mono-fact {ℂ : ecategory} (hasfwl : has-fin-weak-l
     module Exℂ where
       open ecategory Ex ℂ [ hasfwl ] public
       open comm-shapes Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
       open image-fact-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
+      open epi&mono-props-basic Ex ℂ [ hasfwl ] public
       open image-fact-props Ex ℂ [ hasfwl ] public
       open pullback-squares Ex ℂ [ hasfwl ] public
 
@@ -112,8 +110,8 @@ module exact-compl-has-pb-stable-repis {ℂ : ecategory} (hasfwl : has-fin-weak-
       open comm-shapes Ex ℂ [ hasfwl ] public
       open iso-defs Ex ℂ [ hasfwl ] public
       open iso-transports Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
+      open epi&mono-props-basic Ex ℂ [ hasfwl ] public
       open image-fact-defs Ex ℂ [ hasfwl ] public
       open image-fact-props Ex ℂ [ hasfwl ] public
       open pullback-squares Ex ℂ [ hasfwl ] public

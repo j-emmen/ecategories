@@ -8,6 +8,7 @@ open import ecats.basic-defs.exact-ecat
 open import ecats.finite-limits.defs.collective
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
 open import ecats.functors.defs.projective-cover
@@ -28,9 +29,6 @@ CVexcmpl-is-init-lcov-ex : {ℂ : ecategory}(hasfwl : has-fin-weak-limits ℂ)
                            {𝔻 : ecategory}(ex𝔻 : is-exact 𝔻)
                            {F : efunctor ℂ 𝔻}(lcovF : is-left-covering F)  
                              → exwlex-universal-prop (CVex ℂ [ hasfwl ]) ex𝔻 lcovF
-                           {-hasfwl
-                           (exact-compl-is-exact hasfwl)
-                           (excmpl-embed-is-left-covering hasfwl)-}
 CVexcmpl-is-init-lcov-ex hasfwl ex𝔻 lcovF = record
   { fctr = def.↑ex ex𝔻 lcovF
   ; ex = ex.↑ex-is-exact ex𝔻 lcovF
@@ -63,10 +61,12 @@ module check {ℂ : ecategory}(fwlℂ : has-fin-weak-limits ℂ)
   --CVcheck = ≅ₐrefl
   fctr-check : fctr ≅ₐ (exact-compl-universal-def.↑ex fwlℂ ex𝔻 lcovF)
   fctr-check = ≅ₐrefl
-  tr : _○_ {_} {Ex ℂ [ fwlℂ ]} {_} fctr CVex ℂ [ fwlℂ ] ≅ₐ F
+  tr : _○_ {𝔻 = Ex ℂ [ fwlℂ ]} fctr CVex ℂ [ fwlℂ ] ≅ₐ F
   tr = unv.tr ex𝔻 lcovF
 
 -- with ℂfwl = has-flim→has-fwlim flℂ it takes too long...
+
+
 
 
 

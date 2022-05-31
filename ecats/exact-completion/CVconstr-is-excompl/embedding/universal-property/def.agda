@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.def where
 
@@ -28,7 +24,7 @@ module exact-compl-universal-def {ℂ : ecategory} (hasfwl : has-fin-weak-limits
   ↑ex : {𝔼 : ecategory} (exE : is-exact 𝔼) {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
            → efunctor Ex ℂ [ hasfwl ] 𝔼
   ↑ex exE Flcov = QER exE ○ Rel 𝔼-is-regular Flcov
-                where open exact-cat-props exE using () renaming (is-reg to 𝔼-is-regular)
+                where open exact-cat-props-only exE using () renaming (is-reg to 𝔼-is-regular)
 
 
   syntax ↑ex exE {F} Flcov = F ↑ex[ exE , Flcov ]

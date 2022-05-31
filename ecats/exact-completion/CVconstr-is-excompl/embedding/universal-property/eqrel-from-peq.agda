@@ -1,21 +1,18 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.eqrel-from-peq where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.epi&mono-basic
 open import ecats.basic-defs.regular-ecat
 open import ecats.basic-props.regular-ecat
 open import ecats.finite-limits.all
 open import ecats.constructions.ecat-eqrel
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.left-covering
 open import ecats.exact-completion.CVconstruction
 
@@ -40,8 +37,8 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
       module 𝔼 where
         open ecategory 𝔼 public
         open comm-shapes 𝔼 public
-        open epis&monos-defs 𝔼 public
-        open epis&monos-props 𝔼 public
+        open epi&mono-defs 𝔼 public
+        open epi&mono-props 𝔼 public
         open eq-rel-defs 𝔼 public
         open finite-limits-d&p 𝔼 public
       module r𝔼 where
@@ -143,8 +140,8 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
         τcov : || 𝔼.Hom (F.ₒ τAwpb.ul) τrpb.ul ||
         τcov = C×C.diagl 𝔼.∘ outcov 
         τcov-repi : 𝔼.is-regular-epi τcov
-        τcov-repi = ∘c C×C.diagl-repi outcov-repi
-                  where open is-ecat-congr r𝔼.regular-epi-is-congr
+        τcov-repi = r𝔼.repi-cmp outcov-repi C×C.diagl-repi r
+                  where open ecategory-aux-only 𝔼 using (r)
         private
           module τc = 𝔼.is-regular-epi τcov-repi
         rmfF%τ-pf-aux1 = ~proof

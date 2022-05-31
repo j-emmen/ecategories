@@ -1,15 +1,13 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.CVconstr-is-excompl.exact.is-exact where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.isomorphism
+open import ecats.basic-props.epi&mono-basic
+open import ecats.basic-defs.image-fact
 open import ecats.basic-props.image-fact
 open import ecats.basic-defs.regular-ecat
 open import ecats.basic-props.regular-ecat
@@ -41,8 +39,8 @@ module eq-rels-are-effective {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ
       open comm-shapes Ex ℂ [ hasfwl ] public
       open iso-defs Ex ℂ [ hasfwl ] public
       open iso-transports Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
+      open epi&mono-props-basic Ex ℂ [ hasfwl ] public
       open eq-rel-defs Ex ℂ [ hasfwl ] public
       open kernel-pairs-defs Ex ℂ [ hasfwl ] public
       open image-fact-defs Ex ℂ [ hasfwl ] public
