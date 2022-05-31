@@ -39,8 +39,8 @@ open import ecats.concr-ecats.Std-lev
            Iωₐ {n} {m} n≤m = free-stdmap (Iω-fnc {n} {m} n≤m)
 
 
-FinStd-Emb : {n : N} → efunctorₗₑᵥ (𝔽inCat n) Std
-FinStd-Emb {n} = record
+FinLOStd-Emb : {n : N} → efunctorₗₑᵥ (FinLinOrd n) Std
+FinLOStd-Emb {n} = record
   { FObj = {!!}
   ; FHom = {!!}
   ; isF = {!!}

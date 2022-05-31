@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-defs.finite-ecat where
 
@@ -15,7 +11,7 @@ open import ecats.basic-defs.ecategory-not
 
 
 
-record finite-ecategory : Set where
+record std-finite-ecategory : Set where
   field
     obj : N
     hom : Fin obj → Fin obj → N
@@ -26,23 +22,22 @@ record finite-ecategory : Set where
   open is-ecategory isecat public
 
 
-
-finite-ecat-is-small : finite-ecategory → small-ecategory
-finite-ecat-is-small 𝕀 = record { Obj = Obj
-                                 ; Hom = Hom
-                                 ; isecat = isecat
-                                 }
-                                 where open finite-ecategory 𝕀
-
-
+std-finite-ecat-is-small sfcat2scat : std-finite-ecategory → small-ecategory
+std-finite-ecat-is-small 𝕀 = record { Obj = Obj
+                                     ; Hom = Hom
+                                     ; isecat = isecat
+                                     }
+                                     where open std-finite-ecategory 𝕀
+sfcat2scat = std-finite-ecat-is-small
 
 
-module finite-ecategory-aux-only (𝕀 : finite-ecategory) where
-  open small-ecategory-aux-only (finite-ecat-is-small 𝕀) public
+
+module std-finite-ecategory-aux-only (𝕀 : std-finite-ecategory) where
+  open ecategory-aux-only (sfcat2scat 𝕀) public
 -- end module ecategory-aux-only
 
 
-module finite-ecategory-aux (𝕀 : finite-ecategory) where
-  open finite-ecategory 𝕀 public
-  open finite-ecategory-aux-only 𝕀 public
+module finite-ecategory-aux (𝕀 : std-finite-ecategory) where
+  open std-finite-ecategory 𝕀 public
+  open std-finite-ecategory-aux-only 𝕀 public
 -- end module ecategory-aux

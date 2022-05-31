@@ -6,9 +6,9 @@ module ecats.concr-ecats.finite-ecat where
 open import tt-basics.all-basics renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.isomorphism
+open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.preorder
 open import ecats.basic-props.isomorphism
-open import ecats.basic-defs.commut-shapes
 open import ecats.constructions.free-ecat-on-graph
 open import ecats.concr-ecats.Std-lev
 open import ecats.functors.defs.efunctor
@@ -49,7 +49,7 @@ module finite-linear-preorders-data where
   ispreorder (s n) {inr x} {inr x₁} {ij} {ij'} = isContr→isProp N₁-isContr ij ij'
 -- end finite-linear-preorders-data
 
-
+--FinLinOrd : (n : N) → std-finite-ecategory
 FinLinOrd : (n : N) → small-ecategory
 FinLinOrd n = record
             { Obj = Fin n

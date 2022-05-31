@@ -56,8 +56,8 @@ module id-on-objs-full-fact {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}{ℂ : ecategor
 
   flisfull : is-full fl
   flisfull = record
-    { full-ar = λ f → f
-    ; full-pf = r
+    { ar = λ f → f
+    ; pf = r
     }
     where open ecategory-aux-only 𝔻 using (r)
 
