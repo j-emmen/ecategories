@@ -3,19 +3,20 @@
 
 module ecats.finite-limits.defs.terminal where
 
+open import Agda.Primitive
 open import ecats.basic-defs.ecat-def&not
 
 
 
 -- Terminal
 
-module terminal-defs (ℂ : ecategory) where
+module terminal-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
   open ecategory-aux ℂ
 
-  record is-terminal (T : Obj) : Set₁ where
-    constructor mkistrm
+  record is-terminal (T : Obj) : Set ℓₐₗₗ where
+    --constructor mkistrm
     field
-      { ! } : (A : Obj) → || Hom A T ||
+      ! : (A : Obj) → || Hom A T ||
       !uniq : {A : Obj} → (f : || Hom A T ||) → f ~ ! A
     !uqg : {A : Obj} {f g : || Hom A T ||}
               → f ~ g
@@ -24,11 +25,11 @@ module terminal-defs (ℂ : ecategory) where
 --end terminal-defs
 
 
-record has-terminal (ℂ : ecategory) : Set₁ where
-  constructor mkhas-trm
+record has-terminal {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) : Set (ecat.ℓₐₗₗ ℂ) where
+  --constructor mkhas-trm
   open ecategory-aux ℂ
   open terminal-defs ℂ
   field
-    {trmOb} : Obj
+    trmOb : Obj
     istrm : is-terminal trmOb
   open is-terminal istrm public

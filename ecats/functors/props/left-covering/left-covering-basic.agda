@@ -4,18 +4,14 @@
 module ecats.functors.props.left-covering.left-covering-basic where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-defs.eqv-rel
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.all
+open import ecats.arrows
+open import ecats.reg&ex
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
-
 
 -- A functor that preserves limits is left covering
 
@@ -35,7 +31,7 @@ module efunctor-preslim2lcov {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) wher
     { trmuniv-is-repi = λ {X} wtrm {T}  trm cov! → split-epi-is-repi (med!-sepi wtrm trm cov!)
     }
     where open preserves-terminal pres!
-          open epis&monos-props 𝔻
+          open epi&mono-props-all 𝔻
           med!-sepi : {X : ℂ.Obj} {T : 𝔻.Obj} → ℂ.is-wterminal X → 𝔻.is-terminal T → (cov! : || 𝔻.Hom (F.ₒ X) T ||)
                         → 𝔻.is-split-epi cov!
           med!-sepi {X} {T} wtrm trm cov! = record
@@ -55,7 +51,7 @@ module efunctor-preslim2lcov {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) wher
     { prduniv-is-repi = λ wprdof prdof tr₁ tr₂ → split-epi-is-repi (covprd-sepi wprdof prdof tr₁ tr₂)
     }
     where open preserves-bin-products pres×
-          open epis&monos-props 𝔻
+          open epi&mono-props-all 𝔻
           open bin-product-props 𝔻
           open product-is-unique-uptoiso
           module ×of = 𝔻.product-of
@@ -105,6 +101,6 @@ module efunctor-preslim2lcov {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) wher
                               where open pullback-props 𝔻
                                     module F× = 𝔻.product-of-not (F×of Y Y)
                                     open 𝔻.equaliser-of eqlD
-                                    open 𝔻l.equaliser↔pullback-of-diag (F×of Y Y) eqleq {F.ₐ f 𝔻.∘ eqlar}
-                                                                         (F×.<>ar~<>ar lidˢ (lidgenˢ (eqleq ˢ)))
+                                    open 𝔻l.equaliser↔pullback-of-diag (F×of Y Y) eq {F.ₐ f 𝔻.∘ ar}
+                                                                         (F×.<>ar~<>ar lidˢ (lidgenˢ (eq ˢ)))
 -- end efunctor-preslim2lcov

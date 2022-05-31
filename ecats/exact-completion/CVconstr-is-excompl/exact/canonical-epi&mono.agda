@@ -8,10 +8,8 @@ open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.epi&mono
 open import ecats.basic-defs.eqv-rel
 open import ecats.basic-defs.kernel-pair
-open import ecats.basic-props.epi&mono
 open import ecats.finite-limits.defs.collective
 open import ecats.finite-limits.d&n-weak-pullback
-open import ecats.finite-limits.props.weak-pullback
 open import ecats.finite-limits.defs.weak-Wlimit
 open import ecats.finite-limits.props.relations-among-weak-limits
 open import ecats.exact-completion.CVconstruction
@@ -28,7 +26,6 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
       open pseudo-eq-rel-defs ℂ public
       open weak-kernel-pairs-defs ℂ public
       open wpullback-squares ℂ public
-      open weak-pullback-props ℂ public
       open weak-bow-defs ℂ public
       open wWlim-defs ℂ public
     module fwlℂ where
@@ -39,8 +36,7 @@ module can-epi&mono-defs {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) wh
     module Exℂ where
       open ecategory Ex ℂ [ hasfwl ] public
       open comm-shapes Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
       open pullback-defs Ex ℂ [ hasfwl ] public
       open eq-rel-defs Ex ℂ [ hasfwl ] public
       open kernel-pairs-defs Ex ℂ [ hasfwl ] public

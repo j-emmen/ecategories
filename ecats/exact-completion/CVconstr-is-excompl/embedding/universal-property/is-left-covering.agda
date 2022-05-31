@@ -5,11 +5,10 @@ module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.i
 
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
-open import ecats.basic-defs.all-arrows
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.epi&mono-basic
 open import ecats.basic-props.epi&mono
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.exact-ecat
+open import ecats.reg&ex
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
@@ -37,8 +36,8 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       open ecategory Ex ℂ [ hasfwl ] public
       open comm-shapes Ex ℂ [ hasfwl ] public
       open iso-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
+      open epi&mono-props-basic Ex ℂ [ hasfwl ] public
       open finite-weak-limits Ex ℂ [ hasfwl ] public
       open finite-limits Ex ℂ [ hasfwl ] public
       open limits→weak-limits Ex ℂ [ hasfwl ] public
@@ -57,8 +56,8 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
         open ecategory 𝔼 public
         open comm-shapes 𝔼 public
         open iso-defs 𝔼 public
-        open epis&monos-defs 𝔼 public
-        open epis&monos-props 𝔼 public
+        open epi&mono-defs 𝔼 public
+        open epi&mono-props-all 𝔼 public
         open eq-rel-defs 𝔼 public
         open kernel-pairs-defs 𝔼 public
         open finite-limits-d&p 𝔼 public
@@ -190,8 +189,9 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       covP : || 𝔼.Hom (F.ₒ Lo[A×B].O12) P ||
       covP = QA×QB.diag 𝔼.∘ covFLo
       covP-repi : 𝔼.is-regular-epi covP
-      covP-repi = ∘c QA×QB.covpb.is-repi covFLo-repi
-                where open is-ecat-congr ex𝔼.regular-epi-is-congr
+      covP-repi = ex𝔼.repi-cmp covFLo-repi QA×QB.covpb.is-repi r
+                where open ecategory-aux-only 𝔼 using (r)
+                --is-ecat-congr ex𝔼.regular-epi-is-congr
 
       medEx : || Exℂ.Hom A×B.O12 wP ||
       medEx = wP.w< A×B.π₁ , A×B.π₂ >
@@ -294,7 +294,7 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
         module covE1 where
           open 𝔼.pullback-of-not covE1-pb public
           mono : 𝔼.is-monic π/₂
-          mono = pres-du covE1-pb (record { mono-pf = E.eqluq })
+          mono = pres-du covE1-pb (record { mono-pf = E.uq })
                where open 𝔼.is-pbof-stable 𝔼.mono-pbof-stb
           repi : 𝔼.is-regular-epi π/₁
           repi = pres-rl covE1-pb (Q/F↑ex.repi A)
@@ -356,9 +356,9 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
               Q/F↑B.ar 𝔼.∘ F.ₐ g.lo 𝔼.∘ k      ~[ ass ⊙ ∘e r (q-sq (FRel.ₐ g) ˢ) ⊙ assˢ ]∎
               F↑ex.ₐ g 𝔼.∘ Q/F↑ex.ar A 𝔼.∘ k ∎
             unE : || 𝔼.Hom D E ||
-            unE = (Q/F↑ex.ar A 𝔼.∘ k) E.|eql[ unE-pf ]
+            unE = (Q/F↑ex.ar A 𝔼.∘ k) E.|[ unE-pf ]
             un-pfl :  e 𝔼.∘ unE 𝔼.~ Q/F↑ex.ar A 𝔼.∘ k
-            un-pfl = E.eqltr unE-pf
+            un-pfl = E.tr unE-pf
             unl : || 𝔼.Hom D covE1.ul ||
             unl = covE1.⟨ unE , k ⟩[ un-pfl ]
             un-pfr : bwπ 𝔼.∘ unl 𝔼.~ CFB 𝔼.∘ h
@@ -427,29 +427,29 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       covE : || 𝔼.Hom (F.ₒ Efg.wbw.Ob) E ||
       covE = covE1.π/₁ 𝔼.∘ covE2.π/₁ 𝔼.∘ covBw
       covE-repi : 𝔼.is-regular-epi covE
-      covE-repi = ∘c covE1.repi (∘c covE2.repi covBw-repi)
-                where open is-ecat-congr ex𝔼.regular-epi-is-congr
+      covE-repi = ex𝔼.repi-cmp (ex𝔼.repi-cmp covBw-repi covE2.repi r) covE1.repi r
+                where open ecategory-aux-only 𝔼 using (r)
 
-      medEx : || Exℂ.Hom Efg.eql.Eql wE ||
-      medEx = Efg.eql.eqlar wE.|weql[ Efg.eql.eqleq ]
+      medEx : || Exℂ.Hom Efg.eql.Ob wE ||
+      medEx = Efg.eql.ar wE.|w[ Efg.eql.eq ]
       F↑Efg-ob : 𝔼.Obj
-      F↑Efg-ob = F↑ex.ₒ Efg.eql.Eql
+      F↑Efg-ob = F↑ex.ₒ Efg.eql.Ob
       F↑medEx : || 𝔼.Hom F↑Efg-ob (F↑ex.ₒ wE) ||
-      F↑medEx = F↑ex.ₐ {Efg.eql.Eql} {wE} medEx
+      F↑medEx = F↑ex.ₐ {Efg.eql.Ob} {wE} medEx
       med : || 𝔼.Hom (F.ₒ Efg.wbw.Ob) (F↑ex.ₒ wE) ||
-      med = F↑medEx 𝔼.∘ Q/F↑ex.ar Efg.eql.Eql
+      med = F↑medEx 𝔼.∘ Q/F↑ex.ar Efg.eql.Ob
 
       F↑we : || 𝔼.Hom (F↑ex.ₒ wE) (F↑ex.ₒ A) ||
       F↑we = F↑ex.ₐ {wE} {A} we
       F↑Efg-ar : || 𝔼.Hom F↑Efg-ob (F↑ex.ₒ A) ||
-      F↑Efg-ar = F↑ex.ₐ {Efg.eql.Eql} {A} Efg.eql.eqlar
+      F↑Efg-ar = F↑ex.ₐ {Efg.eql.Ob} {A} Efg.eql.ar
       cov-tr-aux : F↑we 𝔼.∘  F↑medEx 𝔼.~ F↑Efg-ar
-      cov-tr-aux = F↑ex.∘ax {Efg.eql.Eql} {wE} {A} {medEx} {we} {Efg.eql.eqlar} (wE.weqltr Efg.eql.eqleq)
+      cov-tr-aux = F↑ex.∘ax {Efg.eql.Ob} {wE} {A} {medEx} {we} {Efg.eql.ar} (wE.wtr Efg.eql.eq)
       cov-tr : coveql 𝔼.∘ med 𝔼.~ covE
-      cov-tr = E.eqluq {F.ₒ Efg.wbw.Ob} {𝔼._∘_ coveql med} {covE} (~proof
+      cov-tr = E.uq {F.ₒ Efg.wbw.Ob} {𝔼._∘_ coveql med} {covE} (~proof
         e 𝔼.∘ coveql 𝔼.∘ med                                ~[ ass ⊙ ∘e r trpf ] /
         F↑we 𝔼.∘ med                                         ~[ ass ⊙ ∘e r cov-tr-aux ] /
-        F↑Efg-ar 𝔼.∘ Q/F↑ex.ar Efg.eql.Eql                   ~[ q-sq (FRel.ₐ Efg.eql.eqlar) ] /
+        F↑Efg-ar 𝔼.∘ Q/F↑ex.ar Efg.eql.Ob                   ~[ q-sq (FRel.ₐ Efg.eql.ar) ] /
         Q/F↑ex.ar A 𝔼.∘ F.ₐ Efg.wbw.wπ//₁                    ~[ ∘e (covBw-pf₁ ˢ ⊙ assˢ) r ] /
         Q/F↑ex.ar A 𝔼.∘ covE1.π/₂ 𝔼.∘ covE2.π/₁ 𝔼.∘ covBw   ~[ ass ⊙ ∘e r (covE1.×/sqpf ˢ) ⊙ assˢ ]∎
         e 𝔼.∘ covE ∎)

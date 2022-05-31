@@ -4,7 +4,7 @@
 module ecats.functors.defs.preserving-functor where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
+open import ecats.basic-defs.arrows
 open import ecats.basic-props.epi&mono
 open import ecats.finite-limits.defs&not
 open import ecats.functors.defs.efunctor-d&n
@@ -42,7 +42,20 @@ record preserves-bin-products {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : S
   field
     pres-×-pf : {sp : ℂ.span} → ℂ.is-product sp →  𝔻.is-product (F.span sp)
 
-
+private
+  module peql-macros (𝕏 : ecategory) where
+    open ecategory 𝕏 public
+    open equaliser-defs 𝕏 public
+    
+record preserves-equalisers {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
+  private
+    module ℂ = peql-macros ℂ
+    module 𝔻 = peql-macros 𝔻
+    module F = efunctor-aux F
+  field
+    pres-eql-pf : {A B E : ℂ.Obj}{f f' : || ℂ.Hom A B ||}{e : || ℂ.Hom E A ||}
+                  {pfeq : f ℂ.∘ e ℂ.~ f' ℂ.∘ e} → ℂ.is-equaliser pfeq
+                     → 𝔻.is-equaliser (F.∘∘ pfeq)
 
 
 private
@@ -108,7 +121,7 @@ record preserves-fin-limits {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set
 private
   module pre-macros (𝕏 : ecategory) where
     open ecategory 𝕏 public
-    open epis&monos-defs 𝕏 public
+    open epi&mono-defs 𝕏 public
 
 record preserves-regular-epis {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private
@@ -123,25 +136,23 @@ record preserves-regular-epis {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : S
 
 private
   module pm-macros (𝕏 : ecategory) where
-    open ecategory 𝕏 public
-    open epis&monos-defs 𝕏 public
+    open ecat 𝕏 public
+    open epi&mono-defs 𝕏 public
     
-
-record preserves-monos {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
+record preserves-monic {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private
     module ℂ = pm-macros ℂ
     module 𝔻 = pm-macros 𝔻
-    module F = efunctor-aux F
+    module F = efctr F
   field
-    pres-monos-pf : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||}
-                       → ℂ.is-monic f → 𝔻.is-monic (F.ₐ f)
-
+    pres-monic-pf : {A B : ℂ.Obj} {ar : || ℂ.Hom A B ||}
+                       → ℂ.is-monic ar → 𝔻.is-monic (F.ₐ ar)
 
 private
   module pjm-macros (𝕏 : ecategory) where
     open ecategory 𝕏 public
     open comm-shapes 𝕏 public
-    open epis&monos-defs 𝕏 public
+    open epi&mono-defs 𝕏 public
 
 record preserves-jointly-monic/ {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private
@@ -162,7 +173,8 @@ private
     open ecategory 𝕏 public
     open kernel-pairs-defs 𝕏 public
     open pullback-squares 𝕏 public
-    open epis&monos-defs 𝕏 public
+    open epi&mono-defs 𝕏 public
+    open epi&mono-props-all 𝕏 public
     
 record is-exact-functor {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) : Set₁ where
   private

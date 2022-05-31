@@ -1,24 +1,23 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-props.epi&mono where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.isomorphism
 open import ecats.basic-props.epi&mono-basic
 open import ecats.finite-limits.all
 
 
 -- Some properties of monos and {regular,strong,extremal,...} epis
 
-module epis&monos-props (ℂ : ecategory) where
+module epi&mono-props-lim-props (ℂ : ecategory) where
   open ecategory-aux ℂ
   open arrows-defs ℂ
-  open iso-transports ℂ
+  open iso-props ℂ
+  open epi&mono-props ℂ
+  --open iso-transports ℂ
   open binary-products ℂ
   open wequaliser-defs ℂ
   open equaliser-defs ℂ
@@ -41,20 +40,18 @@ module epis&monos-props (ℂ : ecategory) where
     module bwof = bow-of
     --⟨_,_⟩[_]
 
-  open epis&monos-basic-props ℂ public
-
 
   mono-pbof-stb : is-pbof-stable is-monic
   mono-pbof-stb = record
-    { pres-rl = mono-pb-stable
+    { pres-rl = pbof-mono-is-mono
     }
 
   mono-pbsq-stb : is-pbsq-stable is-monic
   mono-pbsq-stb = pbof-stb→pbsq-stb mono-pbof-stb 
 
-
-
+  ---------------------------------
   -- regular epis and kernel pairs
+  ---------------------------------
 
   repi-is-coeq-of-ker-pair : {A B : Obj} {f : || Hom A B ||} (frepi : is-regular-epi f)
                              (kpf : pullback-of f f) → is-coeq (pbof.π/₁ kpf) (pbof.π/₂ kpf) f
@@ -100,19 +97,13 @@ module epis&monos-props (ℂ : ecategory) where
     }
 
 
-  -- Epis & monos & pullbacks
+  -------------------------
+  -- When ℂ has some limit
+  -------------------------
 
-  module epis&monos-pullbacks (haspb : has-pullbacks ℂ) where
-    --open pullbacks-aux haspb
-    --open eq-rel-defs ℂ
+  module epi&mono-pullbacks (haspb : has-pullbacks ℂ) where
     open has-pullbacks haspb using (pb-of)
-    
 
-{-
-    mono-pb-stable : {A B C : Obj} → {m : || Hom A B ||} → (f : || Hom C B ||) → is-monic m
-                        → is-monic (π/₁ {a = f} {b = m})
-    mono-pb-stable {m = m} f pfm = mono-pbsq-stable (mkpb-sq (×/ispbsq {a = f} {b = m})) pfm
--}
 
     module cover-is-strong {A B : Obj} {c : || Hom A B ||} (iscov : is-cover c)
                            {C D : Obj} {up : || Hom A C ||} {down : || Hom B D ||} {m : || Hom C D ||}
@@ -123,7 +114,7 @@ module epis&monos-props (ℂ : ecategory) where
         module c = is-cover iscov
         module m = is-monic pfm
       lift-aux : is-iso d×/m.π/₁
-      lift-aux = c.cov-pf (d×/m.×/tr₁ sqpf) (mono-pb-stable d×/m.×/of pfm)
+      lift-aux = c.cov-pf (d×/m.×/tr₁ sqpf) (pbof-mono-is-mono d×/m.×/of pfm)
       private
         module d*m = is-iso lift-aux
       com-up-aux : d*m.⁻¹ ∘ c ~ d×/m.⟨ c , up ⟩[ sqpf ]
@@ -155,7 +146,18 @@ module epis&monos-props (ℂ : ecategory) where
                                       where open img-fact-of imgf
 -}
 
-  
+
+{-
+diagram for module below:
+P' -->> _ --> B'
+|       |     |
+v       v     v
+v       v     v
+_  -->> P --> B
+|       |     |
+v       v     v
+A' -->> A --> I
+-}
     module pb-of-reg-covers-is-epi-cover-of-pb (repi-pbof-stb : is-pbof-stable is-regular-epi)
                                                {I A B : Obj}{a : || Hom A I ||}{b : || Hom B I ||}
                                                (pb : pullback-of a b)
@@ -223,29 +225,8 @@ module epis&monos-props (ℂ : ecategory) where
       outbw-sp : span/ U1 U2
       outbw-sp = mkspan/ (lsq.π/₁ ∘ ulsq.π/₁) (usq.π/₂ ∘ ulsq.π/₂)
     -- end reg-covers-of-bws→epi-cover-of-bw
-
-
-{-
-    -- regular epis and chosen kernel pairs (rather useless, I believe)
-
-    repi-is-coeq-of-ker-pairᶜ : {A B : Obj} → {f : || Hom A B ||} → is-regular-epi f
-                                   → is-coeq (π/₁ {a = f} {b = f}) (π/₂ {a = f} {b = f}) f
-    repi-is-coeq-of-ker-pairᶜ {A} {B} {f} frepi = repi-is-coeq-of-ker-pair frepi (mkpb-of ×/ispbsq)
-                                                  where open is-regular-epi frepi
-
-
-    kerpair-is-kerpair-of-coeqᶜ : {A B Q : Obj} → {f : || Hom A B ||} → {q : || Hom A Q ||}
-                                    → (iscoeq : is-coeq (π/kp₁ f) (π/kp₂ f) q)
-                                      → is-pb-square (mksq (mksq/ (is-coeq.coeq-eq iscoeq)))
-    kerpair-is-kerpair-of-coeqᶜ {A} {B} {Q} {f} {q} iscoeq = kerpair-is-kerpair-of-coeq (π/iskp f) iscoeq
-
-    
-    π/kp-repi-is-exact : {A B : Obj} {f : || Hom A B ||} (repi : is-regular-epi f) → is-exact-seq (π/kp₁ f) (π/kp₂ f) f
-    π/kp-repi-is-exact {f = f} repi = kerp-of-repi-is-exact (π/iskpof f) repi
--}
-
   -- end epis&monos-pullbacks
-  open epis&monos-pullbacks public
+  open epi&mono-pullbacks public
 
 
   module surjective-props (hastrm : has-terminal ℂ) where
@@ -271,4 +252,10 @@ module epis&monos-props (ℂ : ecategory) where
       { pres-rl = λ pbof issurj → surj-are-pullback-stable.π/₁surj issurj pbof }
 
   -- end surjective-props
--- end epis&monos-props-only
+-- end epi&mono-props-lim-props
+
+
+module epi&mono-props-all (ℂ : ecategory) where
+  open epi&mono-props ℂ public
+  open epi&mono-props-lim-props ℂ public
+

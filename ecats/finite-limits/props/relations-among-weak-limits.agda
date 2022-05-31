@@ -39,8 +39,8 @@ module relations-among-weak-limit-diagrams (ℂ : ecategory) where
 
     is-wpb→is-weql : is-wpb-square (mksq cone) → is-wequaliser eq
     is-wpb→is-weql iswpb = record
-      { _|weql[_] = λ h pf → w⟨ π₁ ∘ h , π₂ ∘ h ⟩[ unpf pf ]
-      ; weqltr = λ pf → ×uq (ass ⊙ ∘e r etr₁ ⊙ w×/tr₁ (unpf pf)) (ass ⊙ ∘e r etr₂ ⊙ w×/tr₂ (unpf pf))
+      { _|w[_] = λ h pf → w⟨ π₁ ∘ h , π₂ ∘ h ⟩[ unpf pf ]
+      ; wtr = λ pf → ×uq (ass ⊙ ∘e r etr₁ ⊙ w×/tr₁ (unpf pf)) (ass ⊙ ∘e r etr₂ ⊙ w×/tr₂ (unpf pf))
       }
       where open wpullback-sq-not (mkwpb-sq iswpb)
             unpf : {X : Obj} {h : || Hom X AxB ||} → (a ∘ π₁) ∘ h ~ (b ∘ π₂) ∘ h
@@ -49,9 +49,9 @@ module relations-among-weak-limit-diagrams (ℂ : ecategory) where
             
     is-weql→is-wpb : is-wequaliser eq → is-wpb-square (mksq cone)
     is-weql→is-wpb isweql = record
-      { w⟨_,_⟩[_] = λ h k pf → < h , k > |weql[ unpf pf ]
-      ; w×/tr₁ = λ pf → ∘e r (etr₁ ˢ) ⊙ (assˢ ⊙ ∘e (weqltr (unpf pf)) r ⊙ ×tr₁) 
-      ; w×/tr₂ = λ pf → ∘e r (etr₂ ˢ) ⊙ (assˢ ⊙ ∘e (weqltr (unpf pf)) r ⊙ ×tr₂) 
+      { w⟨_,_⟩[_] = λ h k pf → < h , k > |w[ unpf pf ]
+      ; w×/tr₁ = λ pf → ∘e r (etr₁ ˢ) ⊙ (assˢ ⊙ ∘e (wtr (unpf pf)) r ⊙ ×tr₁) 
+      ; w×/tr₂ = λ pf → ∘e r (etr₂ ˢ) ⊙ (assˢ ⊙ ∘e (wtr (unpf pf)) r ⊙ ×tr₂) 
       }
       where open is-wequaliser isweql
             unpf : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||} → a ∘ h ~ b ∘ k
@@ -64,9 +64,9 @@ module relations-among-weak-limit-diagrams (ℂ : ecategory) where
   wpbof→weqlofπ's : {A B : Obj} (A×B : product-of A B) {I : Obj} {f : || Hom A I ||} {g : || Hom B I ||} 
                        → wpullback-of f g → wequaliser-of (f ∘ ×of.π₁ A×B) (g ∘ ×of.π₂ A×B)
   wpbof→weqlofπ's A×B {f = f} {g} wpbof = record
-    { wEql = ul
-    ; weqlar = < wπ/₁ , wπ/₂ >
-    ; weqleq = eq
+    { wOb = ul
+    ; war = < wπ/₁ , wπ/₂ >
+    ; weq = eq
     ; isweql = is-wpb→is-weql w×/iswpbsq
     }
     where open wpullback-of-not wpbof
@@ -85,10 +85,10 @@ module relations-among-weak-limit-diagrams (ℂ : ecategory) where
     where open wequaliser-of weqlof
           cone : square/cosp f g
           cone = record
-               { upleft = mkspan/ (×of.π₁ A×B ∘ weqlar) (×of.π₂ A×B ∘ weqlar)
-               ; sq-pf = ass ⊙ weqleq ⊙ assˢ
+               { upleft = mkspan/ (×of.π₁ A×B ∘ war) (×of.π₂ A×B ∘ war)
+               ; sq-pf = ass ⊙ weq ⊙ assˢ
                }
-          open square-is-wpullback↔wsubprod-is-wequaliser cone A×B {weqlar} weqleq r r
+          open square-is-wpullback↔wsubprod-is-wequaliser cone A×B {war} weq r r
 
 
 
@@ -130,16 +130,16 @@ module relations-among-weak-limit-diagrams (ℂ : ecategory) where
 
     is-weql→is-wpb : is-wequaliser eq → is-wpb-square (mksq (mksq/ sqpf))
     is-weql→is-wpb isweql = record
-      { w⟨_,_⟩[_] = λ h k pf → h |weql[ sq2eql pf ]
-      ; w×/tr₁ = λ pf → weqltr (sq2eql pf)
-      ; w×/tr₂ = λ pf → ∘e r tr₁ ⊙ (assˢ ⊙ ∘e (weqltr (sq2eql pf)) r ⊙ sq2eq₁ pf)
+      { w⟨_,_⟩[_] = λ h k pf → h |w[ sq2eql pf ]
+      ; w×/tr₁ = λ pf → wtr (sq2eql pf)
+      ; w×/tr₂ = λ pf → ∘e r tr₁ ⊙ (assˢ ⊙ ∘e (wtr (sq2eql pf)) r ⊙ sq2eq₁ pf)
       }
       where open is-wequaliser isweql            
     
     is-wpb→is-weql : is-wpb-square (mksq (mksq/ sqpf)) → is-wequaliser eq
     is-wpb→is-weql iswpb = record
-      { _|weql[_] = λ h pf → w⟨ h , f ∘ h ⟩[ unpf pf ]
-      ; weqltr = λ pf → w×/tr₁ (unpf pf)
+      { _|w[_] = λ h pf → w⟨ h , f ∘ h ⟩[ unpf pf ]
+      ; wtr = λ pf → w×/tr₁ (unpf pf)
       }
       where open wpullback-of-not (mkwpb-of iswpb)
             unpf : {C : Obj} {h : || Hom C A ||} (pf : f ∘ h ~ f' ∘ h)
@@ -157,7 +157,7 @@ module relations-among-weak-limit-diagrams (ℂ : ecategory) where
     }
     where open wequaliser-of weqlof
           open product-of-not B×B
-          open wequaliser↔wpullback-of-diag B×B weqleq {f ∘ weqlar} (<>ar~<>ar lidˢ (lidgenˢ (weqleq ˢ)))
+          open wequaliser↔wpullback-of-diag B×B weq {f ∘ war} (<>ar~<>ar lidˢ (lidgenˢ (weq ˢ)))
 
 
   wpbof<>→weqlof : {B : Obj} (B×B : product-of B B) {A : Obj} {f f' : || Hom A B ||}
@@ -263,14 +263,14 @@ has-wpb⇒has-wW {ℂ} has-wpb = record
 has-wprd+weql⇒has-wpb : {ℂ : ecategory} → has-bin-weak-products ℂ → has-weak-equalisers ℂ
                              → has-weak-pullbacks ℂ
 has-wprd+weql⇒has-wpb {ℂ} wprod weql = mkhas-wpb (λ a b → mkwpb-of
-  { w×/sq/ = mksq/ (~proof a ∘ wπ₁ ∘ weqlar      ~[ ass ⊙ weqleq ] /
-                           (b ∘ wπ₂) ∘ weqlar    ~[ assˢ ]∎
-                           b ∘ wπ₂ ∘ weqlar ∎)
+  { w×/sq/ = mksq/ (~proof a ∘ wπ₁ ∘ war      ~[ ass ⊙ weq ] /
+                           (b ∘ wπ₂) ∘ war    ~[ assˢ ]∎
+                           b ∘ wπ₂ ∘ war ∎)
   }
   (record
-    { w⟨_,_⟩[_] = λ h k pf → w< h , k > |weql[ outsq pf ]
-    ; w×/tr₁ = λ pf → assˢ ⊙ ∘e (weqltr (outsq pf)) r ⊙ w×tr₁
-    ; w×/tr₂ = λ pf → assˢ ⊙ ∘e (weqltr (outsq pf)) r ⊙ w×tr₂
+    { w⟨_,_⟩[_] = λ h k pf → w< h , k > |w[ outsq pf ]
+    ; w×/tr₁ = λ pf → assˢ ⊙ ∘e (wtr (outsq pf)) r ⊙ w×tr₁
+    ; w×/tr₂ = λ pf → assˢ ⊙ ∘e (wtr (outsq pf)) r ⊙ w×tr₂
     }
   ))
   where open ecategory-aux ℂ
@@ -287,13 +287,13 @@ has-wprd+weql⇒has-wpb {ℂ} wprod weql = mkhas-wpb (λ a b → mkwpb-of
 has-prd+weql⇒has-wpb : {ℂ : ecategory} → has-bin-products ℂ →  has-weak-equalisers ℂ
                             → has-weak-pullbacks ℂ
 has-prd+weql⇒has-wpb {ℂ} prod weql = mkhas-wpb (λ a b → mkwpb-of
-  { w×/sq/ = mksq/ (~proof a ∘ π₁ ∘ weqlar      ~[ ass ⊙ weqleq ] /
-                           (b ∘ π₂) ∘ weqlar    ~[ assˢ ]∎
-                           b ∘ π₂ ∘ weqlar ∎) }
+  { w×/sq/ = mksq/ (~proof a ∘ π₁ ∘ war      ~[ ass ⊙ weq ] /
+                           (b ∘ π₂) ∘ war    ~[ assˢ ]∎
+                           b ∘ π₂ ∘ war ∎) }
   (record
-    { w⟨_,_⟩[_] = λ h k pf → < h , k > |weql[ outsq pf ]
-    ; w×/tr₁ = λ pf → assˢ ⊙ ∘e (weqltr (outsq pf)) r ⊙ ×tr₁
-    ; w×/tr₂ = λ pf → assˢ ⊙ ∘e (weqltr (outsq pf)) r ⊙ ×tr₂
+    { w⟨_,_⟩[_] = λ h k pf → < h , k > |w[ outsq pf ]
+    ; w×/tr₁ = λ pf → assˢ ⊙ ∘e (wtr (outsq pf)) r ⊙ ×tr₁
+    ; w×/tr₂ = λ pf → assˢ ⊙ ∘e (wtr (outsq pf)) r ⊙ ×tr₂
     }
   ))
   where open ecategory-aux ℂ
@@ -312,12 +312,12 @@ has-prd+wpb⇒has-weql : {ℂ : ecategory} → has-bin-products ℂ → has-weak
                             → has-weak-equalisers ℂ
 has-prd+wpb⇒has-weql {ℂ} prod wpb = record
   { weql-of = λ f f' → record
-            { wEql = < f , f' > w×/ₒ (Δ _)
-            ; weqlar = wπ/₁
-            ; weqleq = auxf f f' ⊙ (auxf' f f' ˢ)
+            { wOb = < f , f' > w×/ₒ (Δ _)
+            ; war = wπ/₁
+            ; weq = auxf f f' ⊙ (auxf' f f' ˢ)
             ; isweql = record
-                     { _|weql[_] = λ h pf → w⟨ h , f ∘ h ⟩[ eqcond pf ]
-                     ; weqltr = λ pf → w×/tr₁ (eqcond pf)
+                     { _|w[_] = λ h pf → w⟨ h , f ∘ h ⟩[ eqcond pf ]
+                     ; wtr = λ pf → w×/tr₁ (eqcond pf)
                      }
             }
   }
@@ -375,17 +375,17 @@ module weql+wpb⇒wbw {ℂ : ecategory} (has-weql : has-weak-equalisers ℂ) (ha
     private
       module weql-a2 = wequaliser-of weql-a2
 
-    w×//sqpf₁ : sp₁.a1 ∘ a1×/a1.wπ/₁ ∘ weql-a2.weqlar ~ sp₂.a1 ∘ a1×/a1.wπ/₂ ∘ weql-a2.weqlar
+    w×//sqpf₁ : sp₁.a1 ∘ a1×/a1.wπ/₁ ∘ weql-a2.war ~ sp₂.a1 ∘ a1×/a1.wπ/₂ ∘ weql-a2.war
     w×//sqpf₁ = ass ⊙ ∘e r a1×/a1.w×/sqpf ⊙ assˢ
 
-    w×//sqpf₂ : sp₁.a2 ∘ a1×/a1.wπ/₁ ∘ weql-a2.weqlar ~ sp₂.a2 ∘ a1×/a1.wπ/₂ ∘ weql-a2.weqlar
-    w×//sqpf₂ = ass ⊙ weql-a2.weqleq ⊙ assˢ
+    w×//sqpf₂ : sp₁.a2 ∘ a1×/a1.wπ/₁ ∘ weql-a2.war ~ sp₂.a2 ∘ a1×/a1.wπ/₂ ∘ weql-a2.war
+    w×//sqpf₂ = ass ⊙ weql-a2.weq ⊙ assˢ
 
     iswbow : is-wbow w×//sqpf₁ w×//sqpf₂
     iswbow = record
-      { ⟨_,_⟩[_,_] = λ f₁ f₂ pf₁ pf₂ →  a1×/a1.w⟨ f₁ , f₂ ⟩[ pf₁ ] weql-a2.|weql[ univpf pf₁ pf₂ ]
-      ; tr₁ = λ pf₁ pf₂ → assˢ ⊙ ∘e (weql-a2.weqltr (univpf pf₁ pf₂)) r ⊙ w×/tr₁ pf₁
-      ; tr₂ = λ pf₁ pf₂ → assˢ ⊙ ∘e (weql-a2.weqltr (univpf pf₁ pf₂)) r ⊙ w×/tr₂ pf₁
+      { ⟨_,_⟩[_,_] = λ f₁ f₂ pf₁ pf₂ →  a1×/a1.w⟨ f₁ , f₂ ⟩[ pf₁ ] weql-a2.|w[ univpf pf₁ pf₂ ]
+      ; tr₁ = λ pf₁ pf₂ → assˢ ⊙ ∘e (weql-a2.wtr (univpf pf₁ pf₂)) r ⊙ w×/tr₁ pf₁
+      ; tr₂ = λ pf₁ pf₂ → assˢ ⊙ ∘e (weql-a2.wtr (univpf pf₁ pf₂)) r ⊙ w×/tr₂ pf₁
       }
       where univpf : {X : Obj} {f₁ : || Hom X sp₁.O12 ||} {f₂ : || Hom X sp₂.O12 ||}
                      (pf₁ : sp₁.a1 ∘ f₁ ~ sp₂.a1 ∘ f₂) (pf₂ : sp₁.a2 ∘ f₁ ~ sp₂.a2 ∘ f₂)
@@ -399,7 +399,7 @@ module weql+wpb⇒wbw {ℂ : ecategory} (has-weql : has-weak-equalisers ℂ) (ha
     
     wbw-of : wbow-of sp₁ sp₂
     wbw-of = record
-      { sp = mkspan/ (a1×/a1.wπ/₁ ∘ weql-a2.weqlar) (a1×/a1.wπ/₂ ∘ weql-a2.weqlar)
+      { sp = mkspan/ (a1×/a1.wπ/₁ ∘ weql-a2.war) (a1×/a1.wπ/₂ ∘ weql-a2.war)
       ; sqpf₁ = w×//sqpf₁
       ; sqpf₂ = w×//sqpf₂
       ; is-wbw = iswbow

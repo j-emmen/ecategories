@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-defs.exact-ecat where
 
@@ -19,7 +15,7 @@ open import ecats.finite-limits.props.pullback
  
 record is-exact//has-conn-lim {ℂ : ecategory} (hascl : has-conn-limits ℂ) : Set₁ where
   open ecategory ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
   open kernel-pairs-defs ℂ
   open pullback-props ℂ
   open eq-rel-defs ℂ
@@ -50,7 +46,7 @@ mklocexact {ℂ} {hascl} isex/cl = record { hascl = hascl ; isex/cl = isex/cl }
 
 record is-exact//has-fin-lim {ℂ : ecategory} (hascl : has-fin-limits ℂ) : Set₁ where
   open ecategory ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
   open kernel-pairs-defs ℂ
   open pullback-props ℂ
   open eq-rel-defs ℂ

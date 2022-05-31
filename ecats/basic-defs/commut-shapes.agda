@@ -3,19 +3,20 @@
 
 module ecats.basic-defs.commut-shapes where
 
+open import Agda.Primitive
 open import ecats.basic-defs.ecat-def&not
 
-module comm-shapes (ℂ : ecategory) where
-  open ecategory-aux ℂ
+module comm-shapes {ℓ₁ ℓ₂ ℓ₃}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+  open ecategoryₗₑᵥ ℂ
 
-  record span/ (O1 O2 : Obj) : Set₁ where
+  record span/ (O1 O2 : Obj) : Set ℓₙₒ~ where
     constructor mkspan/
     field
       {O12} : Obj
       a1 : || Hom O12 O1 ||
       a2 : || Hom O12 O2 ||
 
-  record span/-mor {O1 O2 : Obj} (spD spC : span/ O1 O2) : Set₀ where
+  record span/-mor {O1 O2 : Obj} (spD spC : span/ O1 O2) : Set ℓₕₒₘ where
     private
       module spD = span/ spD
       module spC = span/ spC
@@ -25,7 +26,7 @@ module comm-shapes (ℂ : ecategory) where
       tr₂ : spC.a2 ∘ ar ~ spD.a2
 
 
-  record span : Set₁ where
+  record span : Set ℓₙₒ~ where
     constructor mkspan-c
     field
       {O1} {O2} : Obj
@@ -40,22 +41,29 @@ module comm-shapes (ℂ : ecategory) where
           where open span/ sp/
 
 
-  record cospan/ (O1 O2 : Obj) : Set₁ where
+  record /cospan (O1 O2 : Obj) : Set ℓₙₒ~ where
     constructor mkcospan/
     field
       {O12} : Obj
       a1 : || Hom O1 O12 ||
       a2 : || Hom O2 O12 ||
 
-  record cospan : Set₁ where
-    constructor mkcospan
+  record cospan/ (O12 : Obj) : Set ℓₙₒ~ where
+    constructor mkcospan/
     field
       {O1} {O2} : Obj
-      cosp/ : cospan/ O1 O2
+      a1 : || Hom O1 O12 ||
+      a2 : || Hom O2 O12 ||
+
+  record cospan : Set ℓₙₒ~ where
+    constructor mkcospan
+    field
+      {O12} : Obj
+      cosp/ : cospan/ O12
     open cospan/ cosp/ public
 
 
-  record comm-triang : Set₁ where
+  record comm-triang : Set ℓₐₗₗ where
     constructor mktriang
     field
       {O1} {O2} {O3} : Obj
@@ -66,7 +74,8 @@ module comm-shapes (ℂ : ecategory) where
 
 
   record square/cosp {dl dr ur : Obj}
-                     (down : || Hom dl dr ||) (right : || Hom ur dr ||) : Set₁
+                     (down : || Hom dl dr ||) (right : || Hom ur dr ||)
+                     : Set ℓₐₗₗ
                      where
     constructor mksq/
     field
@@ -75,7 +84,7 @@ module comm-shapes (ℂ : ecategory) where
     field
       sq-pf : down ∘ left ~ right ∘ up
 
-  record comm-square : Set₁ where
+  record comm-square : Set ℓₐₗₗ where
     constructor mksq
     field
       {dl} {ur} {dr} : Obj
@@ -102,11 +111,13 @@ module comm-shapes (ℂ : ecategory) where
               → square/cosp down right → down ~ down' → right ~ right'
                 → square/cosp down' right'
   sq-ext sq/ pfd pfr = mksq/ (∘e r (pfd ˢ) ⊙ sq-pf ⊙ ∘e r pfr)
-                     where open square/cosp sq/
+                     where open ecategory-aux-only ℂ
+                           open square/cosp sq/
 
 
   diag-sym-square : comm-square → comm-square
   diag-sym-square sq = mksq (mksq/ (sq-pf ˢ))
-                     where open comm-square sq
+                     where open ecategory-aux-only ℂ using (_ˢ)
+                           open comm-square sq
 
 -- end comm-shapes

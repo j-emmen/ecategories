@@ -8,10 +8,8 @@ open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.epi&mono
 open import ecats.basic-defs.eqv-rel
 open import ecats.finite-limits.defs.collective
-open import ecats.finite-limits.props.relations-among-limits
 open import ecats.finite-limits.defs.equaliser
 open import ecats.finite-limits.defs.weak-equaliser
---open import ecats.finite-limits.props.weak-pullback
 open import ecats.finite-limits.defs.weak-bow
 open import ecats.functors.defs.efunctor
 open import ecats.exact-completion.CVconstruction
@@ -36,7 +34,7 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
     module Exℂ where
       open ecategory Ex ℂ [ hasfwl ] public
       open comm-shapes Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public 
+      open epi&mono-defs Ex ℂ [ hasfwl ] public 
       open equaliser-defs Ex ℂ [ hasfwl ] public
     infixr 2  _~_
     infixr 5 _∘_
@@ -135,13 +133,13 @@ module exact-compl-has-equalisers {ℂ : ecategory} (hasfwl : has-fin-weak-limit
 
     eql-of : Exℂ.equaliser-of f f'
     eql-of = record
-      { Eql = eqlOb
-      ; eqlar = eqlar
-      ; eqleq = eqleq
+      { Ob = eqlOb
+      ; ar = eqlar
+      ; eq = eqleq
       ; iseql = record
-        { _|eql[_] = λ {C} g pf → g|f C g pf
-        ; eqltr = λ {C} {g} pf → trpf C g pf
-        ; eqluq = λ {C} {g} pf → eql-mono.mono-pf pf
+        { _|[_] = λ {C} g pf → g|f C g pf
+        ; tr = λ {C} {g} pf → trpf C g pf
+        ; uq = λ {C} {g} pf → eql-mono.mono-pf pf
         }
       }
       where open Eql-univ

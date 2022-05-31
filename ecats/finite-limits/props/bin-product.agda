@@ -6,6 +6,7 @@ module ecats.finite-limits.props.bin-product where
 open import ecats.basic-defs.ecat-def&not
 open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.isomorphism
+open import ecats.basic-props.isomorphism
 open import ecats.basic-defs.epi&mono
 open import ecats.finite-limits.d&n-bin-product
 
@@ -15,7 +16,8 @@ open import ecats.finite-limits.d&n-bin-product
 module bin-product-props (ℂ : ecategory) where
   open ecategory-aux ℂ
   open iso-defs ℂ
-  open epis&monos-defs ℂ
+  open iso-props ℂ
+  open epi&mono-defs ℂ
   open comm-shapes ℂ
   open binary-products ℂ 
 

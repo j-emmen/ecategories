@@ -11,7 +11,28 @@ open import ecats.basic-defs.ecategory
 
 -- Notation
 
-module ecategory-aux-level {ℓ ℓ' : Level} {Obj : Set ℓ} {Hom : Obj → Obj → setoid {ℓ'}}
+-- It seems it is more useful to have these levels defined within 'is-ecategory'
+-- so that we let Agda compute them for us
+{-
+module ecat-levels {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+    ℓₒ ℓₐᵣᵣ ℓ~ ℓₕₒₘ ℓₙₒ~ ℓₐₗₗ : Level
+    ℓₒ = ℓ₁
+    ℓₐᵣᵣ = ℓ₂
+    ℓ~ = ℓ₃
+    ℓₕₒₘ = ℓₐᵣᵣ ⊔ ℓ~
+    ℓₙₒ~ = ℓₒ ⊔ ℓₐᵣᵣ
+    ℓₐₗₗ = ℓₒ ⊔ ℓₕₒₘ
+-- end ecat-levels
+-}
+
+module ecat {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+  open ecategoryₗₑᵥ ℂ public
+  --open ecat-levels ℂ public
+--end ecat
+
+
+module ecategory-aux-level {ℓ₁ ℓ₂ ℓ₃ : Level}
+                           {Obj : Set ℓ₁} {Hom : Obj → Obj → setoid {ℓ₂} {ℓ₃}}
                            (isecat : is-ecategory Obj Hom)
                            where
   open is-ecategory isecat
@@ -31,15 +52,15 @@ module ecategory-aux-level {ℓ ℓ' : Level} {Obj : Set ℓ} {Hom : Obj → Obj
               --~proof f₁ ~[ pf ] pf' = H.~proof f₁ ~[ pf ] pf'
                                  where module H = setoid-aux (Hom a b)
 
-  theeqproof eqres-end : {a b : Obj} (f f' : || Hom a b ||) → f ~ f' → f ~ f'
+  theeqproof eqreas-end : {a b : Obj} (f f' : || Hom a b ||) → f ~ f' → f ~ f'
   theeqproof = H.eqreasend
             where module H = setoid-aux (Hom _ _)
-  eqres-end = theeqproof
+  eqreas-end = theeqproof
 
   infix 1 theeqproof
   syntax theeqproof f f' pf = f ~[ pf ] f'
-  infix 3 eqres-end --/_~[_]∎_∎
-  syntax eqres-end f f' pf = / f ~[ pf ]∎ f' ∎
+  infix 3 eqreas-end --/_~[_]∎_∎
+  syntax eqreas-end f f' pf = / f ~[ pf ]∎ f' ∎
   
 
   infixr 35 _⊙_
@@ -141,31 +162,29 @@ module ecategory-aux-level {ℓ ℓ' : Level} {Obj : Set ℓ} {Hom : Obj → Obj
                      → (h ∘ g) ∘ f ~ h' ∘ g' ∘ f'
   assgenˢ pff pfg pfh = assˢ ⊙ (∘e (∘e pff pfg) pfh)
 
--- end module ecategory-aux-level
+-- end ecategory-aux-level
 
 
 
 
 
-module ecategory-aux-only (ℂ : ecategory) where
-  open ecategory ℂ using (isecat)
+module ecategory-aux-only {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+  open ecategoryₗₑᵥ ℂ using (isecat)
   open ecategory-aux-level isecat public
 -- end module ecategory-aux-only
 
 
-module ecategory-aux (ℂ : ecategory) where
-  open ecategory ℂ public
+module ecategory-aux {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+  open ecat ℂ public
   open ecategory-aux-only ℂ public
 -- end module ecategory-aux
 
 
-
-
+{-
 module small-ecategory-aux-only (𝕀 : small-ecategory) where
   open small-ecategory 𝕀 using (isecat)
   open ecategory-aux-level isecat public
 -- end module ecategory-aux-only
-
 
 module small-ecategory-aux (𝕀 : small-ecategory) where
   open small-ecategory 𝕀 public
@@ -178,7 +197,6 @@ module large-ecategory-aux-only (ℂ : large-ecategory) where
   open ecategory-aux-level isecat public
 -- end module large-ecategory-aux-only
 
-
 module large-ecategory-aux (ℂ : large-ecategory) where
   open large-ecategory ℂ public
   open large-ecategory-aux-only ℂ public
@@ -190,9 +208,8 @@ module Large-ecategory-aux-only (ℂ : Large-ecategory) where
   open ecategory-aux-level isecat public
 -- end module Large-ecategory-aux-only
 
-
 module Large-ecategory-aux (ℂ : Large-ecategory) where
   open Large-ecategory ℂ public
   open Large-ecategory-aux-only ℂ public
 -- end module Large-ecategory-aux
-
+-}

@@ -18,17 +18,17 @@ module wequaliser-defs (ℂ : ecategory) where
                        (pfeq : f ∘ e ~ f' ∘ e) : Set₁ where
     --constructor mkis-weql
     field
-      _|weql[_] : {C : Obj} (h : || Hom C A ||) → f ∘ h ~ f' ∘ h → || Hom C E ||
-      weqltr : {C : Obj} {h : || Hom C A ||} (pf : f ∘ h ~ f' ∘ h)
-                  → e ∘ h |weql[ pf ] ~ h
+      _|w[_] : {C : Obj} (h : || Hom C A ||) → f ∘ h ~ f' ∘ h → || Hom C E ||
+      wtr : {C : Obj} {h : || Hom C A ||} (pf : f ∘ h ~ f' ∘ h)
+               → e ∘ h |w[ pf ] ~ h
 
   record wequaliser-of {A B} (f f' : || Hom A B ||) : Set₁ where
     constructor mkweql-of
     field
-      {wEql} : Obj
-      {weqlar} : || Hom wEql A ||
-      {weqleq} : f ∘ weqlar ~ f' ∘ weqlar
-      isweql : is-wequaliser weqleq
+      {wOb} : Obj
+      {war} : || Hom wOb A ||
+      {weq} : f ∘ war ~ f' ∘ war
+      isweql : is-wequaliser weq
     open is-wequaliser isweql public
     
 -- end wequaliser-defs
@@ -42,7 +42,7 @@ record has-weak-equalisers (ℂ : ecategory) : Set₁ where
   module weql-of {A B : Obj} {f f' : || Hom A B ||} = wequaliser-of (weql-of f f')
   open weql-of public
   w[_~_] : {A B : Obj} (f f' : || Hom A B ||) → Obj
-  w[ f ~ f' ] = wEql {f = f} {f'}
+  w[ f ~ f' ] = wOb {f = f} {f'}
 
 {-
     weqob : {A B : Obj} → (f g : || Hom A B  ||) → Obj

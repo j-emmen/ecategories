@@ -483,7 +483,7 @@ module eq-rel-defs (ℂ : ecategory) where
   open bow-defs ℂ
   open binary-products ℂ
   open pseudo-eq-rel-defs ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
 
 
   record is-transitive/pb {Hi Lo : Obj} {r₁ r₂ : || Hom Hi Lo ||} (τpb : pullback-of r₂ r₁) : Set₁

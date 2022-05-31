@@ -4,13 +4,12 @@
 module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.commut where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.exact-ecat
+open import ecats.reg&ex
 open import ecats.finite-limits.defs.collective
 open import ecats.constructions.ecat-eqrel
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.left-covering
 open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.def

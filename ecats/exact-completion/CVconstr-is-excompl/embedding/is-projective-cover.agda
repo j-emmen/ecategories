@@ -4,8 +4,10 @@
 module ecats.exact-completion.CVconstr-is-excompl.embedding.is-projective-cover where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
+open import ecats.basic-defs.arrows
+open import ecats.basic-props.isomorphism
+open import ecats.basic-props.epi&mono-basic
+open import ecats.basic-defs.image-fact
 open import ecats.basic-props.image-fact
 open import ecats.basic-defs.regular-ecat
 open import ecats.basic-props.regular-ecat
@@ -46,8 +48,8 @@ module exact-compl-embed-is-prjcov {ℂ : ecategory} (hasfwl : has-fin-weak-limi
       open comm-shapes Ex ℂ [ hasfwl ] public
       open iso-defs Ex ℂ [ hasfwl ] public
       open iso-transports Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
+      open epi&mono-props-basic Ex ℂ [ hasfwl ] public
       open image-fact-defs Ex ℂ [ hasfwl ] public
       open image-fact-props Ex ℂ [ hasfwl ] public
       open pullback-squares Ex ℂ [ hasfwl ] public

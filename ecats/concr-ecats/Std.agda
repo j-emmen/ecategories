@@ -1,13 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
-
-
-
--- This module defines the category of small setoids and proves some of its properties
 
 module ecats.concr-ecats.Std where
 
@@ -16,42 +8,16 @@ open import tt-basics.basics
 open import tt-basics.id-type
 open import tt-basics.setoids renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
+open import ecats.basic-defs.arrows
 open import ecats.basic-defs.exact-ecat
 open import ecats.basic-props.epi&mono
---open import ecats.basic-props.exact-ecat
 open import ecats.finite-limits.defs&not
 open import ecats.finite-limits.props.relations-among-limits
 open import ecats.finite-limits.props.pullback
-
-
 open import ecats.concr-ecats.Type
-private
-  module Type where
-    open ecategory-aux Type public
-    open comm-shapes Type public
-    open wpullback-squares Type public
-    open pseudo-eq-rel-defs Type public
-    open elementality-in-Type public
-  
+open import ecats.concr-ecats.Std-lev using (Std) public
 
-
-                       
-Std : ecategory
-Std = record
-         { Obj = setoid {lzero}
-         ; Hom = setoidmaps
-         ; isecat = record
-                  { _∘_ = std-cmp
-                  ; idar = λ A → std-id {A}
-                  ; ∘ext = λ f f' g g' pff pfg → std-cmp-ext g g' f f' pfg pff
-                  ; lidax = λ {_} {B} f x → std.r B
-                  ; ridax = λ {_} {B} f x → std.r B
-                  ; assoc = λ {_} {_} {_} {D} f g h x → std.r D
-                  }
-         }
-         where module std (A : setoid {lzero}) = setoid-aux A
-
+-- This module proves some properties of the category of small setoids Std
 
 private
   trm-Std : has-terminal Std
@@ -64,8 +30,14 @@ private
             }
     }
 
-
 private
+  module Type where
+    open ecategory-aux Type public
+    open Type-is-elemental public
+    open comm-shapes Type public
+    open wpullback-squares Type public
+    open pseudo-eq-rel-defs Type public
+    --open elementality-in-Type public
   module Std where
     open ecategory-aux Std public
     open arrows-defs Std public
@@ -75,16 +47,17 @@ private
     module pbprop =  pullback-props Std hiding (is-pbof-stable; is-pbsq-stable)
     glel : {A : setoid} → || A ||std → || Hom (Freestd N₁) A ||
     glel {A} a = free-std-is-min {A = A} (Type.glel a)
-    ev0₁ : {A : setoid} → || Hom (Freestd N₁) A || → || A ||std
-    ev0₁ a = a.op 0₁
+    tyel : {A : setoid} → || Hom (Freestd N₁) A || → || A ||std
+    tyel a = a.op 0₁
            where module a = setoidmap a
+
 
 
 module surjective-Std {A B : Std.Obj} {f : || Std.Hom A B ||} (issurj : Std.is-surjective f) where
   open Std.is-surjective issurj public
   module f = setoidmap f
   secop : || B ||std → || A ||std
-  secop b = Std.ev0₁ (cntimg (Std.glel b))
+  secop b = Std.tyel (cntimg (Std.glel b))
   secop-pf : {b : || B ||std} → < B > f.op (secop b) ~ b
   secop-pf {b} = cntimg-pf {Std.glel b} 0₁
 -- end surjective-Std
@@ -111,7 +84,7 @@ module bin-products-in-Std (A B : Std.Obj) where
   π₁ = record { op = prj1 ; ext = prj1 }
   π₂ : || setoidmaps Ob B ||std
   π₂ = record { op = prj2 ; ext = prj2 }
-  module univ {C : setoid} (f : || setoidmaps C A ||) (g : || setoidmaps C B ||) where
+  module univ {C : Std.Obj} (f : || Std.Hom C A ||) (g : || Std.Hom C B ||) where
     private
       module f = setoidmap f
       module g = setoidmap g
@@ -266,7 +239,7 @@ module coeq-of-eqv-rel-in-Std {A : Std.Obj} (eqr : Std.eqrel-over A) where
                    { refl = λ a → eqr.ρ.op a , pair (eqr.ρ-ax₀ a) (eqr.ρ-ax₁ a)
                    ; sym = λ pf → eqr.σ.op (pj1 pf) , pair (eqr.σ-ax₀ (pj1 pf) A.⊙ (prj2 (pj2 pf)))
                                                             (eqr.σ-ax₁ (pj1 pf) A.⊙ (prj1 (pj2 pf)))
-                   ; tra = λ pf1 pf2 → Std.ev0₁ (eqr.τ Std.∘ τaux pf1 pf2) , pair (eqr.τ-ax₀g 0₁ A.⊙ prj1 (pj2 pf1))
+                   ; tra = λ pf1 pf2 → Std.tyel (eqr.τ Std.∘ τaux pf1 pf2) , pair (eqr.τ-ax₀g 0₁ A.⊙ prj1 (pj2 pf1))
                                                                                (eqr.τ-ax₁g 0₁ A.⊙ prj2 (pj2 pf2))
                    }
        }
@@ -319,7 +292,7 @@ module coeq-of-eqv-rel-in-Std {A : Std.Obj} (eqr : Std.eqrel-over A) where
 
 module can-regular-epi-iso {A B : Std.Obj} {e : || Std.Hom A B ||} (isrepi : Std.is-regular-epi e) where
   open pullback-props Std
-  open epis&monos-props Std
+  open epi&mono-props-all Std
   private
     module A = setoid-aux A
     module B = setoid-aux B
@@ -446,15 +419,15 @@ module surjection-is-regular-epi {A B : Std.Obj} {e : || Std.Hom A B ||} (issurj
     eq-op-aux₂ pf = kp.×/tr₂ {flStd.trmOb} {Std.glel _} {Std.glel _} (λ _ → pf)
     eq-op : {a a' : || A ||std} → < B > e.op a ~ e.op a' → < C > f.op a ~  f.op a'
     eq-op {a} {a'} pf = C.~proof f.op a                                ~[ f.ext ((eq-op-aux₁ pf) 0₁ A.ˢ) ] C./
-                                 f.op (kp.₁.op (Std.ev0₁ (eq-op-aux pf)))  ~[ eq (Std.ev0₁ (eq-op-aux pf)) ] C./
-                                 f.op (kp.₂.op (Std.ev0₁ (eq-op-aux pf)))  ~[  f.ext ((eq-op-aux₂ pf) 0₁) ]∎
+                                 f.op (kp.₁.op (Std.tyel (eq-op-aux pf)))  ~[ eq (Std.tyel (eq-op-aux pf)) ] C./
+                                 f.op (kp.₂.op (Std.tyel (eq-op-aux pf)))  ~[  f.ext ((eq-op-aux₂ pf) 0₁) ]∎
                                  f.op a' ∎
     ext : {b b' : || B ||std} → < B > b ~ b'
-             → < C > f.op (Std.ev0₁ (e.cntimg (Std.glel b))) ~ f.op (Std.ev0₁ (e.cntimg (Std.glel b')))
+             → < C > f.op (Std.tyel (e.cntimg (Std.glel b))) ~ f.op (Std.tyel (e.cntimg (Std.glel b')))
     ext {b} {b'} pf = eq-op (e.cntimg-pf 0₁ B.⊙ (pf B.⊙ e.cntimg-pf 0₁ B.ˢ))
     ar : || Std.Hom B C ||
     ar = record
-       { op = λ b → f.op (Std.ev0₁ (e.cntimg (Std.glel b)))
+       { op = λ b → f.op (Std.tyel (e.cntimg (Std.glel b)))
        ; ext = ext
        }
   -- end univ
@@ -487,7 +460,7 @@ isrepi→issurj = regular-epi-is-surjective.issurj
 
 repi-pb-stb : Std.is-pbof-stable Std.is-regular-epi
 repi-pb-stb = Std.pbprop.pbof-stb-trsp issurj→isrepi isrepi→issurj surj-pbof-stb
-            where open epis&monos-props Std
+            where open epi&mono-props-all Std
                   open surjective-props flStd.hastrm
 
 
@@ -562,5 +535,3 @@ ex-Std = record
   ; eqr-has-coeq = coeq-of-eqv-rel-in-Std.coeqof
   ; eqr-is-eff = eqv-rel-is-kernerl-pair.iskp
   }
-
-

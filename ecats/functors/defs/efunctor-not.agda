@@ -8,21 +8,25 @@ open import ecats.basic-defs.isomorphism
 open import ecats.basic-defs.commut-shapes
 open import ecats.functors.defs.efunctor
 
-
 -- E-functor notation
 
 
-module efunctor-aux-only {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
-  private    
-    module catnot (ℂ : ecategory) where
-      open ecategory ℂ public
+module efunctor-aux-only {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                         (F : efunctorₗₑᵥ ℂ 𝔻) where
+  private
+    module catnot {ℓ₁ ℓ₂ ℓ₃}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) where
+      open ecat ℂ public
       open iso-defs ℂ public
       open comm-shapes ℂ public
-    module ℂ = catnot ℂ
-    module 𝔻 = catnot 𝔻
-    module F = efunctor F
+    module ℂ where
+      open catnot ℂ public
+      open iso-defs ℂ public
+    module 𝔻 where
+      open catnot 𝔻 public
+      open iso-defs 𝔻 public
+    module F = efctr F
     
-  -- apparently only equational reasoning in 𝔻 is needed
+  -- only equational reasoning in 𝔻 is needed
   open ecategory-aux-only 𝔻
   
 
@@ -60,15 +64,14 @@ module efunctor-aux-only {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
   F∘tactˢ {A} {B} {C} {f} {f'} {g} {g'} pf = {!!} --F∘ˢ ⊙ pf ⊙ F∘
 -}
 
-
+  
   ᵢₛₒ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||}{f' : || ℂ.Hom B A ||}
-           → ℂ.is-iso-pair f f' → 𝔻.is-iso-pair (F.ₐ f) (F.ₐ f')
+             → ℂ.is-iso-pair f f' → 𝔻.is-iso-pair (F.ₐ f) (F.ₐ f')
   ᵢₛₒ {f = f} {invf} isopair = record
     { iddom = ∘ax iddom ⊙ F.id
     ; idcod = ∘ax idcod ⊙ F.id
     }
     where open ℂ.is-iso-pair isopair
-
 
 
   -- shapes
@@ -81,21 +84,21 @@ module efunctor-aux-only {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
   span spC = 𝔻.mkspan (F.ₐ a1) (F.ₐ a2)
             where open ℂ.span spC
 
-  sq/ : {I A B : ℂ.Obj}{a : || ℂ.Hom A I ||}{b : || ℂ.Hom B I ||}
-           →  ℂ.square/cosp a b → 𝔻.square/cosp (F.ₐ a) (F.ₐ b)
+  sq/ : {I A B : ℂ.Obj} {a : || ℂ.Hom A I ||} {b : || ℂ.Hom B I ||}
+           → ℂ.square/cosp a b → 𝔻.square/cosp (F.ₐ a) (F.ₐ b)
   sq/ sqC = 𝔻.mksq/ (∘∘ sq-pf)
           where open ℂ.square/cosp sqC
 
   sq : ℂ.comm-square → 𝔻.comm-square
-  sq sqC = 𝔻.mksq (𝔻.mksq/ (∘∘ sq-pf))
-  -- {F.ₒ dl} {F.ₒ ur} {F.ₒ dr} {F.ₐ down} {F.ₐ right}  --{F.ₒ ul} {F.ₐ left} {F.ₐ up} 
-          where open ℂ.comm-square sqC
+  sq sqC = 𝔻.mksq (sq/ sqC.sq/)
+          where module sqC = ℂ.comm-square sqC
 
 -- end module efunctor-aux-only
 
 
 
-module efunctor-aux {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
-  open efunctor F public
+module efunctor-aux {ℓ₁ ℓ₂ ℓ₃ ℓ₄ ℓ₅ ℓ₆}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                    (F : efunctorₗₑᵥ ℂ 𝔻) where
+  open efunctorₗₑᵥ F public
   open efunctor-aux-only F public
 -- end efunctor-aux

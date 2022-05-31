@@ -4,11 +4,10 @@
 module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.is-exact-fun where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.exact-ecat
+open import ecats.basic-defs.arrows
+open import ecats.basic-defs.image-fact
+open import ecats.basic-props.epi&mono-basic
+open import ecats.reg&ex
 open import ecats.finite-limits.defs.collective
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
@@ -34,8 +33,8 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
     module Exℂ where
       open ecategory Ex ℂ [ hasfwl ] public
       open iso-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
+      open epi&mono-props-basic Ex ℂ [ hasfwl ] public
       open image-fact-defs Ex ℂ [ hasfwl ] public
     module CVex = efunctor-aux CVex ℂ [ hasfwl ]
   --open exact-compl-universal-def hasfwl
@@ -47,8 +46,8 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
       module 𝔼 where
         open ecategory 𝔼 public
         open iso-defs 𝔼 public
-        open epis&monos-defs 𝔼 public
-        open epis&monos-props 𝔼 public
+        open epi&mono-defs 𝔼 public
+        open epi&mono-props-basic 𝔼 public
         open eq-rel-defs 𝔼 public
         open kernel-pairs-defs 𝔼 public
       module ex𝔼 where

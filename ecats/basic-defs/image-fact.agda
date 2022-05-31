@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.basic-defs.image-fact where
 
@@ -21,7 +17,7 @@ module image-fact-defs (ℂ : ecategory) where
   open ecategory ℂ
   open comm-shapes ℂ
   open iso-defs ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
   open pullback-defs ℂ
   open wWlim-defs ℂ
   private
@@ -197,7 +193,7 @@ record has-img-fact (ℂ : ecategory) : Set₁ where
 
 record has-pb-stable-img-fact (ℂ : ecategory) : Set₁ where
   open ecategory ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
   open image-fact-defs ℂ
   open comm-shapes ℂ
   open pullback-defs ℂ
@@ -245,7 +241,7 @@ record has-img-fact₂ (ℂ : ecategory) : Set₁ where
 
 record has-pb-stable-img-fact₂ (ℂ : ecategory) : Set₁ where
   open ecategory ℂ
-  open epis&monos-defs ℂ
+  open epi&mono-defs ℂ
   open image-fact-defs ℂ
   open comm-shapes ℂ
   open pullback-defs ℂ

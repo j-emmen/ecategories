@@ -1,4 +1,4 @@
- 
+
 {-# OPTIONS --without-K #-}
 
 module ecats.finite-limits.defs.pullback where
