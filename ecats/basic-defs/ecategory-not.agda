@@ -40,17 +40,18 @@ module ecategory-aux-level {ℓ₁ ℓ₂ ℓ₃ : Level}
 
 -- Equational reasonig
 
-  infixr 2 /_~[_]_ -- the / character is needed to avoid parenthesis for parsing
-  infix 1 ~proof_~[_]_
+  infix 1 eqreas-start ~proof_~[_]_
+  eqreas-start ~proof_~[_]_ : {a b : Obj} (f₁ {f₂ f₃} : || Hom a b ||) → f₁ ~ f₂ → f₂ ~ f₃ → f₁ ~ f₃
+  eqreas-start {a} {b} = H.eqreasstart
+                       where module H = setoid-aux (Hom a b)
+  ~proof f₁ ~[ pf ] pf' = eqreas-start f₁ pf pf'
 
-  /_~[_]_ : {a b : Obj} (f₁ {f₂ f₃} : || Hom a b ||) → f₁ ~ f₂ → f₂ ~ f₃ → f₁ ~ f₃
-  / f₁ ~[ pf ] pf' = H./ f₁ ~[ pf ] pf'
-                   where module H = setoid-aux (Hom _ _)
-  
-  ~proof_~[_]_ : {a b : Obj} (f₁ {f₂ f₃} : || Hom a b ||) → f₁ ~ f₂ → f₂ ~ f₃ → f₁ ~ f₃
-  ~proof_~[_]_ {a} {b} f₁ pf pf' = H.~proof f₁ ~[ pf ] pf'
-              --~proof f₁ ~[ pf ] pf' = H.~proof f₁ ~[ pf ] pf'
-                                 where module H = setoid-aux (Hom a b)
+  infixr 2 eqreas-mid /_~[_]_
+  -- it seems that the / character is needed to avoid parenthesis for parsing
+  eqreas-mid /_~[_]_ : {a b : Obj} (f₁ {f₂ f₃} : || Hom a b ||) → f₁ ~ f₂ → f₂ ~ f₃ → f₁ ~ f₃
+  eqreas-mid {a} {b} = H.eqreasmid
+                     where module H = setoid-aux (Hom a b)
+  / f₁ ~[ pf ] pf' = eqreas-mid f₁ pf pf'
 
   theeqproof eqreas-end : {a b : Obj} (f f' : || Hom a b ||) → f ~ f' → f ~ f'
   theeqproof = H.eqreasend
@@ -61,24 +62,37 @@ module ecategory-aux-level {ℓ₁ ℓ₂ ℓ₃ : Level}
   syntax theeqproof f f' pf = f ~[ pf ] f'
   infix 3 eqreas-end --/_~[_]∎_∎
   syntax eqreas-end f f' pf = / f ~[ pf ]∎ f' ∎
-  
 
-  infixr 35 _⊙_
-  infix 40 _ˢ
   r : {a b : Obj} {f : || Hom a b ||} → f ~ f
   r = refl (Hom _ _) _
   
-  _ˢ :  {a b : Obj} {f₁ f₂ : || Hom a b ||} → f₁ ~ f₂ → f₂ ~ f₁
-  pf ˢ = sym (Hom _ _) pf
-  
-  _⊙_ : {a b : Obj} {f₁ f₂ f₃ : || Hom a b ||} → f₁ ~ f₂ → f₂ ~ f₃
-         → f₁ ~ f₃
-  pf₁ ⊙ pf₂ = tra (Hom _ _) pf₁ pf₂
+  infix 40 ~sym _ˢ
+  ~sym _ˢ :  {a b : Obj} {f₁ f₂ : || Hom a b ||} → f₁ ~ f₂ → f₂ ~ f₁
+  ~sym {a} {b} = sym (Hom a b)
+  pf ˢ = ~sym pf
+
+  infixr 35 ~tra _⊙_
+  ~tra _⊙_ : {a b : Obj} {f₁ f₂ f₃ : || Hom a b ||} → f₁ ~ f₂ → f₂ ~ f₃
+                → f₁ ~ f₃
+  ~tra {a} {b} = tra (Hom a b)
+  pf₁ ⊙ pf₂ = ~tra pf₁ pf₂
 
   ∘e : {a b c : Obj} → {f f' : || Hom a b ||} {g g' : || Hom b c ||}
              → f ~ f' → g ~ g' → g ∘ f ~ (g' ∘ f')
   ∘e {f = f} {f' = f'} {g = g} {g' = g'} = ∘ext f f' g g'
-  
+
+  -- versions of the above keeping track of intermediate points
+  syntax eqreas-start f₁ {f₂} {f₃} pf pf' = ~proof f₁ ~[ pf to f₂ , f₃ ] pf'
+  syntax eqreas-mid f₁ {f₂} {f₃} pf pf' = / f₁ ~[ pf to f₂ , f₃ ] pf'
+
+  infix 45 r[_]
+  r[_] : {a b : Obj}(f : || Hom a b ||) → f ~ f
+  r[ f ] = refl (Hom _ _) f  
+  syntax ~sym {f₁ = f₁} {f₂} pf = pf ˢ[ f₁ , f₂ ]
+  syntax ~tra {f₁ = f₁} {f₂} {f₃} pf₁ pf₂ = pf₁ ⊙ pf₂ [ f₁ , f₂ , f₃ ]
+  syntax ∘e {f = f} {f' = f'} {g = g} {g' = g'} pf pf' = ∘e[ pf , pf' ]for[ f ~ f' , g ~ g' ]
+
+
   
 -- left identity
   lid : {a b : Obj} {f : || Hom a b ||} → idar b ∘ f ~ f

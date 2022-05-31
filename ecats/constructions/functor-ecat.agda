@@ -1,5 +1,5 @@
 
-{-# OPTIONS --without-K --show-implicit #-}
+{-# OPTIONS --without-K #-}
 
 module ecats.constructions.functor-ecat where
 
@@ -35,16 +35,17 @@ private module fctr {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑ�
 -- Category of efunctors between two ecategories
 -------------------------------------------------
 
-Fctrₗₑᵥ : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~)
-         {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~)
-           → ecategoryₗₑᵥ (fctr.ℓₒ ℂ 𝔻) (fctr.ℓₐᵣᵣ ℂ 𝔻) (fctr.ℓ~ ℂ 𝔻)
+[_,_]ᶜᵃᵗ Fctrₗₑᵥ : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~)
+                 {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~)
+                   → ecategoryₗₑᵥ (fctr.ℓₒ ℂ 𝔻) (fctr.ℓₐᵣᵣ ℂ 𝔻) (fctr.ℓ~ ℂ 𝔻)
 Fctrₗₑᵥ ℂ 𝔻 = record
   { Obj = efunctorₗₑᵥ ℂ 𝔻
   ; Hom = NatTr {ℂ = ℂ} {𝔻 = 𝔻}
   ; isecat = fctr-and-natt-is-ecat ℂ 𝔻
   }
-
-
+[_,_]ᶜᵃᵗ = Fctrₗₑᵥ
+  
+  
 
 -------------------------------------------------------------
 -- Small category of efunctors between two small ecategories
@@ -135,3 +136,23 @@ const-discDiagr I ℂ = record
         }
   }
   where module ℂ = ecategory-aux ℂ using (r)
+
+
+-- functors on functors induced by functors
+
+fctr-precmp : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
+              {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
+              (F : efunctorₗₑᵥ ℂ 𝔻)
+              {ℓₒ ℓₕ ℓ~ : Level}(𝕏 : ecategoryₗₑᵥ ℓₒ ℓₕ ℓ~)
+                → efunctorₗₑᵥ [ 𝔻 , 𝕏 ]ᶜᵃᵗ [ ℂ , 𝕏 ]ᶜᵃᵗ
+fctr-precmp F 𝕏 = record
+  { FObj = λ K → K ○ F
+  ; FHom = natt-fctr-pre F
+  ; isF = record
+        { ext = λ eq A → eq (F.ₒ A)
+        ; id = λ {_} _ → r
+        ; cmp = λ _ _ _ → r
+        }
+  }
+  where module F = efctr F
+        open ecategory-aux-only 𝕏 using (r)

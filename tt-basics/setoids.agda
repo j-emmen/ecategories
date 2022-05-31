@@ -64,8 +64,8 @@ module setoid-aux {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) where
   open setoid A
 
   infix 2 _~_
-  infixr 35 _⊙_
-  infix 40 _ˢ
+  infixr 35 ~tra _⊙_
+  infix 40 ~sym _ˢ
 
   ob : Set ℓo
   ob = object
@@ -75,10 +75,12 @@ module setoid-aux {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) where
   r : {a : ob} → a ∼ a
   r {a} = refl a
 
-  _ˢ :  {a a' : ob} → a ~ a' → a' ~ a
+  ~sym _ˢ :  {a a' : ob} → a ~ a' → a' ~ a
+  ~sym = sym
   pf ˢ = sym pf
   
-  _⊙_ : {a a' a'' : ob} → a ~ a' → a' ~ a'' → a ~ a''
+  ~tra _⊙_ : {a a' a'' : ob} → a ~ a' → a' ~ a'' → a ~ a''
+  ~tra = tra
   pf₁ ⊙ pf₂ = tra pf₁ pf₂
 
   infix 3 eqendp
@@ -89,10 +91,12 @@ module setoid-aux {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) where
   eqendp a₁ a₂ p = p
   syntax eqendp a₁ a₂ p = a₁ ~[ p ] a₂
 
-  ~proof_~[_]_ : (a₁ : ob) {a₂ a₃ : ob} →  a₁ ~ a₂ →  a₂ ~ a₃ →  a₁ ~ a₃
+  eqreasstart ~proof_~[_]_ : (a₁ : ob) {a₂ a₃ : ob} →  a₁ ~ a₂ →  a₂ ~ a₃ →  a₁ ~ a₃
+  eqreasstart a₁ = tra
   ~proof a₁ ~[ pf ] pf' = tra pf pf'
 
-  /_~[_]_ : (a₁ : ob) {a₂ a₃ : ob} →  a₁ ~ a₂ →  a₂ ~ a₃ →  a₁ ~ a₃
+  eqreasmid /_~[_]_ : (a₁ : ob) {a₂ a₃ : ob} →  a₁ ~ a₂ →  a₂ ~ a₃ →  a₁ ~ a₃
+  eqreasmid a₁ = tra
   / a₁ ~[ pf ] pf' = tra pf pf'
 
   eqreasend endpoints : (a a' : ob) → a ~ a' → a ~ a'
@@ -102,6 +106,15 @@ module setoid-aux {ℓo ℓr : Level}(A : setoid {ℓo} {ℓr}) where
   infix 3 eqreasend endpoints --_~[_]_∎
   syntax eqreasend a a' pf = / a ~[ pf ]∎ a' ∎
   syntax endpoints a a' pf = a ~[ pf ] a' ∎
+
+  -- versions of the above keeping track of intermediate points
+  r[_] : (a : ob) → a ~ a
+  r[ a ] = refl a  
+  syntax ~sym {a = a} {a'} pf = pf ˢ[ a , a' ]
+  syntax ~tra {a = a} {a'} {a''} pf₁ pf₂ = pf₁ ⊙ pf₂ [ a , a' , a'' ]
+  syntax eqreasstart a₁ {a₂} {a₃} pf pf' = ~proof a₁ ~[ pf to a₂ , a₃ ] pf'
+  syntax eqreasmid a₁ {a₂} {a₃} pf pf' = / a₁ ~[ pf to a₂ , a₃ ] pf'
+  infix 45 r[_]
 
 -- end setoid-aux
 

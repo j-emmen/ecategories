@@ -44,12 +44,15 @@ record natural-transformation {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ �
   natˢ f = nat f ˢ
          where open ecategory-aux-only 𝔻 using (_ˢ)
 
+private module nt = natural-transformation
+
 infixr 60 _⇒_
 _⇒_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
         (F G : efunctorₗₑᵥ ℂ 𝔻)
            → Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
 F ⇒ G = natural-transformation F G
 
+-- setoid of natural transformations
 
 NatTr : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
         (F G : efunctorₗₑᵥ ℂ 𝔻)
@@ -124,3 +127,27 @@ _○ₕ_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂
        {ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}{F G : efunctorₗₑᵥ ℂ 𝔻}{H K : efunctorₗₑᵥ 𝔻 𝔼}
                → H ⇒ K → F ⇒ G → H ○ F ⇒ K ○ G
 _○ₕ_ = natt-hcmp
+
+natt-fctr-pre : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}
+                {𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}{ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}
+                (F : efunctorₗₑᵥ ℂ 𝔻){H K : efunctorₗₑᵥ 𝔻 𝔼}
+                  → H ⇒ K → H ○ F ⇒ K ○ F
+natt-fctr-pre F α = record
+  { fnc = λ {A} → α.fnc {F.ₒ A}
+  ; nat = λ f → α.nat (F.ₐ f)
+  }
+  where module F = efctr F
+        module α = natural-transformation α
+
+
+
+natt-fctr-post : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}
+                 {𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}{ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}
+                 {F G : efunctorₗₑᵥ ℂ 𝔻}(α : F ⇒ G)(K : efunctorₗₑᵥ 𝔻 𝔼)
+                   → K ○ F ⇒ K ○ G
+natt-fctr-post α K = record
+  { fnc = λ {A} → K.ₐ (α.fnc {A})
+  ; nat = λ f → K.∘∘ (α.nat f)
+  }
+  where module K = efunctor-aux K
+        module α = natural-transformation α
