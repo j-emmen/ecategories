@@ -15,7 +15,7 @@ open import ecats.finite-limits.defs.equaliser
 
 
 
-module equaliser-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
+module equaliser-props (ℂ : ecategory) where
   open ecategory-aux ℂ
   open iso-defs ℂ
   open iso-props ℂ
