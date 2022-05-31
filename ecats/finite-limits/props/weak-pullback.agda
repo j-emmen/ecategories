@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.finite-limits.props.weak-pullback where
 
@@ -105,8 +101,8 @@ module weak-pullback-props (ℂ : ecategory) where
 
     iswpb2isweql : is-wequaliser weqleq
     iswpb2isweql = record
-      { _|weql[_] = λ h pf → w⟨ π₁ ∘ h , π₂ ∘ h ⟩[ ass ⊙ pf ⊙ assˢ ]
-      ; weqltr = λ pf → <>ar~ar (w×/tr₁ (ass ⊙ pf ⊙ assˢ) ˢ) (w×/tr₂ (ass ⊙ pf ⊙ assˢ) ˢ)
+      { _|w[_] = λ h pf → w⟨ π₁ ∘ h , π₂ ∘ h ⟩[ ass ⊙ pf ⊙ assˢ ]
+      ; wtr = λ pf → <>ar~ar (w×/tr₁ (ass ⊙ pf ⊙ assˢ) ˢ) (w×/tr₂ (ass ⊙ pf ⊙ assˢ) ˢ)
       }
       
   -- end wpb→weql
@@ -115,9 +111,9 @@ module weak-pullback-props (ℂ : ecategory) where
   wpbof2weqlof : {A B I : Obj} {f : || Hom A I ||} {g : || Hom B I ||} (A×B : product-of A B)
                     → wpullback-of f g → wequaliser-of (f ∘ ×of.π₁ A×B) (g ∘ ×of.π₂ A×B)
   wpbof2weqlof B×B wpbof = record
-    { wEql = ul
-    ; weqlar = < wπ/₁ , wπ/₂ >
-    ; weqleq = weqleq
+    { wOb = ul
+    ; war = < wπ/₁ , wπ/₂ >
+    ; weq = weqleq
     ;isweql = iswpb2isweql
     }
     where open wpullback-of-not wpbof
@@ -136,9 +132,9 @@ module weak-pullback-props (ℂ : ecategory) where
     isweql2iawpb : {A E : Obj} {f f' : || Hom A B ||} {e : || Hom E A ||} {pfeq : f ∘ e ~ f' ∘ e}
                       → is-wequaliser pfeq → is-wpb-square (mksq (mksq/ (wpbeq pfeq)))
     isweql2iawpb {A} {E} {f} {f'} {e} {pfeq} isweql = record
-      { w⟨_,_⟩[_] = λ h k pf → h |weql[ sq2eql pf ]
-      ; w×/tr₁ = λ pf → weqltr (sq2eql pf)
-      ; w×/tr₂ = λ pf → assˢ ⊙ ∘e (weqltr (sq2eql pf)) r ⊙ aux₁ pf
+      { w⟨_,_⟩[_] = λ h k pf → h |w[ sq2eql pf ]
+      ; w×/tr₁ = λ pf → wtr (sq2eql pf)
+      ; w×/tr₂ = λ pf → assˢ ⊙ ∘e (wtr (sq2eql pf)) r ⊙ aux₁ pf
       }
       where open is-wequaliser isweql
             aux₁ : {C : Obj} {h : || Hom C A ||} {k : || Hom C B ||}

@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.CVconstr-is-excompl.finite-limits.pullback where
 
@@ -12,13 +8,11 @@ open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.epi&mono
 open import ecats.basic-defs.eqv-rel
 open import ecats.finite-limits.defs.collective
-open import ecats.finite-limits.props.relations-among-weak-limits
+open import ecats.finite-limits.props.relations-among-weak-limits using (has-wpb⇒has-wWlim)
 open import ecats.finite-limits.d&n-pullback
 open import ecats.finite-limits.d&n-weak-pullback
-open import ecats.finite-limits.props.weak-pullback
 open import ecats.finite-limits.defs.weak-Wlimit
 open import ecats.finite-limits.defs.weak-bow
---open import ecats.functors.defs.efunctor
 open import ecats.exact-completion.CVconstruction
 open import ecats.exact-completion.CVconstr-is-excompl.exact.canonical-epi&mono
 
@@ -31,7 +25,6 @@ module exact-compl-has-pullbacks-from-connected {ℂ : ecategory} (hasfwl : has-
       open comm-shapes ℂ public
       open pseudo-eq-rel-defs ℂ public
       open wpullback-squares ℂ public
-      open weak-pullback-props ℂ public
       open weak-bow-defs ℂ public
     module fwlℂ where
       open has-fin-weak-limits hasfwl public using (haswpb; haswbw)
@@ -41,7 +34,7 @@ module exact-compl-has-pullbacks-from-connected {ℂ : ecategory} (hasfwl : has-
     module Exℂ where
       open ecategory Ex ℂ [ hasfwl ] public
       open comm-shapes Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
       open pullback-squares Ex ℂ [ hasfwl ] public
     infixr 2  _~_
     infixr 5 _∘_

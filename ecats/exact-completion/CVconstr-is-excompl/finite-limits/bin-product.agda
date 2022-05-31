@@ -1,9 +1,5 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.CVconstr-is-excompl.finite-limits.bin-product where
 
@@ -37,7 +33,7 @@ module exact-compl-has-bin-products {ℂ : ecategory} (hasfwl : has-fin-weak-lim
     module Exℂ where
       open ecategory Ex ℂ [ hasfwl ] public
       open comm-shapes Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
       open binary-products Ex ℂ [ hasfwl ] public
     infixr 2  _~_
     infixr 5 _∘_

@@ -1,18 +1,13 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K  #-}
-
--- Agda version 2.5.4.1
 
 module ecats.exact-completion.CVconstr-is-excompl.embedding.universal-property.is-exact-fun where
 
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
-open import ecats.basic-defs.regular-ecat
-open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.exact-ecat
+open import ecats.basic-defs.arrows
+open import ecats.basic-defs.image-fact
+open import ecats.basic-props.epi&mono-basic
+open import ecats.reg&ex
 open import ecats.finite-limits.defs.collective
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
@@ -38,11 +33,11 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
     module Exℂ where
       open ecategory Ex ℂ [ hasfwl ] public
       open iso-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-defs Ex ℂ [ hasfwl ] public
-      open epis&monos-props Ex ℂ [ hasfwl ] public
+      open epi&mono-defs Ex ℂ [ hasfwl ] public
+      open epi&mono-props-basic Ex ℂ [ hasfwl ] public
       open image-fact-defs Ex ℂ [ hasfwl ] public
     module CVex = efunctor-aux CVex ℂ [ hasfwl ]
-  open exact-compl-universal-def hasfwl
+  --open exact-compl-universal-def hasfwl
 
   module extension-is-exact {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                             {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
@@ -51,8 +46,8 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
       module 𝔼 where
         open ecategory 𝔼 public
         open iso-defs 𝔼 public
-        open epis&monos-defs 𝔼 public
-        open epis&monos-props 𝔼 public
+        open epi&mono-defs 𝔼 public
+        open epi&mono-props-basic 𝔼 public
         open eq-rel-defs 𝔼 public
         open kernel-pairs-defs 𝔼 public
       module ex𝔼 where
@@ -60,14 +55,14 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
       module F = efunctor-aux F
       module lcF = is-left-covering lcovF
       F↑ex : efunctor Ex ℂ [ hasfwl ] 𝔼
-      F↑ex = ↑ex ex𝔼 lcovF
+      F↑ex = F CV↑ex[ hasfwl , ex𝔼 , lcovF ]
       module F↑ex = efunctor-aux F↑ex
       reg𝔼 : is-regular 𝔼
       reg𝔼 = ex𝔼.is-reg
       -- it seems that declaring reg𝔼 explicitly is crucial
       -- for typechecking Q/F↑ex.Ob A = F↑ex.ₒ A
       FRel : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
-      FRel = Rel reg𝔼 lcovF
+      FRel = Peq2Rel hasfwl reg𝔼 lcovF
       module FRel where
         open efunctor-aux FRel public
         private
@@ -137,22 +132,22 @@ module exact-compl-universal-is-exact {ℂ : ecategory} (hasfwl : has-fin-weak-l
     F↑ex-pres-flim : preserves-fin-limits F↑ex
     F↑ex-pres-flim = lcov→pres-flim reg𝔼
                                      (has-flim→has-fwlim (exact-compl-has-fin-limits hasfwl))
-                                     (↑ex-is-left-covering ex𝔼 lcovF)
+                                     (CV↑ex-is-left-covering ex𝔼 lcovF)
                    where open exact-compl-universal-is-left-cov hasfwl
     
     F↑ex-is-exact : is-exact-functor F↑ex
     F↑ex-is-exact = record
       { presfl = F↑ex-pres-flim
-      ; presre = F↑ex-pres-repi
+      ; presrepi = F↑ex-pres-repi
       }
 
   -- end extension-is-exact
 
 
-  ↑ex-is-exact : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
-                 {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
-                        → is-exact-functor (↑ex ex𝔼 lcovF)
-  ↑ex-is-exact ex𝔼 lcovF = F↑ex-is-exact
+  CV↑ex-is-exact : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
+                   {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
+                        → is-exact-functor (F CV↑ex[ hasfwl , ex𝔼 , lcovF ])
+  CV↑ex-is-exact ex𝔼 lcovF = F↑ex-is-exact
                           where open extension-is-exact ex𝔼 lcovF
 
 -- end exact-compl-universal-is-exact

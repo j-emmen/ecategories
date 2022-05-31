@@ -1,26 +1,20 @@
 
--- disable the K axiom:
-
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.constructions.ecat-eqrel where
 
 open import tt-basics.basics using (is-tt-eqrel)
 open import tt-basics.setoids hiding (||_||)
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.all-arrows
-open import ecats.basic-props.epi&mono
-open import ecats.basic-props.image-fact
+open import ecats.arrows
 open import ecats.basic-defs.regular-ecat
 open import ecats.basic-props.regular-ecat
 open import ecats.basic-defs.exact-ecat
-open import ecats.basic-props.exact-ecat
 open import ecats.finite-limits.all
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 
 
 -- The category EqRel ℂ of equivalence relations in a category ℂ & extensional arrows quotiented under eqrel of codomain.
@@ -65,7 +59,6 @@ module cat-of-equivalence-relations (ℂ : ecategory) where
             module g~h = eqrel-mor-eq pf2
             module Sτ = pullback-of-not S.τpb
             τpf = f~g.wit₁ ⊙ g~h.wit₀ ˢ
-
   -- end eqrel-mor-eq-is-tt-eqrel
 
 
@@ -156,6 +149,7 @@ module cat-of-equivalence-relations (ℂ : ecategory) where
     where open eqrel-mor-are-arrows
 -- end cat-of-equivalence-relations
 
+
 -- ecategory of equivalence relations and extensional arrows
 
 EqRel : ecategory → ecategory
@@ -192,9 +186,8 @@ module quot-of-eqrel-funct {𝔼 : ecategory} (𝔼isex : is-exact 𝔼) where
   open ecategory 𝔼
   open eq-rel-defs 𝔼
   open pullback-squares 𝔼
-  open epis&monos-defs 𝔼
-  open epis&monos-props 𝔼
-  open exact-cat-d&p 𝔼isex
+  open epi&mono-d&p 𝔼
+  open is-exact 𝔼isex
   private
     module er where
       open eqrel public
@@ -287,15 +280,13 @@ module exact-is-retract-of-EqRel {𝔼 : ecategory} (𝔼isex : is-exact 𝔼) w
       open ecategory (EqRel 𝔼) public
       open eq-rel-defs (EqRel 𝔼) public
       open pullback-squares (EqRel 𝔼) public
-      open epis&monos-defs (EqRel 𝔼) public
-      open epis&monos-props (EqRel 𝔼) public
+      open epi&mono-d&p (EqRel 𝔼) public
       open iso-defs (EqRel 𝔼) public
     module 𝔼 where
       open ecategory 𝔼 public
       open eq-rel-defs 𝔼 public
       open pullback-squares 𝔼 public
-      open epis&monos-defs 𝔼 public
-      open epis&monos-props 𝔼 public
+      open epi&mono-d&p 𝔼 public
       open iso-defs 𝔼 public
     module ex𝔼 = is-exact 𝔼isex
     module er where
@@ -335,8 +326,6 @@ module exact-is-retract-of-EqRel {𝔼 : ecategory} (𝔼isex : is-exact 𝔼) w
                       open 𝔼.is-epic (𝔼.repi-is-epic (record { coeq = qA.iscoeq }))
                       open ecategory-aux-only 𝔼
                       open quot-of-eqrel-funct 𝔼isex using (q-ar-pf) 
-
-
 -- end exact-is-retract-of-EqRel
 
 
@@ -352,7 +341,7 @@ ex-retr-EqR {𝔼} 𝔼isex = record
          }
   ; natt⁻¹ = record
            { fnc = λ {A} → iso.a21 A
-           ; nat = λ {A} {B} f → iso-defs.invIsNat 𝔼 (iso.isop A) (iso.isop B) (nat f)
+           ; nat = λ {A} {B} f → iso-props.iso-sq 𝔼 (iso.isop A) (iso.isop B) (nat f)
            }
   ; isiso = λ {A} → iso.isop A
   }

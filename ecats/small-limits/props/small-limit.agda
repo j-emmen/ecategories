@@ -3,7 +3,6 @@
 
 module ecats.small-limits.props.small-limit where
 
-open import Agda.Primitive
 open import tt-basics.basics
 open import ecats.basic-defs.ecat-def&not
 open import ecats.functors.defs.efunctor-d&n
@@ -40,7 +39,7 @@ module small-limit-props (ℂ : ecategory) where
       module cn/D = Cone/D.ₒ
           
     cod-fam : 𝕀.Arr → ℂ.Obj
-    cod-fam u = D.ₒ (prj2 (pj1 u))
+    cod-fam u = D.ₒ (𝕀.c u)
     module dom = prd-of D.ₒ
     module cod = prd-of cod-fam
     ar₁fam ar₂fam : Span/Dc.Obj

@@ -1,9 +1,5 @@
- 
--- disable the K axiom:
 
 {-# OPTIONS --without-K #-}
-
--- Agda version 2.5.4.1
 
 module ecats.functors.defs.left-covering where
 
@@ -99,8 +95,8 @@ module left-covering-defs (ℂ 𝔻 : ecategory) where
     field
       eqluniv-is-repi : {X Y : ℂ.Obj} {f f' : || ℂ.Hom X Y ||}
                         (weqlC : ℂ.wequaliser-of f f') (eqlD : 𝔻.equaliser-of (F.ₐ f) (F.ₐ f'))
-                        {coveql : || 𝔻.Hom (F.ₒ (weqlof.wEql weqlC)) (eqlof.Eql eqlD) ||}
-                        (tr : eqlof.eqlar eqlD 𝔻.∘ coveql 𝔻.~ F.ₐ (weqlof.weqlar weqlC))
+                        {coveql : || 𝔻.Hom (F.ₒ (weqlof.wOb weqlC)) (eqlof.Ob eqlD) ||}
+                        (tr : eqlof.ar eqlD 𝔻.∘ coveql 𝔻.~ F.ₐ (weqlof.war weqlC))
                           → 𝔻.is-regular-epi coveql
 
 
