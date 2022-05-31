@@ -125,16 +125,16 @@ module yoneda-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ
     where open Lemma
 
   module Yo-full-props where
-    open is-full Yo-full
+    module Yofull = is-full Yo-full
     private module NT {X Y : ℂ.Obj} = NatTr (ℂ [─, X ₒ]) (ℂ [─, Y ₒ])
-    ext : {X Y : ℂ.Obj}{μ μ' : ℂ [─, X ₒ] ⇒ ℂ [─, Y ₒ]} → μ NT.~ μ' → full-ar μ ℂ.~ full-ar μ'
+    ext : {X Y : ℂ.Obj}{μ μ' : ℂ [─, X ₒ] ⇒ ℂ [─, Y ₒ]} → μ NT.~ μ' → Yofull.ar μ ℂ.~ Yofull.ar μ'
     ext {X} {Y} {μ} {μ'} eq = natt2el.ext {x = μ} {μ'} eq
                             where open Lemma (ℂ [─, Y ₒ]) X
     id : {X : ℂ.Obj}{μ : ℂ [─, X ₒ] ⇒ ℂ [─, X ₒ]}
-            → μ NT.~ ιd {F = ℂ [─, X ₒ]} → full-ar μ ℂ.~ ℂ.idar X
+            → μ NT.~ ιd {F = ℂ [─, X ₒ]} → Yofull.ar μ ℂ.~ ℂ.idar X
     id {X} eq = eq X (ℂ.idar X)
     cmp :  {X Y Z : ℂ.Obj}{μ : ℂ [─, X ₒ] ⇒ ℂ [─, Y ₒ]}{ν : ℂ [─, Y ₒ] ⇒ ℂ [─, Z ₒ]}{ζ : ℂ [─, X ₒ] ⇒ ℂ [─, Z ₒ]}
-      → ν ○ᵥ μ NT.~ ζ → full-ar ν ℂ.∘ full-ar μ ℂ.~ full-ar ζ
+      → ν ○ᵥ μ NT.~ ζ → Yofull.ar ν ℂ.∘ Yofull.ar μ ℂ.~ Yofull.ar ζ
     cmp {X} {Y} {Z} {μ} {ν} {ζ} eq = ~proof
       ν.ap {Y} (ℂ.idar Y) ℂ.∘ μ.ap {X} (ℂ.idar X)   ~[ ν.natˢ (μ.ap {X} (ℂ.idar X)) (ℂ.idar Y) ] /
       ν.ap {X} (ℂ.idar Y ℂ.∘ μ.ap {X} (ℂ.idar X))   ~[ ν.ext {X} lid ] /

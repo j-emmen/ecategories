@@ -31,16 +31,17 @@ module functor-defined-by-representations {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ec
       module ₐ {X Y : ℂ.Obj}(f : || ℂ.Hom X Y ||) = psheaf-morₗₑᵥ (ₐ f)
   open yoneda-props 𝔻
   module Yo where
-    open is-full Yo-full public
     open is-faithful Yo-faith public
-    module full = Yo-full-props
+    module full where
+      open is-full Yo-full public
+      open Yo-full-props public
 
   module Far {X Y : ℂ.Obj}(f : || ℂ.Hom X Y ||) where
     open Lemma (𝔻 [─, P.ₒ.Rob Y ₒ]) (P.ₒ.Rob X) public
     nt : 𝔻 [─, P.ₒ.Rob X ₒ] ⇒ 𝔻 [─, P.ₒ.Rob Y ₒ]
     nt = P.ₒ.iso.natt Y ○ᵥ P.ₐ f ○ᵥ P.ₒ.iso.natt⁻¹ X
     lft : || 𝔻.Hom (P.ₒ.Rob X) (P.ₒ.Rob Y) ||
-    lft = Yo.full-ar nt
+    lft = Yo.full.ar nt
   -- end Far
       
   F : efunctorₗₑᵥ ℂ 𝔻
