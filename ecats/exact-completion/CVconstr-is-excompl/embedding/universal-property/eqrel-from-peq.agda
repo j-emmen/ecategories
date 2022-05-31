@@ -18,7 +18,8 @@ open import ecats.exact-completion.CVconstruction
 
 
 
--- Definition of the functor Ex ℂ [ hasfwl ] → 𝔼 induced by a left covering ℂ → 𝔼 into 𝔼 exact.
+-- Definition of the functor Ex ℂ [ hasfwl ] → EqRel 𝔼
+-- into the category of equivalence relations in 𝔼, induced by a left covering ℂ → 𝔼 into 𝔼 exact.
 
 module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ) where
   private
@@ -232,9 +233,6 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
 
     eqr : Exℂ.Obj → 𝔼.eqrel
     eqr A = record { eqrelover = CRF%.eqrel/ A }
-    {-module eqr where
-      open 𝔼.eqrel-over public
-      open 𝔼.eqrel-mor public-}
 
     eqr-ar : {A B : Exℂ.Obj} (f : || Exℂ.Hom A B ||) → 𝔼.eqrel-mor (eqr A) (eqr B)
     eqr-ar {A} {B} f = record
@@ -335,27 +333,6 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
       r₁~r₂ : CRA.r₁ 𝔼.~ CRA.r₂
       r₁~r₂ = CRA.epi-pf (CRA.rmfF%tr₁ ⊙ F.ext isfree ⊙ CRA.rmfF%tr₂ ˢ)
             where open ecategory-aux-only 𝔼
-{-
-      inv : || 𝔼.Hom CRA.Ob (F.ₒ A.Hi) ||
-      inv = F.ₐ A.ρ 𝔼.∘ CRA.r₁
-      isop₁  : 𝔼.is-iso-pair CRA.ar inv
-      isop₁ = record
-        { iddom = {!!} --CRA.r₁tr ⊙ F.id
-        ; idcod = {!!} --CRA.jm-pf (ass ⊙ ∘e r CRA.r₁tr ⊙ lidgg ridˢ F.id)
-                      --      (ass ⊙ ∘e r₁~r₂ CRA.r₂tr ⊙ lidgg ridˢ F.id)
-        }
-        where open ecategory-aux-only 𝔼        
-      isop₂  : 𝔼.is-iso-pair CRA.ar CRA.r₂
-      isop₂ = record
-        { iddom = CRA.r₂tr ⊙ F.id
-        ; idcod = CRA.jm-pf (ass ⊙ ∘e (r₁~r₂ ˢ) CRA.r₁tr ⊙ lidgg ridˢ F.id)
-                            (ass ⊙ ∘e r CRA.r₂tr ⊙ lidgg ridˢ F.id)
-        }
-        where open ecategory-aux-only 𝔼
-      qF%iso₁ qF%iso₂ : 𝔼.is-iso CRA.ar
-      qF%iso₁ = iso-defs.mkis-iso isop₁
-      qF%iso₂ = iso-defs.mkis-iso isop₂
--}
     -- end CRF%-is-iso
 
     eqrelΔ2Δ : natural-transformation (Rel reg𝔼 Flcov ○ CVex ℂ [ hasfwl ]) (ΔER 𝔼 ○ F)
@@ -421,3 +398,19 @@ module eqrel-from-peq-funct {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
           module F = efunctor-aux F
 
 -- end eqrel-from-peq-funct
+
+
+Peq2Rel :  {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
+           {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼)
+           {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
+              → efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
+Peq2Rel hasfwl = Rel
+               where open eqrel-from-peq-funct hasfwl
+
+
+Peq2Rel-sq : {ℂ : ecategory} (hasfwl : has-fin-weak-limits ℂ)
+             {𝔼 : ecategory} (reg𝔼 : is-regular 𝔼)
+             {F : efunctor ℂ 𝔼} (Flcov : is-left-covering F)
+               → Peq2Rel hasfwl reg𝔼 Flcov ○ CVex ℂ [ hasfwl ] ≅ₐ ΔER 𝔼 ○ F
+Peq2Rel-sq hasfwl = Rel-sq
+                  where open eqrel-from-peq-funct hasfwl

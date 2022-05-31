@@ -106,4 +106,3 @@ natt-hcmp {𝔼 = 𝔼} {F} {G} {H} {K} β α = record
         module α = natural-transformation α
         module β = natural-transformation β
         open ecategory-aux-only 𝔼
-

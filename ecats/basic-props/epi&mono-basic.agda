@@ -151,8 +151,6 @@ module epi&mono-props-basic (ℂ : ecategory) where
                                             linv ∘ f ∘ g'   ~[ ass ⊙ lidgg r linv-pf ]∎
                                             g' ∎
     }
-
-
   
   
   iso-is-monic : {A B : Obj} {f : || Hom A B ||} → is-iso f → is-monic f

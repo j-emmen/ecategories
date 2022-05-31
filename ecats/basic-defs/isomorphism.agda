@@ -1,4 +1,4 @@
- 
+
 {-# OPTIONS --without-K #-}
 
 module ecats.basic-defs.isomorphism where

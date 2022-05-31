@@ -27,7 +27,6 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     module ℂ = macros ℂ
     module 𝔻 = macros 𝔻
     module F = efunctor-aux F
-  
 
   Fpres-iso : {A B : ℂ.Obj} {f : || ℂ.Hom A B ||}
                  → ℂ.is-iso f → 𝔻.is-iso (F.ₐ f)
@@ -37,7 +36,6 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     }
     where open ℂ.is-iso isof
 
-
   Fpres-natt : {𝔹 : ecategory}{H K : efunctor 𝔹 ℂ}(α : natural-transformation H K)
                   → natural-transformation (F ○ H) (F ○ K)
   Fpres-natt {𝔹} {H} {K} α = record
@@ -45,6 +43,7 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     ; nat = λ f → F.∘∘ (α.nat f)
     }
     where module α = natural-transformation α
+
 
   Fridx-natt : {𝔼 : ecategory}{H K : efunctor 𝔻 𝔼}(α : natural-transformation H K)
                   → natural-transformation (H ○ F) (K ○ F)
@@ -245,8 +244,6 @@ module esseqv-is-adjeqv {ℂ 𝔻 : ecategory}{F : efunctor ℂ 𝔻}(eeqv : is-
     ; trid₁ = trid₁
     ; trid₂ = trid₂
     }
-    where
-
 -- end eeqv-is-eqv
 
 esseqv-is-adjeqv : {ℂ 𝔻 : ecategory} {F : efunctor ℂ 𝔻}
@@ -256,8 +253,6 @@ esseqv-is-adjeqv {F = F} eeqv = record
   ; isadjeqvp = adjeqv
   }
   where open esseqv-is-adjeqv eeqv
-
-
 
 -- Some additional properties of (adjoint) equivalences
 
@@ -422,7 +417,6 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
       { pres-!-pf = pres-term.istrm
       }
 
-
     module pres-bin-products {sp : ℂ.span}(isprd : ℂ.is-product sp) where
       private
         module ×sp = ℂ.bin-product (ℂ.mk× isprd)
@@ -435,7 +429,7 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
                  → F.ₐ ×sp.π₁ 𝔻.∘ unv f g 𝔻.~ f
       tr₁ {A} f g = ~proof
         F.ₐ ×sp.π₁ 𝔻.∘ unv f g                   ~[ ass ⊙ ∘e r (F.∘∘ ×sp.×tr₁) ⊙ assˢ ] /
-        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ f 𝔻.∘ ι1.fnc⁻¹ {A}  ~[ ∘e (ι1.nat⁻¹ f ˢ) r ] /
+        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ f 𝔻.∘ ι1.fnc⁻¹ {A}  ~[ ∘e (ι1.natt⁻¹.nat f ˢ) r ] /
         F.ₐ ι2.fnc 𝔻.∘ ι1.fnc⁻¹ 𝔻.∘ f            ~[ ass ⊙ lidgg r trid⁻¹₁ ]∎
         f ∎
         where open ecategory-aux-only 𝔻
@@ -443,7 +437,7 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
                  → F.ₐ ×sp.π₂ 𝔻.∘ unv f g 𝔻.~ g
       tr₂ {A} f g = ~proof
         F.ₐ ×sp.π₂ 𝔻.∘ unv f g                   ~[ ass ⊙ ∘e r (F.∘∘ ×sp.×tr₂) ⊙ assˢ ] /
-        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ g 𝔻.∘ ι1.fnc⁻¹ {A}  ~[ ∘e (ι1.nat⁻¹ g ˢ) r ] /
+        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ g 𝔻.∘ ι1.fnc⁻¹ {A}  ~[ ∘e (ι1.natt⁻¹.nat g ˢ) r ] /
         F.ₐ ι2.fnc 𝔻.∘ ι1.fnc⁻¹ 𝔻.∘ g            ~[ ass ⊙ lidgg r trid⁻¹₁ ]∎
         g ∎
         where open ecategory-aux-only 𝔻
@@ -461,15 +455,15 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
               open ecategory-aux-only ℂ
               aux₁ : ×sp.π₁ ℂ.∘  ι2.fnc ℂ.∘ G.ₐ h ℂ.~ ×sp.π₁ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'
               aux₁ = ~proof
-                ×sp.π₁ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.nat ×sp.π₁ ˢ) ⊙ assˢ ] /
+                ×sp.π₁ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.natt.nat ×sp.π₁ ˢ) ⊙ assˢ ] /
                 ι2.fnc ℂ.∘ G○F.ₐ ×sp.π₁ ℂ.∘ G.ₐ h     ~[ ∘e (G.∘∘ pf₁) r ] /
-                ι2.fnc ℂ.∘ G○F.ₐ ×sp.π₁ ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.nat ×sp.π₁) ⊙ assˢ ]∎
+                ι2.fnc ℂ.∘ G○F.ₐ ×sp.π₁ ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.natt.nat ×sp.π₁) ⊙ assˢ ]∎
                 ×sp.π₁ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h' ∎
               aux₂ : ×sp.π₂ ℂ.∘  ι2.fnc ℂ.∘ G.ₐ h ℂ.~ ×sp.π₂ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'
               aux₂ = ~proof
-                ×sp.π₂ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.nat ×sp.π₂ ˢ) ⊙ assˢ ] /
+                ×sp.π₂ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.natt.nat ×sp.π₂ ˢ) ⊙ assˢ ] /
                 ι2.fnc ℂ.∘ G○F.ₐ ×sp.π₂ ℂ.∘ G.ₐ h     ~[ ∘e (G.∘∘ pf₂) r ] /
-                ι2.fnc ℂ.∘ G○F.ₐ ×sp.π₂ ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.nat ×sp.π₂) ⊙ assˢ ]∎
+                ι2.fnc ℂ.∘ G○F.ₐ ×sp.π₂ ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.natt.nat ×sp.π₂) ⊙ assˢ ]∎
                 ×sp.π₂ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h' ∎
 
       Fprd : 𝔻.is-product (F.span sp)
@@ -499,20 +493,20 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
       unv-pf : {C : 𝔻.Obj}{h : || 𝔻.Hom C (F.FObj A) ||}
                → F.ₐ f 𝔻.∘ h 𝔻.~ F.ₐ f' 𝔻.∘ h → f ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h ℂ.~ f' ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h
       unv-pf {C} {h} pf = ~proof
-        f ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h           ~[ ass ⊙ ∘e r (ι2.nat f ˢ) ⊙ assˢ ] /
+        f ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h           ~[ ass ⊙ ∘e r (ι2.natt.nat f ˢ) ⊙ assˢ ] /
         ι2.fnc ℂ.∘ G○F.ₐ f ℂ.∘ G.ₐ h     ~[ ∘e (G.∘∘ pf) r ] /
-        ι2.fnc ℂ.∘ G○F.ₐ f' ℂ.∘ G.ₐ h    ~[ ass ⊙ ∘e r (ι2.nat f') ⊙ assˢ ]∎
+        ι2.fnc ℂ.∘ G○F.ₐ f' ℂ.∘ G.ₐ h    ~[ ass ⊙ ∘e r (ι2.natt.nat f') ⊙ assˢ ]∎
         f' ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h ∎
                         where open ecategory-aux-only ℂ
       unv : {C : 𝔻.Obj}(h : || 𝔻.Hom C (F.FObj A) ||)
                → F.ₐ f 𝔻.∘ h 𝔻.~ F.ₐ f' 𝔻.∘ h → || 𝔻.Hom C (F.ₒ E) ||
-      unv {C} h pf = F.ₐ ((ι2.fnc ℂ.∘ G.ₐ h) eql.|[ unv-pf pf ]) 𝔻.∘ ι1.fnc⁻¹ {C}
+      unv {C} h pf = F.ₐ ((ι2.fnc ℂ.∘ G.ₐ h) eql.|eql[ unv-pf pf ]) 𝔻.∘ ι1.fnc⁻¹ {C}
 
       tr : {C : 𝔻.Obj}{h : || 𝔻.Hom C (F.FObj A) ||}(pf : F.ₐ f 𝔻.∘ h 𝔻.~ F.ₐ f' 𝔻.∘ h)
               → F.ₐ e 𝔻.∘ unv h pf 𝔻.~ h
       tr {C} {h} pf = ~proof
-        F.ₐ e 𝔻.∘ unv h pf             ~[ ass ⊙ ∘e r (F.∘∘ (eql.tr (unv-pf pf))) ⊙ assˢ ] /
-        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ h 𝔻.∘ ι1.fnc⁻¹ {C}    ~[ ∘e (ι1.nat⁻¹ h ˢ) r ] /
+        F.ₐ e 𝔻.∘ unv h pf             ~[ ass ⊙ ∘e r (F.∘∘ (eql.eqltr (unv-pf pf))) ⊙ assˢ ] /
+        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ h 𝔻.∘ ι1.fnc⁻¹ {C}    ~[ ∘e (ι1.natt⁻¹.nat h ˢ) r ] /
         F.ₐ ι2.fnc 𝔻.∘ ι1.fnc⁻¹ 𝔻.∘ h              ~[ ass ⊙ lidgg r trid⁻¹₁ ]∎
         h ∎
         where open ecategory-aux-only 𝔻
@@ -521,7 +515,7 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
               → h 𝔻.~ h'
       uq {C} {h} {h'} pf = Gfaith.pf (~proof
         G.ₐ h                            ~[ lidggˢ r ι2.iddom ⊙ assˢ ] /
-        ι2.fnc⁻¹ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h    ~[ ∘e (eql.uq aux) r ] /
+        ι2.fnc⁻¹ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h    ~[ ∘e (eql.eqluq aux) r ] /
         ι2.fnc⁻¹ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'   ~[ ass ⊙ lidgg r ι2.iddom ]∎
         G.ₐ h' ∎)
         where Geqv : is-equivalence G
@@ -530,15 +524,15 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
               open ecategory-aux-only ℂ
               aux : e ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h ℂ.~ e ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'
               aux = ~proof
-                e ℂ.∘  ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.nat e ˢ) ⊙ assˢ ] /
+                e ℂ.∘  ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.natt.nat e ˢ) ⊙ assˢ ] /
                 ι2.fnc ℂ.∘ G○F.ₐ e ℂ.∘ G.ₐ h     ~[ ∘e (G.∘∘ pf) r ] /
-                ι2.fnc ℂ.∘ G○F.ₐ e ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.nat e) ⊙ assˢ ]∎
+                ι2.fnc ℂ.∘ G○F.ₐ e ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.natt.nat e) ⊙ assˢ ]∎
                 e ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h' ∎
       Feql : 𝔻.is-equaliser (F.∘∘ pfeq)
       Feql = record
-        { _|[_] = unv
-        ; tr = tr
-        ; uq = uq
+        { _|eql[_] = unv
+        ; eqltr = tr
+        ; eqluq = uq
         }
     --end pres-equalisers
 
@@ -551,18 +545,18 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
 
 
     module pres-pullbacks {I A B : ℂ.Obj} {a : || ℂ.Hom A I ||} {b : || ℂ.Hom B I ||}
-                          {sq/ : ℂ.square/cosp a b}(ispb : ℂ.is-pb-square (ℂ.mksq sq/))
+                          {sq/ : ℂ.square/cosp a b}(ispb : ℂ.is-pullback-of sq/)
                           where
       private
-        module ×/sq = ℂ.pullback-of-not (ℂ.mkpb-of ispb)
+        module ×/sq = ℂ.pullback-of-not (ℂ.pbof-is2sq ispb)
         module Fsq/ = 𝔻.square/cosp (F.sq/ sq/)
 
       unv-pf : {C : 𝔻.Obj}{h : || 𝔻.Hom C (F.FObj A) ||}{k : || 𝔻.Hom C (F.FObj B) ||}
                → F.ₐ a 𝔻.∘ h 𝔻.~ F.ₐ b 𝔻.∘ k → a ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h ℂ.~ b ℂ.∘ ι2.fnc ℂ.∘ G.ₐ k
       unv-pf {C} {h} {k} pf = ~proof
-        a ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.nat a ˢ) ⊙ assˢ ] /
+        a ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.natt.nat a ˢ) ⊙ assˢ ] /
         ι2.fnc ℂ.∘ G○F.ₐ a ℂ.∘ G.ₐ h    ~[ ∘e (G.∘∘ pf) r ] /
-        ι2.fnc ℂ.∘ G○F.ₐ b ℂ.∘ G.ₐ k    ~[ ass ⊙ ∘e r (ι2.nat b) ⊙ assˢ ]∎
+        ι2.fnc ℂ.∘ G○F.ₐ b ℂ.∘ G.ₐ k    ~[ ass ⊙ ∘e r (ι2.natt.nat b) ⊙ assˢ ]∎
         b ℂ.∘ ι2.fnc ℂ.∘ G.ₐ k ∎
                             where open ecategory-aux-only ℂ
       unv : {C : 𝔻.Obj}(h : || 𝔻.Hom C (F.FObj A) ||)(k : || 𝔻.Hom C (F.FObj B) ||)
@@ -573,7 +567,7 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
             (pf : F.ₐ a 𝔻.∘ h 𝔻.~ F.ₐ b 𝔻.∘ k) → F.ₐ ×/sq.π/₁ 𝔻.∘ unv h k pf 𝔻.~ h
       tr₁ {C} {h} {k} pf = ~proof
         F.ₐ ×/sq.π/₁ 𝔻.∘ unv h k pf             ~[ ass ⊙ ∘e r (F.∘∘ (×/sq.×/tr₁ (unv-pf pf))) ⊙ assˢ ] /
-        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ h 𝔻.∘ ι1.fnc⁻¹ {C}    ~[ ∘e (ι1.nat⁻¹ h ˢ) r ] /
+        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ h 𝔻.∘ ι1.fnc⁻¹ {C}    ~[ ∘e (ι1.natt⁻¹.nat h ˢ) r ] /
         F.ₐ ι2.fnc 𝔻.∘ ι1.fnc⁻¹ 𝔻.∘ h              ~[ ass ⊙ lidgg r trid⁻¹₁ ]∎
         h ∎
         where open ecategory-aux-only 𝔻
@@ -581,7 +575,7 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
             (pf : F.ₐ a 𝔻.∘ h 𝔻.~ F.ₐ b 𝔻.∘ k) → F.ₐ ×/sq.π/₂ 𝔻.∘ unv h k pf 𝔻.~ k
       tr₂ {C} {h} {k} pf = ~proof
         F.ₐ ×/sq.π/₂ 𝔻.∘ unv h k pf             ~[ ass ⊙ ∘e r (F.∘∘ (×/sq.×/tr₂ (unv-pf pf))) ⊙ assˢ ] /
-        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ k 𝔻.∘ ι1.fnc⁻¹ {C}    ~[ ∘e (ι1.nat⁻¹ k ˢ) r ] /
+        F.ₐ ι2.fnc 𝔻.∘ F○G.ₐ k 𝔻.∘ ι1.fnc⁻¹ {C}    ~[ ∘e (ι1.natt⁻¹.nat k ˢ) r ] /
         F.ₐ ι2.fnc 𝔻.∘ ι1.fnc⁻¹ 𝔻.∘ k              ~[ ass ⊙ lidgg r trid⁻¹₁ ]∎
         k ∎
         where open ecategory-aux-only 𝔻
@@ -600,30 +594,32 @@ module equivalence-props {ℂ 𝔻 : ecategory}(F : efunctor ℂ 𝔻)(G : efunc
               open ecategory-aux-only ℂ
               aux₁ : ×/sq.π/₁ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h ℂ.~ ×/sq.π/₁ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'
               aux₁ = ~proof
-                ×/sq.π/₁ ℂ.∘  ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.nat ×/sq.π/₁ ˢ) ⊙ assˢ ] /
+                ×/sq.π/₁ ℂ.∘  ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.natt.nat ×/sq.π/₁ ˢ) ⊙ assˢ ] /
                 ι2.fnc ℂ.∘ G○F.ₐ ×/sq.π/₁ ℂ.∘ G.ₐ h     ~[ ∘e (G.∘∘ pf₁) r ] /
-                ι2.fnc ℂ.∘ G○F.ₐ ×/sq.π/₁ ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.nat ×/sq.π/₁) ⊙ assˢ ]∎
+                ι2.fnc ℂ.∘ G○F.ₐ ×/sq.π/₁ ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.natt.nat ×/sq.π/₁) ⊙ assˢ ]∎
                 ×/sq.π/₁ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h' ∎
               aux₂ : ×/sq.π/₂ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h ℂ.~ ×/sq.π/₂ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h'
               aux₂ = ~proof
-                ×/sq.π/₂ ℂ.∘  ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.nat ×/sq.π/₂ ˢ) ⊙ assˢ ] /
+                ×/sq.π/₂ ℂ.∘  ι2.fnc ℂ.∘ G.ₐ h          ~[ ass ⊙ ∘e r (ι2.natt.nat ×/sq.π/₂ ˢ) ⊙ assˢ ] /
                 ι2.fnc ℂ.∘ G○F.ₐ ×/sq.π/₂ ℂ.∘ G.ₐ h     ~[ ∘e (G.∘∘ pf₂) r ] /
-                ι2.fnc ℂ.∘ G○F.ₐ ×/sq.π/₂ ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.nat ×/sq.π/₂) ⊙ assˢ ]∎
+                ι2.fnc ℂ.∘ G○F.ₐ ×/sq.π/₂ ℂ.∘ G.ₐ h'    ~[ ass ⊙ ∘e r (ι2.natt.nat ×/sq.π/₂) ⊙ assˢ ]∎
                 ×/sq.π/₂ ℂ.∘ ι2.fnc ℂ.∘ G.ₐ h' ∎
 
-      Fpb : 𝔻.is-pb-square (𝔻.mksq (F.sq/ sq/))
+      Fpb : 𝔻.is-pullback-of (F.sq/ sq/)
       Fpb = record
-        { ⟨_,_⟩[_] = unv
-        ; ×/tr₁ = tr₁
-        ; ×/tr₂ = tr₂
-        ; ×/uq = uq
+        { ispb = record
+               { ⟨_,_⟩[_] = unv
+               ; ×/tr₁ = tr₁
+               ; ×/tr₂ = tr₂
+               ; ×/uq = uq
+               }
         }
         where open ecategory-aux-only 𝔻
     --end pres-pullbacks
 
     pres-pb : preserves-pullbacks F
     pres-pb = record
-      { pres-pbsq-pf = Fpb
+      { pres-ispbof-pf = Fpb
       }
       where open pres-pullbacks
   -- end adj-eqv-pres-fin-lim

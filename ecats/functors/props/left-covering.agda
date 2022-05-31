@@ -12,6 +12,9 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.basic-defs
 open import ecats.functors.defs.preserving-functor
 open import ecats.functors.defs.left-covering
+open import ecats.functors.props.left-covering.left-covering-regular public
+open import ecats.functors.props.left-covering.left-covering-basic public
+
 
 
 -- Properties from other files
@@ -243,4 +246,3 @@ ex○lcov-is-lcov : {ℂ 𝔻 𝔼 : ecategory}(weqlℂ : has-weak-equalisers �
                        → is-left-covering (G ○ F)
 ex○lcov-is-lcov weqlℂ wpbℂ fl𝔻 reg𝔼 lcovF exG = cmp-lcov weqlℂ wpbℂ reg𝔼
                                                 where open exact+lcov-is-lcov fl𝔻 lcovF exG
-

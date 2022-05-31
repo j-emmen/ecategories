@@ -24,7 +24,6 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
       open ecategory ℂ public
       open comm-shapes ℂ public
       open epi&mono-d&p ℂ public
-      --open epis&monos-props ℂ public
       open finite-limits-d&p ℂ public
       open finite-weak-limits-d&p ℂ public
       open limits→weak-limits ℂ public
@@ -778,7 +777,6 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
 
 
 
-
   module lc-eql-pb-preserves-eql (Cweql : has-weak-equalisers ℂ) (Cwpb : has-weak-pullbacks ℂ)
                                  (lceql : is-left-covering-eql F) (lcpb : is-left-covering-pb F)
                                 where
@@ -876,7 +874,6 @@ module left-cov-relations-into-regular-cat {ℂ 𝔼 : ecategory} (F : efunctor 
 
 
 
-
 -- All the properties proved in the module above
 
 
@@ -907,11 +904,17 @@ lcov-eql+pb→lcov-bw {F = F} regE = lp.lcov-eql+pb→lcov-bw
                                   where module lp = left-cov-relations-into-regular-cat F regE
 
 
+lcov-pb→pres-monic : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
+                      (Cwpb : has-weak-pullbacks ℂ) → is-left-covering-pb F
+                        → preserves-monic F
+lcov-pb→pres-monic {F = F} regE = lp.lcov-pb→pres-monos
+                                  where module lp = left-cov-relations-into-regular-cat F regE
+
 
 lcov-bw→pres-jm/ : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
                     (Cwbw : has-weak-bows ℂ)
                          → is-left-covering-bw F → preserves-jointly-monic/ F
-lcov-bw→pres-jm/ {F = F} regE = lp.lcov-bw→pres-jm/
+lcov-bw→pres-jm/ {F = F} regE = lp.lcov-pb→pres-monic
                                where module lp = left-cov-relations-into-regular-cat F regE
 
 
@@ -938,7 +941,6 @@ lcov!×→pres-trm {F = F} regE = lp.lcov!×→pres-trm
                               where module lp = left-cov-relations-into-regular-cat F regE
 
 
-
 lcov-×+eql→pres-× : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
                      (Cwprd : has-bin-weak-products ℂ) (Cweql : has-weak-equalisers ℂ)
                        → is-left-covering-prd F → is-left-covering-eql F
@@ -947,15 +949,12 @@ lcov-×+eql→pres-× {F = F} regE = lp.lcov-×+eql→pres-×
                                 where module lp = left-cov-relations-into-regular-cat F regE
 
 
-
-
 lcov-eql+pb→pres-eql : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)
                        (Cweql : has-weak-equalisers ℂ) (Cwpb : has-weak-pullbacks ℂ)
                          → is-left-covering-eql F → is-left-covering-pb F
                            → preserves-equalisers F
 lcov-eql+pb→pres-eql {F = F} regE = lp.lcov-eql+pb→pres-eql
                                   where module lp = left-cov-relations-into-regular-cat F regE
-
 
 
 lcov-eql+pb→pres-pb : {ℂ 𝔼 : ecategory} {F : efunctor ℂ 𝔼} (regE : is-regular 𝔼)

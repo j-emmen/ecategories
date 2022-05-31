@@ -46,7 +46,7 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       open has-terminal hastrm public
       open has-bin-products hasprd public
     module CVex = efunctor-aux CVex ℂ [ hasfwl ]
-  open exact-compl-universal-def hasfwl
+  --open exact-compl-universal-def hasfwl
 
   module extension-is-left-cov {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                                {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
@@ -72,14 +72,14 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
       module F = efunctor-aux F
       module lcF = is-left-covering lcovF
       F↑ex : efunctor Ex ℂ [ hasfwl ] 𝔼
-      F↑ex = ↑ex ex𝔼 lcovF
+      F↑ex = F CV↑ex[ hasfwl , ex𝔼 , lcovF ]
       module F↑ex = efunctor-aux F↑ex
       reg𝔼 : is-regular 𝔼
       reg𝔼 = ex𝔼.is-reg
       -- it seems that declaring reg𝔼 explicitly is crucial
       -- for typechecking Q/F↑ex.Ob A = F↑ex.ₒ A
       FRel : efunctor Ex ℂ [ hasfwl ] (EqRel 𝔼)
-      FRel = Rel reg𝔼 lcovF
+      FRel = Peq2Rel hasfwl reg𝔼 lcovF
       module FRel where
         open efunctor-aux FRel public
         private
@@ -260,6 +260,7 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
           module wbw = ℂ.wbow-of eqlLo
         module E = 𝔼.is-equaliser Epf
         module CRFB where
+          open eqrel-from-peq-funct hasfwl
           open eqrel-from-peq-via-left-covering reg𝔼 lcovF
           open eqrel-as-repi-mono-fact B public
           open rmfF% using (C; C-is-repi) public
@@ -488,79 +489,9 @@ module exact-compl-universal-is-left-cov {ℂ : ecategory} (hasfwl : has-fin-wea
 
 
 
-  ↑ex-is-left-covering : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
+  CV↑ex-is-left-covering : {𝔼 : ecategory} (ex𝔼 : is-exact 𝔼)
                          {F : efunctor ℂ 𝔼} (lcovF : is-left-covering F)
-                           → is-left-covering (↑ex ex𝔼 lcovF)
-  ↑ex-is-left-covering ex𝔼 lcovF = F↑ex-is-left-covering
+                           → is-left-covering (F CV↑ex[ hasfwl , ex𝔼 , lcovF ])
+  CV↑ex-is-left-covering ex𝔼 lcovF = F↑ex-is-left-covering
                                   where open extension-is-left-cov ex𝔼 lcovF using (F↑ex-is-left-covering)
 -- end exact-compl-universal-is-left-cov
-
-
-
-
-
-{-
-    module F↑ex-lcov-pullbacks {I A B wP : Exℂ.Obj} {a : || Exℂ.Hom A I ||} {b : || Exℂ.Hom B I ||}
-                               {wp₁ : || Exℂ.Hom wP A ||} {wp₂ : || Exℂ.Hom wP B ||}
-                               {wPsq : a Exℂ.∘ wp₁ Exℂ.~ b Exℂ.∘ wp₂}
-                               (wPpf : Exℂ.is-wpb-square (Exℂ.mksq (Exℂ.mksq/ {A} {I} {B} wPsq)))
-                               {P : 𝔼.Obj} {p₁ : || 𝔼.Hom P (F↑ex.ₒ A) ||} {p₂ : || 𝔼.Hom P (F↑ex.ₒ B) ||}
-                               {Psq : (F↑ex.ₐ a) 𝔼.∘ p₁ 𝔼.~ (F↑ex.ₐ b) 𝔼.∘ p₂}
-                               (Ppf : 𝔼.is-pb-square (𝔼.mksq (𝔼.mksq/ Psq)))
-                               {cov×/ : || 𝔼.Hom (F↑ex.ₒ wP) P ||}
-                               (pf₁ : p₁ 𝔼.∘ cov×/ 𝔼.~ F↑ex.ₐ wp₁) (pf₂ : p₂ 𝔼.∘ cov×/ 𝔼.~ F↑ex.ₐ wp₂)
-                               where
-      a×/b : Exℂ.pullback-of a b
-      a×/b = flExℂ.pb-of {I} {A} {B} a b
-      private
-        module I = ℂ.peq I
-        module A = ℂ.peq A
-        module B = ℂ.peq B
-        module a = ℂ.peq-mor a
-        module b = ℂ.peq-mor b
-        module wP where
-          open Exℂ.wpullback-of-not (Exℂ.mkwpb-of wPpf) public
-          module Ob = ℂ.peq wP
-          module wπ/₁ = ℂ.peq-mor wπ/₁
-          module wπ/₂ = ℂ.peq-mor wπ/₂
-        module a×/b where
-          open Exℂ.pullback-of-not a×/b public
-          module Ob = ℂ.peq ul
-          module π/₁ = ℂ.peq-mor π/₁
-          module π/₂ = ℂ.peq-mor π/₂
-        module P = 𝔼.pullback-of-not (𝔼.mkpb-of Ppf)
-
-      Lo[a×/b] : ℂ.wWlim-of a.lo I.sp/ b.lo
-      Lo[a×/b] = fwlℂ.wW-of a.lo I.sp/ b.lo
-              --where open has-fin-weak-limits hasfwl
-                --    open has-bin-weak-products haswprd using (wprd-of)
-                  --  open ℂ.wproduct-of (wprd-of A.Lo B.Lo)
-      Fa×/Fb : 𝔼.pullback-of (F.ₐ a.lo) (F.ₐ b.lo)
-      Fa×/Fb = ex𝔼.pb-of (F.ₐ a.lo) (F.ₐ b.lo)
-      private
-        module Lo[a×/b] = ℂ.wWlim-of Lo[a×/b]
-        module Fa×/Fb = 𝔼.pullback-of-not Fa×/Fb
-      covFLo : || 𝔼.Hom (F.ₒ a×/b.Ob.Lo) Fa×/Fb.ul ||
-      covFLo = Fa×/Fb.⟨ F.ₐ a×/b.π₁.lo , F.ₐ a×/b.π₂.lo ⟩[ ? ]
-      covFLo-repi : 𝔼.is-regular-epi covFLo
-      covFLo-repi = lcF.prduniv-is-repi (ℂ.mkw×of Lo[a×/b]) Fa×/Fb Fa×/Fb.×tr₁ Fa×/Fb.×tr₂
-      QA×QB : || 𝔼.Hom Fa×/Fb.O12 P ||
-      QA×QB = {!!}
-            where open ex𝔼.pb-of-reg-covers-is-reg-cover-of-pb (𝔼.mkpb-of (𝔼.×is-pb-on! ex𝔼.istrm Ppf))
-                                                                (𝔼.repi-is-reg-cov {!!})
-                                                                {!!}
-
-      medEx : || Exℂ.Hom a×/b.O12 wP ||
-      medEx = wP.w< a×/b.π₁ , a×/b.π₂ >
-      med : || 𝔼.Hom (F.ₒ Lo[a×/b].O12) (F↑ex.ₒ wP) ||
-      med = F↑ex.ₐ {a×/b.O12} {wP} medEx 𝔼.∘ Q/F↑ex.ar a×/b.O12
-
-      --covP-tr
-    -- end F↑ex-lcov-pullbacks
-
-    F↑ex-is-left-covering-pb : is-left-covering-pb F↑ex
-    F↑ex-is-left-covering-pb = record
-      { pbuniv-is-repi = {!!}
-      }
-      where open F↑ex-lcov-pullbacks
--}

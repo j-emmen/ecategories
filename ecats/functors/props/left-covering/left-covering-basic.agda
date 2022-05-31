@@ -104,4 +104,3 @@ module efunctor-preslim2lcov {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) wher
                                     open 𝔻l.equaliser↔pullback-of-diag (F×of Y Y) eq {F.ₐ f 𝔻.∘ ar}
                                                                          (F×.<>ar~<>ar lidˢ (lidgenˢ (eq ˢ)))
 -- end efunctor-preslim2lcov
-

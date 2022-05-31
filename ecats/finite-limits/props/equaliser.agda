@@ -24,6 +24,16 @@ module equaliser-props (ℂ : ecategory) where
   open comm-shapes ℂ
   open equaliser-defs ℂ
 
+  pfeq-irr : {A B E : Obj} {f g : || Hom A B ||} {e : || Hom E A ||}
+             {pfeq : f ∘ e ~ g ∘ e}(iseql : is-equaliser pfeq)
+             (pfeq' : f ∘ e ~ g ∘ e) → is-equaliser pfeq'
+  pfeq-irr {pfeq = pfeq} iseql pfeq' = record
+    { _|eql[_] = _|eql[_]
+    ; eqltr = eqltr
+    ; eqluq = eqluq
+    }
+    where open is-equaliser iseql
+
   iseql-ext : {A B E : Obj} {f f' g g' : || Hom A B ||} {e : || Hom E A ||}
               {pfeq : f ∘ e ~ g ∘ e} (pfeq' : f' ∘ e ~ g' ∘ e)
                  → f ~ f' → g ~ g' → is-equaliser pfeq
@@ -49,6 +59,7 @@ module equaliser-props (ℂ : ecategory) where
     }
     where open is-equaliser eql
 
+
   eqlof-ext : {A B E : Obj} {f f' g g' : || Hom A B ||}
                  → f ~ f' → g ~ g' → equaliser-of f g
                    → equaliser-of f' g'
@@ -59,6 +70,7 @@ module equaliser-props (ℂ : ecategory) where
     ; iseql = iseql-ext (∘e r (pff ˢ) ⊙ eq ⊙ ∘e r pfg) pff pfg iseql
     }
     where open equaliser-of eqlof
+
 
   ar-iso-to-eql-is-eql : {A B E E' : Obj}{f g : || Hom A B ||}{e' : || Hom E' A ||}
                          (eq' : f ∘ e' ~ g ∘ e'){e : || Hom E A ||}{eq : f ∘ e ~ g ∘ e}
@@ -77,6 +89,7 @@ module equaliser-props (ℂ : ecategory) where
           ism' = ar-iso-to-mono-is-monic tr isiso (eqlof-is-monic (mkeql-of iseql))
           module e' = is-monic ism'
 
+
   same-eql-is-iso : {A B E E' : Obj}{f g : || Hom A B ||}{e : || Hom E A ||}{eq : f ∘ e ~ g ∘ e}
                     {e' : || Hom E' A ||}{eq' : f ∘ e' ~ g ∘ e'}
                     {med : || Hom E' E ||} → e ∘ med ~ e'
@@ -91,6 +104,9 @@ module equaliser-props (ℂ : ecategory) where
     where module e = equaliser-of (mkeql-of iseql)
           module e' = equaliser-of (mkeql-of iseql')
 
-          
 
+  eqlar-mono : {A B E : Obj} {f g : || Hom A B ||} {e : || Hom E A ||}
+               {pfeq : f ∘ e ~ g ∘ e} → is-equaliser pfeq → is-monic e
+  eqlar-mono iseql = record { mono-pf = eqluq }
+                   where open is-equaliser iseql
 -- end equaliser-props
