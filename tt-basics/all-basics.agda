@@ -85,7 +85,7 @@ Fin-inr-emb n m i = =rf
 -}
 
 -- coproduct inclusions
-
+{-
 Fin-suc-inl : (n m : N)(i : Fin n)
   → Fin-inl (s n) (s m) (Fin-suc n i) == Fin-suc (s n +N m) (Fin-inl (s n) m (Fin-emb n i))
 Fin-suc-inl n = Nrec
@@ -165,7 +165,7 @@ Fin-+unv-ass n m k {A = A} f g =
 -- = Fin-+unvar (n +N m) (s x) (Fin-+unvar n m f g) h (Fin-emb ((n +N m) +N x) ((Fin ● +N-ass n m x) i))
 -- [by +N-ass-emb ⁻¹]
 -- == Fin-+unvar (n +N m) (s x) (Fin-+unvar n m f g) h ((Fin ● +N-ass n m (s x)) (Fin-emb (n +N m +N x) i))
-
+-}
 
 Fin-inl-min : (n m : N) → Fin-inl (s n) (s m) (Fin-min n) == Fin-min (s n +N m)
 Fin-inl-min n = Nrec =rf (λ m hi → =ap inl hi)
