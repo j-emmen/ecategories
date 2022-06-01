@@ -5,16 +5,8 @@ module ecats.concr-ecats.linear-orders where
 
 open import tt-basics.all-basics renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
---open import ecats.basic-defs.isomorphism
---open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.preorder
---open import ecats.basic-props.isomorphism
---open import ecats.constructions.free-ecat-on-graph
---open import ecats.concr-ecats.Std-lev
 open import ecats.functors.defs.efunctor
---open import ecats.functors.defs.natural-iso
---open import ecats.functors.defs.natural-transformation
-
 
 ---------------------------
 -- Countable linear orders
