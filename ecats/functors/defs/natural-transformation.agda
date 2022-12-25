@@ -139,6 +139,12 @@ natt-fctr-pre F α = record
         module α = natural-transformation α
 
 
+infix 90 _ₙₜ·_
+_ₙₜ·_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}
+      {𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}{ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}
+      {H K : efunctorₗₑᵥ 𝔻 𝔼}
+        → H ⇒ K → (F : efunctorₗₑᵥ ℂ 𝔻) → H ○ F ⇒ K ○ F
+α ₙₜ· F = natt-fctr-pre F α
 
 natt-fctr-post : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}
                  {𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}{ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}
@@ -150,3 +156,11 @@ natt-fctr-post α K = record
   }
   where module K = efunctor-aux K
         module α = natural-transformation α
+
+infix 90 _·ₙₜ_
+_·ₙₜ_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}
+       {𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}{ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}
+       (K : efunctorₗₑᵥ 𝔻 𝔼){F G : efunctorₗₑᵥ ℂ 𝔻}(α : F ⇒ G)
+         → K ○ F ⇒ K ○ G
+K ·ₙₜ α = natt-fctr-post α K
+
