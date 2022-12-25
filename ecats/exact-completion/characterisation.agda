@@ -4,7 +4,7 @@
 module ecats.exact-completion.characterisation where
 
 open import ecats.basic-defs.ecat-def&not
---open import ecats.basic-defs.isomorphism
+open import ecats.basic-defs.isomorphism
 open import ecats.basic-defs.exact-ecat
 open import ecats.basic-props.exact-ecat
 open import ecats.finite-limits.defs.collective
@@ -93,12 +93,14 @@ module exwlex-completion-is-unique {ℂ : ecategory}(fwlℂ : has-fin-weak-limit
   adjeqv↑ adjeqv↑direct : is-adj-equivalence-pair D↑.fctr E↑.fctr
   adjeqv↑ = eqv-is-adj-eqv-ε eqv↑
           where open equivalence-props D↑.fctr E↑.fctr
+{-
   adjeqv↑direct = record
     { ι1 = idcod
     ; ι2 = iddom
     ; trid₁ = λ {X} → {!!}
     ; trid₂ = {!!}
     }
+-}
 
 -- end exwlex-completion-is-unique
 
