@@ -47,6 +47,24 @@ syntax ·ₙₜ'' F G K H α = F ·ₙₜ'' α [ G , K , H ]
 -- Monads
 ----------
 
+record is-monad-struct {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}
+                       (T : efunctorₗₑᵥ ℂ ℂ)
+                       (η : natural-transformation IdF T)
+                       (μ : natural-transformation (T ○ T) T)
+                       : Set (ecat.ℓₐₗₗ ℂ)
+                       where
+  private
+    T² : efunctorₗₑᵥ ℂ ℂ
+    T² = T ○ T
+    module [T,T] = NatTr T T
+    module [T²○T,T] = NatTr (T² ○ T) T
+    module T○T²≅T²○T = natural-iso (○ass {F = T} {T} {T})
+  field
+    ax-Tη : μ ○ᵥ T ·ₙₜ' η [T,T].~ natt-id
+    ax-ηT : μ ○ᵥ η ₙₜ·' T [T,T].~ natt-id
+    ax-μ : μ ○ᵥ μ ₙₜ· T [T²○T,T].~ μ ○ᵥ T ·ₙₜ μ ○ᵥ T○T²≅T²○T.natt⁻¹
+
+
 record monad-struct-on {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}
                        (T : efunctorₗₑᵥ ℂ ℂ)
                        : Set (ecat.ℓₐₗₗ ℂ)
@@ -56,22 +74,32 @@ record monad-struct-on {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓ�
   field
     ηnt : natural-transformation IdF T
     μnt : natural-transformation T² T
-  module ηnt = natural-transformation ηnt
-  module μnt = natural-transformation μnt
+    ismndstr : is-monad-struct T ηnt μnt
+  module η = natural-transformation ηnt
+  module μ = natural-transformation μnt
+  open is-monad-struct ismndstr public
 
 record monad-on {ℓₒ ℓₐ ℓ~}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)
                 : Set (ecat.ℓₐₗₗ ℂ)
                 where
+  
   field
     fctr : efunctorₗₑᵥ ℂ ℂ
-    is-mnd : monad-struct-on fctr
-  open monad-struct-on is-mnd renaming (T² to ²) public
+    ηnt : natural-transformation IdF fctr
+    μnt : natural-transformation (fctr ○ fctr) fctr
+    ismndstr : is-monad-struct fctr ηnt μnt
+  ² : efunctorₗₑᵥ ℂ ℂ
+  ² = fctr ○ fctr
+  module fc = efunctorₗₑᵥ fctr
+  module ² = efunctorₗₑᵥ ²
+  module η = natural-transformation ηnt
+  module μ = natural-transformation μnt
+  open is-monad-struct ismndstr public
+
 
 private
   module mnd {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}(T : monad-on ℂ) where
     open monad-on T public
-    open efunctorₗₑᵥ fctr public
-    module ² = efunctorₗₑᵥ ²
 
 
 -- Moprhisms of monads
