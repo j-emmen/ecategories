@@ -47,10 +47,10 @@ syntax ·ₙₜ'' F G K H α = F ·ₙₜ'' α [ G , K , H ]
 -- Monads
 ----------
 
-record is-monad {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}
-                (T : efunctorₗₑᵥ ℂ ℂ)
-                : Set (ecat.ℓₐₗₗ ℂ)
-                where
+record monad-struct-on {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}
+                       (T : efunctorₗₑᵥ ℂ ℂ)
+                       : Set (ecat.ℓₐₗₗ ℂ)
+                       where
   T² : efunctorₗₑᵥ ℂ ℂ
   T² = T ○ T
   field
@@ -64,8 +64,8 @@ record monad-on {ℓₒ ℓₐ ℓ~}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~
                 where
   field
     fctr : efunctorₗₑᵥ ℂ ℂ
-    is-mnd : is-monad fctr
-  open is-monad is-mnd renaming (T² to ²) public
+    is-mnd : monad-struct-on fctr
+  open monad-struct-on is-mnd renaming (T² to ²) public
 
 private
   module mnd {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}(T : monad-on ℂ) where
