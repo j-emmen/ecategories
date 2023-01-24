@@ -39,8 +39,10 @@ record natural-transformation {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ �
   field
     fnc : {A : ℂ.Obj} → || 𝔻.Hom (F.ₒ A) (G.ₒ A) ||
     nat : is-natural fnc
+  ar : {A : ℂ.Obj} → || 𝔻.Hom (F.ₒ A) (G.ₒ A) ||
+  ar {A} = fnc {A}
   natˢ : {A B : ℂ.Obj}(f : || ℂ.Hom A B ||)
-             → G.ₐ f 𝔻.∘ fnc 𝔻.~ fnc 𝔻.∘ F.ₐ f
+             → G.ₐ f 𝔻.∘ ar 𝔻.~ ar 𝔻.∘ F.ₐ f
   natˢ f = nat f ˢ
          where open ecategory-aux-only 𝔻 using (_ˢ)
 
@@ -88,7 +90,7 @@ natt-vcmp : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ�
             {F G H : efunctorₗₑᵥ ℂ 𝔻}
                → G ⇒ H → F ⇒ G → F ⇒ H
 natt-vcmp {ℂ = ℂ} {𝔻 = 𝔻} {F} {G} {H} β α = record
-  { fnc = λ {A} → β.fnc 𝔻.∘ α.fnc
+  { fnc = λ {A} → β.ar 𝔻.∘ α.ar
   ; nat = λ f → assˢ ⊙ ∘e (α.nat f) r ⊙ ass ⊙ ∘e r (β.nat f) ⊙ assˢ
   }
   where module 𝔻 = ecat 𝔻
@@ -101,11 +103,11 @@ natt-hcmp : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ�
             {ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}{F G : efunctorₗₑᵥ ℂ 𝔻}{H K : efunctorₗₑᵥ 𝔻 𝔼}
                → H ⇒ K → F ⇒ G → H ○ F ⇒ K ○ G
 natt-hcmp {𝔼 = 𝔼} {F} {G} {H} {K} β α = record
-  { fnc = λ {A} → β.fnc {G.ₒ A} 𝔼.∘ H.ₐ (α.fnc {A})
+  { fnc = λ {A} → β.ar {G.ₒ A} 𝔼.∘ H.ₐ (α.ar {A})
   ; nat = λ f → ~proof
-        (β.fnc 𝔼.∘ H.ₐ α.fnc) 𝔼.∘ H.ₐ (F.ₐ f)   ~[ assˢ ⊙ ∘e (H.∘∘ (α.nat f)) r ] /
-        β.fnc 𝔼.∘ H.ₐ (G.ₐ f) 𝔼.∘ H.ₐ α.fnc     ~[ ass ⊙ ∘e r (β.nat (G.ₐ f)) ⊙ assˢ ]∎
-        K.ₐ (G.ₐ f) 𝔼.∘ β.fnc 𝔼.∘ H.ₐ α.fnc ∎
+        (β.ar 𝔼.∘ H.ₐ α.ar) 𝔼.∘ H.ₐ (F.ₐ f)   ~[ assˢ ⊙ ∘e (H.∘∘ (α.nat f)) r ] /
+        β.ar 𝔼.∘ H.ₐ (G.ₐ f) 𝔼.∘ H.ₐ α.ar     ~[ ass ⊙ ∘e r (β.nat (G.ₐ f)) ⊙ assˢ ]∎
+        K.ₐ (G.ₐ f) 𝔼.∘ β.ar 𝔼.∘ H.ₐ α.ar ∎
   }
   where module 𝔼 = ecat 𝔼
         module F = efctr F
@@ -132,7 +134,7 @@ natt-fctr-pre : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ �
                 (F : efunctorₗₑᵥ ℂ 𝔻){H K : efunctorₗₑᵥ 𝔻 𝔼}
                   → H ⇒ K → H ○ F ⇒ K ○ F
 natt-fctr-pre F α = record
-  { fnc = λ {A} → α.fnc {F.ₒ A}
+  { fnc = λ {A} → α.ar {F.ₒ A}
   ; nat = λ f → α.nat (F.ₐ f)
   }
   where module F = efctr F
@@ -151,7 +153,7 @@ natt-fctr-post : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ 
                  {F G : efunctorₗₑᵥ ℂ 𝔻}(α : F ⇒ G)(K : efunctorₗₑᵥ 𝔻 𝔼)
                    → K ○ F ⇒ K ○ G
 natt-fctr-post α K = record
-  { fnc = λ {A} → K.ₐ (α.fnc {A})
+  { fnc = λ {A} → K.ₐ (α.ar {A})
   ; nat = λ f → K.∘∘ (α.nat f)
   }
   where module K = efunctor-aux K

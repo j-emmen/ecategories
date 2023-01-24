@@ -395,20 +395,20 @@ module adjunction-as-universal-props {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecatego
         cn : (A : ℂ.Obj) → ℂ↓R.Obj A
         cn A = RLnt2sl ηnt A
         module unv (A : ℂ.Obj) where
-          open ℂ↓R.is-initial A (ηin A) renaming (ø to ar; øuq to uq; øuqg to uqg) public
+          open ℂ↓R.is-initial A (ηin A) renaming (ø to øar) public -- ; øuq to uq; øuqg to uqg
           uar : {B : 𝔻.Obj}(f : || ℂ.Hom A (R.ₒ B) ||)
                   → || 𝔻.Hom (L.ₒ A) B ||
-          uar {B} f = ℂ↓R.ₐ.arR (ar (RLar2slob f))
+          uar {B} f = ℂ↓R.ₐ.arR (øar (RLar2slob f))
           tr : {B : 𝔻.Obj}{f : || ℂ.Hom A (R.ₒ B) ||}
                   → R.ₐ (uar f) ℂ.∘ fnc ℂ.~ f
-          tr {B} {f} = ℂ↓R.ₐ.tr (ar (RLar2slob f))
+          tr {B} {f} = ℂ↓R.ₐ.tr (øar (RLar2slob f))
 
     εnt : natural-transformation (L ○ R) IdF
     εnt = record
       { fnc = fnc
-      ; nat = λ {B} {B'} b → η.unv.uqg (R.ₒ B) {RLar2slob (R.ₐ b)}
-                                        {RLtr2slar (inv1 b)}
-                                        {RLtr2slar (inv2 b)}
+      ; nat = λ {B} {B'} b → η.unv.øuqg (R.ₒ B) {RLar2slob (R.ₐ b)}
+                                         {RLtr2slar (inv1 b)}
+                                         {RLtr2slar (inv2 b)}
       }
       where fnc : {B : 𝔻.Obj} → || 𝔻.Hom (L.ₒ (R.ₒ B)) B ||
             fnc {B} = η.unv.uar (R.ₒ B) (ℂ.idar (R.ₒ B))
@@ -432,13 +432,13 @@ module adjunction-as-universal-props {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecatego
     private module ε = natural-transformation εnt
 
     trid₁ : {A : ℂ.Obj} → ε.fnc 𝔻.∘ L.ₐ η.fnc 𝔻.~ 𝔻.idar (L.ₒ A)
-    trid₁ {A} = η.unv.uqg A
-                          {f = RLtr2slar (~proof
-                             R.ₐ (ε.fnc 𝔻.∘ L.ₐ η.fnc) ℂ.∘ η.fnc     ~[ ∘e r R.∘ax-rfˢ ⊙ assˢ ] /
-                             R.ₐ ε.fnc ℂ.∘ RL.ₐ η.fnc ℂ.∘ η.fnc  ~[ ∘e (η.nat η.fnc ˢ) r ] /
-                             R.ₐ ε.fnc ℂ.∘ η.fnc ℂ.∘ η.fnc   ~[ ass ⊙ lidgg r (η.unv.tr (R.ₒ (L.ₒ A))) ]∎
-                             η.fnc ∎)}
-                          {RLtr2slar (lidgg r R.id)}
+    trid₁ {A} = η.unv.øuqg A
+                           {f = RLtr2slar (~proof
+                              R.ₐ (ε.fnc 𝔻.∘ L.ₐ η.fnc) ℂ.∘ η.fnc     ~[ ∘e r R.∘ax-rfˢ ⊙ assˢ ] /
+                              R.ₐ ε.fnc ℂ.∘ RL.ₐ η.fnc ℂ.∘ η.fnc  ~[ ∘e (η.nat η.fnc ˢ) r ] /
+                              R.ₐ ε.fnc ℂ.∘ η.fnc ℂ.∘ η.fnc   ~[ ass ⊙ lidgg r (η.unv.tr (R.ₒ (L.ₒ A))) ]∎
+                              η.fnc ∎)}
+                           {RLtr2slar (lidgg r R.id)}
               where open ecategory-aux-only ℂ
     trid₂ : {B : 𝔻.Obj} → R.ₐ ε.fnc ℂ.∘ η.fnc ℂ.~ ℂ.idar (R.ₒ B)
     trid₂ {B} = η.unv.tr (R.ₒ B)
@@ -454,20 +454,20 @@ module adjunction-as-universal-props {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecatego
         cn : (B : 𝔻.Obj) → L↓𝔻.Obj B
         cn B = LRnt2sl εnt B
         module unv (B : 𝔻.Obj) where
-          open L↓𝔻.is-terminal B (εtm B) renaming (! to ar; !uniq to uq; !uqg to uqg) public
+          open L↓𝔻.is-terminal B (εtm B) renaming (! to !ar; !uniq to !uq) public -- ; !uqg to uqg
           uar : {A : ℂ.Obj}(g : || 𝔻.Hom (L.ₒ A) B ||)
                   → || ℂ.Hom A (R.ₒ B) ||
-          uar {A} g = L↓𝔻.ₐ.arL (ar (LRar2slob g))
+          uar {A} g = L↓𝔻.ₐ.arL (!ar (LRar2slob g))
           tr : {A : ℂ.Obj}{g : || 𝔻.Hom (L.ₒ A) B ||}
                   → fnc 𝔻.∘ L.ₐ (uar g) 𝔻.~ g
-          tr {A} {g} = L↓𝔻.ₐ.tr (ar (LRar2slob g))
+          tr {A} {g} = L↓𝔻.ₐ.tr (!ar (LRar2slob g))
 
     ηnt : natural-transformation IdF (R ○ L)
     ηnt = record
       { fnc = fnc
-      ; nat = λ {A'} {A} a → ε.unv.uqg (L.ₒ A) {LRar2slob (L.ₐ a)}
-                                        {LRtr2slar (inv2 a)}
-                                        {LRtr2slar (inv1 a)}
+      ; nat = λ {A'} {A} a → ε.unv.!uqg (L.ₒ A) {LRar2slob (L.ₐ a)}
+                                         {LRtr2slar (inv2 a)}
+                                         {LRtr2slar (inv1 a)}
       }
       where fnc : {A : ℂ.Obj} → || ℂ.Hom A (R.ₒ (L.ₒ A)) ||
             fnc {A} = ε.unv.uar (L.ₒ A) (𝔻.idar (L.ₒ A))
@@ -493,13 +493,13 @@ module adjunction-as-universal-props {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecatego
     trid₁ : {A : ℂ.Obj} → ε.fnc 𝔻.∘ L.ₐ η.fnc 𝔻.~ 𝔻.idar (L.ₒ A)
     trid₁ {A} = ε.unv.tr (L.ₒ A)
     trid₂ : {B : 𝔻.Obj} → R.ₐ ε.fnc ℂ.∘ η.fnc ℂ.~ ℂ.idar (R.ₒ B)
-    trid₂ {B} = ε.unv.uqg B {LRnt2sl εnt B}
-                           {LRtr2slar (~proof
+    trid₂ {B} = ε.unv.!uqg B {LRnt2sl εnt B}
+                             {LRtr2slar (~proof
               ε.fnc 𝔻.∘ L.ₐ (R.ₐ ε.fnc ℂ.∘ η.fnc)  ~[ ∘e L.∘ax-rfˢ r ] /
               ε.fnc 𝔻.∘ LR.ₐ ε.fnc 𝔻.∘ L.ₐ η.fnc  ~[ ass ⊙ (∘e r (ε.nat ε.fnc) ⊙ assˢ) ] /
               ε.fnc 𝔻.∘ ε.fnc 𝔻.∘ L.ₐ η.fnc       ~[ ridgg r (ε.unv.tr (LR.ₒ B)) ]∎
               ε.fnc ∎)}
-                           {LRtr2slar (ridgg r L.id)}
+                             {LRtr2slar (ridgg r L.id)}
               where open ecategory-aux-only 𝔻
   -- end unvη2adj
 

@@ -29,7 +29,7 @@ record natural-iso {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂
     natt : natural-transformation F G
     natt⁻¹ : natural-transformation G F
   open natural-transformation natt public
-  open natural-transformation natt⁻¹ renaming (fnc to fnc⁻¹; nat to nat⁻¹; natˢ to nat⁻¹ˢ) public
+  open natural-transformation natt⁻¹ renaming (fnc to fnc⁻¹; nat to nat⁻¹; natˢ to nat⁻¹ˢ; ar to ar⁻¹) public
   open iso-defs 𝔻
   field
     isiso : {A : ℂ.Obj} → is-iso-pair (fnc {A}) (fnc⁻¹ {A})
