@@ -42,7 +42,7 @@ module adjunction-bij-props {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑ�
       open adjunction-bij-equat adjbij public
 
 
-  module RAPL {𝕀 : small-ecategory}(D : 𝕀 diag-in 𝔻){lC : Cone/.Obj D}
+  module RAPL {𝕀 : small-ecategory}{D : 𝕀 diag-in 𝔻}{lC : Cone/.Obj D}
               (lCislim : 𝔻.is-limit-cone lC)(A : Cone/.Obj (G ○ D))
               where
     private
@@ -95,9 +95,9 @@ record
 
   RAPL : preserves-limits G
   RAPL = record
-       { pres-lim = λ D islim → record
-                  { ! = ar D islim
-                  ; !uniq = λ {A} → uq D islim A
+       { pres-lim = λ islim → record
+                  { ! = ar islim
+                  ; !uniq = λ {A} → uq islim A
                   }
        }
        where open RAPL
