@@ -94,7 +94,7 @@ adjunction2monad-on-cat : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategory�
                           {𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}{L : efunctorₗₑᵥ ℂ 𝔻}{R : efunctorₗₑᵥ 𝔻 ℂ}
                             → adjunction-εη L R → monad-on ℂ
 adjunction2monad-on-cat {L = L} {R} L⊣R = record
-  { fctr = R ○ L
+  { fc = R ○ L
   ; ηnt = η
   ; μnt = μ
   ; ismndstr = mnd-struct

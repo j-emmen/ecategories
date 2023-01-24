@@ -84,14 +84,14 @@ record monad-on {ℓₒ ℓₐ ℓ~}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~
                 where
   
   field
-    fctr : efunctorₗₑᵥ ℂ ℂ
-    ηnt : natural-transformation IdF fctr
-    μnt : natural-transformation (fctr ○ fctr) fctr
-    ismndstr : is-monad-struct fctr ηnt μnt
+    fc : efunctorₗₑᵥ ℂ ℂ
+    ηnt : natural-transformation IdF fc
+    μnt : natural-transformation (fc ○ fc) fc
+    ismndstr : is-monad-struct fc ηnt μnt
   ² : efunctorₗₑᵥ ℂ ℂ
-  ² = fctr ○ fctr
-  module fc = efunctorₗₑᵥ fctr
-  module ² = efunctorₗₑᵥ ²
+  ² = fc ○ fc
+  module fc = efunctor-aux fc
+  module ² = efunctor-aux ²
   module η = natural-transformation ηnt
   module μ = natural-transformation μnt
   open is-monad-struct ismndstr public
@@ -106,19 +106,19 @@ private
 
 record is-monad-lax-morphism {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}{ℓₒ₂ ℓₐ₂ ℓ~₂}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                              (T : monad-on ℂ)(S : monad-on 𝔻)(F : efunctorₗₑᵥ ℂ 𝔻)
-                             (ϕ : natural-transformation (mnd.fctr S ○ F) (F ○ mnd.fctr T))
+                             (ϕ : natural-transformation (mnd.fc S ○ F) (F ○ mnd.fc T))
                 : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
                 where
   private
     module T = mnd T
     module S = mnd S
-    module [F,F○T] = NatTr F (F ○ T.fctr)
-    module [S²○F,F○T] = NatTr (S.² ○ F) (F ○ T.fctr)
-    module S○S○F≅S²○F = natural-iso (○ass {F = F}{G = S.fctr}{H = S.fctr})
+    module [F,F○T] = NatTr F (F ○ T.fc)
+    module [S²○F,F○T] = NatTr (S.² ○ F) (F ○ T.fc)
+    module S○S○F≅S²○F = natural-iso (○ass {F = F}{G = S.fc}{H = S.fc})
   field
     ηeq : ϕ ○ᵥ S.ηnt ₙₜ·' F [F,F○T].~ F ·ₙₜ' T.ηnt 
-    μeq : ϕ ○ᵥ S.μnt ₙₜ· F [S²○F,F○T].~ F ·ₙₜ T.μnt ○ᵥ ϕ ₙₜ·'' T.fctr [ S.fctr ○ F , T.fctr , F ]
-                                                    ○ᵥ S.fctr ·ₙₜ'' ϕ [ S.fctr ○ F , T.fctr , F ]
+    μeq : ϕ ○ᵥ S.μnt ₙₜ· F [S²○F,F○T].~ F ·ₙₜ T.μnt ○ᵥ ϕ ₙₜ·'' T.fc [ S.fc ○ F , T.fc , F ]
+                                                    ○ᵥ S.fc ·ₙₜ'' ϕ [ S.fc ○ F , T.fc , F ]
                                                      ○ᵥ S○S○F≅S²○F.natt⁻¹
 
 
@@ -130,7 +130,9 @@ record monad-lax-morphism {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ
     module T = mnd T
     module S = mnd S
   field
-    fctr : efunctorₗₑᵥ ℂ 𝔻
-    natt : natural-transformation (S.fctr ○ fctr) (fctr ○ T.fctr)
-    is-laxm : is-monad-lax-morphism T S fctr natt
+    fc : efunctorₗₑᵥ ℂ 𝔻
+    natt : natural-transformation (S.fc ○ fc) (fc ○ T.fc)
+    is-laxm : is-monad-lax-morphism T S fc natt
+  module fc = efunctor-aux fc
+  module natt = natural-transformation natt
   module laxm = is-monad-lax-morphism is-laxm
