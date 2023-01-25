@@ -10,7 +10,7 @@ open import ecats.functors.defs.natural-iso
 
 
 -- Preliminary definitions. To be renamend and moved in a more appropriate place.
-infix 90 _ₙₜ·'_ _·ₙₜ'_ ₙₜ·'' ·ₙₜ''
+infix 90 _ₙₜ·'_ _·ₙₜ'_ _ₙₜ'·_ _·'ₙₜ_ ₙₜ·'' ·ₙₜ''
 _ₙₜ·'_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
          {K : efunctorₗₑᵥ 𝔻 𝔻}
            → IdF ⇒ K → (F : efunctorₗₑᵥ ℂ 𝔻) → F ⇒ K ○ F
@@ -27,6 +27,30 @@ _·ₙₜ'_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ
          (K : efunctorₗₑᵥ ℂ 𝔻){F : efunctorₗₑᵥ ℂ ℂ}(α : IdF ⇒ F)
            → K ⇒ K ○ F
 K ·ₙₜ' α = record
+  { fnc = λ {A} → K.ₐ (α.ar {A})
+  ; nat = λ f → K.∘∘ (α.nat f)
+  }
+  where module α = natural-transformation α
+        module K = efunctor-aux K
+  -- module K○Id≅K = natural-iso (○rid {F = K})
+  -- K ·ₙₜ α ○ᵥ K○Id≅K.natt⁻¹
+
+_ₙₜ'·_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+         {K : efunctorₗₑᵥ 𝔻 𝔻}
+           → K ⇒ IdF → (F : efunctorₗₑᵥ ℂ 𝔻) → K ○ F ⇒ F
+α ₙₜ'· F = record
+  { fnc = λ {A} → α.ar {F.ₒ A}
+  ; nat = λ f → α.nat (F.ₐ f)
+  }
+  where module α = natural-transformation α
+        module F = efunctor-aux F
+  -- module Id○F≅F = natural-iso (○lid {F = F})
+  --    α ₙₜ· F ○ᵥ Id○F≅F.natt⁻¹
+
+_·'ₙₜ_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+         (K : efunctorₗₑᵥ ℂ 𝔻){F : efunctorₗₑᵥ ℂ ℂ}(α : F ⇒ IdF)
+           → K ○ F ⇒ K
+K ·'ₙₜ α = record
   { fnc = λ {A} → K.ₐ (α.ar {A})
   ; nat = λ f → K.∘∘ (α.nat f)
   }
@@ -80,14 +104,28 @@ record is-monad-struct {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓ�
   private
     T² : efunctorₗₑᵥ ℂ ℂ
     T² = T ○ T
+    module T = efctr T
+    module μ = natural-transformation μ
     module [T,T] = NatTr T T
     module [T²○T,T] = NatTr (T² ○ T) T
+    module [T○T²,T] = NatTr (T ○ T²) T
     module T○T²≅T²○T = natural-iso (○ass {F = T} {T} {T})
            -- the components at A are the identities on T³A
   field
     ax-Tη : μ ○ᵥ T ·ₙₜ' η [T,T].~ natt-id
     ax-ηT : μ ○ᵥ η ₙₜ·' T [T,T].~ natt-id
     ax-μ : μ ○ᵥ μ ₙₜ· T [T²○T,T].~ μ ○ᵥ T ·ₙₜ μ ○ᵥ T○T²≅T²○T.natt⁻¹
+  ax-Tηˢ : natt-id [T,T].~ μ ○ᵥ T ·ₙₜ' η
+  ax-Tηˢ X = ax-Tη X ˢ
+          where open ecategory-aux ℂ using (_ˢ)
+  ax-ηTˢ : natt-id [T,T].~ μ ○ᵥ η ₙₜ·' T
+  ax-ηTˢ X = ax-ηT X ˢ
+           where open ecategory-aux ℂ using (_ˢ)
+  ax-μˢ : μ ○ᵥ T ·ₙₜ μ [T○T²,T].~ μ ○ᵥ μ ₙₜ· T ○ᵥ T○T²≅T²○T.natt
+  ax-μˢ X = ~proof μ.ar ∘ T.ₐ μ.ar                      ~[ ridgenˢ (ridˢ ⊙ assˢ) ] /
+                   (μ.ar ∘ T.ₐ μ.ar ∘ idar _) ∘ idar _  ~[ ∘e r (ax-μ X ˢ) ⊙ assˢ ]∎
+                   μ.ar ∘ μ.ar ∘ idar _ ∎
+          where open ecategory-aux ℂ
 
 
 record monad-struct-on {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}
