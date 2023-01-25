@@ -210,8 +210,6 @@ module Eilenberg-Moore-adjunction {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategory�
     module alg/ = algebra-on
     module alg = algebra
     module algm = algebra-morphism
-    module [F,F] = NatTr F F
-    module [U,U] = NatTr U U
 
   η : IdF ⇒ U ○ F
   η = record
