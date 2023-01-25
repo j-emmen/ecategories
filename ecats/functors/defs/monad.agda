@@ -14,21 +14,39 @@ infix 90 _ₙₜ·'_ _·ₙₜ'_ ₙₜ·'' ·ₙₜ''
 _ₙₜ·'_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
          {K : efunctorₗₑᵥ 𝔻 𝔻}
            → IdF ⇒ K → (F : efunctorₗₑᵥ ℂ 𝔻) → F ⇒ K ○ F
-α ₙₜ·' F = α ₙₜ· F ○ᵥ Id○F≅F.natt⁻¹
-         where module Id○F≅F = natural-iso (○lid {F = F})
+α ₙₜ·' F = record
+  { fnc = λ {A} → α.ar {F.ₒ A}
+  ; nat = λ f → α.nat (F.ₐ f)
+  }
+  where module α = natural-transformation α
+        module F = efunctor-aux F
+  -- module Id○F≅F = natural-iso (○lid {F = F})
+  --    α ₙₜ· F ○ᵥ Id○F≅F.natt⁻¹
 
 _·ₙₜ'_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
          (K : efunctorₗₑᵥ ℂ 𝔻){F : efunctorₗₑᵥ ℂ ℂ}(α : IdF ⇒ F)
            → K ⇒ K ○ F
-K ·ₙₜ' α = K ·ₙₜ α ○ᵥ K○Id≅K.natt⁻¹
-         where module K○Id≅K = natural-iso (○rid {F = K})
+K ·ₙₜ' α = record
+  { fnc = λ {A} → K.ₐ (α.ar {A})
+  ; nat = λ f → K.∘∘ (α.nat f)
+  }
+  where module α = natural-transformation α
+        module K = efunctor-aux K
+  -- module K○Id≅K = natural-iso (○rid {F = K})
+  -- K ·ₙₜ α ○ᵥ K○Id≅K.natt⁻¹
 
 ₙₜ·'' : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
         {ℓ₇' ℓ₈' ℓ₉' : Level}{𝔼' : ecategoryₗₑᵥ ℓ₇' ℓ₈' ℓ₉'}{ℓ₇ ℓ₈ ℓ₉ : Level}
         {𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}(G : efunctorₗₑᵥ 𝔻 𝔼)(K : efunctorₗₑᵥ 𝔻 𝔼')(H : efunctorₗₑᵥ 𝔼' 𝔼)
           → G ⇒ H ○ K → (F : efunctorₗₑᵥ ℂ 𝔻) → G ○ F ⇒ H ○ K ○ F
-ₙₜ·'' G K H α F = [H○K]○F≅H○K○F.natt⁻¹ ○ᵥ α ₙₜ· F
-                where module [H○K]○F≅H○K○F = natural-iso (○ass {F = F}{G = K}{H = H})
+ₙₜ·'' G K H α F = record
+  { fnc = λ {A} → α.ar {F.ₒ A}
+  ; nat = λ f → α.nat (F.ₐ f)
+  }
+  where module α = natural-transformation α
+        module F = efunctor-aux F
+  -- module [H○K]○F≅H○K○F = natural-iso (○ass {F = F}{G = K}{H = H})
+  -- [H○K]○F≅H○K○F.natt⁻¹ ○ᵥ α ₙₜ· F
 syntax ₙₜ·'' G K H α F = α ₙₜ·'' F [ G , K , H ]
 
 ·ₙₜ'' : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
@@ -36,8 +54,14 @@ syntax ₙₜ·'' G K H α F = α ₙₜ·'' F [ G , K , H ]
         {𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}(F : efunctorₗₑᵥ 𝔼 ℂ)
         (G : efunctorₗₑᵥ 𝔻 𝔼)(K : efunctorₗₑᵥ 𝔻 𝔼')(H : efunctorₗₑᵥ 𝔼' 𝔼)
           → G ⇒ H ○ K → F ○ G ⇒ (F ○ H) ○ K
-·ₙₜ''  F G K H α = [H○K]○F≅H○K○F.natt ○ᵥ F ·ₙₜ α
-                 where module [H○K]○F≅H○K○F = natural-iso (○ass {F = K}{G = H}{H = F})
+·ₙₜ'' F G K H α = record
+  { fnc = λ {A} → F.ₐ (α.ar {A})
+  ; nat = λ f → F.∘∘ (α.nat f)
+  }
+  where module α = natural-transformation α
+        module F = efunctor-aux F
+  -- module [H○K]○F≅H○K○F = natural-iso (○ass {F = K}{G = H}{H = F})
+  -- [H○K]○F≅H○K○F.natt ○ᵥ F ·ₙₜ α
 syntax ·ₙₜ'' F G K H α = F ·ₙₜ'' α [ G , K , H ]
 
 
@@ -59,6 +83,7 @@ record is-monad-struct {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓ�
     module [T,T] = NatTr T T
     module [T²○T,T] = NatTr (T² ○ T) T
     module T○T²≅T²○T = natural-iso (○ass {F = T} {T} {T})
+           -- the components at A are the identities on T³A
   field
     ax-Tη : μ ○ᵥ T ·ₙₜ' η [T,T].~ natt-id
     ax-ηT : μ ○ᵥ η ₙₜ·' T [T,T].~ natt-id
