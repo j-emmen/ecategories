@@ -8,7 +8,6 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.monad
 open import ecats.functors.defs.adjunction
---open import ecats.constructions.functor-ecat
 
 module monad-from-adjunction {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}{ℓₒ₂ ℓₐ₂ ℓ~₂}
                              {𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}{L : efunctorₗₑᵥ ℂ 𝔻}{R : efunctorₗₑᵥ 𝔻 ℂ}
@@ -17,8 +16,6 @@ module monad-from-adjunction {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑ
   private
     module ℂ = ecat ℂ
     module 𝔻 = ecat 𝔻
-    --module [ℂ,𝔻] = ecat [ ℂ , 𝔻 ]ᶜᵃᵗ
-    --module [ℂ,ℂ] = ecat [ ℂ , ℂ ]ᶜᵃᵗ
     module L = efunctor-aux L
     module R = efunctor-aux R
     module L⊣R = adjunction-εη L⊣R
