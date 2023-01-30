@@ -8,7 +8,7 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.monad
 open import ecats.functors.defs.adjunction
-open import ecats.constructions.functor-ecat
+--open import ecats.constructions.functor-ecat
 
 module monad-from-adjunction {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}{ℓₒ₂ ℓₐ₂ ℓ~₂}
                              {𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}{L : efunctorₗₑᵥ ℂ 𝔻}{R : efunctorₗₑᵥ 𝔻 ℂ}
@@ -17,8 +17,8 @@ module monad-from-adjunction {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑ
   private
     module ℂ = ecat ℂ
     module 𝔻 = ecat 𝔻
-    module [ℂ,𝔻] = ecat [ ℂ , 𝔻 ]ᶜᵃᵗ
-    module [ℂ,ℂ] = ecat [ ℂ , ℂ ]ᶜᵃᵗ
+    --module [ℂ,𝔻] = ecat [ ℂ , 𝔻 ]ᶜᵃᵗ
+    --module [ℂ,ℂ] = ecat [ ℂ , ℂ ]ᶜᵃᵗ
     module L = efunctor-aux L
     module R = efunctor-aux R
     module L⊣R = adjunction-εη L⊣R
@@ -59,12 +59,12 @@ module monad-from-adjunction {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑ
 
   mnd-struct : is-monad-struct RL η μ
   mnd-struct = record
-           { ax-Tη = λ X → ~proof
-                   μ.fnc ∘ RL.ₐ η.fnc ∘ μ.RId.fnc⁻¹           ~[ ∘e rid μ.~RεL ] /
-                   R.ₐ (ε.fnc {L.ₒ X}) ∘ RL.ₐ η.fnc          ~[ R.∘ax L⊣R.trid₁ ⊙ R.id ]∎
+    { ax-Tη = λ X → ~proof
+                   μ.fnc ∘ RL.ₐ η.fnc                         ~[ ∘e r μ.~RεL ] /
+                   R.ₐ (ε.fnc {L.ₒ X}) ∘ RL.ₐ η.fnc           ~[ R.∘ax L⊣R.trid₁ ⊙ R.id ]∎
                    idar (RL.ₒ X) ∎
     ; ax-ηT = λ X → ~proof
-            μ.fnc ∘ η.fnc ∘ μ.RId.fnc⁻¹                      ~[ ∘e rid μ.~RεL ] /
+            μ.fnc ∘ η.fnc {RL.ₒ X}                           ~[ ∘e r (μ.~RεL {X}) ] /
             R.ₐ (ε.fnc {L.ₒ X}) ∘ η.fnc {RL.ₒ X}             ~[ L⊣R.trid₂ ]∎
             idar (RL.ₒ X) ∎
     ; ax-μ = λ X → ~proof
