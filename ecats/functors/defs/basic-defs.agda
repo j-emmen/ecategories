@@ -315,6 +315,7 @@ private
     open ecat 𝕏 public
     open iso-defs 𝕏 public
 
+
 record is-conservative {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
                        {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                        (F : efunctorₗₑᵥ ℂ 𝔻)
@@ -326,6 +327,7 @@ record is-conservative {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗ�
     module F = efunctorₗₑᵥ F
   field
     refl-iso : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → 𝔻.is-iso (F.ₐ f) → ℂ.is-iso f
+
 
 f&f-is-conservative : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
                       {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}

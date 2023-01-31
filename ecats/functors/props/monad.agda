@@ -44,7 +44,7 @@ module monad-from-adjunction {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑ
       module Rε = natural-transformation Rε
   μ : RL² ⇒ RL
   μ = (μaux.RId.natt ○ᵥ μaux.Rε ○ᵥ μaux.RLR.natt⁻¹) ₙₜ· L ○ᵥ μaux.RLRL.natt
-  module μ where
+  module μ-aux where
     open μaux public
     open natural-transformation μ public
     ~RεL : {X : ℂ.Obj} → fnc {X} ℂ.~ R.ₐ (ε.fnc {L.ₒ X})
@@ -53,7 +53,7 @@ module monad-from-adjunction {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑ
     RεL~ : {X : ℂ.Obj} → R.ₐ (ε.fnc {L.ₒ X}) ℂ.~ fnc {X}
     RεL~ {X} = ridgenˢ (lidgenˢ ridˢ)
              where open ecategory-aux-only ℂ
-
+  private module μ = μ-aux
   mnd-struct : is-monad-struct RL η μ
   mnd-struct = record
     { ax-Tη = λ X → ~proof
