@@ -166,3 +166,73 @@ _·ₙₜ_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ�
          → K ○ F ⇒ K ○ G
 K ·ₙₜ α = natt-fctr-post α K
 
+
+-- Looking for better names than the following...
+
+infix 90 _ₙₜ·'_ _·ₙₜ'_ _ₙₜ'·_ _·'ₙₜ_ ₙₜ·'' ·ₙₜ''
+_ₙₜ·'_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+         {K : efunctorₗₑᵥ 𝔻 𝔻}
+           → IdF ⇒ K → (F : efunctorₗₑᵥ ℂ 𝔻) → F ⇒ K ○ F
+α ₙₜ·' F = record
+  { fnc = λ {A} → α.ar {F.ₒ A}
+  ; nat = λ f → α.nat (F.ₐ f)
+  }
+  where module α = natural-transformation α
+        module F = efunctor-aux F
+
+_·ₙₜ'_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+         (K : efunctorₗₑᵥ ℂ 𝔻){F : efunctorₗₑᵥ ℂ ℂ}(α : IdF ⇒ F)
+           → K ⇒ K ○ F
+K ·ₙₜ' α = record
+  { fnc = λ {A} → K.ₐ (α.ar {A})
+  ; nat = λ f → K.∘∘ (α.nat f)
+  }
+  where module α = natural-transformation α
+        module K = efunctor-aux K
+
+_ₙₜ'·_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+         {K : efunctorₗₑᵥ 𝔻 𝔻}
+           → K ⇒ IdF → (F : efunctorₗₑᵥ ℂ 𝔻) → K ○ F ⇒ F
+α ₙₜ'· F = record
+  { fnc = λ {A} → α.ar {F.ₒ A}
+  ; nat = λ f → α.nat (F.ₐ f)
+  }
+  where module α = natural-transformation α
+        module F = efunctor-aux F
+
+_·'ₙₜ_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+         (K : efunctorₗₑᵥ ℂ 𝔻){F : efunctorₗₑᵥ ℂ ℂ}(α : F ⇒ IdF)
+           → K ○ F ⇒ K
+K ·'ₙₜ α = record
+  { fnc = λ {A} → K.ₐ (α.ar {A})
+  ; nat = λ f → K.∘∘ (α.nat f)
+  }
+  where module α = natural-transformation α
+        module K = efunctor-aux K
+
+ₙₜ·'' : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+        {ℓ₇' ℓ₈' ℓ₉' : Level}{𝔼' : ecategoryₗₑᵥ ℓ₇' ℓ₈' ℓ₉'}{ℓ₇ ℓ₈ ℓ₉ : Level}
+        {𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}(G : efunctorₗₑᵥ 𝔻 𝔼)(K : efunctorₗₑᵥ 𝔻 𝔼')(H : efunctorₗₑᵥ 𝔼' 𝔼)
+          → G ⇒ H ○ K → (F : efunctorₗₑᵥ ℂ 𝔻) → G ○ F ⇒ H ○ K ○ F
+ₙₜ·'' G K H α F = record
+  { fnc = λ {A} → α.ar {F.ₒ A}
+  ; nat = λ f → α.nat (F.ₐ f)
+  }
+  where module α = natural-transformation α
+        module F = efunctor-aux F
+
+syntax ₙₜ·'' G K H α F = α ₙₜ·'' F [ G , K , H ]
+
+·ₙₜ'' : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+        {ℓ₇' ℓ₈' ℓ₉' : Level}{𝔼' : ecategoryₗₑᵥ ℓ₇' ℓ₈' ℓ₉'}{ℓ₇ ℓ₈ ℓ₉ : Level}
+        {𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}(F : efunctorₗₑᵥ 𝔼 ℂ)
+        (G : efunctorₗₑᵥ 𝔻 𝔼)(K : efunctorₗₑᵥ 𝔻 𝔼')(H : efunctorₗₑᵥ 𝔼' 𝔼)
+          → G ⇒ H ○ K → F ○ G ⇒ (F ○ H) ○ K
+·ₙₜ'' F G K H α = record
+  { fnc = λ {A} → F.ₐ (α.ar {A})
+  ; nat = λ f → F.∘∘ (α.nat f)
+  }
+  where module α = natural-transformation α
+        module F = efunctor-aux F
+
+syntax ·ₙₜ'' F G K H α = F ·ₙₜ'' α [ G , K , H ]
