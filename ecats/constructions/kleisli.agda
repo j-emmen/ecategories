@@ -194,14 +194,9 @@ module Kleisli-comparison {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategory�
   private
     module ℂ = ecat ℂ
     module 𝔻 = ecat 𝔻
-    --module [ℂ,𝔻] = ecat [ ℂ , 𝔻 ]ᶜᵃᵗ
-    --module [ℂ,ℂ] = ecat [ ℂ , ℂ ]ᶜᵃᵗ
     module L = efunctor-aux L
     module R = efunctor-aux R
     module L⊣R = adjunction-εη L⊣R
-    --RL RL² : efunctorₗₑᵥ ℂ ℂ
-    --RL = R ○ L
-    --RL² = RL ○ RL
     LR : efunctorₗₑᵥ 𝔻 𝔻
     LR = L ○ R
     module LR = efunctor-aux LR
@@ -210,20 +205,12 @@ module Kleisli-comparison {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategory�
     module RL where
       open monad-on RL public
       open efctr fc using (ₒ; ₐ) public
-      {-open efunctor-aux (R ○ L) public
-      ismnd : monad-struct-on RL
-      ismnd = adjunction2monad-on-cmp L⊣R
-      mndon : monad-on ℂ
-      mndon = adjunction2monad-on-cat L⊣R
-      open monad-struct-on ismnd public-}
     η : IdF ⇒ RL.fc
     η = L⊣R.ηnt
     module η = natural-transformation η
     ε : LR ⇒ IdF
     ε = L⊣R.εnt
     module ε = natural-transformation ε
-      --module μaux = monad-from-adjunction.μ-aux L⊣R
-    --module RL² = efunctor-aux RL²
     Kl[RL] : ecategoryₗₑᵥ ℂ.ℓₒ ℂ.ℓₐᵣᵣ ℂ.ℓ~
     Kl[RL] = KlCat RL
     module Kl[RL] = ecat Kl[RL]
@@ -237,7 +224,6 @@ module Kleisli-comparison {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategory�
     module U = efunctor-aux U
     module F⊣U = adjunction-εη F⊣U
     module UF = efunctor-aux (U ○ F)
-  
 
   K : efunctorₗₑᵥ Kl[RL] 𝔻
   K = record
@@ -254,7 +240,6 @@ module Kleisli-comparison {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategory�
           }
     }
     where open ecategory-aux 𝔻
-
   private module K = efunctor-aux K
 
   triangR : R ○ K ≅ₐ U
