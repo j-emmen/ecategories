@@ -118,7 +118,7 @@ module algebras-for-monad-defs {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓ
     { ar = M.μ.ar {A}
     ; isalg = record
             { ηeq = M.ax-ηT A
-            ; μeq =  M.ax-μ A ⊙ ass ⊙ rid
+            ; μeq =  M.ax-μ A --⊙ ass ⊙ rid
             }
     }
     where open ecategory-aux-only ℂ
@@ -347,7 +347,8 @@ module Eilenberg-Moore-comparison {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ec
       mndon : monad-on ℂ
       mndon = adjunction2monad-on-cat L⊣R
       open monad-struct-on ismnd public
-      module μaux = monad-from-adjunction.μ-aux L⊣R
+      --module μaux = monad-from-adjunction.μ-aux L⊣R
+    module RL² = efunctor-aux RL²
     module Alg[RL] = ecat (EMCat RL.mndon)
     Alg[RL] : ecategoryₗₑᵥ Alg[RL].ℓₒ Alg[RL].ℓₐᵣᵣ Alg[RL].ℓ~
     Alg[RL] = EMCat RL.mndon
@@ -357,7 +358,12 @@ module Eilenberg-Moore-comparison {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ec
     F = EM-F RL.mndon
     F⊣U : F ⊣ U
     F⊣U = EM-adj RL.mndon
-    module U = is-conservative (EM-U-conserv RL.mndon)
+    module F = efunctor-aux F
+    module U where
+      open efunctor-aux U public
+      open is-conservative (EM-U-conserv RL.mndon) public
+    module F⊣U = adjunction-εη F⊣U
+    module UF = efunctor-aux (U ○ F)
   open algebras-for-monad-defs RL.mndon
 
   -- counit gives algebras
@@ -365,15 +371,13 @@ module Eilenberg-Moore-comparison {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ec
   Rε-is-alg : (A : 𝔻.Obj) → is-algebra (R.ₐ (ε.ar {A}))
   Rε-is-alg A = record
     { ηeq = L⊣R.trid₂ {A}
-    ; μeq = ~proof R.ₐ (ε.ar {A}) ∘ RL.μ.ar {R.ₒ A}         ~[ ∘e RL.μaux.~RεL r ] /
-                    R.ₐ (ε.ar {A}) ∘ R.ₐ (ε.ar {LR.ₒ A})    ~[ R.∘∘ (ε.natˢ (ε.ar {A})) ]∎
-                    R.ₐ (ε.ar {A}) ∘ RL.ₐ (R.ₐ (ε.ar {A})) ∎
+    ; μeq = R.ₐ (ε.ar {A}) ∘ RL.μ.ar {R.ₒ A}      ~[ R.∘∘ (ε.natˢ (ε.ar {A})) ]
+            R.ₐ (ε.ar {A}) ∘ RL.ₐ (R.ₐ (ε.ar {A}))
     }
     where open ecategory-aux ℂ
 
-  Rε : R ○ L ○ R ⇒ R ○ IdF
-  Rε = R ·ₙₜ ε
-
+  Rε : R ○ L ○ R ⇒ R
+  Rε = R ·'ₙₜ ε
   private module Rε (A : 𝔻.Obj) where
             open natural-transformation Rε public
             module alg (A : 𝔻.Obj) = is-algebra (Rε-is-alg A)
@@ -420,7 +424,7 @@ module Eilenberg-Moore-comparison {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ec
     { natt = record
            { fnc = λ {X} → mk-alg-mor {ar = ℂ.idar (RL.ₒ X)}
                                        (~proof ℂ.idar (RL.ₒ X) ∘ R.ₐ (ε.ar {L.ₒ X})
-                                                                            ~[ lidgen RL.μaux.RεL~ ] /
+                                                                            ~[ lidgen r ] /
                                                RL.μ.ar {X}                  ~[ ridggˢ r RL.id ]∎
                                                RL.μ.ar {X} ∘ RL.ₐ (ℂ.idar (RL.ₒ X)) ∎)
            ; nat = λ _ → lidgen ridˢ
@@ -428,7 +432,7 @@ module Eilenberg-Moore-comparison {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ec
     ; natt⁻¹ = record
            { fnc = λ {X} → mk-alg-mor {ar = ℂ.idar (RL.ₒ X)}
                                        (~proof ℂ.idar (RL.ₒ X) ∘ RL.μ.ar {X}   ~[ lid ] /
-                                               RL.μ.ar {X}             ~[ ridggˢ RL.μaux.~RεL RL.id ]∎
+                                               RL.μ.ar {X}             ~[ ridggˢ r RL.id ]∎
                                                R.ₐ (ε.ar {L.ₒ X}) ∘ RL.ₐ (ℂ.idar (RL.ₒ X)) ∎)
            ; nat = λ _ → lidgen ridˢ
            }
@@ -438,5 +442,6 @@ module Eilenberg-Moore-comparison {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ec
             }
     }
     where open ecategory-aux ℂ
+
 
 -- end Eilenberg-Moore-comparison

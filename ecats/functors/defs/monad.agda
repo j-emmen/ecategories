@@ -22,7 +22,9 @@ record is-monad-struct {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓ�
   private
     T² : efunctorₗₑᵥ ℂ ℂ
     T² = T ○ T
+    module ℂ = ecat ℂ
     module T = efctr T
+    module η = natural-transformation η
     module μ = natural-transformation μ
     module [T,T] = NatTr T T
     module [T²○T,T] = NatTr (T² ○ T) T
@@ -30,20 +32,27 @@ record is-monad-struct {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓ�
     module T○T²≅T²○T = natural-iso (○ass {F = T} {T} {T})
            -- the components at A are the identities on T³A
   field
-    ax-Tη : μ ○ᵥ T ·ₙₜ' η [T,T].~ natt-id
-    ax-ηT : μ ○ᵥ η ₙₜ·' T [T,T].~ natt-id
-    ax-μ : μ ○ᵥ μ ₙₜ· T [T²○T,T].~ μ ○ᵥ T ·ₙₜ μ ○ᵥ T○T²≅T²○T.natt⁻¹
-  ax-Tηˢ : natt-id [T,T].~ μ ○ᵥ T ·ₙₜ' η
+    ax-Tη : (X : ℂ.Obj) → μ.ar {X} ℂ.∘ T.ₐ (η.ar {X}) ℂ.~ ℂ.idar (T.ₒ X)
+    --μ ○ᵥ T ·ₙₜ' η [T,T].~ natt-id
+    ax-ηT : (X : ℂ.Obj) → μ.ar {X} ℂ.∘ η.ar {T.ₒ X} ℂ.~ ℂ.idar (T.ₒ X)
+    -- μ ○ᵥ η ₙₜ·' T [T,T].~ natt-id
+    ax-μ : (X : ℂ.Obj) → μ.ar {X} ℂ.∘ μ.ar {T.ₒ X} ℂ.~ μ.ar {X} ℂ.∘ T.ₐ (μ.ar {X})
+    --μ ○ᵥ μ ₙₜ· T [T²○T,T].~ μ ○ᵥ T ·ₙₜ μ ○ᵥ T○T²≅T²○T.natt⁻¹
+  ax-Tηˢ : (X : ℂ.Obj) → ℂ.idar (T.ₒ X) ℂ.~ μ.ar {X} ℂ.∘ T.ₐ (η.ar {X})
+  --natt-id [T,T].~ μ ○ᵥ T ·ₙₜ' η
   ax-Tηˢ X = ax-Tη X ˢ
           where open ecategory-aux ℂ using (_ˢ)
-  ax-ηTˢ : natt-id [T,T].~ μ ○ᵥ η ₙₜ·' T
+  ax-ηTˢ : (X : ℂ.Obj) → ℂ.idar (T.ₒ X) ℂ.~ μ.ar {X} ℂ.∘ η.ar {T.ₒ X}
+  --natt-id [T,T].~ μ ○ᵥ η ₙₜ·' T
   ax-ηTˢ X = ax-ηT X ˢ
            where open ecategory-aux ℂ using (_ˢ)
-  ax-μˢ : μ ○ᵥ T ·ₙₜ μ [T○T²,T].~ μ ○ᵥ μ ₙₜ· T ○ᵥ T○T²≅T²○T.natt
-  ax-μˢ X = ~proof μ.ar ∘ T.ₐ μ.ar                      ~[ ridgenˢ (ridˢ ⊙ assˢ) ] /
+  ax-μˢ : (X : ℂ.Obj) → μ.ar {X} ℂ.∘ T.ₐ (μ.ar {X}) ℂ.~ μ.ar {X} ℂ.∘ μ.ar {T.ₒ X}
+  --μ ○ᵥ T ·ₙₜ μ [T○T²,T].~ μ ○ᵥ μ ₙₜ· T ○ᵥ T○T²≅T²○T.natt
+  ax-μˢ X = ax-μ X ˢ
+  {-~proof μ.ar ∘ T.ₐ μ.ar                      ~[ ridgenˢ (ridˢ ⊙ assˢ) ] /
                    (μ.ar ∘ T.ₐ μ.ar ∘ idar _) ∘ idar _  ~[ ∘e r (ax-μ X ˢ) ⊙ assˢ ]∎
-                   μ.ar ∘ μ.ar ∘ idar _ ∎
-          where open ecategory-aux ℂ
+                   μ.ar ∘ μ.ar ∘ idar _ ∎-}
+          where open ecategory-aux ℂ using (_ˢ)
 
 
 record monad-struct-on {ℓₒ ℓₐ ℓ~}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}
