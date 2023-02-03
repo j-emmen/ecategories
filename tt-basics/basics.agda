@@ -23,22 +23,22 @@ N₁rec d 0₁ = d
 
 -- natural numbers
 
-data N : Set where
-   O : N
-   s : N -> N
+data Nat : Set where
+   O : Nat
+   s : Nat -> Nat
 
-Nrec : {ℓ : Level} {C : N -> Set ℓ} -> C O -> ((n : N) -> C n -> C (s n)) -> (c : N) -> C c
+Nrec : {ℓ : Level} {C : Nat -> Set ℓ} -> C O -> ((n : Nat) -> C n -> C (s n)) -> (c : Nat) -> C c
 Nrec d e O = d
 Nrec d e (s n) = e n (Nrec d e n)
 
-one two three four : N
+one two three four : Nat
 one = s O
 two = s one
 three = s two
 four = s three
 
 infixr 3 _+N_
-_+N_ : N → N → N
+_+N_ : Nat → Nat → Nat
 n +N m = Nrec n (λ x n+x → s n+x) m
 
 
@@ -110,13 +110,13 @@ _+ₕ_ : {i j i' j' : Level}{A : Set i}{A' : Set i'}{B : Set j}{B' : Set j'}
 
 -- inductive finite types
 
-data Finᵢ : N → Set where
-  f0 : {n : N} → Finᵢ (s n)
-  finj : {n : N} → Finᵢ n → Finᵢ (s n)
+data Finᵢ : Nat → Set where
+  f0 : {n : Nat} → Finᵢ (s n)
+  finj : {n : Nat} → Finᵢ n → Finᵢ (s n)
 
 Finᵢ0rec : {ℓ : Level} {C : Finᵢ O → Set ℓ} (i : Finᵢ O) → C i
 Finᵢ0rec ()
-Finᵢsrec : {ℓ : Level}{n : N}{C : Finᵢ (s n) → Set ℓ}
+Finᵢsrec : {ℓ : Level}{n : Nat}{C : Finᵢ (s n) → Set ℓ}
               → (C f0) → ((i : Finᵢ n) → C (finj i))
                 → (i : Finᵢ (s n)) → C i
 Finᵢsrec c0 cinj f0 = c0
@@ -125,66 +125,66 @@ Finᵢsrec c0 cinj (finj i) = cinj i
 
 -- defined finite types
 
-Fin : N → Set
+Fin : Nat → Set
 Fin = Nrec N₀ (λ m F → Nrec N₁ (λ n F → F + N₁) m)
 -- Fin O = N₀
 -- Fin (s O) = N₁
 -- Fin (s (s n)) = Fin (S n) + N₁
 
-Fin-emb : (n : N) → Fin n → Fin (s n)
+Fin-emb : (n : Nat) → Fin n → Fin (s n)
 Fin-emb (s n) = inl
 
-Fin-fst : (n : N) → N₁ → Fin (s n)
+Fin-fst : (n : Nat) → N₁ → Fin (s n)
 Fin-fst O x = x
 Fin-fst (s n) x = Fin-emb (s n) (Fin-fst n x) 
 
 -- least element
-Fin-min : (n : N) → Fin (s n)
+Fin-min : (n : Nat) → Fin (s n)
 Fin-min n = Fin-fst n 0₁
 
-Fin-lst : (n : N) → N₁ → Fin (s n)
+Fin-lst : (n : Nat) → N₁ → Fin (s n)
 Fin-lst O x = x
 Fin-lst (s n) x = inr x
 
 -- greatest element
-Fin-max : (n : N) → Fin (s n)
+Fin-max : (n : Nat) → Fin (s n)
 Fin-max n = Fin-lst n 0₁
 
 -- singl element
 Fin-singlel : Fin (s O)
 Fin-singlel = Fin-max O
 
-Finsrec : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
+Finsrec : {ℓ : Level}(n : Nat){C : Fin (s n) → Set ℓ}
              → ((i : Fin n) → C (Fin-emb n i)) → C (Fin-max n)
                → (i : Fin (s n)) → C i
 Finsrec O {C} d e = N₁rec e
 Finsrec (s n) {C} d e = sumrec {C = C} d (N₁rec e)
 
-Finrec : {ℓ : Level}{C : (n : N) → Fin n → Set ℓ}
-             → ((n : N)(i : Fin n) → C n i → C (s n) (Fin-emb n i))
-             → ((n : N) → C (s n) (Fin-max n))
-               → (n : N) → (i : Fin n) → C n i
+Finrec : {ℓ : Level}{C : (n : Nat) → Fin n → Set ℓ}
+             → ((n : Nat)(i : Fin n) → C n i → C (s n) (Fin-emb n i))
+             → ((n : Nat) → C (s n) (Fin-max n))
+               → (n : Nat) → (i : Fin n) → C n i
 --Finrec {C = C} d e O = N₀rec
 Finrec {C = C} d e (s n) = Finsrec n {C = C (s n)} (λ x → d n x (Finrec d e n x)) (e n)
 
--- initial segment inclusions into N
-Fin-embN : (n : N) → Fin n → N
+-- initial segment inclusions into Nat
+Fin-embN : (n : Nat) → Fin n → Nat
 Fin-embN (s n) = Finsrec n (Fin-embN n) (s n)
 
 -- successor embedding: k |--> k+1
-Fin-suc : (n : N) → Fin n → Fin (s n)
+Fin-suc : (n : Nat) → Fin n → Fin (s n)
 Fin-suc (s O) = Fin-lst (s O)
 Fin-suc (s (s n)) (inl x) = inl (Fin-suc (s n) x)
 Fin-suc (s (s n)) (inr x) = Fin-lst (s (s n)) x --Fin-max (s (s n))
 
 -- max-to-max embedding
-Fin-mx2mx : (n : N) → Fin (s n) → Fin (s (s n))
+Fin-mx2mx : (n : Nat) → Fin (s n) → Fin (s (s n))
 Fin-mx2mx n = Finsrec n {C = λ _ → Fin (s (s n))}
                         (λ i → Fin-emb (s n) (Fin-emb n i))
                         (Fin-max (s n))
 
 -- extending a section on the left
-Finsrecl : {ℓ : Level}(n : N){C : Fin (s n) → Set ℓ}
+Finsrecl : {ℓ : Level}(n : Nat){C : Fin (s n) → Set ℓ}
               → ((i : Fin n) → C (Fin-suc n i)) → C (Fin-min n)
                 → (i : Fin (s n)) → C i
 Finsrecl O {C} f c = N₁rec {C = C} c
@@ -195,34 +195,34 @@ Finsrecl (s (s n)) {C} f c (inr i) = f (Fin-lst (s n) i)
 
 
 -- shifts right: k |--> k+1 (mod (s n))
-shiftr : (n : N) → Fin (s n) → Fin (s n)
+shiftr : (n : Nat) → Fin (s n) → Fin (s n)
 shiftr n = Finsrec n {λ _ → Fin (s n)} (Fin-suc n) (Fin-min n)
 
 -- shift left (mod (s n))
-shiftl : (n : N) → Fin (s n) → Fin (s n)
+shiftl : (n : Nat) → Fin (s n) → Fin (s n)
 shiftl O x = x
 shiftl (s n) = Finsrec (s n) (λ i → Fin-mx2mx n (shiftl n i)) (Fin-emb (s n) (Fin-max n))
 
 
 -- coproduct inclusions
-Fin-inl : (n m : N) → Fin n → Fin (n +N m)
+Fin-inl : (n m : Nat) → Fin n → Fin (n +N m)
 Fin-inl n O i = i
 Fin-inl n (s m) i = Fin-emb (n +N m) (Fin-inl n m i)
 
-Fin-inr : (n m : N) → Fin m → Fin (n +N m)
+Fin-inr : (n m : Nat) → Fin m → Fin (n +N m)
 Fin-inr n (s O) = Fin-lst n
 Fin-inr n (s (s m)) = sumrec {A = Fin (s m)} {N₁} {λ _ → Fin (n +N s (s m))}
                              (λ i → Fin-emb (n +N s m) (Fin-inr n (s m) i) )
                              (Fin-lst (n +N s m))
 
 -- universal property of coproducts
-Fin-+N₁rec : (n : N){ℓ : Level}{C : Fin (s n) → Set ℓ}
+Fin-+N₁rec : (n : Nat){ℓ : Level}{C : Fin (s n) → Set ℓ}
                 → ((i : Fin n) → C (Fin-emb n i)) → ((i : Fin (s O)) → C (Fin-lst n i))
                     → (i : Fin (s n)) → C i
 Fin-+N₁rec O f g = g
 Fin-+N₁rec (s n) {C = C} f g = sumrec {C = C} f g
 
-Fin-+rec : (n m : N){ℓ : Level}{C : Fin (n +N m) → Set ℓ}
+Fin-+rec : (n m : Nat){ℓ : Level}{C : Fin (n +N m) → Set ℓ}
                   → ((i : Fin n) → C (Fin-inl n m i)) → ((i : Fin m) → C (Fin-inr n m i))
                     → (i : Fin (n +N m)) → C i
 Fin-+rec n O = λ f _ → f
@@ -232,7 +232,7 @@ Fin-+rec n (s (s m)) = λ f g → sumrec {A = Fin (n +N s m)} {N₁}
                                        (λ x → g (Fin-lst (s m) x))
 
 
-Fin-+unvar : (n m : N){ℓ : Level}{A : Set ℓ}
+Fin-+unvar : (n m : Nat){ℓ : Level}{A : Set ℓ}
                   → (Fin n → A) → (Fin m → A) → Fin (n +N m) → A
 Fin-+unvar n m {A = A} = Fin-+rec n m {C = λ _ → A}
 

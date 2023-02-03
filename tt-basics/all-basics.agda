@@ -12,33 +12,33 @@ open import tt-basics.setoids public
 
 -- natural numers equations
 
-+N-ass₁ : (n m : N) → s n +N m == n +N s m
++N-ass₁ : (n m : Nat) → s n +N m == n +N s m
 +N-ass₁ n = Nrec =rf (λ m → =ap s {s n +N m} {n +N s m})
 
-+N-ass₁⁻¹ : (n m : N) → n +N s m == s n +N m
++N-ass₁⁻¹ : (n m : Nat) → n +N s m == s n +N m
 +N-ass₁⁻¹ n = Nrec =rf (λ m → =ap s {n +N s m} {s n +N m})
 
-0+n=n : (n : N) → O +N n == n
+0+n=n : (n : Nat) → O +N n == n
 0+n=n = Nrec =rf (λ n → =ap s {O +N n} {n})
 
-1+n=n : (n : N) → one +N n == s n
+1+n=n : (n : Nat) → one +N n == s n
 1+n=n n = +N-ass₁ O n ■ 0+n=n (s n)
 
 
-+N-ass : (n m k : N) → n +N m +N k == (n +N m) +N k
++N-ass : (n m k : Nat) → n +N m +N k == (n +N m) +N k
 +N-ass n m = Nrec {C = λ x → n +N m +N x == (n +N m) +N x}
                   =rf
                   λ x hi → =ap s hi
 
-+N-ass₁⁻¹-emb : (n m : N)(i : Fin (n +N s m))
++N-ass₁⁻¹-emb : (n m : Nat)(i : Fin (n +N s m))
                 → (Fin ● +N-ass₁⁻¹ n (s m)) (Fin-emb (n +N s m) i)
                                        == Fin-emb (s n +N m) ((Fin ● +N-ass₁⁻¹ n m) i)
 +N-ass₁⁻¹-emb n m = Fin-emb-=nat-hty (+N-ass₁⁻¹ n m)
 
---+N-ass₁⁻¹-min : (n m : N) → (Fin ● +N-ass₁⁻¹ n (s m)) (Fin-min (n +N s m)) == Fin-min (s n +N m)
+--+N-ass₁⁻¹-min : (n m : Nat) → (Fin ● +N-ass₁⁻¹ n (s m)) (Fin-min (n +N s m)) == Fin-min (s n +N m)
 --+N-ass₁⁻¹-min n m = +N-ass₁⁻¹-emb n m (Fin-min (n +N m)) ■ {!!} --Fin-emb-=nat-hty (+N-ass₁⁻¹ n m)
 
-+N-ass-emb : (n m k : N)(i : Fin (n +N m +N k))
++N-ass-emb : (n m k : Nat)(i : Fin (n +N m +N k))
                 → (Fin ● +N-ass n m (s k)) (Fin-emb (n +N m +N k) i)
                                        == Fin-emb ((n +N m) +N k) ((Fin ● +N-ass n m k) i)
 +N-ass-emb n m k = Fin-emb-=nat-hty (+N-ass n m k)
@@ -67,26 +67,26 @@ Nrec {C = λ k → (i : Fin (n +N m +N k))
 -- coproduct equations
 
 {- good to know:
-Fin-inl-tr₁ : (n m : N)(i : Fin n)
+Fin-inl-tr₁ : (n m : Nat)(i : Fin n)
                 → Fin-inl (n +N m) one (Fin-inl n m i) == Fin-inl n (s m) i
 Fin-inl-tr₁ n m i = =rf
 
-Fin-inr-tr-max₁ : (n m : N)
+Fin-inr-tr-max₁ : (n m : Nat)
                 → Fin-inr (n +N m) one Fin-singlel == Fin-inr n (s m) (Fin-max m)
 Fin-inr-tr-max₁ n m = =rf
 
-Fin-inlr-tr₁ : (n m : N)(i : Fin m)
+Fin-inlr-tr₁ : (n m : Nat)(i : Fin m)
                 → Fin-inl (n +N m) one (Fin-inr n m i) == Fin-inr n (s m) (Fin-emb m i)
 Fin-inlr-tr₁ n m i = =rf
 
-Fin-inr-emb : (n m : N)(i : Fin m)
+Fin-inr-emb : (n m : Nat)(i : Fin m)
             → Fin-inl (n +N m) one (Fin-inr n m i) == Fin-inr n (s m) (Fin-emb m i)
 Fin-inr-emb n m i = =rf
 -}
 
 -- coproduct inclusions
 {-
-Fin-suc-inl : (n m : N)(i : Fin n)
+Fin-suc-inl : (n m : Nat)(i : Fin n)
   → Fin-inl (s n) (s m) (Fin-suc n i) == Fin-suc (s n +N m) (Fin-inl (s n) m (Fin-emb n i))
 Fin-suc-inl n = Nrec
   {C = λ m → (i : Fin n)
@@ -95,22 +95,22 @@ Fin-suc-inl n = Nrec
   (λ m hi i → =ap (Fin-emb (s n +N s m)) (hi i))
 --   → Fin-suc (n +N m) (Fin-inl n m i) == (Fin ● +N-ass₁ n m) (Fin-inl (s n) m (Fin-suc n i))
 
-Fin-suc-inr : (n m : N)(i : Fin m)
+Fin-suc-inr : (n m : Nat)(i : Fin m)
                  → Fin-inr n (s m) (Fin-suc m i) == Fin-suc (n +N m) (Fin-inr n m i)
 Fin-suc-inr n = Nrec 
   {C = λ m → (i : Fin m) → Fin-inr n (s m) (Fin-suc m i) == Fin-suc (n +N m) (Fin-inr n m i)}
   N₀rec
   λ x hi → Finsrec x (λ i → =ap (Fin-emb (n +N s x)) (hi i)) =rf
 
-Fin-ass₁ : (n m : N)
+Fin-ass₁ : (n m : Nat)
   → Fin-inr (s n) (s m) (Fin-min m) == Fin-suc (s n +N m) (Fin-inl (s n) m (Fin-max n))
 Fin-ass₁ n = Nrec =rf (λ m hi → =ap (Fin-emb (s n +N s m)) hi)
 
 -- triangles
 
-Fin-+unv-trl : {ℓ : Level}{A : Set ℓ}(n m : N)(f : Fin n → A)(g : Fin m → A)(i : Fin n)
+Fin-+unv-trl : {ℓ : Level}{A : Set ℓ}(n m : Nat)(f : Fin n → A)(g : Fin m → A)(i : Fin n)
                      → Fin-+unvar n m f g (Fin-inl n m i) == f i
-Fin-+unv-trl {A = A} = Nrec { C = λ n → (m : N)(f : Fin n → A)(g : Fin m → A)(i : Fin n)
+Fin-+unv-trl {A = A} = Nrec { C = λ n → (m : Nat)(f : Fin n → A)(g : Fin m → A)(i : Fin n)
                                            → Fin-+unvar n m f g (Fin-inl n m i) == f i }
                             ( λ m f g → N₀rec )
                             ( λ n hi m f →
@@ -128,7 +128,7 @@ Fin-+unv-trl {A = A} = Nrec { C = λ n → (m : N)(f : Fin n → A)(g : Fin m �
 -- = ( λ hi g → hi (λ i → g (Fin-emb m i)) ) (Fin-+unvar n x f) g ∘  Fin-emb (n +N x)
 -- = Fin-+unvar n x f (λ i → g (Fin-emb m i)) ∘  Fin-emb (n +N x)
 
-Fin-+unv-trr : {ℓ : Level}{A : Set ℓ}(n m : N)(f : Fin n → A)(g : Fin m → A)(i : Fin m)
+Fin-+unv-trr : {ℓ : Level}{A : Set ℓ}(n m : Nat)(f : Fin n → A)(g : Fin m → A)(i : Fin m)
                      → Fin-+unvar n m f g (Fin-inr n m i) == g i
 Fin-+unv-trr {A = A} n m f =
   Nrec {C = λ x → (g : Fin x → A) (i : Fin x) → Fin-+unvar n x f g (Fin-inr n x i) == g i}
@@ -139,7 +139,7 @@ Fin-+unv-trr {A = A} n m f =
                             =rf)
        m
 
-Fin-+unv-ass : (n m k : N){ℓ : Level}{A : Set ℓ}(f : Fin n → A)(g : Fin m → A)(h : Fin k → A)(i : Fin (n +N m +N k))
+Fin-+unv-ass : (n m k : Nat){ℓ : Level}{A : Set ℓ}(f : Fin n → A)(g : Fin m → A)(h : Fin k → A)(i : Fin (n +N m +N k))
                   → Fin-+unvar n (m +N k) f (Fin-+unvar m k g h) i ==
                        Fin-+unvar (n +N m) k (Fin-+unvar n m f g) h ((Fin ● (+N-ass n m k)) i)
 Fin-+unv-ass n m k {A = A} f g =
@@ -167,8 +167,8 @@ Fin-+unv-ass n m k {A = A} f g =
 -- == Fin-+unvar (n +N m) (s x) (Fin-+unvar n m f g) h ((Fin ● +N-ass n m (s x)) (Fin-emb (n +N m +N x) i))
 -}
 
-Fin-inl-min : (n m : N) → Fin-inl (s n) (s m) (Fin-min n) == Fin-min (s n +N m)
+Fin-inl-min : (n m : Nat) → Fin-inl (s n) (s m) (Fin-min n) == Fin-min (s n +N m)
 Fin-inl-min n = Nrec =rf (λ m hi → =ap inl hi)
 
-Fin-inr-max : (n m : N) → Fin-inr n (s m) (Fin-max m) == Fin-max (n +N m)
+Fin-inr-max : (n m : Nat) → Fin-inr n (s m) (Fin-max m) == Fin-max (n +N m)
 Fin-inr-max n = Nrec =rf (λ _ _ → =rf)

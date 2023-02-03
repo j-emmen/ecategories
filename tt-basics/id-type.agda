@@ -293,17 +293,17 @@ prdη⁻¹ (pair a b) = =rf
 
 
 
-Fin-emb-=nat : {x y : N}(p : x == y)
+Fin-emb-=nat : {x y : Nat}(p : x == y)
              → (λ i → (Fin ● =ap s p) (Fin-emb x i)) == (λ i → Fin-emb y ((Fin ● p) i))
 Fin-emb-=nat {x} = =J (λ y p → (λ i → (Fin ● =ap s p) (Fin-emb x i)) == (λ i → Fin-emb y ((Fin ● p) i)))
                       =rf
 
-Fin-emb-=nat-hty : {x y : N}(p : x == y)(i : Fin x)
+Fin-emb-=nat-hty : {x y : Nat}(p : x == y)(i : Fin x)
                       → (Fin ● =ap s p) (Fin-emb x i) == Fin-emb y ((Fin ● p) i)
 Fin-emb-=nat-hty p = =2htpy (Fin-emb-=nat p)
 
 
-Fin-max-=nat : {x y : N}(p : x == y)
+Fin-max-=nat : {x y : Nat}(p : x == y)
              → (Fin ● =ap s p) (Fin-max x) == Fin-max y
 Fin-max-=nat {x} = =J (λ y p → (Fin ● =ap s p) (Fin-max x) == Fin-max y)
                       =rf

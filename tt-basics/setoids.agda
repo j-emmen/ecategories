@@ -329,6 +329,6 @@ record is-ext-prop {ℓo ℓr ℓ : Level} {X : setoid {ℓo} {ℓr}} (P : || X 
                  
 -- Finite setoids
 
-Finstd : N → setoid {lzero} {lzero}
+Finstd : Nat → setoid {lzero} {lzero}
 Finstd n = Freestd (Fin n)
 
