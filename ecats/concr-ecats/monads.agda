@@ -15,6 +15,11 @@ open import ecats.basic-props.isomorphism
 open import ecats.functors.defs.monad
 --open import ecats.functors.props.monad
 
+
+-----------------------
+-- Moprhisms of monads
+-----------------------
+
 private
   module mnd-aux {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~}(M : monad-on ℂ) where
     open monad-on M public
@@ -188,28 +193,80 @@ module cat-monads-defs (ℓₒ ℓₐ ℓ~ : Level) where
                        → morph-eq A C (morph-cmp m n) (morph-cmp m' n')
   morph-cmp-ext {A} {B} {C} m m' n n' eqm eqn = natiso-hcmp eqn.fc~ eqm.fc~
                                               , λ {X} → ~proof
-                                              eqmn.ar ∘ nm.ar       ~[ {!!} ] /
-                                              {!!}                  ~[ {!!} ]∎
-                                              nm'.ar ∘ C.ₐ eqmn.ar ∎
-                where module ℂ = ecat (Obj.ct C)
-                      module C = Obj C
-                      module m = lax-monad-morphism m
-                      module n = lax-monad-morphism n
-                      module m' = lax-monad-morphism m'
-                      module n' = lax-monad-morphism n'
-                      module nm = lax-monad-morphism (morph-cmp m n)
-                      module nm' = lax-monad-morphism (morph-cmp m' n')
-                      module eqn = morph-eq {B} {C} {n} {n'} eqn
-                      module eqm = morph-eq {A} {B} {m} {m'} eqm
-                      module eqmn = natural-iso (natiso-hcmp eqn.fc~ eqm.fc~)
-                      open ecategory-aux (Obj.ct C)
+    eqmn.ar ∘ nm.ar                            ~[ assˢ ⊙ ∘e (ass ⊙ ∘e r (n.fc.∘∘ eqm.nt~) ⊙ assˢ) r ] /
+    eqn.fc~.ar ∘ n.ₐ m'.ar ∘ n.ₐ (B.ₐ eqm.fc~.ar) ∘ n.ar
+                                        ~[ ass ⊙ ∘e (n.natˢ eqm.fc~.ar) (eqn.fc~.nat m'.ar) ⊙ assˢ ] /
+    n'.ₐ m'.ar ∘ eqn.fc~.ar ∘ n.ar ∘ C.ₐ (n.ₐ eqm.fc~.ar)        ~[ ∘e (ass ⊙ ∘e r eqn.nt~ ⊙ assˢ) r ] /
+    n'.ₐ m'.ar ∘ n'.ar ∘ C.ₐ eqn.fc~.ar ∘ C.ₐ (n.ₐ eqm.fc~.ar)              ~[ ass ⊙ ∘e C.fc.∘ax-rf r ]∎
+    nm'.ar ∘ C.ₐ eqmn.ar ∎
+                         where module ℂ = ecat (Obj.ct C)
+                               module A = Obj A
+                               module B = Obj B
+                               module C = Obj C
+                               module m = lax-monad-morphism m -- m.nt : B m ⇒ m A
+                               module n = lax-monad-morphism n -- n.nt : C n ⇒ n B
+                               module m' = lax-monad-morphism m'
+                               module n' = lax-monad-morphism n'
+                               module nm = lax-monad-morphism (morph-cmp m n) -- nm.nt : C nm ⇒ nm A
+                               module nm' = lax-monad-morphism (morph-cmp m' n')
+                               module eqn = morph-eq {B} {C} {n} {n'} eqn -- n.fc ~ n'.fc
+                               module eqm = morph-eq {A} {B} {m} {m'} eqm
+                               module eqmn = natural-iso (natiso-hcmp eqn.fc~ eqm.fc~)
+                               open ecategory-aux C.ct
 
+  lidax : {A B : Obj} (m : || laxMndMor A B ||)
+             → morph-eq A B (morph-cmp m (id-laxmndmorph (Obj.mnd B))) m
+  lidax {A} {B} m = (○lid {F = m.fc}) , (λ {X} → ~proof
+                  lid.ar ∘ id∘m.ar             ~[ lidgen (ridgg r lid) ] /
+                  m.ar                        ~[ ridggˢ r B.fc.id ]∎
+                  m.ar ∘ B.ₐ lid.ar ∎)
+                  where module B = Obj B
+                        module m = lax-monad-morphism m -- m.nt : B m ⇒ m A
+                        module id∘m = lax-monad-morphism (morph-cmp m (id-laxmndmorph (Obj.mnd B)))
+                        module lid = natural-iso (○lid {F = m.fc})
+                        open ecategory-aux B.ct
 
-{-λ m m' n n' eqm eqn → natiso-hcmp (lm~.fc~ {m = n} {n'} eqn)
-                                                          (lm~.fc~ {m = m} {m'} eqm)
-                                              , λ {X} → {!!}-}
+  
+  ridax : {A B : Obj} (m : || laxMndMor A B ||)
+             → morph-eq A B (morph-cmp (id-laxmndmorph (Obj.mnd A)) m) m
+  ridax {A} {B} m = (○rid {F = m.fc}) , (λ {X} → ~proof
+                  rid.ar ∘ m∘id.ar         ~[ lidgen (lidgg r (m.fc.idax (A.ct.lidax _))) ] /
+                  m.ar                    ~[ ridggˢ r B.fc.id ]∎
+                  m.ar ∘ B.ₐ rid.ar ∎)
+                  where module A = Obj A
+                        module B = Obj B
+                        module m = lax-monad-morphism m -- m.nt : B m ⇒ m A
+                        module m∘id = lax-monad-morphism (morph-cmp (id-laxmndmorph (Obj.mnd A)) m)
+                        module rid = natural-iso (○rid {F = m.fc})
+                        open ecategory-aux B.ct
+
+  ass : {A B C D : Obj}(m : || laxMndMor A B ||)(n : || laxMndMor B C ||)(l : || laxMndMor C D ||)
+           → morph-eq A D (morph-cmp (morph-cmp m n) l) (morph-cmp m (morph-cmp n l))
+  ass {A} {B} {C} {D} m n l = ○ass {F =  m.fc} {n.fc} {l.fc} , (λ {X} → ~proof
+    ○ass.ar ∘ l-nm.ar {X}                                            ~[ lid ] /
+    l.ₐ (n.ₐ m.ar C.ct.∘ n.ar {m.fc.ₒ X}) ∘ l.ar {nm.ₒ X}             ~[ ∘e r l.fc.∘ax-rfˢ ⊙ assˢ ] /
+    l.ₐ (n.ₐ m.ar) ∘ l.ₐ n.ar ∘ l.ar {nm.ₒ X}                         ~[ ridggˢ r D.fc.id ]∎
+    ln-m.ar ∘ D.ₐ ○ass.ar ∎)
+    where module C = Obj C
+          module D = Obj D
+          module m = lax-monad-morphism m -- m.nt : B m ⇒ m A
+          module n = lax-monad-morphism n -- n.nt : C n ⇒ n B
+          module l = lax-monad-morphism l
+          module ln = lax-monad-morphism (morph-cmp n l) -- ln.nt : D ln ⇒ ln B
+          module nm = lax-monad-morphism (morph-cmp m n) -- nm.nt : C nm ⇒ nm A
+          module l-nm = lax-monad-morphism (morph-cmp (morph-cmp m n) l)
+          module ln-m = lax-monad-morphism (morph-cmp m (morph-cmp n l))
+          module ○ass = natural-iso (○ass {F =  m.fc} {n.fc} {l.fc})
+          open ecategory-aux D.ct
+
 
 -- end cat-monads-defs
+
+
+
+-----------------------
+-- Category of monads
+-----------------------
 
 Mndₗₑᵥ : (ℓₒ ℓₐ ℓ~ : Level) → ecategoryₗₑᵥ (sucₗₑᵥ (ℓₒ ⊔ ℓₐ ⊔ ℓ~)) (ℓₒ ⊔ ℓₐ ⊔ ℓ~) (ℓₒ ⊔ ℓₐ ⊔ ℓ~)
 Mndₗₑᵥ ℓₒ ℓₐ ℓ~ = record
@@ -218,13 +275,10 @@ Mndₗₑᵥ ℓₒ ℓₐ ℓ~ = record
   ; isecat = record
                { _∘_ = λ n m → morph-cmp m n
                ; idar = λ A → id-laxmndmorph (Obj.mnd A)
-               ; ∘ext = {!!}
-               ; lidax = {!!}
-               ; ridax = {!!}
-               ; assoc = {!!}
+               ; ∘ext = morph-cmp-ext
+               ; lidax = lidax
+               ; ridax = ridax
+               ; assoc = ass
                }
   }
   where open cat-monads-defs ℓₒ ℓₐ ℓ~
-        module lm = lax-monad-morphism
-        module lm~ = morph-eq
-
