@@ -11,9 +11,7 @@ open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
 open import ecats.basic-defs.isomorphism
 open import ecats.basic-props.isomorphism
---open import ecats.functors.defs.adjunction
 open import ecats.functors.defs.monad
---open import ecats.functors.props.monad
 
 
 -----------------------
@@ -282,3 +280,4 @@ Mndₗₑᵥ ℓₒ ℓₐ ℓ~ = record
                }
   }
   where open cat-monads-defs ℓₒ ℓₐ ℓ~
+
