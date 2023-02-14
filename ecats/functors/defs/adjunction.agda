@@ -65,34 +65,6 @@ _⊣_ : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁
                   → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ 𝔻 ℂ → Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
 L ⊣ R = adjunction-εη L R
 
-
-record is-right-adjoint {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
-                        {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
-                        (F : efunctorₗₑᵥ ℂ 𝔻)
-                        : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
-                        where
-  private
-    module ℂ = ecat ℂ
-    module 𝔻 = ecat 𝔻
-    module F = efctr F
-  field
-    left : efunctorₗₑᵥ 𝔻 ℂ
-    adj : left ⊣ F
-
-record is-left-adjoint {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
-                       {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
-                       (F : efunctorₗₑᵥ ℂ 𝔻)
-                       : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
-                       where
-  private
-    module ℂ = ecat ℂ
-    module 𝔻 = ecat 𝔻
-    module F = efctr F
-  field
-    right : efunctorₗₑᵥ 𝔻 ℂ
-    adj : F ⊣ right
-
-
 module adjunction-εη-equats {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
                             {ℓₒ₂ ℓₐ₂ ℓ~₂}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
                             {L : efunctorₗₑᵥ ℂ 𝔻}{R : efunctorₗₑᵥ 𝔻 ℂ}
@@ -172,6 +144,58 @@ module adjunction-εη-equats {ℓₒ₁ ℓₐ₁ ℓ~₁}{ℂ : ecategoryₗ�
                                                   where open ecategory-aux-only ℂ
 
 -- end adjunction-εη-equats
+
+
+record is-right-adjoint {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                        {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                        (F : efunctorₗₑᵥ ℂ 𝔻)
+                        : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
+                        where
+  private
+    module ℂ = ecat ℂ
+    module 𝔻 = ecat 𝔻
+    module F = efctr F
+  field
+    left : efunctorₗₑᵥ 𝔻 ℂ
+    areadj : left ⊣ F
+  module left = efunctor-aux left
+  open adjunction-εη areadj public
+  open adjunction-εη-equats areadj public
+
+record is-left-adjoint {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                       {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                       (F : efunctorₗₑᵥ ℂ 𝔻)
+                       : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
+                       where
+  private
+    module ℂ = ecat ℂ
+    module 𝔻 = ecat 𝔻
+    module F = efctr F
+  field
+    right : efunctorₗₑᵥ 𝔻 ℂ
+    areadj : F ⊣ right
+  module right = efunctor-aux right
+  open adjunction-εη areadj public
+  open adjunction-εη-equats areadj public
+
+record adjunction-εη-btw {ℓₒ₁ ℓₐ₁ ℓ~₁}(ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁)
+                         {ℓₒ₂ ℓₐ₂ ℓ~₂}(𝔻 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂)
+                         : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝔻)
+                         where
+  private
+    module ℂ = ecat ℂ
+    module 𝔻 = ecat 𝔻
+  field
+    left : efunctorₗₑᵥ ℂ 𝔻
+    right : efunctorₗₑᵥ 𝔻 ℂ
+    areadj : left ⊣ right
+  module left = efunctor-aux left
+  module right = efunctor-aux right
+  open adjunction-εη areadj public
+  open adjunction-εη-equats areadj public
+
+
+
 
 
 
