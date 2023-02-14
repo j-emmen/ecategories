@@ -27,8 +27,12 @@ module natural-trans-defs {ℓ₁ ℓ₂ ℓ₃ : Level}{D : ecategoryₗₑᵥ 
                           → fnc Cod.∘ (F.ₐ f) Cod.~ (G.ₐ f) Cod.∘ fnc
 -- end natural-trans-defs
 
+natt-level : {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃){ℓ₄ ℓ₅ ℓ₆ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆)
+                 → Level
+natt-level ℂ 𝔻 = ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻
+
 record natural-transformation {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
-                              (F G : efunctorₗₑᵥ ℂ 𝔻) : Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
+                              (F G : efunctorₗₑᵥ ℂ 𝔻) : Set (natt-level ℂ 𝔻)
                               where
   private
     module ℂ = ecat ℂ

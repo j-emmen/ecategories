@@ -18,7 +18,7 @@ open import ecats.functors.defs.natural-transformation
 ------------------------
 
 record natural-iso {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆}{𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
-                   (F G : efunctorₗₑᵥ ℂ 𝔻) : Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₕₒₘ 𝔻)
+                   (F G : efunctorₗₑᵥ ℂ 𝔻) : Set (natt-level ℂ 𝔻)
                    where
   private
     module ℂ = ecat ℂ
