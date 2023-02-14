@@ -141,6 +141,13 @@ module iso-props {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ 
     iso-trcod ison {_} {f'} (ass ⊙ iso-trdom isom {f'} {n ∘ f} (pf ˢ))
       where open ecategory-aux-only ℂ
 
+  iso-sqˢ : {a a' b b' : Obj}{f : || Hom a b || }{f' : || Hom a' b' ||}
+             {m : || Hom a a' ||}{m⁻¹ : || Hom a' a ||}{n : || Hom b b' ||}{n⁻¹ : || Hom b' b ||}
+                → is-iso-pair m m⁻¹ → is-iso-pair n n⁻¹ → n ∘ f ~ f' ∘ m
+                  → f ∘ m⁻¹ ~ n⁻¹ ∘ f'
+  iso-sqˢ isom ison pf = iso-sq isom ison pf ˢ
+                       where open ecategory-aux-only ℂ using (_ˢ)
+
   ≅ₒrefl : (a : Obj) → a ≅ₒ a
   ≅ₒrefl a = record
            { a12 = idar a
