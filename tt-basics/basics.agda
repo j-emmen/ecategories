@@ -240,11 +240,32 @@ Fin-+unvar n m {A = A} = Fin-+rec n m {C = λ _ → A}
 
 -- type-theoretic equivalence relations
 
+record is-refl-ttRel {ℓo ℓr : Level} {A : Set ℓo} (R : A → A → Set ℓr) : Set (ℓo ⊔ ℓr) where
+  field
+    refl : (x : A) → R x x
+
+record is-symm-ttRel {ℓo ℓr : Level} {A : Set ℓo} (R : A → A → Set ℓr) : Set (ℓo ⊔ ℓr) where
+  field
+    sym : {x₁ x₂ : A} → R x₁ x₂ → R x₂ x₁
+
+record is-trans-ttRel {ℓo ℓr : Level} {A : Set ℓo} (R : A → A → Set ℓr) : Set (ℓo ⊔ ℓr) where
+  field
+    tra : ∀ {x₁ x₂ x₃} → R x₁ x₂ → R x₂ x₃ → R x₁ x₃
+
 record is-tt-eqrel {ℓo ℓr : Level} {A : Set ℓo} (R : A → A → Set ℓr) : Set (ℓo ⊔ ℓr) where
   field
     refl : (x : A) → R x x
     sym : {x₁ x₂ : A} → R x₁ x₂ → R x₂ x₁
     tra : {x₁ x₂ x₃ : A} → R x₁ x₂ → R x₂ x₃ → R x₁ x₃
+
+{-
+    isrefl : is-tt-reflrel R
+    issymm : is-tt-symmrel R
+    istrans  : is-tt-transrel R
+  open is-tt-reflrel isrefl public
+  open is-tt-symmrel issymm public
+  open is-tt-transrel istrans public    
+-}
 
 tt-eqrel-stable :  {ℓ ℓo ℓr : Level}{A' : Set ℓ}{A : Set ℓo}(f : A' → A)
                    {R : A → A → Set ℓr}(tteqrel : is-tt-eqrel R)
@@ -255,6 +276,75 @@ tt-eqrel-stable {A' = A'} {A} f {R} tteqrel = record
   ; tra = λ {x₁} {x₂} {x₃} → R.tra {f x₁} {f x₂} {f x₃}
   }
   where module R = is-tt-eqrel tteqrel
+
+-- transitive closure of a reflexive and symmetric relation
+
+data trans-clos-ttRel {ℓo ℓr : Level} {A : Set ℓo} (R : A → A → Set ℓr) : A → A → Set (ℓo ⊔ ℓr) where
+  incl : ∀ {a a'} → R a a' → trans-clos-ttRel R a a'
+  indct : ∀ {a a' a'' : A} → trans-clos-ttRel R a a' → trans-clos-ttRel R a' a''
+               → trans-clos-ttRel R a a''
+
+trans-clos-ttRel-is-trans : {ℓo ℓr : Level} {A : Set ℓo} (R : A → A → Set ℓr)
+                                    → is-trans-ttRel (trans-clos-ttRel R)
+trans-clos-ttRel-is-trans R = record { tra = indct }
+
+trans-clos-ttRel-is-closure : {ℓo ℓr : Level} {A : Set ℓo} (R : A → A → Set ℓr)
+                                    → {T : A → A → Set} → (∀ {a a'} → R a a' → T a a') → (is-trans-ttRel T)
+                                      → ∀ {a a'} → trans-clos-ttRel R a a' → T a a'
+trans-clos-ttRel-is-closure R inT traT (incl r) =
+  inT r
+trans-clos-ttRel-is-closure R inT traT (indct u₁ u₂) =
+  tra (trans-clos-ttRel-is-closure R inT traT u₁) (trans-clos-ttRel-is-closure R inT traT u₂)
+  where open is-trans-ttRel traT
+
+trans-clos-ttRel-refl : {ℓo ℓr : Level} {A : Set ℓo} {R : A → A → Set ℓr}
+                            → is-refl-ttRel R → is-refl-ttRel (trans-clos-ttRel R)
+trans-clos-ttRel-refl rflR = record { refl = λ x → incl (refl x) }
+  where open is-refl-ttRel rflR
+
+trans-clos-ttRel-symm : {ℓo ℓr : Level} {A : Set ℓo} {R : A → A → Set ℓr}
+                            → is-symm-ttRel R → is-symm-ttRel (trans-clos-ttRel R)
+trans-clos-ttRel-symm {A = A} {R} symR = record { sym = sympf }
+  where open is-symm-ttRel symR
+        sympf : {x₁ x₂ : A} → trans-clos-ttRel R x₁ x₂ → trans-clos-ttRel R x₂ x₁
+        sympf (incl r) = incl (sym r)
+        sympf (indct u₁ u₂) = indct (sympf u₂) (sympf u₁)
+
+trans-clos-refsym-ttRel-is-eqv : {ℓo ℓr : Level} {A : Set ℓo} {R : A → A → Set ℓr}
+                                     → is-refl-ttRel R → is-symm-ttRel R → is-tt-eqrel (trans-clos-ttRel R)
+trans-clos-refsym-ttRel-is-eqv {A = A} {R} rflR symR = record
+  { refl = refl
+  ; sym = sym
+  ; tra = indct
+  }
+  where open is-refl-ttRel (trans-clos-ttRel-refl rflR)
+        open is-symm-ttRel (trans-clos-ttRel-symm symR)
+
+
+{-
+
+data trans-clos-of-refsym-ttRel {ℓo ℓr : Level} {A : Set ℓo} {R : A → A → Set ℓr} (Rrfl : is-refl-ttRel R) (Rsym : is-symm-ttRel R)
+                           : A → A → Set (ℓo ⊔ ℓr) where
+  incl : ∀ {a a'} → R a a' → trans-clos-of-refsym-ttRel Rrfl Rsym a a'
+  indct : ∀ {a a' a'' : A} → trans-clos-of-refsym-ttRel Rrfl Rsym a a' → trans-clos-of-refsym-ttRel Rrfl Rsym a' a''
+               → trans-clos-of-refsym-ttRel Rrfl Rsym a a''
+
+trans-clos-of-refsym-ttRel-is-trans : {ℓo ℓr : Level} {A : Set ℓo} {R : A → A → Set ℓr} (Rrfl : is-refl-ttRel R) (Rsym : is-symm-ttRel R)
+                                    → is-trans-ttRel (trans-clos-of-refsym-ttRel Rrfl Rsym)
+trans-clos-of-refsym-ttRel-is-trans Rrfl Rsym = record { tra = indct }
+
+trans-clos-of-refsym-ttRel-is-closure : {ℓo ℓr : Level} {A : Set ℓo} {R : A → A → Set ℓr} (Rrfl : is-refl-ttRel R) (Rsym : is-symm-ttRel R)
+                                    → {T : A → A → Set} → (∀ {a a'} → R a a' → T a a') → (is-trans-ttRel T)
+                                      → ∀ {a a'} → trans-clos-of-refsym-ttRel Rrfl Rsym a a' → T a a'
+trans-clos-of-refsym-ttRel-is-closure {A = A} {R} Rrfl Rsym {T} inT traT (incl r) =
+  inT r
+trans-clos-of-refsym-ttRel-is-closure {A = A} {R} Rrfl Rsym {T} inT traT (indct u₁ u₂) =
+  tra (trans-clos-of-refsym-ttRel-is-closure Rrfl Rsym inT traT u₁) (trans-clos-of-refsym-ttRel-is-closure Rrfl Rsym inT traT u₂)
+  where open is-trans-ttRel traT
+
+-}
+
+
 
 
 {-
