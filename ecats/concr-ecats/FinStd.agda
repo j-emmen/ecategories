@@ -16,6 +16,7 @@ open import ecats.functors.defs.id-on-objs
 open import ecats.functors.defs.id-on-objs-full-factorisation
 open import ecats.concr-ecats.finite-ecat
 open import ecats.concr-ecats.Std-lev
+open import ecats.concr-ecats.linear-orders
 
 
 -- embedding of ω into Std

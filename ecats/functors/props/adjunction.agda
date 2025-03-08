@@ -95,7 +95,7 @@ record
 
   RAPL : preserves-limits G
   RAPL = record
-       { pres-lim = λ D islim → record
+       { pres-lim = λ {_} {D} islim → record
                   { ! = ar D islim
                   ; !uniq = λ {A} → uq D islim A
                   }

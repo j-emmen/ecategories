@@ -1,6 +1,6 @@
 {-# OPTIONS --without-K #-}
 
-module ecats.functor.defs.monad where
+module ecats.functors.defs.monad where
 
 open import ecats.basic-defs.ecat-def&not
 --open import ecats.basic-defs.initial
