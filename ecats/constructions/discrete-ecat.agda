@@ -11,6 +11,8 @@ open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
 
+-- discrete and  codiscrete categories
+
 discrete-ecat' : {ℓ : Level} → Set ℓ → ecategoryₗₑᵥ ℓ ℓ 0ₗₑᵥ
 -- ℓ₁ ≤ ℓ₂ ; 0ₗₑᵥ ≤ ℓ₃
 discrete-ecat' A = record
@@ -31,6 +33,7 @@ discrete-ecat : {ℓ : Level} → Set ℓ → ecategoryₗₑᵥ ℓ ℓ ℓ
 discrete-ecat A = record
   { Obj = A
   ; Hom = λ x y → Freestd (x == y)
+{- NB: `f ~ g` in Freestd is `f == g` -}
   ; isecat = record
            { _∘_ = λ q p → p ■ q
            ; idar = λ _ → =rf
@@ -40,11 +43,15 @@ discrete-ecat A = record
            ; assoc = ■ass⁻¹
            }
   }
+module disc-ecat {ℓ : Level} (A : Set ℓ) = ecat (discrete-ecat A)
 
 small-disc-ecat : Set 0ₗₑᵥ → small-ecategory
 small-disc-ecat = discrete-ecat {0ₗₑᵥ}
 
--- there is no discrete locally small category
+disc-set-is-poset : {ℓ : Level} {A : Set ℓ} (Aset : ishSet A)
+                {x y : A} (f g : || disc-ecat.Hom A x y ||)
+                   → disc-ecat._~_ A f g
+disc-set-is-poset Aset {x} {y} = Aset x y
 
 
 -- part of the universal property of discrete ecategories:

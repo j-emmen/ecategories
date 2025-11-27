@@ -18,6 +18,7 @@ open import ecats.finite-limits.defs.terminal
 open import ecats.finite-limits.props.terminal
 open import ecats.finite-limits.defs.equaliser
 open import ecats.small-limits.defs.small-limit
+open import ecats.small-limits.defs.product
 
 module small-limit-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
   private
@@ -25,6 +26,7 @@ module small-limit-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ �
       open ecat ℂ public
       open equaliser-defs ℂ public
       open small-limit-defs ℂ public
+      open product-defs ℂ public
 
   -- limit is invariant under iso of cones
 

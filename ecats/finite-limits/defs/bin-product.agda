@@ -12,11 +12,11 @@ open import ecats.basic-defs.commut-shapes
 
 -- Binary products
 
-module bin-product-defs (ℂ : ecategory) where
+module bin-product-defs {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
   open ecategory-aux ℂ
   open comm-shapes ℂ
 
-  record is-product (sp : span) : Set₁ where
+  record is-product (sp : span) : Set ℓₐₗₗ where
     --constructor mkis-prd
     open span sp renaming (a1 to π₁; a2 to π₂)
     field
@@ -27,7 +27,7 @@ module bin-product-defs (ℂ : ecategory) where
                → π₁ ∘ h ~ π₁ ∘ h' → π₂ ∘ h ~ π₂ ∘ h' → h ~ h'
 
 
-  record bin-product : Set₁ where
+  record bin-product : Set ℓₐₗₗ where
     constructor mk×
     field
       {×sp} : span
@@ -36,7 +36,7 @@ module bin-product-defs (ℂ : ecategory) where
     open is-product ×isprd public
 
 
-  record product-of (O1 O2 : Obj) : Set₁ where
+  record product-of (O1 O2 : Obj) : Set ℓₐₗₗ where
     constructor mk×of
     --open commut-shapes ℂ
     field
@@ -51,9 +51,9 @@ module bin-product-defs (ℂ : ecategory) where
 -- end bin-products-defs
 
 
-record has-bin-products (ℂ : ecategory) : Set₁ where
+record has-bin-products {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) : Set (ecat.ℓₐₗₗ ℂ) where
   --constructor mkhas-prds
-  open ecategory ℂ
+  open ecat ℂ
   open comm-shapes ℂ
   open bin-product-defs ℂ
   field

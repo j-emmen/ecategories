@@ -14,7 +14,7 @@ open import ecats.finite-limits.defs.bin-product
 
   -- notation and basic properties of product spans
 
-module bin-product-spans (ℂ : ecategory) where
+module bin-product-spans {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
   open ecategory-aux ℂ
   open comm-shapes ℂ
   open bin-product-defs ℂ
@@ -305,7 +305,7 @@ module bin-product-spans (ℂ : ecategory) where
 
 -- notation and basic properties of chosen products
 
-module bin-products-aux {ℂ : ecategory} (prod : has-bin-products ℂ) where
+module bin-products-aux {ℓₒ ℓₐ ℓ~ : Level}{ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~} (prod : has-bin-products ℂ) where
   open ecategory-aux ℂ
   open bin-product-defs ℂ
   open bin-product-spans ℂ

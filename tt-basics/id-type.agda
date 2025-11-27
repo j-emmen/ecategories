@@ -238,6 +238,14 @@ Fin1-isContr = Fin-singlel , (Finsrec O {λ x → x == Fin-singlel} N₀rec =rf)
 isProp : {ℓ : Level}(A : Set ℓ) → Set ℓ
 isProp A = (a a' : A) → a == a'
 
+N₀-isProp : isProp N₀
+N₀-isProp = N₀rec
+
+isProp→=isContr : {ℓ : Level}{A : Set ℓ} → isProp A → (a a' : A) → isContr (a == a')
+isProp→=isContr {A = A} Aprp a a' =
+  Aprp a a' ■ (Aprp a' a' ⁻¹)
+  , =J {a₀ = a} (λ x u → u == Aprp a x ■ Aprp x x ⁻¹) (■invr (Aprp a a) ⁻¹) {a'}
+
 isContr→isProp : {ℓ : Level}{A : Set ℓ} → isContr A → isProp A
 isContr→isProp cnt = λ a a' → (contr= cnt a) ■ (contr= cnt a' ⁻¹)
 
@@ -245,6 +253,17 @@ isContr→=isContr : {ℓ : Level}{A : Set ℓ}
                       → isContr A → {a a' : A} → isContr (a == a')
 isContr→=isContr cnt = isContr→isProp cnt _ _ , =J (λ x u → u == isContr→isProp cnt _ _)
                                                     (■invr (contr= cnt _) ⁻¹)
+-- equal to but simpler than doing `isProp→=isContr (isContr→isProp _)`
+
+ishSet : {ℓ : Level}(A : Set ℓ) → Set ℓ
+ishSet A = (a a' : A) → isProp (a == a')
+
+isContr→ishSet : {ℓ : Level}{A : Set ℓ} → isContr A → ishSet A
+isContr→ishSet {A = A} Acnt a a' = isContr→isProp (isContr→=isContr Acnt {a} {a'})
+
+N₁-ishSet : ishSet N₁
+N₁-ishSet = isContr→ishSet N₁-isContr
+
 
 
 -- Identities of products

@@ -5,17 +5,101 @@ module ecats.concr-ecats.finite-ecat where
 
 open import tt-basics.all-basics renaming (||_|| to ||_||std)
 open import ecats.basic-defs.ecat-def&not
-open import ecats.basic-defs.isomorphism
+--open import ecats.basic-defs.isomorphism
 open import ecats.basic-defs.commut-shapes
 open import ecats.basic-defs.preorder
-open import ecats.basic-props.isomorphism
+open import ecats.isomorphism
+open import ecats.constructions.discrete-ecat
 open import ecats.constructions.free-ecat-on-graph
 open import ecats.concr-ecats.Std-lev
-open import ecats.functors.defs.efunctor
+open import ecats.functors.defs.efunctor-d&n
+open import ecats.functors.props.efunctor
 open import ecats.functors.defs.natural-iso
 open import ecats.functors.defs.natural-transformation
 
+----------------------------------------
+--  discrete category on finite objects
+----------------------------------------
 
+1-cat : small-ecategory
+1-cat = discrete-ecat N₁
+
+module 1-cat-aux where
+  private
+    module 𝟙 where
+      open ecat 1-cat public
+      open iso-d&p 1-cat public
+  cntr-ar : (x : N₁) → || 𝟙.Hom x 0₁ || × || 𝟙.Hom 0₁ x ||
+  cntr-ar 0₁ = pair (𝟙.idar 0₁) (𝟙.idar 0₁)
+  cntr-uq : {x y : N₁} (f g : || 𝟙.Hom x y ||) → f 𝟙.~ g
+  cntr-uq = disc-set-is-poset N₁-ishSet
+  cntr : (x : N₁) → x 𝟙.≅ₒ 0₁
+  cntr x = record
+    { a12 = prj1 (cntr-ar x)
+    ; a21 = prj2 (cntr-ar x)
+    ; isop = record
+      { iddom = cntr-uq _ _
+      ; idcod = cntr-uq _ _
+      }
+    }
+  module cntr (x : N₁) = 𝟙._≅ₒ_ (cntr x)
+  {-conn-gpd : (x y : N₁) → x 𝟙.≅ₒ y
+  conn-gpd x 0₁ = cntr x
+  module conn-gpd (x y : N₁) = 𝟙._≅ₒ_ (conn-gpd x y)-}
+  -- {x y : N₁} (f : || 𝟙.Hom x y ||) → f 𝟙.~ conn-gpd.a12 x y
+
+  private
+    module aux1 {ℓₒ ℓₐ ℓ~ : Level} (ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
+      private
+        module ℂ where
+          open ecat ℂ public
+          open iso-d&p ℂ public
+      fctr2ob : efunctorₗₑᵥ 1-cat ℂ → ℂ.Obj
+      fctr2ob F = F.ₒ 0₁
+        where
+          module F = efctr F
+      ob2fctr : ecat.Obj ℂ → efunctorₗₑᵥ 1-cat ℂ
+      ob2fctr A = cnstF 1-cat ℂ A
+      -- NB: fctr2ob (ob2fctr A) = A
+      fctr2ob2fctr : (F : efunctorₗₑᵥ 1-cat ℂ) → ob2fctr (fctr2ob F) ≅ₐ F
+      fctr2ob2fctr F = record
+        { natt = record
+               { fnc = λ {x} →  F.ₐ (cntr.a21 x)
+               ; nat = λ {x} {y} f → ℂa.~proof
+                     F.ₐ (prj2 (cntr-ar y)) ℂ.∘ foF.ₐ f        ~[ ℂa.∘e F.idˢ ℂa.r ] ℂa./
+                     F.ₐ (prj2 (cntr-ar y)) ℂ.∘ F.ₐ (𝟙.idar 0₁) ~[ F.∘∘ (cntr-uq _ _) ]∎
+                     F.ₐ f ℂ.∘ F.ₐ (prj2 (cntr-ar x)) ∎
+               }
+        ; natt⁻¹ = record
+                 { fnc = λ {x} →  F.ₐ (cntr.a12 x)
+                 ; nat = λ {x} {y} f → ℂa.~proof
+                     F.ₐ (prj1 (cntr-ar y)) ℂ.∘ F.ₐ f        ~[ F.∘∘ (cntr-uq _ _) ] ℂa./
+                     F.ₐ (𝟙.idar 0₁) ℂ.∘ F.ₐ (prj1 (cntr-ar x))~[ ℂa.∘e ℂa.r F.id ]∎
+                     foF.ₐ f ℂ.∘ F.ₐ (prj1 (cntr-ar x)) ∎
+                 }
+        ; isiso = λ {x} → ℂ.inv-iso-pair (F.pres-iso-pair (cntr.isop x)) 
+        }
+        where
+          module F where
+            open efunctor-aux F public
+            open efunctor-lev-props F public
+          module ℂa = ecategory-aux ℂ
+          module foF = efctr (ob2fctr (fctr2ob F))
+  private module aux2  {ℓₒ ℓₐ ℓ~ : Level} {ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~} = aux1 ℂ
+  open aux2 public
+
+
+
+
+1+1-cat : small-ecategory
+1+1-cat = discrete-ecat (N₁ + N₁)
+module 1+1-cat = ecat 1+1-cat
+
+{- need binary coproducts
+Fin-disc-cat : N → small-ecategory
+Fin-disc-cat O = discrete-ecat N₀
+Fin-disc-cat (s n) = {!!}
+-}
 
 ---------------------------
 --  the equaliser category

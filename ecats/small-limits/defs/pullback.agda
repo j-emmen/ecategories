@@ -1,4 +1,3 @@
-
 {-# OPTIONS --without-K #-}
 
 module ecats.small-limits.defs.pullback where

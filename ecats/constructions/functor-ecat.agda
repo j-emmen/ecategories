@@ -36,7 +36,7 @@ private module fctr {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑ�
 -------------------------------------------------
 
 [_,_]ᶜᵃᵗ Fctrₗₑᵥ : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~)
-                 {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~)
+                {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level}(𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~)
                    → ecategoryₗₑᵥ (fctr.ℓₒ ℂ 𝔻) (fctr.ℓₐᵣᵣ ℂ 𝔻) (fctr.ℓ~ ℂ 𝔻)
 Fctrₗₑᵥ ℂ 𝔻 = record
   { Obj = efunctorₗₑᵥ ℂ 𝔻
@@ -44,8 +44,63 @@ Fctrₗₑᵥ ℂ 𝔻 = record
   ; isecat = fctr-and-natt-is-ecat ℂ 𝔻
   }
 [_,_]ᶜᵃᵗ = Fctrₗₑᵥ
-  
-  
+
+-- precomposition functor
+precmp-Fctr : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level} {ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
+              {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level} {𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
+              {ℓ₃ₒ ℓ₃ₐ ℓ₃~ : Level} {𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₐ ℓ₃~}
+               → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ [ 𝔻 , 𝔼 ]ᶜᵃᵗ [ ℂ , 𝔼 ]ᶜᵃᵗ
+precmp-Fctr {𝔼 = 𝔼} F = record
+  { FObj = λ H → H ○ F
+  ; FHom = natt-fctr-pre F
+  ; isF = record
+        { ext = λ eq X → eq (F.ₒ X)
+        ; id = λ _ → r
+        ; cmp = λ _ _ _ → r
+        }
+  }
+  where module F = efctr F
+        open ecategory-aux 𝔼 using (r; ass; assˢ)
+
+precmp-Fctr-natt : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level} {ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
+                    {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level} {𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
+                    {ℓ₃ₒ ℓ₃ₐ ℓ₃~ : Level} {𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₐ ℓ₃~}
+                    {F G : efunctorₗₑᵥ ℂ 𝔻}
+                      → F ⇒ G → precmp-Fctr {𝔼 = 𝔼} F ⇒ precmp-Fctr G
+precmp-Fctr-natt {𝔼 = 𝔼} {F} {G} α = record
+  { fnc = λ {H} → natt-fctr-post H α
+  ; nat = λ γ X → nt.natˢ γ (nt.fnc α {X})
+  }
+  where module nt = natural-transformation
+
+-- postcomposition functor
+postcmp-Fctr : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level} {ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
+               {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level} {𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
+               {ℓ₃ₒ ℓ₃ₐ ℓ₃~ : Level} {𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₐ ℓ₃~}
+                 → efunctorₗₑᵥ 𝔻 𝔼 → efunctorₗₑᵥ [ ℂ , 𝔻 ]ᶜᵃᵗ [ ℂ , 𝔼 ]ᶜᵃᵗ
+postcmp-Fctr {𝔼 = 𝔼} F = record
+  { FObj = λ H → F ○ H
+  ; FHom = natt-fctr-post F
+  ; isF = record
+        { ext = λ eq X → F.ext (eq X)
+        ; id = λ _ → F.id
+        ; cmp = λ _ _ _ → F.cmp _ _
+        }
+  }
+  where module F = efctr F
+
+postcmp-Fctr-natt : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level} {ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
+                    {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level} {𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
+                    {ℓ₃ₒ ℓ₃ₐ ℓ₃~ : Level} {𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₐ ℓ₃~}
+                    {F G : efunctorₗₑᵥ 𝔻 𝔼}
+                      → F ⇒ G → postcmp-Fctr {ℂ = ℂ} F ⇒ postcmp-Fctr G
+postcmp-Fctr-natt {𝔼 = 𝔼} {F} {G} α = record
+  { fnc = λ {H} → natt-fctr-pre H α
+  ; nat = λ γ X → nt.nat α (nt.fnc γ {X}) 
+  }
+  where module nt = natural-transformation
+
+
 
 -------------------------------------------------------------
 -- Small category of efunctors between two small ecategories
@@ -136,6 +191,7 @@ const-discDiagr I ℂ = record
         }
   }
   where module ℂ = ecategory-aux ℂ using (r)
+
 
 
 -- functors on functors induced by functors

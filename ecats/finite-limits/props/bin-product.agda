@@ -13,7 +13,7 @@ open import ecats.finite-limits.d&n-bin-product
 
 
 
-module bin-product-props (ℂ : ecategory) where
+module bin-product-props {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
   open ecategory-aux ℂ
   open iso-defs ℂ
   open iso-props ℂ
