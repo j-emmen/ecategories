@@ -208,6 +208,7 @@ free-ecat-on-graph {V = V} E = record
     where open free-ecat-on-graph-via-inductive-paths E
           module H {u v : V} = setoid-aux (HomStd u v)
 
+
 module free-on-graph-emb {ℓ₁ ℓ₂ ℓ₃ : Level}{V : Set ℓ₁}(E : V → V → setoid {ℓ₂} {ℓ₃}) where
   open free-ecat-on-graph-via-inductive-paths E
   private
@@ -220,6 +221,8 @@ module free-on-graph-emb {ℓ₁ ℓ₂ ℓ₃ : Level}{V : Set ℓ₁}(E : V �
   ext : {u v : V}{e e' : || E u v ||} → e E.~ e' → ₐ e FC.~ ₐ e'
   ext = apnd-eq emty-eq
 -- end free-on-graph-emb
+
+
 
 module free-on-graph-is-free-on-graph {ℓ₁ ℓ₂ ℓ₃ : Level}{V : Set ℓ₁}(E : V → V → setoid {ℓ₂} {ℓ₃})
                                       {ℓ₁' ℓ₂' ℓ₃' : Level}(𝔻 : ecategoryₗₑᵥ ℓ₁' ℓ₂' ℓ₃')

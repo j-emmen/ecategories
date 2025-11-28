@@ -12,8 +12,92 @@ open import ecats.functors.defs.natural-iso
 
 
 
+-- when ℂ is free on a reflexive graph V → E ⇉ V
+module free-category-on-refl-graph-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)
+                                   {ℓ₄ ℓ₅ : Level}{V : Set ℓ₁}
+                                   (E : V → V → setoid {ℓ₄} {ℓ₅}) (rf : ∀ v → || E v v ||)
+                                   {FO : V → ecat.Obj ℂ}
+                                   (FE : {u v : V} → || E u v ||
+                                              → || ecat.Hom ℂ (FO u) (FO v) ||)
+                                   (FErf : ∀ {v} → < ecat.Hom ℂ (FO v) (FO v) >
+                                                           FE (rf v) ~ ecat.idar ℂ (FO v))
+                                   (FEext : {u v : V}{uv uv' : || E u v ||}
+                                             → < E u v > uv ~ uv'
+                                              → < ecat.Hom ℂ (FO u) (FO v) > FE uv ~ FE uv')
+                                   where
+  private
+    module ℂ = ecat ℂ
+    module unvprop-aux {ℓ₁' ℓ₂' ℓ₃' : Level}(𝕏 : ecategoryₗₑᵥ ℓ₁' ℓ₂' ℓ₃') where
+      open ecat 𝕏 public
+      open iso-defs 𝕏 public
+      open iso-props 𝕏 public
 
--- Constructions of the free ecategory on a graph using inductive types
+  record is-free-on-refl-graph-prop {ℓ₁' ℓ₂' ℓ₃' : Level}(𝔻 : ecategoryₗₑᵥ ℓ₁' ℓ₂' ℓ₃')
+                                    {GO : V → ecat.Obj 𝔻}
+                                    {GE : {u v : V} → || E u v ||
+                                             → || ecat.Hom 𝔻 (GO u) (GO v) ||}
+                                    (GErf : ∀ {v} → < ecat.Hom 𝔻 (GO v) (GO v) >
+                                                            GE (rf v) ~ ecat.idar 𝔻 (GO v))
+                                    (GEext : {u v : V}{uv uv' : || E u v ||}
+                                             → < E u v > uv ~ uv'
+                                             → < ecat.Hom 𝔻 (GO u) (GO v) > GE uv ~ GE uv')
+                                    : Set (ℂ.ℓₐₗₗ ⊔ ecat.ℓₐₗₗ 𝔻 ⊔ ℓ₄)
+                                    where
+    private
+      module 𝔻 = unvprop-aux 𝔻
+    field
+      fctr : efunctorₗₑᵥ ℂ 𝔻
+    private module fctr = efunctorₗₑᵥ fctr
+    field
+      tr-fnc : {v : V} → || 𝔻.Hom (fctr.ₒ (FO v)) (GO v) ||
+      tr-nat : {u v : V}(uv : || E u v ||) → tr-fnc {v} 𝔻.∘ fctr.ₐ (FE uv) 𝔻.~ GE uv 𝔻.∘ tr-fnc {u}
+      tr-iso : {v : V} → 𝔻.is-iso (tr-fnc {v})
+    private module tmp {v : V} = 𝔻.is-iso (tr-iso {v}) renaming (invf to tr-fnc⁻¹)
+    open tmp public
+    tr-nat⁻¹ : {u v : V}(uv : || E u v ||) → tr-fnc⁻¹ 𝔻.∘ GE uv 𝔻.~ fctr.ₐ (FE uv) 𝔻.∘ tr-fnc⁻¹
+    tr-nat⁻¹ {u} {v} uv = 𝔻.iso-sq (isisopair {u}) (isisopair {v}) (tr-nat uv)
+    field
+      uq : {H : efunctorₗₑᵥ ℂ 𝔻}
+           (Hfnc : {v : V} → || 𝔻.Hom (efctr.ₒ H (FO v)) (GO v) ||)
+           (Hnat : {u v : V}(uv : || E u v ||)
+                      → Hfnc {v} 𝔻.∘ efctr.ₐ H (FE uv) 𝔻.~ GE uv 𝔻.∘ Hfnc {u})
+           (Hiso : {v : V} → 𝔻.is-iso (Hfnc {v}))
+             → H ≅ₐ fctr
+-- end free-category-on-refl-graph-defs
+
+
+
+record _is-free-category-on-refl-graph_via_at-lev[_,_,_]
+         {ℓ₁ ℓ₂ ℓ₃ : Level} (ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃) {ℓ₄ ℓ₅ : Level} {V : Set ℓ₁}
+         (E : V → V → setoid {ℓ₄} {ℓ₅}) (rf : ∀ v → || E v v ||)
+         {FO : V → ecat.Obj ℂ}
+         (FE : {u v : V} → || E u v || → || ecat.Hom ℂ (FO u) (FO v) ||)
+         (ℓ₁' ℓ₂' ℓ₃' : Level)
+         : Set (ecat.ℓₐₗₗ ℂ ⊔ sucₗₑᵥ (ℓ₁' ⊔ ℓ₂' ⊔ ℓ₃') ⊔ ℓ₄ ⊔ ℓ₅)
+         where
+  private
+    module ℂ = ecat ℂ
+  open free-category-on-refl-graph-defs ℂ E rf FE
+  field
+    rfid : ∀ {v} → FE (rf v) ℂ.~ ℂ.idar (FO v)
+    ext : {u v : V}{uv uv' : || E u v ||} → < E u v > uv ~ uv'
+             → FE uv ℂ.~ FE uv'
+    unvprop : (𝔻 : ecategoryₗₑᵥ ℓ₁' ℓ₂' ℓ₃'){GO : V → ecat.Obj 𝔻}
+              {GE : {u v : V} → || E u v || → || ecat.Hom 𝔻 (GO u) (GO v) ||}
+              (GErf : ∀ {v} → < ecat.Hom 𝔻 (GO v) (GO v) > GE (rf v) ~ ecat.idar 𝔻 (GO v))
+              (GEext : {u v : V}{uv uv' : || E u v ||} → < E u v > uv ~ uv'
+                           → < ecat.Hom 𝔻 (GO u) (GO v) > GE uv ~ GE uv')
+                    → is-free-on-refl-graph-prop rfid ext 𝔻 GErf GEext
+  module unv (𝔻 : ecategoryₗₑᵥ ℓ₁' ℓ₂' ℓ₃'){GO : V → ecat.Obj 𝔻}
+             {GE : {u v : V} → || E u v || → || ecat.Hom 𝔻 (GO u) (GO v) ||}
+             (GErf : ∀ {v} → < ecat.Hom 𝔻 (GO v) (GO v) > GE (rf v) ~ ecat.idar 𝔻 (GO v))
+             (GEext : {u v : V}{uv uv' : || E u v ||} → < E u v > uv ~ uv'
+                        → < ecat.Hom 𝔻 (GO u) (GO v) > GE uv ~ GE uv')
+             = is-free-on-refl-graph-prop rfid ext (unvprop 𝔻 GErf GEext)
+
+
+
+-- Constructions of the free ecategory on a graph reflexive using inductive types
 
 module free-ecat-on-refl-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level}{V : Set ℓ₁}
                                                    (E : V → V → setoid {ℓ₂} {ℓ₃})
@@ -39,20 +123,6 @@ module free-ecat-on-refl-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level
   twocmp : {u v w : V} → ||E|| u v → ||E|| v w → fin-path₀ u w
   twocmp e e' = path₀-cmp (indv e') (indv e)
 
-{-
-  path₀-rec : {u : V}{ℓ : Level}{PP : {v : V} → fin-path₀ u v → Set ℓ}
-                → (PP (indv (rf u)))
-                → ({w v : V}(p : fin-path₀ u w)(e : ||E|| w v) → PP (apnd p e))
-                  → {v : V}(p : fin-path₀ u v) → PP p
-  path₀-rec {PP = PP} P∅ Pₐ = ?
-
-  path₀-rec-all : {ℓ : Level}{PP : {u v : V} → fin-path₀ u v → Set ℓ}
-                    → ({u : V} → PP (emty {u}))
-                    → ({u v w : V}(p : fin-path₀ u v)(e : ||E|| v w) → PP (apnd p e))
-                      → {u v : V}(p : fin-path₀ u v) → PP p
-  path₀-rec-all {PP = PP} P∅ Pₐ emty = P∅
-  path₀-rec-all {PP = PP} P∅ᵢ Pₐ (apnd p e) = Pₐ p e
--}
 
   -- setoid of finite path₀s modulo rf as unit for concatenation
   data path₀-eq {u v : V} : fin-path₀ u v → fin-path₀ u v → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃) where
@@ -65,20 +135,6 @@ module free-ecat-on-refl-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level
     path₀-tran : {p₁ p₂ p₃ : fin-path₀ u v} → path₀-eq p₁ p₂ → path₀-eq p₂ p₃ → path₀-eq p₁ p₃
     path₀-sym : {p₁ p₂ : fin-path₀ u v} → path₀-eq p₁ p₂ → path₀-eq p₂ p₁
 
-{-
-    {-run₀ : {p : fin-path₀ u u} → path₀-eq p (indv (rf u))
-             → ∀ {e₁ e₂} → e₁ E.~ e₂ → path₀-eq (apnd p e₁) (indv e₂)
-    run₀ˢ : {p : fin-path₀ u u} → path₀-eq p (indv (rf u))
-             → ∀ {e₁ e₂} → e₁ E.~ e₂ → path₀-eq (indv e₂) (apnd p e₁)-}
-    run : {p : fin-path₀ u u} → path₀-eq p (indv (rf u))
-             → ∀ {p₁ p₂} → path₀-eq p₁ p₂ → path₀-eq (path₀-cmp p₁ p) p₂
-    runˢ : {p : fin-path₀ u u} → path₀-eq p (indv (rf u))
-             → ∀ {p₁ p₂} → path₀-eq p₁ p₂ → path₀-eq p₂ (path₀-cmp p₁ p)
-    lun : {e : ||E|| v v} → e E.~ rf v
-             → ∀ {p₁ p₂} → path₀-eq {u} {v} p₁ p₂ → path₀-eq (apnd p₁ e) p₂
-    lunˢ : {e : ||E|| v v} → e E.~ rf v
-             → ∀ {p₁ p₂} → path₀-eq {u} {v} p₁ p₂ → path₀-eq p₂ (apnd p₁ e)
--}
 
   path₀-refl : {u v : V}(p : fin-path₀ u v) → path₀-eq p p
   path₀-refl (indv e) =
@@ -86,69 +142,6 @@ module free-ecat-on-refl-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level
   path₀-refl (apnd p e) =
     apnd-eq (path₀-refl p) E.r
 
-{-
-  path₀-eq-sym : {u v : V}{p₁ p₂ : fin-path₀ u v}
-                     → path₀-eq p₁ p₂ → path₀-eq p₂ p₁
-  path₀-eq-sym (indv-eq e~e') = indv-eq (e~e' E.ˢ)
-  path₀-eq-sym (apnd-eq eq e~e') = apnd-eq (path₀-eq-sym eq) (e~e' E.ˢ)
---  path₀-eq-sym (run₀ eq e~e') = run₀ˢ eq e~e'
---  path₀-eq-sym (run₀ˢ eq e~e') = run₀ eq e~e'
-  path₀-eq-sym (run eqr eq) = runˢ eqr eq
-  path₀-eq-sym (runˢ eqr eq) = run eqr eq
-  path₀-eq-sym (lun e~r eq) = lunˢ e~r eq
-  path₀-eq-sym (lunˢ e~r eq) = lun e~r eq
-
-  path₀-eq-trans : {u v : V}{p₁ p₂ p₃ : fin-path₀ u v}
-                     → path₀-eq p₁ p₂ → path₀-eq p₂ p₃ → path₀-eq p₁ p₃
-  path₀-eq-trans (indv-eq x) eq' = {!!}
-  path₀-eq-trans (apnd-eq eq x) eq' = {!!}
-
-  path₀-eq-trans (run eqr eq) eq' =
-    run eqr (path₀-eq-trans eq eq')
-  path₀-eq-trans (runˢ eqr eq) eq' = {!eq'!}
-  path₀-eq-trans (lun e~r eq) eq' = {!!}
-  path₀-eq-trans (lunˢ e~r eq) eq' = {!eq'!}
-
-{-
-  path₀-eq-trans (indv-eq e₁~e₂) (indv-eq e₂~e₃) =
-    indv-eq (e₁~e₂ E.⊙ e₂~e₃)
-  path₀-eq-trans (indv-eq e₁~e₂) (run₀ˢ eq' e₂~e₃) =
-    run₀ˢ eq' (e₂~e₃ E.⊙ e₁~e₂ E.ˢ)
-  path₀-eq-trans (indv-eq e₁~e₂) (lunˢ e₂~e₃ eq') =
-    lunˢ e₂~e₃ (path₀-eq-trans eq' (indv-eq (e₁~e₂ E.ˢ)))
-
-  path₀-eq-trans (apnd-eq eq e₁~e₂) (apnd-eq eq' e₂~e₃) =
-    apnd-eq (path₀-eq-trans eq eq') (e₁~e₂ E.⊙ e₂~e₃)
-  path₀-eq-trans (apnd-eq eq e₁~e₂) (run₀ eq' e₂~e₃) =
-    run₀ (path₀-eq-trans eq eq') (e₁~e₂ E.⊙ e₂~e₃)
-  path₀-eq-trans (apnd-eq eq e₁~e₂) (lun e₂~r eq') =
-    lun (e₁~e₂ E.⊙ e₂~r) (path₀-eq-trans eq eq')
-  path₀-eq-trans (apnd-eq eq e₁~e₂) (lunˢ e~r eq') =
-    lunˢ e~r (path₀-eq-trans eq' (apnd-eq (path₀-eq-sym eq) (e₁~e₂ E.ˢ)))
-
-  path₀-eq-trans (run₀ eq e₁~e₂) (indv-eq x) = {!!}
-  path₀-eq-trans (run₀ eq e₁~e₂) (run₀ˢ eq' x) = {!!}
-  path₀-eq-trans (run₀ eq e₁~e₂) (lunˢ x eq') = {!!}
-
-  path₀-eq-trans (run₀ˢ eq e₁~e₂) eq' = {!eq'!}
-
-  path₀-eq-trans (lun e~r eq) eq' =
-    lun e~r (path₀-eq-trans eq eq')
-  path₀-eq-trans (lunˢ e~r eq) eq' = {!!}
--}
-
-
-{-
-  path₀-eq-trans (indv-eq e₁~e₂) (sym eq') = {!!}
-  --sym (path₀-eq-trans eq' (indv-eq (e₁~e₂ E.ˢ)))
-  path₀-eq-trans (run₀ eq e₁~e₂) (indv-eq e₂~e₃) =
-    run₀ eq (e₁~e₂ E.⊙ e₂~e₃)
-  path₀-eq-trans (run₀ eq e₁~e₂) (sym eq') = {!!}
-  path₀-eq-trans (lun e~r eq) eq' =
-    lun e~r (path₀-eq-trans eq eq')
-  path₀-eq-trans (sym eq) eq' = {!!}
--}
--}
 
   HomStd : V → V → setoid {ℓ₁ ⊔ ℓ₂} {ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃}
   HomStd u v = record
@@ -193,7 +186,42 @@ module free-ecat-on-refl-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level
                 → path₀-cmp p₃ (path₀-cmp p₂ p₁) H.~ path₀-cmp (path₀-cmp p₃ p₂) p₁
   path₀-ass p₁ p₂ (indv e) = path₀-refl _
   path₀-ass p₁ p₂ (apnd p₃ e) = apnd-eq (path₀-ass p₁ p₂ p₃) E.r
---- end free-ecat-on-graph-via-inductive-path₀s
+--- end free-ecat-on-refl-graph-via-inductive-paths
+
+
+
+free-ecat-on-refl-graph : {ℓ₁ ℓ₂ ℓ₃ : Level} {V : Set ℓ₁}
+                          (E : V → V → setoid {ℓ₂} {ℓ₃}) (rf : ∀ v → || E v v ||)
+                              → ecategoryₗₑᵥ ℓ₁ (ℓ₁ ⊔ ℓ₂) (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃)
+free-ecat-on-refl-graph {V = V} E rf = record
+    { Obj = V
+    ; Hom = HomStd
+    ; isecat = record
+                 { _∘_ = path₀-cmp
+                 ; idar = path₀-id
+                 ; ∘ext = λ p₁ p₁' p₂ p₂' → path₀-cmp-ext {p₁ = p₁} {p₁'} {p₂} {p₂'}
+                 ; lidax = λ _ → path₀-lun
+                 ; ridax = path₀-rid
+                 ; assoc = path₀-ass
+                 }
+    }
+    where open free-ecat-on-refl-graph-via-inductive-paths E rf
+
+
+module free-on-refl-graph-emb {ℓ₁ ℓ₂ ℓ₃ : Level}{V : Set ℓ₁}
+                         (E : V → V → setoid {ℓ₂} {ℓ₃}) (rf : ∀ v → || E v v ||)
+                         where
+  open free-ecat-on-refl-graph-via-inductive-paths E rf
+  private
+    module E {u v : V} = setoid-aux (E u v)
+    module FC = ecat (free-ecat-on-refl-graph E rf)
+  ₒ : V → FC.Obj
+  ₒ u = u
+  ₐ : {u v : V} → || E u v || → || FC.Hom u v ||
+  ₐ = indv
+  ext : {u v : V}{e e' : || E u v ||} → e E.~ e' → ₐ e FC.~ ₐ e'
+  ext = indv-eq
+-- end free-on-refl-graph-emb
 
 
 
