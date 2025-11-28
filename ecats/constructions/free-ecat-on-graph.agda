@@ -11,6 +11,7 @@ open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
 
+-- when ℂ is free on a graph E ⇉ V
 module free-category-on-graph-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)
                                    {ℓ₄ ℓ₅ : Level}{V : Set ℓ₁}(E : V → V → setoid {ℓ₄} {ℓ₅})
                                    {FO : V → ecat.Obj ℂ}
@@ -96,6 +97,11 @@ module free-ecat-on-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level}{V :
     apnd : {w v : V} → fin-path u w → ||E|| w v → fin-path u v
   indv : {u v : V} → ||E|| u v → fin-path u v
   indv e = apnd emty e
+  twocmp : {u v w : V} → ||E|| u v → ||E|| v w → fin-path u w
+  twocmp e e' = apnd (indv e) e'
+  lapnd : {u v w : V} → ||E|| u v → fin-path v w → fin-path u w
+  lapnd e emty = indv e
+  lapnd e (apnd p e') = apnd (lapnd e p) e'
 
   path-rec : {u : V}{ℓ : Level}{PP : {v : V} → fin-path u v → Set ℓ}
                 → (PP emty)
