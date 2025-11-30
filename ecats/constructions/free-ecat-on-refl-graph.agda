@@ -101,7 +101,7 @@ record _is-free-category-on-refl-graph_via_at-lev[_,_,_]
 
 module free-ecat-on-refl-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level}{V : Set ℓ₁}
                                                    (E : V → V → setoid {ℓ₂} {ℓ₃})
-                                                   (rf : (v : V) → || E v v ||)
+                                                   (rf : {v : V} → || E v v ||)
                                                    where
   private
     ||E|| : V → V → Set ℓ₂
@@ -114,14 +114,14 @@ module free-ecat-on-refl-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level
     apnd : {w : V} → fin-path₀ u w → ||E|| w v → fin-path₀ u v
 
   path₀-id : (v : V) → fin-path₀ v v
-  path₀-id v = indv (rf v)
+  path₀-id v = indv (rf {v})
 
   path₀-cmp : {u v w : V} → fin-path₀ v w → fin-path₀ u v → fin-path₀ u w
   path₀-cmp (indv e) p = apnd p e
   path₀-cmp (apnd p e) p' = apnd (path₀-cmp p p') e
 
-  twocmp : {u v w : V} → ||E|| u v → ||E|| v w → fin-path₀ u w
-  twocmp e e' = path₀-cmp (indv e') (indv e)
+  twocmp : {u v w : V} → ||E|| v w → ||E|| u v → fin-path₀ u w
+  twocmp e' e = path₀-cmp (indv e') (indv e)
 
 
   -- setoid of finite path₀s modulo rf as unit for concatenation
@@ -130,8 +130,8 @@ module free-ecat-on-refl-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level
                   → e₁ E.~ e₂ → path₀-eq (indv e₁) (indv e₂)
     apnd-eq : {w : V}{p₁ p₂ : fin-path₀ u w}{e₁ e₂ : ||E|| w v}
                   → path₀-eq p₁ p₂ → e₁ E.~ e₂ → path₀-eq (apnd p₁ e₁) (apnd p₂ e₂)
-    path₀-lun : {p : fin-path₀ u v} → path₀-eq (apnd p (rf v)) p
-    path₀-run : {e : ||E|| u v} → path₀-eq (apnd (indv (rf u)) e) (indv e)
+    path₀-lun : {p : fin-path₀ u v} → path₀-eq (apnd p (rf {v})) p
+    path₀-run : {e : ||E|| u v} → path₀-eq (apnd (indv (rf {u})) e) (indv e)
     path₀-tran : {p₁ p₂ p₃ : fin-path₀ u v} → path₀-eq p₁ p₂ → path₀-eq p₂ p₃ → path₀-eq p₁ p₃
     path₀-sym : {p₁ p₂ : fin-path₀ u v} → path₀-eq p₁ p₂ → path₀-eq p₂ p₁
 
@@ -191,7 +191,7 @@ module free-ecat-on-refl-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level
 
 
 free-ecat-on-refl-graph : {ℓ₁ ℓ₂ ℓ₃ : Level} {V : Set ℓ₁}
-                          (E : V → V → setoid {ℓ₂} {ℓ₃}) (rf : ∀ v → || E v v ||)
+                          (E : V → V → setoid {ℓ₂} {ℓ₃}) (rf : ∀ {v} → || E v v ||)
                               → ecategoryₗₑᵥ ℓ₁ (ℓ₁ ⊔ ℓ₂) (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃)
 free-ecat-on-refl-graph {V = V} E rf = record
     { Obj = V
@@ -209,7 +209,7 @@ free-ecat-on-refl-graph {V = V} E rf = record
 
 
 module free-on-refl-graph-emb {ℓ₁ ℓ₂ ℓ₃ : Level}{V : Set ℓ₁}
-                         (E : V → V → setoid {ℓ₂} {ℓ₃}) (rf : ∀ v → || E v v ||)
+                         (E : V → V → setoid {ℓ₂} {ℓ₃}) (rf : ∀ {v} → || E v v ||)
                          where
   open free-ecat-on-refl-graph-via-inductive-paths E rf
   private
