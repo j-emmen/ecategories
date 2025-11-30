@@ -47,9 +47,9 @@ module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑ�
   HomGen-freestd : Obj → Obj → setoid {ℓₒ ⊔ ℓₐ} {ℓₒ ⊔ ℓₐ}
   HomGen-freestd M N = Freestd (HomGen M N)
 
---  module fc = free-ecat-on-refl-graph-via-inductive-paths HomGen-freestd idg
   open free-ecat-on-refl-graph-via-inductive-paths HomGen-freestd idg public
        using (indv; apnd) renaming (fin-path₀ to HomObj; path₀-cmp to cmp) 
+
 
   iₐ : ∀ {A B} → || ℂ.Hom A B || → HomObj (iₒ A) (iₒ B)
   iₐ f = indv (iₐg f)
@@ -67,7 +67,6 @@ module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑ�
   ρI M = indv (ρIg M)
   ρI⁻¹ : ∀ M → HomObj M (M ⊗ₒ I)
   ρI⁻¹ M = indv (ρI⁻¹g M)
-
   _⊗ₐ_ : ∀ {M₁ N₁ M₂ N₂} → HomObj M₁ N₁ → HomObj M₂ N₂ → HomObj (M₁ ⊗ₒ M₂) (N₁ ⊗ₒ N₂)
   indv g ⊗ₐ indv g' = indv (g ⊗ₐg g')
   indv g ⊗ₐ apnd q g' = apnd (indv g ⊗ₐ q) (idg ⊗ₐg g')
@@ -77,26 +76,25 @@ module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑ�
 
 
   data HomEqR : {M N : Obj} → HomObj M N → HomObj M N → Set ℂ.ℓₐₗₗ where
-    -- category with composition given by concatenation and unit given by the generator idg
-    indv-rfl : ∀ {M N} (g : HomGen M N) → HomEqR (indv g) (indv g)
+    -- category with the generator idg as unit of concatenation
     cmp-ext : {M N L : Obj} {p p' : HomObj M L}{q q' : HomObj L N}
                   → HomEqR p p' → HomEqR q q' → HomEqR (cmp q p) (cmp q' p')
     apnd-lun : {M N : Obj} {p : HomObj M N}
                    → HomEqR (apnd p (idg {N})) p
     apnd-run : {M N : Obj} {g : HomGen M N}
-                     → HomEqR (apnd (indv (idg {M})) g) (indv g)
+                     → HomEqR (apnd (id M) g) (indv g)
 
     -- equivalence relation
+    indv-rfl : ∀ {M N} (g : HomGen M N) → HomEqR (indv g) (indv g)
     HomEqR-tran : {M N : Obj} {p₁ p₂ p₃ : HomObj M N}
                     → HomEqR p₁ p₂ → HomEqR p₂ p₃ → HomEqR p₁ p₃
     HomEqR-sym :{M N : Obj} {p₁ p₂ : HomObj M N}
                   → HomEqR p₁ p₂ → HomEqR p₂ p₁
 
     -- functoriality of i
-    iext : ∀ {A B} {f f' : || ℂ.Hom A B ||} → f ℂ.~ f' → HomEqR (iₐ f) (iₐ f')
     iid : ∀ {A} → HomEqR (iₐ (ℂ.idar A)) (id (iₒ A))
-    icmp : ∀ {A B C} (f : || ℂ.Hom A B ||) (g : || ℂ.Hom B C ||)
-             → HomEqR (cmp (iₐ g) (iₐ f)) (iₐ (g ℂ.∘ f))
+    icmpext : ∀ {A B C} {f : || ℂ.Hom A B ||} {g : || ℂ.Hom B C ||} {h : || ℂ.Hom A C ||}
+                → g ℂ.∘ f ℂ.~ h → HomEqR (cmp (iₐ g) (iₐ f)) (iₐ h)
 
     -- functoriality of ⊗
     ⊗id : ∀ {M N} → HomEqR (id M ⊗ₐ id N) (id (M ⊗ₒ N))
@@ -194,6 +192,25 @@ free-monoidal-ecat-on-ecat-ecat ℂ = record
 FMon = free-monoidal-ecat-on-ecat-ecat
 
 
+module embedding-for-free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
+  open free-monoidal-ecat-on ℂ
+  private
+    module ℂ = ecategory-aux ℂ
+    module Fℂ = ecategory-aux(FMon ℂ)
+  
+  iext : ∀ {A B} {f f' : || ℂ.Hom A B ||} → f ℂ.~ f' → HomEqR (iₐ f) (iₐ f')
+  iext {A} {B} {f} {f'} eq = Fℂ.~proof
+    iₐ f                     ~[ Fℂ.lidˢ ] Fℂ./
+    Fℂ.idar (iₒ B) Fℂ.∘ iₐ f  ~[ Fℂ.∘e Fℂ.r (iid Fℂ.ˢ) ] Fℂ./
+    iₐ (ℂ.idar B) Fℂ.∘ iₐ f   ~[ icmpext (ℂ.lid ℂ.⊙ eq) ]∎
+    iₐ f' ∎
+
+  icmp : ∀ {A B C} (f : || ℂ.Hom A B ||) (g : || ℂ.Hom B C ||)
+           → HomEqR (cmp (iₐ g) (iₐ f)) (iₐ (g ℂ.∘ f))
+  icmp f g = icmpext ℂ.r
+-- end embedding-for-free-monoidal-ecat-on
+
+
 free-monoidal-ecat-on-ecat-emb : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)
                                 → efunctorₗₑᵥ ℂ (FMon ℂ)
 free-monoidal-ecat-on-ecat-emb ℂ = record
@@ -206,6 +223,7 @@ free-monoidal-ecat-on-ecat-emb ℂ = record
         }
   }
   where open free-monoidal-ecat-on ℂ
+        open  embedding-for-free-monoidal-ecat-on ℂ
 
 
 
