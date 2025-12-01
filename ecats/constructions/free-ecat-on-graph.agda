@@ -103,6 +103,13 @@ module free-ecat-on-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level}{V :
   lapnd e emty = indv e
   lapnd e (apnd p e') = apnd (lapnd e p) e'
 
+  path-id : (v : V) → fin-path v v
+  path-id v = emty {v}
+  path-cmp : {u v w : V} → fin-path v w → fin-path u v → fin-path u w
+  path-cmp emty p₁ = p₁
+  path-cmp (apnd p e) p₁ = apnd (path-cmp p p₁) e
+
+{-
   path-rec : {u : V}{ℓ : Level}{PP : {v : V} → fin-path u v → Set ℓ}
                 → (PP emty)
                 → ({w v : V}(p : fin-path u w)(e : ||E|| w v) → PP (apnd p e))
@@ -116,6 +123,8 @@ module free-ecat-on-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level}{V :
                       → {u v : V}(p : fin-path u v) → PP p
   path-rec-all {PP = PP} P∅ Pₐ emty = P∅
   path-rec-all {PP = PP} P∅ᵢ Pₐ (apnd p e) = Pₐ p e
+-}
+
 
   -- setoid of finite paths
   data path-eq {u : V} : {v : V}(p₁ p₂ : fin-path u v) → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃) where
@@ -129,6 +138,7 @@ module free-ecat-on-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level}{V :
                   → path-eq p₁ p₂ → path-eq (apnd p₁ e) (apnd p₂ e)
                   -- maybe provable?
 -}
+
   indv-eq : {u v : V}{e₁ e₂ : ||E|| u v}→ e₁ E.~ e₂ → path-eq (indv e₁) (indv e₂)
   indv-eq {u} = apnd-eq emty-eq
 
@@ -169,10 +179,6 @@ module free-ecat-on-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level}{V :
     ||H|| : V → V → Set (ℓ₁ ⊔ ℓ₂)
     ||H|| u v = || HomStd u v ||
     module H {u v : V} = setoid-aux (HomStd u v)
-
-  path-cmp : {u v w : V} → fin-path v w → fin-path u v → fin-path u w
-  path-cmp emty p₁ = p₁
-  path-cmp (apnd p e) p₁ = apnd (path-cmp p p₁) e
 
   path-cmp-ext : {u v w : V}{p₁ p₁' : fin-path u v}{p₂ p₂' : fin-path v w}
                     → p₁ H.~ p₁' → p₂ H.~ p₂' → path-cmp p₂ p₁ H.~ path-cmp p₂' p₁'
