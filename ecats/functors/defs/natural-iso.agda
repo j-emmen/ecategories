@@ -33,8 +33,7 @@ record natural-iso {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂
   open iso-defs 𝔻
   field
     isiso : {A : ℂ.Obj} → is-iso-pair (fnc {A}) (fnc⁻¹ {A})
-  module isop {A : ℂ.Obj} = is-iso-pair (isiso {A})
-  open isop public
+  open module isop {A : ℂ.Obj} = is-iso-pair (isiso {A}) public
   open ecategory-aux-only 𝔻
   D2Cᵣ : {A B : ℂ.Obj}{f : || ℂ.Hom A B ||} → F.ₐ f 𝔻.~ fnc⁻¹ 𝔻.∘ G.ₐ f 𝔻.∘ fnc
   D2Cᵣ {f = f} = lidggˢ r iddom ⊙ assˢ ⊙ ∘e (nat f) r 

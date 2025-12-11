@@ -7,6 +7,7 @@ open import tt-basics.setoids using (stdsections)
 open import ecats.basic-defs.ecat-def&not
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
+open import ecats.functors.defs.natural-iso
 open import ecats.constructions.discrete-ecat
 
 
@@ -48,9 +49,9 @@ Fctrₗₑᵥ ℂ 𝔻 = record
 -- precomposition functor
 precmp-Fctr : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level} {ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
               {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level} {𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
-              {ℓ₃ₒ ℓ₃ₐ ℓ₃~ : Level} {𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₐ ℓ₃~}
+              {ℓ₃ₒ ℓ₃ₐ ℓ₃~ : Level} (𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₐ ℓ₃~)
                → efunctorₗₑᵥ ℂ 𝔻 → efunctorₗₑᵥ [ 𝔻 , 𝔼 ]ᶜᵃᵗ [ ℂ , 𝔼 ]ᶜᵃᵗ
-precmp-Fctr {𝔼 = 𝔼} F = record
+precmp-Fctr 𝔼 F = record
   { FObj = λ H → H ○ F
   ; FHom = natt-fctr-pre F
   ; isF = record
@@ -64,10 +65,10 @@ precmp-Fctr {𝔼 = 𝔼} F = record
 
 precmp-Fctr-natt : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level} {ℂ : ecategoryₗₑᵥ ℓ₁ₒ ℓ₁ₕ ℓ₁~}
                     {ℓ₂ₒ ℓ₂ₕ ℓ₂~ : Level} {𝔻 : ecategoryₗₑᵥ ℓ₂ₒ ℓ₂ₕ ℓ₂~}
-                    {ℓ₃ₒ ℓ₃ₐ ℓ₃~ : Level} {𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₐ ℓ₃~}
+                    {ℓ₃ₒ ℓ₃ₐ ℓ₃~ : Level} (𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₐ ℓ₃~)
                     {F G : efunctorₗₑᵥ ℂ 𝔻}
-                      → F ⇒ G → precmp-Fctr {𝔼 = 𝔼} F ⇒ precmp-Fctr G
-precmp-Fctr-natt {𝔼 = 𝔼} {F} {G} α = record
+                      → F ⇒ G → precmp-Fctr 𝔼 F ⇒ precmp-Fctr 𝔼 G
+precmp-Fctr-natt 𝔼 {F} {G} α = record
   { fnc = λ {H} → natt-fctr-post H α
   ; nat = λ γ X → nt.natˢ γ (nt.fnc α {X})
   }
@@ -94,7 +95,7 @@ postcmp-Fctr-natt : {ℓ₁ₒ ℓ₁ₕ ℓ₁~ : Level} {ℂ : ecategoryₗₑ
                     {ℓ₃ₒ ℓ₃ₐ ℓ₃~ : Level} {𝔼 : ecategoryₗₑᵥ ℓ₃ₒ ℓ₃ₐ ℓ₃~}
                     {F G : efunctorₗₑᵥ 𝔻 𝔼}
                       → F ⇒ G → postcmp-Fctr {ℂ = ℂ} F ⇒ postcmp-Fctr G
-postcmp-Fctr-natt {𝔼 = 𝔼} {F} {G} α = record
+postcmp-Fctr-natt α = record
   { fnc = λ {H} → natt-fctr-pre H α
   ; nat = λ γ X → nt.nat α (nt.fnc γ {X}) 
   }
@@ -212,3 +213,110 @@ fctr-precmp F 𝕏 = record
   }
   where module F = efctr F
         open ecategory-aux-only 𝕏 using (r)
+
+
+
+-- functors in two arguments as functors into functor categories
+
+module uncurry-efunctor-into-functor-cat {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ₁ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                                         {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{ℂ₂ : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                                         {ℓₒ₃ ℓₐ₃ ℓ~₃ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₃ ℓₐ₃ ℓ~₃}
+                                         (F : efunctorₗₑᵥ ℂ₁ [ ℂ₂ , 𝔻 ]ᶜᵃᵗ)
+                                         where
+  private
+    module ℂ₁ = ecat ℂ₁
+    module ℂ₂ = ecat ℂ₂
+    module 𝔻 = ecat 𝔻
+
+  module l = efunctor-aux F
+  module lₒ (A : ℂ₁.Obj) = efunctor-aux (l.ₒ A) -- : efunctor ℂ₂ 𝔻
+  module lₐ {X Y : ℂ₁.Obj} (f : || ℂ₁.Hom X Y ||) = natural-transformation (l.ₐ f)
+                                                                 -- : l.ₒ X ⇒ l.ₒ Y
+  rₒ : ℂ₂.Obj →  efunctorₗₑᵥ ℂ₁ 𝔻
+  rₒ A = record
+    { FObj = λ X → lₒ.ₒ X A
+    ; FHom = λ {X} {Y} f → lₐ.fnc f {A}
+    ; isF = record
+          { ext = λ eq → l.ext eq A
+          ; id = λ {X} → l.id {X} A
+          ; cmp = λ f g → l.cmp f g A
+          }
+    }
+  module rₒ (A : ℂ₂.Obj) = efunctor-aux (rₒ A)
+
+  rl~lr : {A₁ B₁ : ℂ₁.Obj} (f₁ : || ℂ₁.Hom A₁ B₁ ||)
+          {A₂ B₂ : ℂ₂.Obj} (f₂ : || ℂ₂.Hom A₂ B₂ ||)
+             → rₒ.ₐ B₂ f₁ 𝔻.∘ lₒ.ₐ A₁ f₂ 𝔻.~ lₒ.ₐ B₁ f₂ 𝔻.∘ rₒ.ₐ A₂ f₁
+  rl~lr f₁ f₂ = lₐ.nat f₁ f₂
+  lr~rl : {A₁ B₁ : ℂ₁.Obj} (f₁ : || ℂ₁.Hom A₁ B₁ ||)
+          {A₂ B₂ : ℂ₂.Obj} (f₂ : || ℂ₂.Hom A₂ B₂ ||)
+             → lₒ.ₐ B₁ f₂ 𝔻.∘ rₒ.ₐ A₂ f₁ 𝔻.~ rₒ.ₐ B₂ f₁ 𝔻.∘ lₒ.ₐ A₁ f₂
+  lr~rl f₁ f₂ = lₐ.natˢ f₁ f₂
+
+  rₐ : {A B : ℂ₂.Obj} → || ℂ₂.Hom A B || → natural-transformation (rₒ A) (rₒ B)
+  rₐ {A} {B} f = record
+    { fnc = λ {X} → lₒ.ₐ X f
+    ; nat = λ f₁ → lr~rl f₁ f
+    }
+  module rₐ {A B : ℂ₂.Obj} (f : || ℂ₂.Hom A B ||) = natural-transformation (rₐ f)
+
+  ₒ : ℂ₁.Obj → ℂ₂.Obj → 𝔻.Obj
+  ₒ A B = lₒ.ₒ A B
+  ₐ : {A₁ B₁ : ℂ₁.Obj} {A₂ B₂ : ℂ₂.Obj}
+           → || ℂ₁.Hom A₁ B₁ || → || ℂ₂.Hom A₂ B₂ || → || 𝔻.Hom (ₒ A₁ A₂) (ₒ B₁ B₂) ||
+  ₐ {A₁} {B₁} {A₂} {B₂} f₁ f₂ = lₒ.ₐ B₁ f₂ 𝔻.∘ rₒ.ₐ A₂ f₁
+  -- NB:
+  -- ₐ (ℂ.idar X) f₂ = lₒ.ₐ X f₂ ℂ.∘ r.ₐ A (ℂ.idar X) ~ lₒ.ₐ X f₂ ℂ.∘ ℂ.idar (ₒ X A)
+  -- ₐ f (ℂ.idar X) = lₒ.ₐ B (ℂ.idar X) ℂ.∘ r.ₐ X f ~ ℂ.idar (ₒ B X) ℂ.∘ r.ₐ X f
+-- end uncurry-efunctor-into-functor-cat
+
+
+module uncurry-natt-into-functor-cat {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ₁ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                                     {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{ℂ₂ : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                                     {ℓₒ₃ ℓₐ₃ ℓ~₃ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₃ ℓₐ₃ ℓ~₃}
+                                     {F G : efunctorₗₑᵥ ℂ₁ [ ℂ₂ , 𝔻 ]ᶜᵃᵗ}
+                                     (φ : F ⇒ G)
+                                     where
+  private
+    module ℂ₁ = ecat ℂ₁
+    module ℂ₂ = ecat ℂ₂
+    module 𝔻 = ecat 𝔻
+    module F = uncurry-efunctor-into-functor-cat F
+    module G = uncurry-efunctor-into-functor-cat G
+
+  open natural-transformation φ public renaming (fnc to l; nat to lnat; natˢ to lnatˢ)
+  open module l (A : ℂ₁.Obj) = natural-transformation (l {A}) public
+                              renaming (nat to rnat; natˢ to rnatˢ)
+  nat : {A₁ B₁ : ℂ₁.Obj} (f₁ : || ℂ₁.Hom A₁ B₁ ||)
+        {A₂ B₂ : ℂ₂.Obj} (f₂ : || ℂ₂.Hom A₂ B₂ ||)
+             → fnc B₁ {B₂} 𝔻.∘ F.ₐ f₁ f₂ 𝔻.~ G.ₐ f₁ f₂ 𝔻.∘ fnc A₁ {A₂}
+  nat {A₁} {B₁} f₁ {A₂} {B₂} f₂ = ~proof
+    fnc B₁ 𝔻.∘ F.ₐ f₁ f₂                           ~[ ass ⊙ ∘e r (rnat B₁ f₂) ⊙ assˢ ] /
+    G.lₒ.ₐ B₁ f₂ 𝔻.∘ fnc B₁ {A₂} 𝔻.∘ F.rₒ.ₐ A₂ f₁    ~[ ∘e (lnat f₁ A₂) r ⊙ ass ]∎
+    G.ₐ f₁ f₂ 𝔻.∘ fnc A₁ {A₂} ∎
+    where open ecategory-aux-only 𝔻
+  natˢ : {A₁ B₁ : ℂ₁.Obj} (f₁ : || ℂ₁.Hom A₁ B₁ ||)
+         {A₂ B₂ : ℂ₂.Obj} (f₂ : || ℂ₂.Hom A₂ B₂ ||)
+             → G.ₐ f₁ f₂ 𝔻.∘ fnc A₁ {A₂} 𝔻.~ fnc B₁ {B₂} 𝔻.∘ F.ₐ f₁ f₂
+  natˢ f₁ f₂ = nat f₁ f₂ ˢ
+    where open ecategory-aux-only 𝔻 using (_ˢ)
+-- end uncurry-natt-into-functor-cat
+
+
+module uncurry-nat-iso-into-functor-cat {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ₁ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁}
+                                        {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level}{ℂ₂ : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                                        {ℓₒ₃ ℓₐ₃ ℓ~₃ : Level}{𝔻 : ecategoryₗₑᵥ ℓₒ₃ ℓₐ₃ ℓ~₃}
+                                        {F G : efunctorₗₑᵥ ℂ₁ [ ℂ₂ , 𝔻 ]ᶜᵃᵗ}
+                                        (φ : F ≅ₐ G)
+                                        where
+  private
+    module ℂ₁ = ecat ℂ₁
+    module ℂ₂ = ecat ℂ₂
+    module 𝔻 = ecat 𝔻
+    module F = uncurry-efunctor-into-functor-cat F
+    module G = uncurry-efunctor-into-functor-cat G
+
+  open natural-iso φ public hiding (fnc; fnc⁻¹; nat; nat⁻¹; natˢ; nat⁻¹ˢ)
+  open uncurry-natt-into-functor-cat natt public
+  module ⁻¹ = uncurry-natt-into-functor-cat natt⁻¹
+-- end uncurry-nat-iso-into-functor-cat

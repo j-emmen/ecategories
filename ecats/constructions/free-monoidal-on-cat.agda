@@ -15,6 +15,30 @@ open import ecats.constructions.free-ecat-on-graph
 --open import ecats.constructions.free-ecat-on-refl-graph
 
 
+-- when 𝕍 is free monoidal over ℂ via some ℂ → 𝕍
+
+module free-monoidal-on-cat-defs {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} (ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁)
+                                 {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level} {𝕍 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
+                                 (𝕍mon : is-monoidal 𝕍)
+                                 (J : efunctorₗₑᵥ ℂ 𝕍)
+                                 where
+  private
+    module ℂ = ecat ℂ
+    module 𝕍 where
+      open ecat 𝕍 public
+      open is-monoidal 𝕍mon public
+    module unvprop-aux {ℓ₁' ℓ₂' ℓ₃' : Level}(𝕏 : ecategoryₗₑᵥ ℓ₁' ℓ₂' ℓ₃') where
+      open ecat 𝕏 public
+      open iso-defs 𝕏 public
+      open iso-props 𝕏 public
+
+  record is-free-monoidal-on-cat-univ-prop {ℓₒ₃ ℓₐ₃ ℓ~₃ : Level}{𝕎 : ecategoryₗₑᵥ ℓₒ₃ ℓₐ₃ ℓ~₃}
+                                           (𝕎mon : is-monoidal 𝕎) (F : efunctorₗₑᵥ ℂ 𝕎)
+                                           : Set
+                                           where
+    private
+      module 𝕎 = ecat 𝕎
+
 
 module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
   private
@@ -82,7 +106,7 @@ module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑ�
   apnd ff g ⊗ₐ gg = apnd (ff ⊗ₐ gg) (⊗rₐg _ g)
 
 
-  -- relations for the freen monoidal structure
+  -- relations for the free monoidal structure
   data HomEqR : {M N : Obj} → HomObj M N → HomObj M N → Set ℂ.ℓₐₗₗ where
     -- congruence with respect to concatenation
     cmp-ext : {M N L : Obj} {p p' : HomObj M L}{q q' : HomObj L N}
@@ -102,14 +126,11 @@ module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑ�
                 → g ℂ.∘ f ℂ.~ h → HomEqR (cmp (iₐ g) (iₐ f)) (iₐ h)
 
     -- functoriality of ⊗
-    --⊗id : ∀ {M N} → HomEqR (id M ⊗ₐ id N) (id (M ⊗ₒ N))
+    ⊗ext : ∀ {M₁ N₁ M₂ N₂} {ff ff' : HomObj M₁ N₁} {gg gg' : HomObj M₂ N₂}
+                    → HomEqR ff ff' → HomEqR gg gg' → HomEqR (ff ⊗ₐ gg) (ff' ⊗ₐ gg')
     ⊗sqg : ∀  {M₁ N₁ M₂ N₂} (g₁ : HomGen M₁ N₁) (g₂ : HomGen M₂ N₂)
                   → HomEqR (apnd (indv (l⊗ₐg M₁ g₂)) (⊗rₐg N₂ g₁))
-                           (apnd (indv (⊗rₐg M₂ g₁)) (l⊗ₐg N₁ g₂))
-    ⊗cmpext : ∀ {M₁ N₁ M₂ N₂ L₁ L₂} {p₁ : HomObj M₁ N₁} {p₂ : HomObj M₂ N₂} {q₁ : HomObj N₁ L₁}
-                 {q₂ : HomObj N₂ L₂} {r₁ : HomObj M₁ L₁} {r₂ : HomObj M₂ L₂}
-                   → HomEqR (cmp q₁ p₁) r₁ → HomEqR (cmp q₂ p₂) r₂
-                     → HomEqR (cmp (q₁ ⊗ₐ q₂) (p₁ ⊗ₐ p₂)) (r₁ ⊗ₐ r₂)
+                            (apnd (indv (⊗rₐg M₂ g₁)) (l⊗ₐg N₁ g₂))
 
     -- coherence isomorphisms
     α₁ : ∀ M N L → HomEqR (apnd (indv (αg M N L)) (α⁻¹g M N L)) (id ((M ⊗ₒ N) ⊗ₒ L))
@@ -125,18 +146,19 @@ module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑ�
                 → HomEqR (cmp (α M' N' L') ((ff ⊗ₐ gg) ⊗ₐ hh))
                          (cmp (ff ⊗ₐ (gg ⊗ₐ hh)) (α M N L))
     Iλnat : ∀ {M M'} (ff : HomObj M M')
-                → HomEqR (cmp (Iλ M') (id I ⊗ₐ ff))
+                → HomEqR (cmp (Iλ M') (I l⊗ₐ ff))
                          (cmp ff (Iλ M))
     ρInat : ∀ {M M'} (ff : HomObj M M')
-                  → HomEqR (cmp (ρI M') (ff ⊗ₐ id I))
+                  → HomEqR (cmp (ρI M') (ff ⊗rₐ I))
                            (cmp ff (ρI M))
-    -- it may be better to phrase naturality using l⊗ and ⊗r,
-    -- although this would mean split αnat in three
-    -- and ⊗ₐ 's definition is not that bad
+
+    -- there may be some sense according to which it is better to phrase
+    -- extensionality of ⊗ₐ and αnat using l⊗ₐ and ⊗rₐ instead ⊗ₐ
+    -- although this would mean split αnat in three, and ⊗ₐ 's definition is not so bad
 
     -- the triangle
     IλαρI : ∀ {M N} → HomEqR (cmp (M l⊗ₐ (Iλ N)) (α M I N)) (ρI M ⊗rₐ N)
-    -- the penthagon
+    -- the pentagon
     αpent : ∀ {M N L O} → HomEqR (cmp (M l⊗ₐ α N L O)
                                          (cmp (α M (N ⊗ₒ L) O) (α M N L ⊗rₐ O)))
                                   (cmp (α M N (L ⊗ₒ O)) (α (M ⊗ₒ N) L O))
@@ -243,92 +265,206 @@ module tensor-functor-for-free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ
     module Fℂ = ecategory-aux (FMon ℂ)
   open free-monoidal-ecat-on ℂ
 
-  l⊗cmp : ∀ M {X Y Z} (ff : || Fℂ.Hom X Y ||) (gg : || Fℂ.Hom Y Z ||)
-                → (M l⊗ₐ gg) Fℂ.∘ (M l⊗ₐ ff) Fℂ.~ M l⊗ₐ (gg Fℂ.∘ ff)
-  l⊗cmp M ff emty = Fℂ.r
-  l⊗cmp M ff (apnd gg g) = apnd-ext (l⊗ₐg M g) (l⊗cmp M ff gg) 
+  ⊗r-is-⊗ : ∀ (M : Fℂ.Obj) {X Y} (ff : || Fℂ.Hom X Y ||) → ff ⊗rₐ M Fℂ.~ ff ⊗ₐ Fℂ.idar M
+  ⊗r-is-⊗ M emty = Fℂ.r
+  ⊗r-is-⊗ M (apnd ff g) = apnd-ext (⊗rₐg _ g) (⊗r-is-⊗ M ff)
+
+  ⊗r-is-⊗ˢ : ∀ (M : Fℂ.Obj) {X Y} (ff : || Fℂ.Hom X Y ||) → ff ⊗ₐ Fℂ.idar M Fℂ.~ ff ⊗rₐ M
+  ⊗r-is-⊗ˢ M ff = ⊗r-is-⊗ M ff Fℂ.ˢ
+
 {-
-apnd ((M l⊗ₐ gg) (M l⊗ₐ ff)) (l⊗ₐg M x)
-apnd (M l⊗ₐ path-cmp gg ff) (l⊗ₐg M x)
+  ⊗ext : ∀ {M₁ N₁ M₂ N₂} {ff ff' : || Fℂ.Hom M₁ N₁ ||} {gg gg' : || Fℂ.Hom M₂ N₂ ||}
+                  → ff Fℂ.~ ff' → gg Fℂ.~ gg' → (ff ⊗ₐ gg) Fℂ.~ (ff' ⊗ₐ gg')
+  ⊗ext {ff = ff} {ff'} {gg} {gg'} eq₁ eq₂ =
+    lidˢ --⊙ ∘e r (⊗id ˢ)
+         ⊙ (⊗cmpext {p₁ = ff} {gg} {Fℂ.idar _} {Fℂ.idar _} (lidgen eq₁) (lidgen eq₂))
+    where open ecategory-aux-only (FMon ℂ)
 -}
+
+  ⊗extˢ : ∀ {M₁ N₁ M₂ N₂} {ff ff' : || Fℂ.Hom M₁ N₁ ||} {gg gg' : || Fℂ.Hom M₂ N₂ ||}
+                  → ff Fℂ.~ ff' → gg Fℂ.~ gg' → ff' ⊗ₐ gg' Fℂ.~ ff ⊗ₐ gg
+  ⊗extˢ eq₁ eq₂ = ⊗ext eq₁ eq₂ Fℂ.ˢ
+
+
+  ⊗ₐ-as-rl : ∀ {M₁ N₁ M₂ N₂} (ff₁ : HomObj M₁ N₁) (ff₂ : HomObj M₂ N₂)
+            → ff₁ ⊗ₐ ff₂ Fℂ.~ (ff₁ ⊗rₐ N₂) Fℂ.∘ (M₁ l⊗ₐ ff₂)
+  ⊗ₐ-as-rl emty ff₂ = Fℂ.r
+  ⊗ₐ-as-rl (apnd ff₁ g₁) ff₂ = apnd-ext (⊗rₐg _ g₁) (⊗ₐ-as-rl ff₁ ff₂)
+
+  ⊗ₐ-as-rlˢ : ∀ {M₁ N₁ M₂ N₂} (ff₁ : HomObj M₁ N₁) (ff₂ : HomObj M₂ N₂)
+            → (ff₁ ⊗rₐ N₂) Fℂ.∘ (M₁ l⊗ₐ ff₂) Fℂ.~ ff₁ ⊗ₐ ff₂
+  ⊗ₐ-as-rlˢ ff₁ ff₂ = ⊗ₐ-as-rl ff₁ ff₂ Fℂ.ˢ
+
+
+  ⊗sqgl : ∀  {M₁ N₁ M₂ N₂} (g₁ : HomGen M₁ N₁) (ff₂ : HomObj M₂ N₂)
+                  → apnd (M₁ l⊗ₐ ff₂) (⊗rₐg N₂ g₁) Fℂ.~ (N₁ l⊗ₐ ff₂) Fℂ.∘ (indv g₁ ⊗rₐ M₂)
+  ⊗sqgl g₁ emty = Fℂ.rid
+  ⊗sqgl g₁ (apnd ff₂ g₂) = ~proof
+    (indv g₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ apnd ff₂ g₂)
+      ~[ ass {f = _ l⊗ₐ ff₂} {_ l⊗ₐ indv g₂} {indv g₁ ⊗rₐ _}
+         ⊙ ∘e r (⊗sqg g₁ g₂) ] /
+    ((_ l⊗ₐ indv g₂) Fℂ.∘ (indv g₁ ⊗rₐ _)) Fℂ.∘ (_ l⊗ₐ ff₂)
+      ~[ assˢ {f = _ l⊗ₐ ff₂} {indv g₁ ⊗rₐ _} {_ l⊗ₐ indv g₂}
+         ⊙ ∘e (⊗sqgl g₁ ff₂) (r {f = _ l⊗ₐ indv g₂}) ] /
+    (_ l⊗ₐ indv g₂) Fℂ.∘ (_ l⊗ₐ ff₂) Fℂ.∘ (indv g₁ ⊗rₐ _)
+      ~[ ass {f = indv g₁ ⊗rₐ _} {_ l⊗ₐ ff₂} {_ l⊗ₐ indv g₂} ]∎
+    (_ l⊗ₐ apnd ff₂ g₂) Fℂ.∘ (indv g₁ ⊗rₐ _) ∎
+    where open ecategory-aux-only (FMon ℂ)
+
+
+{-
+  ⊗ₐ-as-lr : ∀ {M₁ N₁ M₂ N₂} (ff₁ : HomObj M₁ N₁) (ff₂ : HomObj M₂ N₂)
+               → ff₁ ⊗ₐ ff₂ Fℂ.~ (N₁ l⊗ₐ ff₂) Fℂ.∘ (ff₁ ⊗rₐ M₂)
+  ⊗ₐ-as-lr emty ff₂ = Fℂ.ridˢ
+  ⊗ₐ-as-lr (apnd ff₁ g₁) ff₂ = ~proof
+    apnd ff₁ g₁ ⊗ₐ ff₂
+      ~[ ∘e (⊗ₐ-as-lr ff₁ ff₂) r
+         ⊙ ass {f = ff₁ ⊗rₐ _} {_ l⊗ₐ ff₂} {indv g₁ ⊗rₐ _} ] /
+    ((indv g₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ ff₂)) Fℂ.∘ (ff₁ ⊗rₐ _)
+      ~[ ∘e r (⊗sqgl g₁ ff₂)
+         ⊙ assˢ {f = ff₁ ⊗rₐ _} {indv g₁ ⊗rₐ _} {_ l⊗ₐ ff₂} ]∎
+    (_ l⊗ₐ ff₂) Fℂ.∘ (apnd ff₁ g₁ ⊗rₐ _) ∎
+    where open ecategory-aux-only (FMon ℂ)
+-}
+
 
   ⊗ₐsq : {M₁ N₁ M₂ N₂ : Fℂ.Obj} (ff₁ : || Fℂ.Hom M₁ N₁ ||) (ff₂ : || Fℂ.Hom M₂ N₂ ||)
              → (ff₁ ⊗rₐ N₂) Fℂ.∘ (M₁ l⊗ₐ ff₂) Fℂ.~ (N₁ l⊗ₐ ff₂) Fℂ.∘ (ff₁ ⊗rₐ M₂)
   ⊗ₐsq emty ff₂ = Fℂ.ridˢ
-  ⊗ₐsq (apnd emty g₁) emty = Fℂ.rid
-  ⊗ₐsq (apnd emty g₁) (apnd emty g₂) = ⊗sqg g₁ g₂
-  ⊗ₐsq (apnd emty g₁) (apnd (apnd ff₂ g₂) g₂') = {!!}
-  ⊗ₐsq (apnd (apnd ff₁ g₁) g₁') ff₂ = {!Fℂ.~proof
+  ⊗ₐsq (apnd ff₁ g₁) ff₂ = ~proof
     (apnd ff₁ g₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ ff₂)
-                                    ~[ assˢ {f = _ l⊗ₐ ff₂} {ff₁ ⊗rₐ _}  ] Fℂ./
-    --  ~[ ∘e (ass {f = _ l⊗ₐ ff₂} {_ l⊗ₐ indv g₂} ⊙ ∘e r (⊗ₐsq ff₁ (indv g₂)))
-      --      (r {f = indv g₁ ⊗rₐ _}) ] Fℂ./
-                         -- Fℂ.∘e (⊗ₐsq ff₁ (apnd ff₂ g₂)) (Fℂ.r {f = indv g₁ ⊗rₐ _})
-    (indv g₁ ⊗rₐ _) Fℂ.∘ (ff₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ ff₂)
-                         ~[ ∘e (⊗ₐsq ff₁ ff₂) r ] Fℂ./
+      ~[ assˢ {f = _ l⊗ₐ ff₂} {ff₁ ⊗rₐ _} {indv g₁ ⊗rₐ _}
+         ⊙ ∘e (⊗ₐsq ff₁ ff₂) (r {f = indv g₁ ⊗rₐ _}) ] /
     (indv g₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ ff₂) Fℂ.∘ (ff₁ ⊗rₐ _)
-                                    ~[ ass ⊙ ∘e r (⊗ₐsq (indv g₁) ff₂) ] Fℂ./
+      ~[ ass {f = ff₁ ⊗rₐ _} {_ l⊗ₐ ff₂} {indv g₁ ⊗rₐ _}
+         ⊙ ∘e r (⊗sqgl g₁ ff₂) ] /
     ((_ l⊗ₐ ff₂) Fℂ.∘ (indv g₁ ⊗rₐ _)) Fℂ.∘ (ff₁ ⊗rₐ _)
-                                      ~[ assˢ {f = ff₁ ⊗rₐ _} {indv g₁ ⊗rₐ _} {_ l⊗ₐ ff₂} ]∎
-    (_ l⊗ₐ ff₂) Fℂ.∘ (apnd ff₁ g₁ ⊗rₐ _) ∎!}
+      ~[ assˢ {f = ff₁ ⊗rₐ _} {indv g₁ ⊗rₐ _} {_ l⊗ₐ ff₂} ]∎
+    (_ l⊗ₐ ff₂) Fℂ.∘ (apnd ff₁ g₁ ⊗rₐ _) ∎
     where open ecategory-aux-only (FMon ℂ)
 
+  ⊗ₐsqˢ : {M₁ N₁ M₂ N₂ : Fℂ.Obj} (ff₁ : || Fℂ.Hom M₁ N₁ ||) (ff₂ : || Fℂ.Hom M₂ N₂ ||)
+             → (N₁ l⊗ₐ ff₂) Fℂ.∘ (ff₁ ⊗rₐ M₂) Fℂ.~ (ff₁ ⊗rₐ N₂) Fℂ.∘ (M₁ l⊗ₐ ff₂)
+  ⊗ₐsqˢ ff₁ ff₂ = ⊗ₐsq ff₁ ff₂ Fℂ.ˢ
 
-{-
-  ⊗ₐsq (apnd ff₁ g₁) emty = Fℂ.rid
-  ⊗ₐsq (apnd ff₁ g₁) (apnd ff₂ g₂) = Fℂ.~proof
-    (apnd ff₁ g₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ apnd ff₂ g₂)
-                                    ~[ assˢ {f = _ l⊗ₐ apnd ff₂ g₂} {ff₁ ⊗rₐ _}  ] Fℂ./
-    (indv g₁ ⊗rₐ _) Fℂ.∘ (ff₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ indv g₂) Fℂ.∘ (_ l⊗ₐ ff₂)
-      ~[ ∘e (ass {f = _ l⊗ₐ ff₂} {_ l⊗ₐ indv g₂} ⊙ ∘e r (⊗ₐsq ff₁ (indv g₂)))
-            (r {f = indv g₁ ⊗rₐ _}) ] Fℂ./
-                         -- Fℂ.∘e (⊗ₐsq ff₁ (apnd ff₂ g₂)) (Fℂ.r {f = indv g₁ ⊗rₐ _})
-    (indv g₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ indv g₂) Fℂ.∘ (ff₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ ff₂)
-                         ~[ ∘e (⊗ₐsq ff₁ ff₂) (⊗ₐsq (indv g₁) (indv g₂)) ] Fℂ./
-    (_ l⊗ₐ indv g₂) Fℂ.∘ (indv g₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ ff₂) Fℂ.∘ (ff₁ ⊗rₐ _)
-                                    ~[ ∘e (ass ⊙ ∘e r (⊗ₐsq (indv g₁) ff₂)) r ] Fℂ./
-                                    --Fℂ.∘e Fℂ.r (⊗ₐsq (indv g₁) (apnd ff₂ g₂))
-    (_ l⊗ₐ indv g₂) Fℂ.∘ ((_ l⊗ₐ ff₂) Fℂ.∘ (indv g₁ ⊗rₐ _)) Fℂ.∘ (ff₁ ⊗rₐ _)
-                                      ~[ ∘e assˢ r ⊙ ass {f = apnd ff₁ g₁ ⊗rₐ _} {_ l⊗ₐ ff₂} ]∎
-    (_ l⊗ₐ apnd ff₂ g₂) Fℂ.∘ (apnd ff₁ g₁ ⊗rₐ _) ∎
+
+  ⊗ₐ-as-lr : ∀ {M₁ N₁ M₂ N₂} (ff₁ : HomObj M₁ N₁) (ff₂ : HomObj M₂ N₂)
+               → ff₁ ⊗ₐ ff₂ Fℂ.~ (N₁ l⊗ₐ ff₂) Fℂ.∘ (ff₁ ⊗rₐ M₂)
+  ⊗ₐ-as-lr ff₁ ff₂ = ~proof
+    ff₁ ⊗ₐ ff₂                        ~[ ⊗ₐ-as-rl ff₁ ff₂ ] /
+    (ff₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ ff₂)      ~[ ⊗ₐsq ff₁ ff₂ ]∎
+    (_ l⊗ₐ ff₂) Fℂ.∘ (ff₁ ⊗rₐ _) ∎
     where open ecategory-aux-only (FMon ℂ)
--}
+
+  ⊗ₐ-as-lrˢ : ∀ {M₁ N₁ M₂ N₂} (ff₁ : HomObj M₁ N₁) (ff₂ : HomObj M₂ N₂)
+               → (N₁ l⊗ₐ ff₂) Fℂ.∘ (ff₁ ⊗rₐ M₂) Fℂ.~ ff₁ ⊗ₐ ff₂
+  ⊗ₐ-as-lrˢ ff₁ ff₂ = ⊗ₐ-as-lr ff₁ ff₂ Fℂ.ˢ
+  
+
+  l⊗cmp : ∀ M {X Y Z} (ff : || Fℂ.Hom X Y ||) (gg : || Fℂ.Hom Y Z ||)
+                → (M l⊗ₐ gg) Fℂ.∘ (M l⊗ₐ ff) Fℂ.~ M l⊗ₐ (gg Fℂ.∘ ff)
+  l⊗cmp M ff emty = Fℂ.r
+  l⊗cmp M ff (apnd gg g) = apnd-ext (l⊗ₐg M g) (l⊗cmp M ff gg) 
+
+  l⊗cmpˢ : ∀ M {X Y Z} (ff : || Fℂ.Hom X Y ||) (gg : || Fℂ.Hom Y Z ||)
+                → M l⊗ₐ (gg Fℂ.∘ ff) Fℂ.~ (M l⊗ₐ gg) Fℂ.∘ (M l⊗ₐ ff)
+  l⊗cmpˢ M ff gg = l⊗cmp M ff gg Fℂ.ˢ
+  
+  ⊗rcmp : ∀ M {X Y Z} (ff : || Fℂ.Hom X Y ||) (gg : || Fℂ.Hom Y Z ||)
+                → (gg ⊗rₐ M) Fℂ.∘ (ff ⊗rₐ M) Fℂ.~ (gg Fℂ.∘ ff) ⊗rₐ M
+  ⊗rcmp M ff emty = Fℂ.r
+  ⊗rcmp M ff (apnd gg g) = apnd-ext (⊗rₐg M g) (⊗rcmp M ff gg)
+  
+  ⊗rcmpˢ : ∀ M {X Y Z} (ff : || Fℂ.Hom X Y ||) (gg : || Fℂ.Hom Y Z ||)
+                → (gg Fℂ.∘ ff) ⊗rₐ M Fℂ.~ (gg ⊗rₐ M) Fℂ.∘ (ff ⊗rₐ M)
+  ⊗rcmpˢ M ff gg = ⊗rcmp M ff gg Fℂ.ˢ
 
 
   ⊗cmp : ∀ {M₁ N₁ L₁ M₂ N₂ L₂} (ff₁ : || Fℂ.Hom M₁ N₁ ||) (gg₁ : || Fℂ.Hom N₁ L₁ ||)
               (ff₂ : || Fℂ.Hom M₂ N₂ ||) (gg₂ : || Fℂ.Hom N₂ L₂ ||)
                 → (gg₁ ⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂) Fℂ.~ (gg₁ Fℂ.∘ ff₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂)
-  ⊗cmp emty emty ff₂ gg₂ = l⊗cmp _ ff₂ gg₂
-  ⊗cmp (apnd ff₁ g₁) emty ff₂ gg₂ = {!Fℂ.~proof
-    (_ l⊗ₐ gg₂) Fℂ.∘ apnd (ff₁ ⊗ₐ ff₂) (⊗rₐg _ g₁) ~[ ? ] Fℂ./
-    (_ l⊗ₐ gg₂) Fℂ.∘ (indv g₁ ⊗rₐ _) Fℂ.∘ (ff₁ ⊗ₐ ff₂) ~[ ? ]∎
-    apnd (ff₁ ⊗ₐ (gg₂ Fℂ.∘ ff₂)) (⊗rₐg _ g₁) ∎!}
-  ⊗cmp ff₁ (apnd gg₁ g₁') ff₂ gg₂ = Fℂ.~proof
-    apnd (gg₁ ⊗ₐ gg₂) (⊗rₐg _ g₁') Fℂ.∘ (ff₁ ⊗ₐ ff₂)
-                                        ~[ Fℂ.assˢ {f = ff₁ ⊗ₐ ff₂} {g = gg₁ ⊗ₐ gg₂} ] Fℂ./
-    (indv g₁' ⊗rₐ _) Fℂ.∘ (gg₁ ⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
-                                                    ~[ Fℂ.∘e (⊗cmp ff₁ gg₁ ff₂ gg₂) Fℂ.r ]∎
-    apnd ((gg₁ Fℂ.∘ ff₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂)) (⊗rₐg _ g₁') ∎
+  ⊗cmp ff₁ gg₁ ff₂ gg₂ = ~proof
+    (gg₁ ⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
+      ~[ ∘e (⊗ₐ-as-rl ff₁ ff₂) (⊗ₐ-as-rl gg₁ gg₂)
+         ⊙ assˢ {f = (ff₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ ff₂)} {_ l⊗ₐ gg₂} {gg₁ ⊗rₐ _} ] /
+    (gg₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ ff₂)
+      ~[ ∘e (ass {f = _ l⊗ₐ ff₂} {ff₁ ⊗rₐ _} {_ l⊗ₐ gg₂}
+            ⊙ ∘e r (⊗ₐsqˢ ff₁ gg₂)
+            ⊙ assˢ {f = _ l⊗ₐ ff₂} {_ l⊗ₐ gg₂} {ff₁ ⊗rₐ _}) (r {f = gg₁ ⊗rₐ _}) ] /
+    (gg₁ ⊗rₐ _) Fℂ.∘ (ff₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ gg₂) Fℂ.∘ (_ l⊗ₐ ff₂)
+      ~[ ass {f = (_ l⊗ₐ gg₂) Fℂ.∘ (_ l⊗ₐ ff₂)} {ff₁ ⊗rₐ _} {gg₁ ⊗rₐ _}
+         ⊙ ∘e (l⊗cmp _ ff₂ gg₂) (⊗rcmp _ ff₁ gg₁) ] /
+    ((gg₁ Fℂ.∘ ff₁) ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ (gg₂ Fℂ.∘ ff₂))
+      ~[ ⊗ₐ-as-rlˢ (gg₁ Fℂ.∘ ff₁) (gg₂ Fℂ.∘ ff₂) ]∎
+    (gg₁ Fℂ.∘ ff₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂) ∎
+    where open ecategory-aux-only (FMon ℂ)
 
-  --⊗cmpext {p₁ = ff₁} {ff₂} {gg₁} {gg₂} r r
+{-
+  ⊗cmp emty emty ff₂ gg₂ = l⊗cmp _ ff₂ gg₂
+  ⊗cmp (apnd ff₁ g₁) emty ff₂ gg₂ = ~proof
+    (_ l⊗ₐ gg₂) Fℂ.∘ apnd (ff₁ ⊗ₐ ff₂) (⊗rₐg _ g₁)
+                    ~[ ass {f = ff₁ ⊗ₐ ff₂} {indv g₁ ⊗rₐ _} {_ l⊗ₐ gg₂}
+                       ⊙ ∘e r (⊗sqgl g₁ gg₂ ˢ)
+                       ⊙ assˢ {f = ff₁ ⊗ₐ ff₂} {_ l⊗ₐ gg₂} {indv g₁ ⊗rₐ _} ] /
+    (indv g₁ ⊗rₐ _) Fℂ.∘ (emty ⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
+                    ~[ ∘e (⊗cmp ff₁ emty ff₂ gg₂) r ]∎
+    apnd (ff₁ ⊗ₐ (gg₂ Fℂ.∘ ff₂)) (⊗rₐg _ g₁) ∎
+    where open ecategory-aux-only (FMon ℂ)
+  ⊗cmp emty (apnd gg₁ g₁') ff₂ gg₂ = ~proof
+    (apnd gg₁ g₁' ⊗ₐ gg₂) Fℂ.∘ (_ l⊗ₐ ff₂)
+          ~[ assˢ {f = emty ⊗ₐ ff₂} {gg₁ ⊗ₐ gg₂} {indv g₁' ⊗rₐ _} ] /
+    (indv g₁' ⊗rₐ _) Fℂ.∘ (gg₁ ⊗ₐ gg₂) Fℂ.∘ (_ l⊗ₐ ff₂)
+          ~[ ∘e (⊗cmp emty gg₁ ff₂ gg₂) r ] /
+    (indv g₁' ⊗rₐ _) Fℂ.∘ ((gg₁ Fℂ.∘ Fℂ.idar _) ⊗ₐ (gg₂ Fℂ.∘ ff₂))
+          ~[ ⊗ext (ass {f = emty} {gg₁} {indv g₁'}) r ]∎
+    (apnd gg₁ g₁' Fℂ.∘ Fℂ.idar _) ⊗ₐ (gg₂ Fℂ.∘ ff₂) ∎
+    where open ecategory-aux-only (FMon ℂ)
+  ⊗cmp (apnd ff₁ g₁) (apnd gg₁ g₁') ff₂ gg₂ =  ~proof
+    (apnd gg₁ g₁' ⊗ₐ gg₂) Fℂ.∘ (apnd ff₁ g₁ ⊗ₐ ff₂)
+      ~[ ∘e (~proof
+      (gg₁ ⊗ₐ gg₂) Fℂ.∘ (apnd ff₁ g₁ ⊗ₐ ff₂)
+           ~[ ∘e r (⊗ₐ-as-rl gg₁ gg₂)
+              ⊙ assˢ {f = apnd ff₁ g₁ ⊗ₐ ff₂} {_ l⊗ₐ gg₂} {gg₁ ⊗rₐ _} ] /
+      (gg₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ gg₂) Fℂ.∘ (indv g₁ ⊗rₐ _) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
+               ~[ ∘e (ass {f = ff₁ ⊗ₐ ff₂} {indv g₁ ⊗rₐ _} {_ l⊗ₐ gg₂}
+                     ⊙ ∘e r (⊗ₐsqˢ (indv g₁) gg₂)
+                     ⊙ assˢ {f = ff₁ ⊗ₐ ff₂} {_ l⊗ₐ gg₂} {indv g₁ ⊗rₐ _}) r ] /
+      (gg₁ ⊗rₐ _) Fℂ.∘ (indv g₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
+           ~[ ass {f = (_ l⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)} {indv g₁ ⊗rₐ _} {gg₁ ⊗rₐ _}
+              ⊙ ∘e (⊗cmp ff₁ emty ff₂ gg₂) (⊗rcmp _ (indv g₁) gg₁) ] /
+      ((gg₁ Fℂ.∘ indv g₁) ⊗rₐ _) Fℂ.∘ (ff₁ ⊗ₐ (gg₂ Fℂ.∘ ff₂))
+           ~[ ∘e r (⊗r-is-⊗ _ (gg₁ Fℂ.∘ indv g₁))
+              ⊙ ⊗cmp ff₁ (gg₁ Fℂ.∘ indv g₁) (gg₂ Fℂ.∘ ff₂) emty ]∎
+      ((gg₁ Fℂ.∘ indv g₁) Fℂ.∘ ff₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂) ∎) r ] /
+    (indv g₁' Fℂ.∘ (gg₁ Fℂ.∘ indv g₁)  Fℂ.∘ ff₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂)
+      ~[ ⊗ext (∘e (assˢ {f = ff₁} {indv g₁} {gg₁}) (r {f = indv g₁'})
+                ⊙ ass {f = apnd ff₁ g₁} {gg₁} {indv g₁'})
+               r ]∎
+    (apnd gg₁ g₁' Fℂ.∘ apnd ff₁ g₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂) ∎
+-}
 
   ⊗cmpˢ : ∀ {M₁ N₁ L₁ M₂ N₂ L₂} (ff₁ : || Fℂ.Hom M₁ N₁ ||) (gg₁ : || Fℂ.Hom N₁ L₁ ||)
               (ff₂ : || Fℂ.Hom M₂ N₂ ||) (gg₂ : || Fℂ.Hom N₂ L₂ ||)
                 → (gg₁ Fℂ.∘ ff₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂) Fℂ.~ (gg₁ ⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
-  ⊗cmpˢ ff₁ gg₁ ff₂ gg₂ = ⊗cmp ff₁ gg₁ ff₂ gg₂ ˢ
-    where open ecategory-aux-only (FMon ℂ) using (_ˢ)
+  ⊗cmpˢ ff₁ gg₁ ff₂ gg₂ =
+    ⊗cmp ff₁ gg₁ ff₂ gg₂ Fℂ.ˢ
 
-  ⊗ext : ∀ {M₁ N₁ M₂ N₂} {p p' : || Fℂ.Hom M₁ N₁ ||} {q q' : || Fℂ.Hom M₂ N₂ ||}
-                  → p Fℂ.~ p' → q Fℂ.~ q' → (p ⊗ₐ q) Fℂ.~ (p' ⊗ₐ q')
-  ⊗ext {p = p} {p'} {q} {q'} eq₁ eq₂ =
-    lidˢ --⊙ ∘e r (⊗id ˢ)
-         ⊙ (⊗cmpext {p₁ = p} {q} {Fℂ.idar _} {Fℂ.idar _} (lidgen eq₁) (lidgen eq₂))
-    where open ecategory-aux-only (FMon ℂ)
+  ⊗cmpext : ∀ {M₁ N₁ M₂ N₂ L₁ L₂} {ff₁ : || Fℂ.Hom M₁ N₁ ||} {ff₂ : || Fℂ.Hom M₂ N₂ ||}
+               {gg₁ : || Fℂ.Hom N₁ L₁ ||} {gg₂ : || Fℂ.Hom N₂ L₂ ||}
+               {hh₁ : || Fℂ.Hom M₁ L₁ ||} {hh₂ : || Fℂ.Hom M₂ L₂ ||}
+                   → gg₁ Fℂ.∘ ff₁ Fℂ.~ hh₁ → gg₂ Fℂ.∘ ff₂ Fℂ.~ hh₂
+                     → (gg₁ ⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂) Fℂ.~ hh₁ ⊗ₐ hh₂
+  ⊗cmpext {ff₁ = ff₁} {ff₂} {gg₁} {gg₂} eq₁ eq₂ =
+    ⊗cmp ff₁ gg₁ ff₂ gg₂ Fℂ.⊙ ⊗ext eq₁ eq₂ 
 
-  ⊗extˢ : ∀ {M₁ N₁ M₂ N₂} {p p' : || Fℂ.Hom M₁ N₁ ||} {q q' : || Fℂ.Hom M₂ N₂ ||}
-                  → p Fℂ.~ p' → q Fℂ.~ q' → p' ⊗ₐ q' Fℂ.~ p ⊗ₐ q
-  ⊗extˢ eq₁ eq₂ = ⊗ext eq₁ eq₂ ˢ
-    where open ecategory-aux-only (FMon ℂ) using (_ˢ)
+  ⊗cmpextˢ : ∀ {M₁ N₁ M₂ N₂ L₁ L₂} {ff₁ : || Fℂ.Hom M₁ N₁ ||} {ff₂ : || Fℂ.Hom M₂ N₂ ||}
+               {gg₁ : || Fℂ.Hom N₁ L₁ ||} {gg₂ : || Fℂ.Hom N₂ L₂ ||}
+               {hh₁ : || Fℂ.Hom M₁ L₁ ||} {hh₂ : || Fℂ.Hom M₂ L₂ ||}
+                   → gg₁ Fℂ.∘ ff₁ Fℂ.~ hh₁ → gg₂ Fℂ.∘ ff₂ Fℂ.~ hh₂
+                     → hh₁ ⊗ₐ hh₂ Fℂ.~ (gg₁ ⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
+  ⊗cmpextˢ {ff₁ = ff₁} {ff₂} {gg₁} {gg₂} eq₁ eq₂ =
+    ⊗ext eq₁ eq₂ Fℂ.ˢ Fℂ.⊙ ⊗cmp ff₁ gg₁ ff₂ gg₂ Fℂ.ˢ
+
 
   ⊗∘∘ : ∀ {M₁ N₁ N₁' L₁ M₂ N₂ N₂' L₂} {ff₁ : || Fℂ.Hom M₁ N₁ ||} {gg₁ : || Fℂ.Hom N₁ L₁ ||}
            {ff₂ : || Fℂ.Hom M₂ N₂ ||} {gg₂ : || Fℂ.Hom N₂ L₂ ||}
@@ -337,8 +473,8 @@ apnd (M l⊗ₐ path-cmp gg ff) (l⊗ₐg M x)
                 → gg₁ Fℂ.∘ ff₁ Fℂ.~ hh₁ Fℂ.∘ kk₁ → gg₂ Fℂ.∘ ff₂ Fℂ.~ hh₂ Fℂ.∘ kk₂
                   → (gg₁ ⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂) Fℂ.~ (hh₁ ⊗ₐ hh₂) Fℂ.∘ (kk₁ ⊗ₐ kk₂)
   ⊗∘∘  {ff₁ = ff₁} {gg₁} {ff₂} {gg₂} {kk₁ = kk₁} {hh₁} {kk₂} {hh₂} eq₁ eq₂ =
-    ⊗cmpext {p₁ = ff₁} {ff₂} {gg₁} {gg₂} eq₁ eq₂ ⊙ ⊗cmpˢ kk₁ hh₁ _ _
-    where open ecategory-aux-only (FMon ℂ) using (_⊙_)
+    ⊗cmpext {ff₁ = ff₁} {ff₂} {gg₁} {gg₂} eq₁ eq₂ Fℂ.⊙ ⊗cmpˢ kk₁ hh₁ _ _
+
 
   module functor-data where
     l⊗ₒ : Fℂ.Obj → efunctor (FMon ℂ) (FMon ℂ)
@@ -379,9 +515,9 @@ free-monoidal-ecat-on-ecat-tensor ℂ = record
         }
   }
   where
-    open free-monoidal-ecat-on ℂ using (⊗cmpext)
+    open free-monoidal-ecat-on ℂ using (⊗ext)
     module Fℂ = ecat (FMon ℂ)
-    open tensor-functor-for-free-monoidal-ecat-on ℂ using (⊗ext; ⊗cmp)
+    open tensor-functor-for-free-monoidal-ecat-on ℂ using (⊗cmp)
     open tensor-functor-for-free-monoidal-ecat-on.functor-data ℂ
     open ecategory-aux-only (FMon ℂ) using (r; lid)
 F⊗ = free-monoidal-ecat-on-ecat-tensor
@@ -401,7 +537,7 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
                                   renaming (⊗ass-lfst to F⊗ass-l; ⊗ass-llst to F⊗ass-r)
   open tensor-functor-for-free-monoidal-ecat-on ℂ
 
-  lun-nat : l⊗ I ⇒ IdF
+  lun-nat : l⊗.ₒ I ⇒ IdF
   lun-nat = record
     { fnc = λ {M} → Iλ M
     ; nat = Iλnat
@@ -414,11 +550,12 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
     ; idcod = Iλ₂ M
     }
 
-  run-nat : ⊗r I ⇒ IdF
+  run-nat : ⊗rₒ I ⇒ IdF
   run-nat = record
     { fnc = λ {M} → ρI M
-    ; nat = ρInat
+    ; nat = λ f → ∘e (⊗r-is-⊗ˢ I f) r ⊙ ρInat f
     }
+    where open ecategory-aux-only (FMon ℂ) using (r; ∘e ; _⊙_)
   module run-nat = natural-transformation run-nat
 
   run-iso : {M : Fℂ.Obj} → Fℂ.is-iso-pair (run-nat.fnc {M}) (ρI⁻¹ M)
