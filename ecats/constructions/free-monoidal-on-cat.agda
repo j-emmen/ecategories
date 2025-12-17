@@ -13,7 +13,6 @@ open import ecats.constructions.functor-ecat
 open import ecats.basic-defs.monoidal
 open import ecats.functors.defs.monoidal
 open import ecats.constructions.free-ecat-on-graph
---open import ecats.constructions.free-ecat-on-refl-graph
 
 
 -- when 𝕍 is free monoidal over ℂ via some ℂ → 𝕍
@@ -135,6 +134,7 @@ module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑ�
 
   -- relations for the free monoidal structure
   data HomEqR : {M N : Obj} → HomObj M N → HomObj M N → Set ℂ.ℓₐₗₗ where
+
     -- congruence with respect to concatenation
     cmp-ext : {M N L : Obj} {p p' : HomObj M L}{q q' : HomObj L N}
                   → HomEqR p p' → HomEqR q q' → HomEqR (cmp q p) (cmp q' p')
@@ -156,16 +156,16 @@ module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑ�
     ⊗ext : ∀ {M₁ N₁ M₂ N₂} {ff ff' : HomObj M₁ N₁} {gg gg' : HomObj M₂ N₂}
                     → HomEqR ff ff' → HomEqR gg gg' → HomEqR (ff ⊗ₐ gg) (ff' ⊗ₐ gg')
     ⊗sqg : ∀  {M₁ N₁ M₂ N₂} (g₁ : HomGen M₁ N₁) (g₂ : HomGen M₂ N₂)
-                  → HomEqR (apnd (indv (l⊗ₐg M₁ g₂)) (⊗rₐg N₂ g₁))
-                            (apnd (indv (⊗rₐg M₂ g₁)) (l⊗ₐg N₁ g₂))
+                  → HomEqR (apnd (M₁ l⊗ₐ indv  g₂) (⊗rₐg N₂ g₁))
+                            (apnd (indv g₁ ⊗rₐ M₂) (l⊗ₐg N₁ g₂))
 
     -- coherence isomorphisms
-    α₁ : ∀ M N L → HomEqR (apnd (indv (αg M N L)) (α⁻¹g M N L)) (id ((M ⊗ₒ N) ⊗ₒ L))
-    α₂ : ∀ M N L → HomEqR (apnd (indv (α⁻¹g M N L)) (αg M N L)) (id (M ⊗ₒ (N ⊗ₒ L)))
-    Iλ₁ : ∀ M → HomEqR (apnd (indv (Iλg M)) (Iλ⁻¹g M)) (id (I ⊗ₒ M))
-    Iλ₂ : ∀ M → HomEqR (apnd (indv (Iλ⁻¹g M)) (Iλg M)) (id M)
-    ρI₁ : ∀ M → HomEqR (apnd (indv (ρIg M)) (ρI⁻¹g M)) (id (M ⊗ₒ I))
-    ρI₂ : ∀ M → HomEqR (apnd (indv (ρI⁻¹g M)) (ρIg M)) (id M)
+    α₁ : ∀ M N L → HomEqR (apnd (α M N L) (α⁻¹g M N L)) (id ((M ⊗ₒ N) ⊗ₒ L))
+    α₂ : ∀ M N L → HomEqR (apnd (α⁻¹ M N L) (αg M N L)) (id (M ⊗ₒ (N ⊗ₒ L)))
+    Iλ₁ : ∀ M → HomEqR (apnd (Iλ M) (Iλ⁻¹g M)) (id (I ⊗ₒ M))
+    Iλ₂ : ∀ M → HomEqR (apnd (Iλ⁻¹ M) (Iλg M)) (id M)
+    ρI₁ : ∀ M → HomEqR (apnd (ρI M) (ρI⁻¹g M)) (id (M ⊗ₒ I))
+    ρI₂ : ∀ M → HomEqR (apnd (ρI⁻¹ M) (ρIg M)) (id M)
 
     -- their naturality
     αnat : ∀ {M N L M' N' L'}
@@ -299,14 +299,6 @@ module tensor-functor-for-free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ
   ⊗r-is-⊗ˢ : ∀ (M : Fℂ.Obj) {X Y} (ff : || Fℂ.Hom X Y ||) → ff ⊗ₐ Fℂ.idar M Fℂ.~ ff ⊗rₐ M
   ⊗r-is-⊗ˢ M ff = ⊗r-is-⊗ M ff Fℂ.ˢ
 
-{-
-  ⊗ext : ∀ {M₁ N₁ M₂ N₂} {ff ff' : || Fℂ.Hom M₁ N₁ ||} {gg gg' : || Fℂ.Hom M₂ N₂ ||}
-                  → ff Fℂ.~ ff' → gg Fℂ.~ gg' → (ff ⊗ₐ gg) Fℂ.~ (ff' ⊗ₐ gg')
-  ⊗ext {ff = ff} {ff'} {gg} {gg'} eq₁ eq₂ =
-    lidˢ --⊙ ∘e r (⊗id ˢ)
-         ⊙ (⊗cmpext {p₁ = ff} {gg} {Fℂ.idar _} {Fℂ.idar _} (lidgen eq₁) (lidgen eq₂))
-    where open ecategory-aux-only (FMon ℂ)
--}
 
   ⊗extˢ : ∀ {M₁ N₁ M₂ N₂} {ff ff' : || Fℂ.Hom M₁ N₁ ||} {gg gg' : || Fℂ.Hom M₂ N₂ ||}
                   → ff Fℂ.~ ff' → gg Fℂ.~ gg' → ff' ⊗ₐ gg' Fℂ.~ ff ⊗ₐ gg
@@ -487,7 +479,7 @@ module tensor-functor-for-free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ
 
 
 
-F⊗ free-monoidal-ecat-on-ecat-tensor : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)
+free⊗ free-monoidal-ecat-on-ecat-tensor : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)
                                               → efunctorₗₑᵥ (FMon ℂ) [ FMon ℂ , FMon ℂ ]ᶜᵃᵗ
 free-monoidal-ecat-on-ecat-tensor ℂ = record
   { FObj = l⊗ₒ
@@ -504,7 +496,7 @@ free-monoidal-ecat-on-ecat-tensor ℂ = record
     open tensor-functor-for-free-monoidal-ecat-on ℂ using (⊗cmp)
     open tensor-functor-for-free-monoidal-ecat-on.functor-data ℂ
     open ecategory-aux-only (FMon ℂ) using (r; lid)
-F⊗ = free-monoidal-ecat-on-ecat-tensor
+free⊗ = free-monoidal-ecat-on-ecat-tensor
 
 
 
@@ -517,8 +509,8 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
       open iso-d&p (FMon ℂ) public
   open monoidal-defs (FMon ℂ)
   open free-monoidal-ecat-on ℂ
-  open tensor-efunctor-not (F⊗ ℂ) hiding (_⊗ₒ_; _⊗ₐ_)
-                                  renaming (⊗ass-lfst to F⊗ass-l; ⊗ass-llst to F⊗ass-r)
+  open tensor-efunctor-not (free⊗ ℂ) hiding (_⊗ₒ_; _⊗ₐ_)
+                                  renaming (⊗ass-lfst to free⊗ass-l; ⊗ass-llst to free⊗ass-r)
   open tensor-functor-for-free-monoidal-ecat-on ℂ
 
   lun-nat : l⊗.ₒ I ⇒ IdF
@@ -550,8 +542,8 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
 
 
   private
-    module F⊗ass-l = efctr F⊗ass-l
-    module F⊗ass-r = efctr F⊗ass-r
+    module free⊗ass-l = efctr free⊗ass-l
+    module free⊗ass-r = efctr free⊗ass-r
 
   ass-iso : (M N L : Fℂ.Obj) → Fℂ.is-iso-pair (α M N L) (α⁻¹ M N L)
   ass-iso M N L = record
@@ -560,7 +552,7 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
     }
   module ass-iso (M N L : Fℂ.Obj) = Fℂ.is-iso-pair (ass-iso M N L)
 
-  ass-fst-nat : (M : Fℂ.Obj) → F⊗ass-l.ₒ M ⇒ F⊗ass-r.ₒ M
+  ass-fst-nat : (M : Fℂ.Obj) → free⊗ass-l.ₒ M ⇒ free⊗ass-r.ₒ M
   ass-fst-nat M = record
     { fnc = λ {N} → record { fnc = λ {L} → α M N L
                             ; nat = λ f → αnat (Fℂ.idar M) (Fℂ.idar N) f }
@@ -572,7 +564,7 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
     open natural-transformation (ass-fst-nat M) public
     module snd (N : Fℂ.Obj) = natural-transformation (fnc {N})
 
-  ass-fst-nat⁻¹ : (M : Fℂ.Obj) → F⊗ass-r.ₒ M ⇒ F⊗ass-l.ₒ M
+  ass-fst-nat⁻¹ : (M : Fℂ.Obj) → free⊗ass-r.ₒ M ⇒ free⊗ass-l.ₒ M
   ass-fst-nat⁻¹ M = record
     { fnc = λ {N} → record { fnc = λ {L} → α⁻¹ M N L
                             ; nat = λ f → Fℂ.iso-sq (ass-iso M N _) (ass-iso M N _)
@@ -583,7 +575,7 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
     where
       open ecategory-aux-only (FMon ℂ)
 
-  ass-nat : F⊗ass-l ⇒ F⊗ass-r
+  ass-nat : free⊗ass-l ⇒ free⊗ass-r
   ass-nat = record
     { fnc = λ {M} → ass-fst-nat M
     ; nat = λ f N L → αnat f (Fℂ.idar N) (Fℂ.idar L)
@@ -598,8 +590,8 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
     open fncn₂ renaming (nat to nat₃; natˢ to nat₃ˢ) public
     
 
-  F⊗-is-tensor : is-tensor-with-unit I (F⊗ ℂ)
-  F⊗-is-tensor = record
+  free⊗-is-tensor : is-tensor-with-unit I (free⊗ ℂ)
+  free⊗-is-tensor = record
     { lun = record
           { natt = lun-nat
           ; natt⁻¹ = record { fnc = λ {M} → Iλ⁻¹ M
@@ -630,12 +622,12 @@ free-monoidal-ecat-on-ecat-is-monoidal FMon-mon : {ℓₒ ℓₐ ℓ~ : Level}(�
                                              → is-monoidal-cat (FMon ℂ)
 free-monoidal-ecat-on-ecat-is-monoidal ℂ = record
   { I = I
-  ; tenf = F⊗ ℂ
-  ; pf = F⊗-is-tensor
+  ; tenf = free⊗ ℂ
+  ; pf = free⊗-is-tensor
   }
   where
       open free-monoidal-ecat-on ℂ using (I)
-      open free-monoidal-ecat-on-ecat-is-monoidal ℂ using (F⊗-is-tensor)
+      open free-monoidal-ecat-on-ecat-is-monoidal ℂ using (free⊗-is-tensor)
 FMon-mon = free-monoidal-ecat-on-ecat-is-monoidal
 
 
@@ -776,8 +768,12 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
 
   fctr-ext : {M N : Fℂ.Obj} {ff ff' : || Fℂ.Hom M N ||}
                 → ff Fℂ.~ ff' → fctr-ar ff 𝕎.~ fctr-ar ff'
-  fctr-ext {M} {N} (cmp-ext {p = ff} {ff'} {gg} {gg'} eq₁ eq₂) =
-     fctr-cmp ff gg ˢ ⊙ ∘e (fctr-ext eq₁) (fctr-ext eq₂) ⊙ fctr-cmp ff' gg'
+
+  fctr-ext {M} {N} (cmp-ext {p = ff} {ff'} {gg} {gg'} eq₁ eq₂) = ~proof
+    fctr-ar (cmp gg ff)             ~[ fctr-cmp ff gg ˢ ] /
+    fctr-ar gg 𝕎.∘ fctr-ar ff       ~[ ∘e (fctr-ext eq₁) (fctr-ext eq₂) ] /
+    fctr-ar gg' 𝕎.∘ fctr-ar ff'     ~[ fctr-cmp ff' gg' ]∎
+    fctr-ar (cmp gg' ff') ∎
      where open ecategory-aux-only 𝕎
   fctr-ext emty-rfl =
     𝕎.r
@@ -799,6 +795,7 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
     where open ecategory-aux-only 𝕎
   fctr-ext {M} {N} {ff} {ff'} (⊗sqg g₁ g₂) =
     𝕎.⊗ₐsq (fctr-ar-gen g₁) (fctr-ar-gen g₂)
+
   fctr-ext (α₁ M N L) =
     𝕎.⊗ass.iddom (fctr-ob N) (fctr-ob L)
   fctr-ext (α₂ M N L) =
@@ -871,8 +868,8 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
   mon-⊗rnat'ˢ {M} ff = mon-⊗rnat' {M} ff ˢ
     where open ecategory-aux-only 𝕎 using (_ˢ)
 
-  F⊗iso : natural-iso fctr.F⊗F fctr.F⊗
-  F⊗iso = record
+  F⊗F≅F⊗ : natural-iso fctr.F⊗F fctr.F⊗
+  F⊗F≅F⊗ = record
     { natt = record
            { fnc = λ {M} → record
                  { fnc = λ {N} → mon-⊗ar {M} {N}
@@ -1047,6 +1044,10 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
                    → ar⁻¹ N 𝕎.∘ fctr.ₐ ff 𝕎.~ G.ₐ ff 𝕎.∘ ar⁻¹ M
     nat⁻¹ ff = 𝕎.iso-sq (isop _) (isop _) (natˢ ff)
 
+    nat⁻¹ˢ : {M N : Fℂ.Obj} (ff : || Fℂ.Hom M N ||)
+                   → G.ₐ ff 𝕎.∘ ar⁻¹ M 𝕎.~ ar⁻¹ N 𝕎.∘ fctr.ₐ ff
+    nat⁻¹ˢ ff = 𝕎.iso-sqˢ (isop _) (isop _) (nat ff)
+
 
     pf : G ≅ₐ fctr
     pf = record
@@ -1076,7 +1077,7 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
                   }
     ; mon =  record
           { Iiso = 𝕎.≅ₒrefl _
-          ; ⊗iso = F⊗iso
+          ; ⊗iso = F⊗F≅F⊗
           ; pf = record
                { run-eq = λ {X} → 𝕎.ridgg 𝕎.r (𝕎.lidgen (𝕎.l⊗ₒ.id _))
                ; lun-eq = λ {X} → 𝕎.ridgg 𝕎.r (𝕎.lidgen (𝕎.⊗rₒ.id _))
@@ -1099,5 +1100,3 @@ free-monoidal-ecat-on-ecat-is-free ℂ ℓₒ' ℓₐ' ℓ~' = record
   { unvp = unvprop
   }
   where open free-monoidal-ecat-on-ecat-is-free ℂ
-       
-       
