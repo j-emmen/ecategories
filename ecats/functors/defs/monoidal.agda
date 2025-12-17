@@ -69,23 +69,25 @@ module monoidal-functor-defs {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} {𝕍 : ecate
                  → 𝕎.⊗run.fnc {F.ₒ X} 𝕎.∘ 𝕎.l⊗ₒ.ₐ (F.ₒ X) I≅.ar⁻¹ 𝕎.∘ ⊗≅.fnc⁻¹ X {𝕍.I}
                        𝕎.~ F.ₐ (𝕍.⊗run.fnc {X})
       run-eq⁻¹ {X} =
-        𝕎.iso-trdom (𝕎.isopair-cmp (𝕎.l⊗ₒ.ᵢₛₒ (F.ₒ X) I≅.isop) ⊗≅.isisopair) (run-eq {X})
+        𝕎.iso-trdom (𝕎.isopair-cmp (𝕎.l⊗ₒ.ᵢₛₒ (F.ₒ X) I≅.isop) ⊗≅.isisopair) (run-eq {X} ˢ)
+        where open ecategory-aux-only 𝕎 using (_ˢ)
       run-eq⁻¹ˢ : {X : 𝕍.Obj}
                  → F.ₐ (𝕍.⊗run.fnc {X}) 𝕎.~
                    𝕎.⊗run.fnc {F.ₒ X} 𝕎.∘ 𝕎.l⊗ₒ.ₐ (F.ₒ X) I≅.ar⁻¹ 𝕎.∘ ⊗≅.fnc⁻¹ X {𝕍.I}
-      run-eq⁻¹ˢ {X} = run-eq⁻¹ {X} ˢ
-        where open ecategory-aux-only 𝕎 using (_ˢ)
+      run-eq⁻¹ˢ {X} =
+        𝕎.iso-trdomˢ (𝕎.isopair-cmp (𝕎.l⊗ₒ.ᵢₛₒ (F.ₒ X) I≅.isop) ⊗≅.isisopair) (run-eq {X})
 
       lun-eq⁻¹ : {X : 𝕍.Obj}
                  → 𝕎.⊗lun.fnc {F.ₒ X} 𝕎.∘ 𝕎.⊗rₒ.ₐ (F.ₒ X) I≅.ar⁻¹ 𝕎.∘ ⊗≅.fnc⁻¹ 𝕍.I {X}
                       𝕎.~ F.ₐ (𝕍.⊗lun.fnc {X})
       lun-eq⁻¹ {X} =
-        𝕎.iso-trdom (𝕎.isopair-cmp (𝕎.⊗rₒ.ᵢₛₒ (F.ₒ X) I≅.isop) ⊗≅.isisopair) (lun-eq {X})
+        𝕎.iso-trdom (𝕎.isopair-cmp (𝕎.⊗rₒ.ᵢₛₒ (F.ₒ X) I≅.isop) ⊗≅.isisopair) (lun-eq {X} ˢ)
+        where open ecategory-aux-only 𝕎 using (_ˢ)
       lun-eq⁻¹ˢ : {X : 𝕍.Obj}
                  → F.ₐ (𝕍.⊗lun.fnc {X}) 𝕎.~
                    𝕎.⊗lun.fnc {F.ₒ X} 𝕎.∘ 𝕎.⊗rₒ.ₐ (F.ₒ X) I≅.ar⁻¹ 𝕎.∘ ⊗≅.fnc⁻¹ 𝕍.I {X}
-      lun-eq⁻¹ˢ {X} = lun-eq⁻¹ {X} ˢ
-        where open ecategory-aux-only 𝕎 using (_ˢ)
+      lun-eq⁻¹ˢ {X} =
+        𝕎.iso-trdomˢ (𝕎.isopair-cmp (𝕎.⊗rₒ.ᵢₛₒ (F.ₒ X) I≅.isop) ⊗≅.isisopair) (lun-eq {X})
   
       ass-eq⁻¹ : {X Y Z : 𝕍.Obj}
                     → (𝕎.l⊗ₒ.ₐ (F.ₒ X) (⊗≅.fnc⁻¹ Y {Z}) 𝕎.∘ ⊗≅.fnc⁻¹ X {Y 𝕍.⊗ₒ Z})
@@ -94,15 +96,17 @@ module monoidal-functor-defs {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} {𝕍 : ecate
                              𝕎.∘ 𝕎.⊗rₒ.ₐ (F.ₒ Z) (⊗≅.fnc⁻¹ X {Y}) 𝕎.∘ ⊗≅.fnc⁻¹ (X 𝕍.⊗ₒ Y) {Z}
       ass-eq⁻¹ {X} {Y} {Z} =
         𝕎.iso-sq (𝕎.isopair-cmp (𝕎.⊗rₒ.ᵢₛₒ (F.ₒ Z) ⊗≅.isisopair) ⊗≅.isisopair)
-                        (𝕎.isopair-cmp (𝕎.l⊗ₒ.ᵢₛₒ (F.ₒ X) ⊗≅.isisopair) ⊗≅.isisopair)
-                        (ass-eqˢ {X} {Y} {Z})
+                 (𝕎.isopair-cmp (𝕎.l⊗ₒ.ᵢₛₒ (F.ₒ X) ⊗≅.isisopair) ⊗≅.isisopair)
+                 (ass-eq {X} {Y} {Z})
       ass-eq⁻¹ˢ : {X Y Z : 𝕍.Obj}
                     → 𝕎.⊗ass.fnc (F.ₒ X) (F.ₒ Y) {F.ₒ Z}
                         𝕎.∘ 𝕎.⊗rₒ.ₐ (F.ₒ Z) (⊗≅.fnc⁻¹ X {Y}) 𝕎.∘ ⊗≅.fnc⁻¹ (X 𝕍.⊗ₒ Y) {Z}
                       𝕎.~ (𝕎.l⊗ₒ.ₐ (F.ₒ X) (⊗≅.fnc⁻¹ Y {Z}) 𝕎.∘ ⊗≅.fnc⁻¹ X {Y 𝕍.⊗ₒ Z})
                             𝕎.∘ F.ₐ (𝕍.⊗ass.fnc X Y {Z})
-      ass-eq⁻¹ˢ {X} {Y} {Z} = ass-eq⁻¹ {X} {Y} {Z} ˢ
-        where open ecategory-aux-only 𝕎 using (_ˢ)
+      ass-eq⁻¹ˢ {X} {Y} {Z} =
+        𝕎.iso-sqˢ (𝕎.isopair-cmp (𝕎.⊗rₒ.ᵢₛₒ (F.ₒ Z) ⊗≅.isisopair) ⊗≅.isisopair)
+                  (𝕎.isopair-cmp (𝕎.l⊗ₒ.ᵢₛₒ (F.ₒ X) ⊗≅.isisopair) ⊗≅.isisopair)
+                  (ass-eqˢ {X} {Y} {Z})
     -- end is-monoidal-with-isos
   --end aux
 

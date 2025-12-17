@@ -148,33 +148,82 @@ module iso-props {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ 
   
   iso-trdom : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
               {g : || Hom b c ||} {h : || Hom a  c ||}
-                → g ∘ f ~ h → h ∘ f' ~ g
+                → h ~ g ∘ f → h ∘ f' ~ g
   iso-trdom  {f = f} {f'} isop {g} {h} pf = ~proof
-    h ∘ f'        ~[ ∘e r (pf ˢ) ⊙ ass ˢ ] /
+    h ∘ f'        ~[ ∘e r pf ⊙ ass ˢ ] /
     g ∘ f ∘ f'    ~[ ridgg r idcod ]∎
     g ∎
     where open is-iso-pair isop
           open ecategory-aux-only ℂ
+  
+  iso-trdomˢ : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
+              {g : || Hom b c ||} {h : || Hom a  c ||}
+                → g ∘ f ~ h → g ~ h ∘ f'
+  iso-trdomˢ  {f = f} {f'} isop {g} {h} pf = ~proof
+    g              ~[ ridggˢ r idcod ] /
+    g ∘ f ∘ f'     ~[ ass ⊙ ∘e r pf ]∎
+    h ∘ f' ∎
+    where open is-iso-pair isop
+          open ecategory-aux-only ℂ
+
+  iso-trdom-alt : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
+              {g : || Hom b c ||} {h : || Hom a  c ||}
+                → g ∘ f ~ h → h ∘ f' ~ g
+  iso-trdom-alt  {f = f} {f'} isop {g} {h} pf = iso-trdom isop (pf ˢ)
+    where open ecategory-aux-only ℂ using (_ˢ)
 
   iso-trcod : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
               {g : || Hom c a ||} {h : || Hom c b ||}
-                → f ∘ g ~ h → f' ∘ h ~ g
+                → h ~ f ∘ g → f' ∘ h ~ g
   iso-trcod {f = f} {f'} isop {g} {h} pf  = ~proof
-    f' ∘ h          ~[ ∘e (pf ˢ) r ⊙ ass ] /
+    f' ∘ h          ~[ ∘e pf r ⊙ ass ] /
     (f' ∘ f) ∘ g    ~[ lidgg r iddom ]∎
     g ∎
     where open is-iso-pair isop
           open ecategory-aux-only ℂ
 
+  iso-trcodˢ : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
+              {g : || Hom c a ||} {h : || Hom c b ||}
+                → f ∘ g ~ h → g ~ f' ∘ h
+  iso-trcodˢ {f = f} {f'} isop {g} {h} pf  = ~proof
+    g               ~[ lidggˢ r iddom ⊙ assˢ ] /
+    f' ∘ f ∘ g      ~[ ∘e pf r ]∎
+    f' ∘ h ∎
+    where open is-iso-pair isop
+          open ecategory-aux-only ℂ
+
+  iso-trcod-alt : {a b c : Obj} {f : || Hom a b ||} {f' : || Hom b a ||}(isop : is-iso-pair f f')
+              {g : || Hom c a ||} {h : || Hom c b ||}
+                → f ∘ g ~ h → f' ∘ h ~ g
+  iso-trcod-alt {f = f} {f'} isop {g} {h} pf  = iso-trcod isop (pf ˢ)
+    where open ecategory-aux-only ℂ using (_ˢ)
+
   -- and squares
-  
+
   iso-sq : {a a' b b' : Obj}{f : || Hom a b || }{f' : || Hom a' b' ||}
+             {m : || Hom a a' ||}{m⁻¹ : || Hom a' a ||}{n : || Hom b b' ||}{n⁻¹ : || Hom b' b ||}
+                → is-iso-pair m m⁻¹ → is-iso-pair n n⁻¹ → f' ∘ m ~ n ∘ f
+                  → n⁻¹ ∘ f' ~ f ∘ m⁻¹
+  iso-sq {f = f} {f'} {m} {m⁻¹} {n} {n⁻¹} isom ison pf =
+    iso-trcod ison (iso-trdomˢ isom pf ⊙ assˢ)
+--or: iso-trdomˢ isom (assˢ ⊙ iso-trcod ison pf)
+      where open ecategory-aux-only ℂ using (_⊙_; assˢ)
+
+  -- this one is for naturality squares of natural isos
+  iso-sq-alt : {a a' b b' : Obj}{f : || Hom a b || }{f' : || Hom a' b' ||}
              {m : || Hom a a' ||}{m⁻¹ : || Hom a' a ||}{n : || Hom b b' ||}{n⁻¹ : || Hom b' b ||}
                 → is-iso-pair m m⁻¹ → is-iso-pair n n⁻¹ → n ∘ f ~ f' ∘ m
                   → n⁻¹ ∘ f' ~ f ∘ m⁻¹
-  iso-sq {f = f} {f'} {m} {m⁻¹} {n} {n⁻¹} isom ison pf =
-    iso-trcod ison {_} {f'} (ass ⊙ iso-trdom isom {f'} {n ∘ f} (pf ˢ))
-      where open ecategory-aux-only ℂ
+  iso-sq-alt {f = f} {f'} {m} {m⁻¹} {n} {n⁻¹} isom ison pf = iso-sq isom ison (pf ˢ)
+      where open ecategory-aux-only ℂ using (_ˢ)
+  
+  iso-sqˢ : {a a' b b' : Obj}{f : || Hom a b || }{f' : || Hom a' b' ||}
+             {m : || Hom a a' ||}{m⁻¹ : || Hom a' a ||}{n : || Hom b b' ||}{n⁻¹ : || Hom b' b ||}
+                → is-iso-pair m m⁻¹ → is-iso-pair n n⁻¹ → n ∘ f ~ f' ∘ m
+                  → f ∘ m⁻¹ ~ n⁻¹ ∘ f'
+  iso-sqˢ {f = f} {f'} {m} {m⁻¹} {n} {n⁻¹} isom ison pf =
+    iso-trdom isom (iso-trcodˢ ison pf ⊙ ass)
+    where open ecategory-aux-only ℂ using (_⊙_; ass)
 
   ≅ₒrefl : (a : Obj) → a ≅ₒ a
   ≅ₒrefl a = record

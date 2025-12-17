@@ -83,13 +83,9 @@ module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑ�
     iₒ : ℂ.Obj → Obj
     _⊗ₒ_ : Obj → Obj → Obj
 
--- with a two-variable generator for the tensor,
--- identities seem to be needed to contruct the two-variable tensor (see below).
--- otherwise it should be possible to use left and right generators instead.
--- in this case contructing the free category on the (non-reflexive)
--- graph of generators should be enough
-
-  -- generators for the freen monoidal structure
+  -- generators for the freen monoidal structure:
+  -- using a single two-variable generator for the tensor,
+  -- generators for identities seem to be needed to construct the tensor functor
   data HomGen : Obj → Obj → Set (ℓₒ ⊔ ℓₐ) where
     --idg : ∀ {M} → HomGen M M
     iₐg : ∀ {A B} → || ℂ.Hom A B || → HomGen (iₒ A) (iₒ B)
@@ -580,9 +576,9 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
   ass-fst-nat⁻¹ M = record
     { fnc = λ {N} → record { fnc = λ {L} → α⁻¹ M N L
                             ; nat = λ f → Fℂ.iso-sq (ass-iso M N _) (ass-iso M N _)
-                                                    (ass-fst-nat.snd.nat M N f) }
+                                                     (ass-fst-nat.snd.natˢ M N f) }
     ; nat = λ f L → Fℂ.iso-sq (ass-iso M _ L) (ass-iso M _ L)
-                               (ass-fst-nat.nat M f L)
+                               (ass-fst-nat.natˢ M f L)
     }
     where
       open ecategory-aux-only (FMon ℂ)
@@ -607,20 +603,20 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
     { lun = record
           { natt = lun-nat
           ; natt⁻¹ = record { fnc = λ {M} → Iλ⁻¹ M
-                            ; nat = λ f → Fℂ.iso-sq lun-iso lun-iso (lun-nat.nat f) }
+                            ; nat = λ f → Fℂ.iso-sq lun-iso lun-iso (lun-nat.natˢ f) }
           ; isiso = lun-iso
           }
     ; run = record
           { natt = run-nat
           ; natt⁻¹ = record { fnc = λ {M} → ρI⁻¹ M
-                            ; nat = λ f → Fℂ.iso-sq run-iso run-iso (run-nat.nat f) }
+                            ; nat = λ f → Fℂ.iso-sq run-iso run-iso (run-nat.natˢ f) }
           ; isiso = run-iso
           }
     ; ass = record
           { natt = ass-nat
           ; natt⁻¹ = record { fnc = λ {M} → ass-fst-nat⁻¹ M
                             ; nat = λ f N L → Fℂ.iso-sq (ass-iso _ N L) (ass-iso _ N L)
-                                                         (ass.nat₁ f N L) }
+                                                         (ass.nat₁ˢ f N L) }
           ; isiso = λ {M} → record { iddom = ass-iso.iddom M
                                    ; idcod = ass-iso.idcod M }
           }
@@ -762,6 +758,11 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
                                𝕎.~ fctr-ar (M l⊗ₐ gg) 𝕎.∘ mon-⊗ar {M} {M₂}
   mon-l⊗nat gg = 𝕎.lidgen (𝕎.ridgenˢ (l⊗ₐeq gg))
 
+  mon-l⊗natˢ : {M M₂ N₂ : Fℂ.Obj} (gg : || Fℂ.Hom M₂ N₂ ||)
+                 → fctr-ar (M l⊗ₐ gg) 𝕎.∘ mon-⊗ar {M} {M₂}
+                               𝕎.~ mon-⊗ar {M} {N₂} 𝕎.∘ (𝕎.l⊗ₒ.ₐ (fctr-ob M) (fctr-ar gg))
+  mon-l⊗natˢ gg = 𝕎.ridgen (𝕎.lidgenˢ (l⊗ₐeqˢ gg))
+
   mon-⊗rnat : {M M₁ N₁ : Fℂ.Obj} (ff : || Fℂ.Hom M₁ N₁ ||)
                  → mon-⊗ar {N₁} {M} 𝕎.∘ (𝕎.⊗rₒ.ₐ (fctr-ob M) (fctr-ar ff))
                                𝕎.~ fctr-ar (ff ⊗rₐ M) 𝕎.∘ mon-⊗ar {M₁} {M}
@@ -858,23 +859,33 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
     open monoidal-functor-defs.aux (FMon-mon ℂ) 𝕎mon fctr using (F⊗F; F⊗) public
 
 
-  ⊗iso : natural-iso fctr.F⊗F fctr.F⊗
-  ⊗iso = record
+  mon-⊗rnat' : {M M₁ N₁ : Fℂ.Obj} (ff : || Fℂ.Hom M₁ N₁ ||)
+           → 𝕎.idar (fctr.ₒ N₁ 𝕎.⊗ₒ fctr.ₒ M) 𝕎.∘ 𝕎.⊗rₒ.ₐ (fctr.ₒ M) (fctr.ₐ ff)
+                       𝕎.~ fctr.ₐ (Fℂ.⊗rₒ.ₐ M ff) 𝕎.∘ 𝕎.idar (fctr.ₒ (M₁ ⊗ₒ M))
+  mon-⊗rnat' {M} ff = mon-⊗rnat {M} ff ⊙ ∘e r (fctr.ext (Fℂ.⊗df.⊗r-is-⊗ _ ff)) 
+    where open ecategory-aux-only 𝕎 using (_⊙_; ∘e; r)
+
+  mon-⊗rnat'ˢ : {M M₁ N₁ : Fℂ.Obj} (ff : || Fℂ.Hom M₁ N₁ ||)
+           → fctr.ₐ (Fℂ.⊗rₒ.ₐ M ff) 𝕎.∘ 𝕎.idar (fctr.ₒ (M₁ ⊗ₒ M))
+                  𝕎.~ 𝕎.idar (fctr.ₒ N₁ 𝕎.⊗ₒ fctr.ₒ M) 𝕎.∘ 𝕎.⊗rₒ.ₐ (fctr.ₒ M) (fctr.ₐ ff)
+  mon-⊗rnat'ˢ {M} ff = mon-⊗rnat' {M} ff ˢ
+    where open ecategory-aux-only 𝕎 using (_ˢ)
+
+  F⊗iso : natural-iso fctr.F⊗F fctr.F⊗
+  F⊗iso = record
     { natt = record
            { fnc = λ {M} → record
                  { fnc = λ {N} → mon-⊗ar {M} {N}
                  ; nat = mon-l⊗nat }
-           ; nat = λ ff _ → 𝕎.lidgen (𝕎.ridgenˢ ( ⊗rₐeq ff
-                                                   𝕎.⊙ fctr.ext (Fℂ.⊗df.⊗r-is-⊗ _ ff) ))
+           ; nat = λ ff _ → mon-⊗rnat' ff
            }
     ; natt⁻¹ = record
              { fnc = λ {M} → record
                    { fnc = λ {N} → 𝕎.idar _
                    ; nat = λ ff → 𝕎.iso-sq (𝕎.idar-is-isopair _) (𝕎.idar-is-isopair _)
-                                            (mon-l⊗nat ff)  }
+                                            (mon-l⊗natˢ ff)  }
              ; nat = λ ff _ → 𝕎.iso-sq (𝕎.idar-is-isopair _) (𝕎.idar-is-isopair _)
-                                        (𝕎.lidgen (𝕎.ridgenˢ ( ⊗rₐeq ff
-                                                  𝕎.⊙ fctr.ext (Fℂ.⊗df.⊗r-is-⊗ _ ff) )))
+                                        (mon-⊗rnat'ˢ ff)
              }
     ; isiso = record { iddom = λ _ → 𝕎.lid ; idcod = λ _ → 𝕎.lid }
     }
@@ -888,7 +899,10 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
     private
       module G where
         open efunctor-aux G public
-        open is-monoidal-functor monG public renaming (pf to ismon)
+        open is-monoidal-functor monG public using (Iiso; ⊗iso) renaming (pf to ismon)
+        module I≅ = 𝕎._≅ₒ_ Iiso renaming (a12 to ar; a21 to ar⁻¹)
+        module ⊗≅ = uncurry-nat-iso-into-functor-cat ⊗iso
+        module ⊗ = monoidal-functor-defs.is-monoidal-with-isos ismon
       module trG = natural-iso trG
 
     ar : (M : Fℂ.Obj) → || 𝕎.Hom (G.ₒ M) (fctr.ₒ M) ||
@@ -941,7 +955,7 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
                  ~[ ∘e r (∘e r (∘e (𝕎.l⊗ₒ.∘ax-rfˢ (G.ₒ M)) r ⊙ ass) ⊙ assˢ) ⊙ assˢ ] /
       (𝕎.⊗rₒ.ₐ _ (ar M) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (ar N 𝕎.⊗ₐ ar L))
          𝕎.∘ (𝕎.l⊗ₒ.ₐ _ (G.⊗≅.⁻¹.fnc N) 𝕎.∘ G.⊗≅.⁻¹.fnc M) 𝕎.∘ G.ₐ (α M N L)
-                                        ~[ ∘e (G.ass-eq⁻¹ ⊙ ass) (∘e (𝕎.l⊗ₒ.∘ax-rfˢ _) r)
+                                        ~[ ∘e (G.⊗.ass-eq⁻¹ ⊙ ass) (∘e (𝕎.l⊗ₒ.∘ax-rfˢ _) r)
                                            ⊙ (ass ⊙ ∘e r (assˢ ⊙ ∘e assˢ r)) ] /
       (𝕎.⊗rₒ.ₐ _ (ar M) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (𝕎.⊗rₒ.ₐ _ (ar N)) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (𝕎.l⊗ₒ.ₐ _ (ar L))
          𝕎.∘ 𝕎.⊗ass.fnc (G.ₒ M) (G.ₒ N) {G.ₒ L} 𝕎.∘ 𝕎.⊗rₒ.ₐ _ (G.⊗≅.⁻¹.fnc _))
@@ -973,23 +987,37 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
       fctr.ₐ (indv (αg M N L)) 𝕎.∘ (((ar M 𝕎.⊗ₐ ar N) 𝕎.∘ G.⊗≅.⁻¹.fnc M) 𝕎.⊗ₐ ar L)
              𝕎.∘ G.⊗≅.⁻¹.fnc (M ⊗ₒ N) ∎
       where open ecategory-aux-only 𝕎
-
-    natg (α⁻¹g M N L) = 𝕎.iso-sq (G.ᵢₛₒ αisop) (fctr.ᵢₛₒ αisop) (natg (αg M N L) ˢ) ˢ
+    natg (α⁻¹g M N L) =
+      𝕎.iso-sqˢ (G.ᵢₛₒ αisop) (fctr.ᵢₛₒ αisop) (natg (αg M N L) ˢ)
       where open ecategory-aux-only 𝕎 using (_ˢ)
             αisop : Fℂ.is-iso-pair (α M N L) (α⁻¹ M N L)
             αisop = record { iddom = α₁ M N L ; idcod = α₂ M N L }
 
-    natg (Iλg _) = {!!}
+    natg (Iλg M) = ~proof
+      ar M 𝕎.∘ G.ₐ (Iλ M)                                   ~[ ∘e G.⊗.lun-eq⁻¹ˢ r ] /
+      ar M 𝕎.∘ 𝕎.⊗lun.fnc 𝕎.∘ (𝕎.⊗rₒ.ₐ _ G.I≅.ar⁻¹) 𝕎.∘ G.⊗≅.⁻¹.fnc Fℂ.I
+         ~[ ass ⊙ ∘e r (𝕎.⊗lun.natˢ (ar M)) ⊙ assˢ  ] /
+      𝕎.⊗lun.fnc 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (ar M) 𝕎.∘ 𝕎.⊗rₒ.ₐ _ G.I≅.ar⁻¹ 𝕎.∘ G.⊗≅.⁻¹.fnc Fℂ.I
+         ~[ ∘e (ass ⊙ ∘e r (𝕎.⊗ₐsqˢ G.I≅.ar⁻¹ (ar M))) r ]∎
+      fctr.ₐ (Iλ M) 𝕎.∘ (G.I≅.ar⁻¹ 𝕎.⊗ₐ ar M) 𝕎.∘ G.⊗≅.⁻¹.fnc Fℂ.I ∎
       where open ecategory-aux-only 𝕎
+    natg (Iλ⁻¹g M) = 𝕎.iso-sqˢ (G.ᵢₛₒ λisop) (fctr.ᵢₛₒ λisop) (natg (Iλg M) ˢ)
+      where open ecategory-aux-only 𝕎 using (_ˢ)
+            λisop : Fℂ.is-iso-pair (Iλ M) (Iλ⁻¹ M)
+            λisop = record { iddom = Iλ₁ M ; idcod = Iλ₂ M }
 
-    natg (Iλ⁻¹g _) = {!!}
+    natg (ρIg N) = ~proof
+      ar N 𝕎.∘ G.ₐ (ρI N)                                 ~[ ∘e G.⊗.run-eq⁻¹ˢ r ] /
+      ar N 𝕎.∘ 𝕎.⊗run.fnc 𝕎.∘ (𝕎.l⊗ₒ.ₐ _ G.I≅.ar⁻¹) 𝕎.∘ G.⊗≅.⁻¹.fnc N
+         ~[ ass ⊙ ∘e r (𝕎.⊗run.natˢ (ar N)) ⊙ assˢ  ] /
+      𝕎.⊗run.fnc 𝕎.∘ 𝕎.⊗rₒ.ₐ _ (ar N) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ G.I≅.ar⁻¹ 𝕎.∘ G.⊗≅.⁻¹.fnc N
+         ~[ ∘e ass r ]∎
+      fctr.ₐ (ρI N) 𝕎.∘ (ar N 𝕎.⊗ₐ G.I≅.ar⁻¹) 𝕎.∘ G.⊗≅.⁻¹.fnc N ∎
       where open ecategory-aux-only 𝕎
-
-    natg (ρIg _) = {!!}
-      where open ecategory-aux-only 𝕎
-
-    natg (ρI⁻¹g _) = {!!}
-      where open ecategory-aux-only 𝕎
+    natg (ρI⁻¹g N) = 𝕎.iso-sqˢ (G.ᵢₛₒ ρisop) (fctr.ᵢₛₒ ρisop) (natg (ρIg N) ˢ)
+      where open ecategory-aux-only 𝕎 using (_ˢ)
+            ρisop : Fℂ.is-iso-pair (ρI N) (ρI⁻¹ N)
+            ρisop = record { iddom = ρI₁ N ; idcod = ρI₂ N }
 
 
     nat : {M N : Fℂ.Obj} (ff : || Fℂ.Hom M N ||) → ar N 𝕎.∘ G.ₐ ff 𝕎.~ fctr.ₐ ff 𝕎.∘ ar M
@@ -1011,9 +1039,13 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
       fctr.ₐ (apnd (apnd ff g) g') 𝕎.∘ ar _ ∎
       where open ecategory-aux-only 𝕎
 
+    natˢ : {M N : Fℂ.Obj} (ff : || Fℂ.Hom M N ||) → fctr.ₐ ff 𝕎.∘ ar M 𝕎.~ ar N 𝕎.∘ G.ₐ ff
+    natˢ ff = nat ff ˢ
+      where open ecategory-aux-only 𝕎 using (_ˢ)
+
     nat⁻¹ : {M N : Fℂ.Obj} (ff : || Fℂ.Hom M N ||)
                    → ar⁻¹ N 𝕎.∘ fctr.ₐ ff 𝕎.~ G.ₐ ff 𝕎.∘ ar⁻¹ M
-    nat⁻¹ ff = 𝕎.iso-sq (isop _) (isop _) (nat ff)
+    nat⁻¹ ff = 𝕎.iso-sq (isop _) (isop _) (natˢ ff)
 
 
     pf : G ≅ₐ fctr
@@ -1044,7 +1076,7 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
                   }
     ; mon =  record
           { Iiso = 𝕎.≅ₒrefl _
-          ; ⊗iso = ⊗iso
+          ; ⊗iso = F⊗iso
           ; pf = record
                { run-eq = λ {X} → 𝕎.ridgg 𝕎.r (𝕎.lidgen (𝕎.l⊗ₒ.id _))
                ; lun-eq = λ {X} → 𝕎.ridgg 𝕎.r (𝕎.lidgen (𝕎.⊗rₒ.id _))
@@ -1052,7 +1084,7 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
                                                    (𝕎.lidgen (𝕎.⊗rₒ.id _))
                }
           }
-    ; uq = λ monG trG → {!!}
+    ; uq = fctr-uniqueness.pf
     }
   
 -- end free-monoidal-ecat-on-ecat-is-free
@@ -1061,8 +1093,11 @@ module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} 
 
 free-monoidal-ecat-on-ecat-is-free : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} (ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁)
                                      (ℓₒ' ℓₐ' ℓ~' : Level)
-           → (FMon-mon ℂ) is-free-monoidal-on-cat ℂ via (FMon-emb ℂ) at-lev[ ℓₒ' , ℓₐ' , ℓ~' ]
+                         → (FMon-mon ℂ) is-free-monoidal-on-cat ℂ via (FMon-emb ℂ)
+                                                                  at-lev[ ℓₒ' , ℓₐ' , ℓ~' ]
 free-monoidal-ecat-on-ecat-is-free ℂ ℓₒ' ℓₐ' ℓ~' = record
-  { unvp = {!!} }
+  { unvp = unvprop
+  }
+  where open free-monoidal-ecat-on-ecat-is-free ℂ
        
        

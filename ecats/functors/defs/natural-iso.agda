@@ -79,7 +79,7 @@ module natural-iso-defs {ℓ₁ ℓ₂ ℓ₃}{ℂ : ecategoryₗₑᵥ ℓ₁ �
            }
     ; natt⁻¹ = record
              { fnc = a⁻¹
-             ; nat = λ {X} {Y} f → 𝔻.iso-sq (aiso {X}) (aiso {Y}) (anat f)
+             ; nat = λ {X} {Y} f → 𝔻.iso-sq-alt (aiso {X}) (aiso {Y}) (anat f)
              }
     ; isiso = aiso
     }

@@ -45,7 +45,7 @@ module free-category-on-graph-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategor
     private module tmp {v : V} = 𝔻.is-iso (tr-iso {v}) renaming (invf to tr-fnc⁻¹)
     open tmp public
     tr-nat⁻¹ : {u v : V}(uv : || E u v ||) → tr-fnc⁻¹ 𝔻.∘ GE uv 𝔻.~ fctr.ₐ (FE uv) 𝔻.∘ tr-fnc⁻¹
-    tr-nat⁻¹ {u} {v} uv = 𝔻.iso-sq (isisopair {u}) (isisopair {v}) (tr-nat uv)
+    tr-nat⁻¹ {u} {v} uv = 𝔻.iso-sq-alt (isisopair {u}) (isisopair {v}) (tr-nat uv)
     field
       uq : {H : efunctorₗₑᵥ ℂ 𝔻}
            (Hfnc : {v : V} → || 𝔻.Hom (efctr.ₒ H (FO v)) (GO v) ||)
@@ -297,7 +297,7 @@ module free-on-graph-is-free-on-graph {ℓ₁ ℓ₂ ℓ₃ : Level}{V : Set ℓ
                }
         ; natt⁻¹ = record
                  { fnc = H.iso.⁻¹
-                 ; nat = λ p → 𝔻.iso-sq H.iso.isisopair H.iso.isisopair (Hnat p)
+                 ; nat = λ p → 𝔻.iso-sq-alt H.iso.isisopair H.iso.isisopair (Hnat p)
                  }
         ; isiso = H.iso.isisopair
         }
