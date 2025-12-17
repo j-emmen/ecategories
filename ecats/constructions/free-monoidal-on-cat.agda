@@ -11,6 +11,7 @@ open import ecats.functors.defs.natural-iso
 open import ecats.concr-ecats.ecat-ecats
 open import ecats.constructions.functor-ecat
 open import ecats.basic-defs.monoidal
+open import ecats.functors.defs.monoidal
 open import ecats.constructions.free-ecat-on-graph
 --open import ecats.constructions.free-ecat-on-refl-graph
 
@@ -19,26 +20,56 @@ open import ecats.constructions.free-ecat-on-graph
 
 module free-monoidal-on-cat-defs {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} (ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁)
                                  {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level} {𝕍 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}
-                                 (𝕍mon : is-monoidal 𝕍)
+                                 (𝕍mon : is-monoidal-cat 𝕍)
                                  (J : efunctorₗₑᵥ ℂ 𝕍)
                                  where
   private
     module ℂ = ecat ℂ
     module 𝕍 where
       open ecat 𝕍 public
-      open is-monoidal 𝕍mon public
+      open is-monoidal-cat 𝕍mon public
     module unvprop-aux {ℓ₁' ℓ₂' ℓ₃' : Level}(𝕏 : ecategoryₗₑᵥ ℓ₁' ℓ₂' ℓ₃') where
       open ecat 𝕏 public
       open iso-defs 𝕏 public
       open iso-props 𝕏 public
 
   record is-free-monoidal-on-cat-univ-prop {ℓₒ₃ ℓₐ₃ ℓ~₃ : Level}{𝕎 : ecategoryₗₑᵥ ℓₒ₃ ℓₐ₃ ℓ~₃}
-                                           (𝕎mon : is-monoidal 𝕎) (F : efunctorₗₑᵥ ℂ 𝕎)
-                                           : Set
+                                           (𝕎mon : is-monoidal-cat 𝕎) (F : efunctorₗₑᵥ ℂ 𝕎)
+                                           : Set (ecat.ℓₙₒ~ ℂ ⊔ ecat.ℓₐₗₗ 𝕍 ⊔ ecat.ℓₐₗₗ 𝕎)
                                            where
-    private
-      module 𝕎 = ecat 𝕎
+    field
+      fctr : efunctorₗₑᵥ 𝕍 𝕎
+      tr : natural-iso (fctr ○ J) F
+      mon : is-monoidal-functor fctr 𝕍mon 𝕎mon
+      uq : {G : efunctorₗₑᵥ 𝕍 𝕎} → is-monoidal-functor G 𝕍mon 𝕎mon
+                → G ○ J ≅ₐ F → G ≅ₐ fctr
+    module fctr = efunctor-aux fctr
+    module tr = natural-iso tr
+    module mon = is-monoidal-functor mon
+    module uq {G} (monG : is-monoidal-functor G 𝕍mon 𝕎mon) (trG : G ○ J ≅ₐ F)
+           = natural-iso (uq {G} monG trG)
+  -- end is-free-monoidal-on-cat-univ-prop
+-- end free-monoidal-on-cat-defs
 
+
+record _is-free-monoidal-on-cat_via_at-lev[_,_,_]
+       {ℓₒ₂ ℓₐ₂ ℓ~₂ : Level} {𝕍 : ecategoryₗₑᵥ ℓₒ₂ ℓₐ₂ ℓ~₂}(𝕍mon : is-monoidal-cat 𝕍)
+       {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} (ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁)
+       (J : efunctorₗₑᵥ ℂ 𝕍) (ℓₒ' ℓₐ' ℓ~' : Level)
+       : Set (ecat.ℓₐₗₗ ℂ ⊔ ecat.ℓₐₗₗ 𝕍 ⊔ sucₗₑᵥ (ℓₒ' ⊔ ℓₐ' ⊔  ℓ~'))
+       where
+  open free-monoidal-on-cat-defs ℂ 𝕍mon J
+  field
+    unvp : {𝕎 : ecategoryₗₑᵥ ℓₒ' ℓₐ' ℓ~'}
+           (𝕎mon : is-monoidal-cat 𝕎) (F : efunctorₗₑᵥ ℂ 𝕎)
+                → is-free-monoidal-on-cat-univ-prop 𝕎mon F
+  open module unvp {𝕎 : ecategoryₗₑᵥ ℓₒ' ℓₐ' ℓ~'}
+                   (𝕎mon : is-monoidal-cat 𝕎) (F : efunctorₗₑᵥ ℂ 𝕎)
+                   = is-free-monoidal-on-cat-univ-prop (unvp 𝕎mon F) public
+
+    
+                                 
+-- construction of the free monoidal category
 
 module free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
   private
@@ -243,8 +274,8 @@ module embedding-for-free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ec
 -- end embedding-for-free-monoidal-ecat-on
 
 
-free-monoidal-ecat-on-ecat-emb : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)
-                                → efunctorₗₑᵥ ℂ (FMon ℂ)
+free-monoidal-ecat-on-ecat-emb FMon-emb : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)
+                                              → efunctorₗₑᵥ ℂ (FMon ℂ)
 free-monoidal-ecat-on-ecat-emb ℂ = record
   { FObj = iₒ
   ; FHom = iₐ
@@ -256,7 +287,7 @@ free-monoidal-ecat-on-ecat-emb ℂ = record
   }
   where open free-monoidal-ecat-on ℂ
         open  embedding-for-free-monoidal-ecat-on ℂ
-
+FMon-emb = free-monoidal-ecat-on-ecat-emb
 
 
 module tensor-functor-for-free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~) where
@@ -399,55 +430,12 @@ module tensor-functor-for-free-monoidal-ecat-on {ℓₒ ℓₐ ℓ~ : Level}(ℂ
     (gg₁ Fℂ.∘ ff₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂) ∎
     where open ecategory-aux-only (FMon ℂ)
 
-{-
-  ⊗cmp emty emty ff₂ gg₂ = l⊗cmp _ ff₂ gg₂
-  ⊗cmp (apnd ff₁ g₁) emty ff₂ gg₂ = ~proof
-    (_ l⊗ₐ gg₂) Fℂ.∘ apnd (ff₁ ⊗ₐ ff₂) (⊗rₐg _ g₁)
-                    ~[ ass {f = ff₁ ⊗ₐ ff₂} {indv g₁ ⊗rₐ _} {_ l⊗ₐ gg₂}
-                       ⊙ ∘e r (⊗sqgl g₁ gg₂ ˢ)
-                       ⊙ assˢ {f = ff₁ ⊗ₐ ff₂} {_ l⊗ₐ gg₂} {indv g₁ ⊗rₐ _} ] /
-    (indv g₁ ⊗rₐ _) Fℂ.∘ (emty ⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
-                    ~[ ∘e (⊗cmp ff₁ emty ff₂ gg₂) r ]∎
-    apnd (ff₁ ⊗ₐ (gg₂ Fℂ.∘ ff₂)) (⊗rₐg _ g₁) ∎
-    where open ecategory-aux-only (FMon ℂ)
-  ⊗cmp emty (apnd gg₁ g₁') ff₂ gg₂ = ~proof
-    (apnd gg₁ g₁' ⊗ₐ gg₂) Fℂ.∘ (_ l⊗ₐ ff₂)
-          ~[ assˢ {f = emty ⊗ₐ ff₂} {gg₁ ⊗ₐ gg₂} {indv g₁' ⊗rₐ _} ] /
-    (indv g₁' ⊗rₐ _) Fℂ.∘ (gg₁ ⊗ₐ gg₂) Fℂ.∘ (_ l⊗ₐ ff₂)
-          ~[ ∘e (⊗cmp emty gg₁ ff₂ gg₂) r ] /
-    (indv g₁' ⊗rₐ _) Fℂ.∘ ((gg₁ Fℂ.∘ Fℂ.idar _) ⊗ₐ (gg₂ Fℂ.∘ ff₂))
-          ~[ ⊗ext (ass {f = emty} {gg₁} {indv g₁'}) r ]∎
-    (apnd gg₁ g₁' Fℂ.∘ Fℂ.idar _) ⊗ₐ (gg₂ Fℂ.∘ ff₂) ∎
-    where open ecategory-aux-only (FMon ℂ)
-  ⊗cmp (apnd ff₁ g₁) (apnd gg₁ g₁') ff₂ gg₂ =  ~proof
-    (apnd gg₁ g₁' ⊗ₐ gg₂) Fℂ.∘ (apnd ff₁ g₁ ⊗ₐ ff₂)
-      ~[ ∘e (~proof
-      (gg₁ ⊗ₐ gg₂) Fℂ.∘ (apnd ff₁ g₁ ⊗ₐ ff₂)
-           ~[ ∘e r (⊗ₐ-as-rl gg₁ gg₂)
-              ⊙ assˢ {f = apnd ff₁ g₁ ⊗ₐ ff₂} {_ l⊗ₐ gg₂} {gg₁ ⊗rₐ _} ] /
-      (gg₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ gg₂) Fℂ.∘ (indv g₁ ⊗rₐ _) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
-               ~[ ∘e (ass {f = ff₁ ⊗ₐ ff₂} {indv g₁ ⊗rₐ _} {_ l⊗ₐ gg₂}
-                     ⊙ ∘e r (⊗ₐsqˢ (indv g₁) gg₂)
-                     ⊙ assˢ {f = ff₁ ⊗ₐ ff₂} {_ l⊗ₐ gg₂} {indv g₁ ⊗rₐ _}) r ] /
-      (gg₁ ⊗rₐ _) Fℂ.∘ (indv g₁ ⊗rₐ _) Fℂ.∘ (_ l⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
-           ~[ ass {f = (_ l⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)} {indv g₁ ⊗rₐ _} {gg₁ ⊗rₐ _}
-              ⊙ ∘e (⊗cmp ff₁ emty ff₂ gg₂) (⊗rcmp _ (indv g₁) gg₁) ] /
-      ((gg₁ Fℂ.∘ indv g₁) ⊗rₐ _) Fℂ.∘ (ff₁ ⊗ₐ (gg₂ Fℂ.∘ ff₂))
-           ~[ ∘e r (⊗r-is-⊗ _ (gg₁ Fℂ.∘ indv g₁))
-              ⊙ ⊗cmp ff₁ (gg₁ Fℂ.∘ indv g₁) (gg₂ Fℂ.∘ ff₂) emty ]∎
-      ((gg₁ Fℂ.∘ indv g₁) Fℂ.∘ ff₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂) ∎) r ] /
-    (indv g₁' Fℂ.∘ (gg₁ Fℂ.∘ indv g₁)  Fℂ.∘ ff₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂)
-      ~[ ⊗ext (∘e (assˢ {f = ff₁} {indv g₁} {gg₁}) (r {f = indv g₁'})
-                ⊙ ass {f = apnd ff₁ g₁} {gg₁} {indv g₁'})
-               r ]∎
-    (apnd gg₁ g₁' Fℂ.∘ apnd ff₁ g₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂) ∎
--}
-
   ⊗cmpˢ : ∀ {M₁ N₁ L₁ M₂ N₂ L₂} (ff₁ : || Fℂ.Hom M₁ N₁ ||) (gg₁ : || Fℂ.Hom N₁ L₁ ||)
               (ff₂ : || Fℂ.Hom M₂ N₂ ||) (gg₂ : || Fℂ.Hom N₂ L₂ ||)
                 → (gg₁ Fℂ.∘ ff₁) ⊗ₐ (gg₂ Fℂ.∘ ff₂) Fℂ.~ (gg₁ ⊗ₐ gg₂) Fℂ.∘ (ff₁ ⊗ₐ ff₂)
   ⊗cmpˢ ff₁ gg₁ ff₂ gg₂ =
     ⊗cmp ff₁ gg₁ ff₂ gg₂ Fℂ.ˢ
+
 
   ⊗cmpext : ∀ {M₁ N₁ M₂ N₂ L₁ L₂} {ff₁ : || Fℂ.Hom M₁ N₁ ||} {ff₂ : || Fℂ.Hom M₂ N₂ ||}
                {gg₁ : || Fℂ.Hom N₁ L₁ ||} {gg₂ : || Fℂ.Hom N₂ L₂ ||}
@@ -642,9 +630,8 @@ module free-monoidal-ecat-on-ecat-is-monoidal {ℓₒ ℓₐ ℓ~ : Level}(ℂ :
 -- end free-monoidal-ecat-on-ecat-is-monoidal
 
 
-
-free-monoidal-ecat-on-ecat-is-monoidal : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)
-                                             → is-monoidal (FMon ℂ)
+free-monoidal-ecat-on-ecat-is-monoidal FMon-mon : {ℓₒ ℓₐ ℓ~ : Level}(ℂ : ecategoryₗₑᵥ ℓₒ ℓₐ ℓ~)
+                                             → is-monoidal-cat (FMon ℂ)
 free-monoidal-ecat-on-ecat-is-monoidal ℂ = record
   { I = I
   ; tenf = F⊗ ℂ
@@ -653,3 +640,429 @@ free-monoidal-ecat-on-ecat-is-monoidal ℂ = record
   where
       open free-monoidal-ecat-on ℂ using (I)
       open free-monoidal-ecat-on-ecat-is-monoidal ℂ using (F⊗-is-tensor)
+FMon-mon = free-monoidal-ecat-on-ecat-is-monoidal
+
+
+module free-monoidal-ecat-on-ecat-is-free {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} (ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁)
+                                          {ℓₒ' ℓₐ' ℓ~' : Level} {𝕎 : ecategoryₗₑᵥ ℓₒ' ℓₐ' ℓ~'}
+                                          (𝕎mon : is-monoidal-cat 𝕎)
+                                          (F : efunctorₗₑᵥ ℂ 𝕎)
+                                          where
+  open free-monoidal-on-cat-defs ℂ (FMon-mon ℂ) (FMon-emb ℂ)
+  open free-monoidal-ecat-on ℂ
+  private
+    module ℂ = ecat ℂ
+    module 𝕎 where
+      open moncat 𝕎mon public
+      open ecategory-aux-only 𝕎 public
+      --open iso-d&p 𝕎 public
+      --open is-monoidal 𝕎mon public renaming (ass to ⊗ass; lun to ⊗lun; run to ⊗run)
+    module Fℂ where
+      open moncat (FMon-mon ℂ) public
+      module ⊗df = tensor-functor-for-free-monoidal-ecat-on ℂ
+    module F = efunctor-aux F
+  --open monoidal-defs (FMon ℂ)
+
+  fctr-ob : Fℂ.Obj → 𝕎.Obj
+  fctr-ob I = 𝕎.I
+  fctr-ob (iₒ A) = F.ₒ A
+  fctr-ob (M ⊗ₒ N) = (fctr-ob M) 𝕎.⊗ₒ (fctr-ob N)
+
+  fctr-ar-gen : {M N : Fℂ.Obj} → HomGen M N → || 𝕎.Hom (fctr-ob M) (fctr-ob N) ||
+  fctr-ar-gen (iₐg f) = F.ₐ f
+  fctr-ar-gen (l⊗ₐg M g) = 𝕎.l⊗ₒ.ₐ (fctr-ob M) (fctr-ar-gen g)
+  fctr-ar-gen (⊗rₐg N g) = 𝕎.⊗rₒ.ₐ (fctr-ob N) (fctr-ar-gen g) 
+  fctr-ar-gen (αg M N L) = 𝕎.⊗ass.fnc (fctr-ob M) (fctr-ob N)
+  fctr-ar-gen (α⁻¹g M N L) = 𝕎.⊗ass.⁻¹.fnc (fctr-ob M) (fctr-ob N)
+  fctr-ar-gen (Iλg _) = 𝕎.⊗lun.fnc
+  fctr-ar-gen (Iλ⁻¹g _) = 𝕎.⊗lun.fnc⁻¹
+  fctr-ar-gen (ρIg _) = 𝕎.⊗run.fnc
+  fctr-ar-gen (ρI⁻¹g _) = 𝕎.⊗run.fnc⁻¹
+
+
+  fctr-ar : {M N : Fℂ.Obj} → || Fℂ.Hom M N || → || 𝕎.Hom (fctr-ob M) (fctr-ob N) ||
+  fctr-ar {M} emty = 𝕎.idar (fctr-ob M)
+  fctr-ar (apnd emty g) = fctr-ar-gen g
+  fctr-ar (apnd (apnd ff g) g') = fctr-ar-gen g' 𝕎.∘ fctr-ar (apnd ff g)
+  -- the additional case is to avoid `fctr-ar (indv g) = fctr-ar-gen g 𝕎.∘ 𝕎.idar _`
+
+
+  fctr-apnd : {M N L : Fℂ.Obj} (ff : || Fℂ.Hom M N ||) (g : HomGen N L)
+                → fctr-ar-gen g 𝕎.∘ fctr-ar ff 𝕎.~ fctr-ar (apnd ff g)
+  fctr-apnd emty g = 𝕎.rid
+  fctr-apnd (apnd ff g') g = 𝕎.r
+
+  fctr-apndˢ : {M N L : Fℂ.Obj} (ff : || Fℂ.Hom M N ||) (g : HomGen N L)
+                → fctr-ar (apnd ff g) 𝕎.~ fctr-ar-gen g 𝕎.∘ fctr-ar ff
+  fctr-apndˢ ff g = fctr-apnd ff g 𝕎.ˢ
+
+
+  fctr-cmp : {M N L : Fℂ.Obj} (ff : || Fℂ.Hom M N ||) (gg : || Fℂ.Hom N L ||)
+                → fctr-ar gg 𝕎.∘ fctr-ar ff 𝕎.~ fctr-ar (gg Fℂ.∘ ff)
+  fctr-cmp ff emty = 𝕎.lid
+  fctr-cmp ff (apnd gg g) = ~proof
+    fctr-ar (apnd gg g) 𝕎.∘ fctr-ar ff           ~[ ∘e r (fctr-apndˢ gg g) ⊙ assˢ ] /
+    fctr-ar-gen g 𝕎.∘ fctr-ar gg 𝕎.∘ fctr-ar ff  ~[ ∘e (fctr-cmp ff gg) r ] /
+    fctr-ar-gen g 𝕎.∘ fctr-ar (gg Fℂ.∘ ff)        ~[ fctr-apnd (gg Fℂ.∘ ff) g ]∎
+    fctr-ar (apnd gg g Fℂ.∘ ff) ∎
+    where open ecategory-aux-only 𝕎
+
+
+  l⊗ₐeq : {M₁ M₂ N₂ : Fℂ.Obj} (gg : || Fℂ.Hom M₂ N₂ ||)
+                 → 𝕎.l⊗ₒ.ₐ (fctr-ob M₁) (fctr-ar gg) 𝕎.~ fctr-ar (M₁ l⊗ₐ gg)
+  l⊗ₐeq emty = 𝕎.l⊗ₒ.id _
+  l⊗ₐeq {M} (apnd gg g) = ~proof
+    𝕎.l⊗ₒ.ₐ _ (fctr-ar (apnd gg g))                  ~[ 𝕎.l⊗ₒ.∘axˢ _ (fctr-apnd gg g) ] /
+    𝕎.l⊗ₒ.ₐ _ (fctr-ar-gen g) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (fctr-ar gg)        ~[ ∘e (l⊗ₐeq gg) 𝕎.r ] /
+    fctr-ar-gen (l⊗ₐg M g) 𝕎.∘ fctr-ar (M l⊗ₐ gg)   ~[ fctr-apnd (M l⊗ₐ gg) (l⊗ₐg M g) ]∎
+    fctr-ar (M l⊗ₐ apnd gg g) ∎
+    where open ecategory-aux-only 𝕎
+
+  l⊗ₐeqˢ : {M₁ M₂ N₂ : Fℂ.Obj} (gg : || Fℂ.Hom M₂ N₂ ||)
+                 → fctr-ar (M₁ l⊗ₐ gg) 𝕎.~ 𝕎.l⊗ₒ.ₐ (fctr-ob M₁) (fctr-ar gg)
+  l⊗ₐeqˢ gg = l⊗ₐeq gg 𝕎.ˢ
+
+  ⊗rₐeq : {M M₁ N₁ : Fℂ.Obj} (ff : || Fℂ.Hom M₁ N₁ ||)
+                 → 𝕎.⊗rₒ.ₐ (fctr-ob M) (fctr-ar ff) 𝕎.~ fctr-ar (ff ⊗rₐ M)
+  ⊗rₐeq emty = 𝕎.⊗rₒ.id _
+  ⊗rₐeq {M} (apnd ff g) = ~proof
+    𝕎.⊗rₒ.ₐ _ (fctr-ar (apnd ff g))                  ~[ 𝕎.⊗rₒ.∘axˢ _ (fctr-apnd ff g) ] /
+    𝕎.⊗rₒ.ₐ _ (fctr-ar-gen g) 𝕎.∘ 𝕎.⊗rₒ.ₐ _ (fctr-ar ff)        ~[ ∘e (⊗rₐeq ff) 𝕎.r ] /
+    fctr-ar-gen (⊗rₐg M g) 𝕎.∘ fctr-ar (ff ⊗rₐ M)   ~[ fctr-apnd (ff ⊗rₐ M) (⊗rₐg M g) ]∎
+    fctr-ar (apnd ff g ⊗rₐ M) ∎
+    where open ecategory-aux-only 𝕎
+
+  ⊗rₐeqˢ : {M M₁ N₁ : Fℂ.Obj} (ff : || Fℂ.Hom M₁ N₁ ||)
+                 → fctr-ar (ff ⊗rₐ M) 𝕎.~ 𝕎.⊗rₒ.ₐ (fctr-ob M) (fctr-ar ff)
+  ⊗rₐeqˢ ff = ⊗rₐeq ff 𝕎.ˢ
+
+  ⊗ₐeq : {M₁ N₁ M₂ N₂ : Fℂ.Obj} (ff : || Fℂ.Hom M₁ N₁ ||) (gg : || Fℂ.Hom M₂ N₂ ||)
+                 → (fctr-ar ff) 𝕎.⊗ₐ (fctr-ar gg) 𝕎.~ fctr-ar (ff ⊗ₐ gg)
+  ⊗ₐeq emty gg = 𝕎.lidgg (l⊗ₐeq gg) (𝕎.⊗rₒ.id _)
+  ⊗ₐeq (apnd ff g) gg = ~proof
+    (fctr-ar (apnd ff g) 𝕎.⊗ₐ fctr-ar gg)
+                                        ~[ ∘e r (𝕎.⊗rₒ.∘axˢ _ (fctr-apnd ff g)) ⊙ assˢ ] /
+    𝕎.⊗rₒ.ₐ _ (fctr-ar-gen g) 𝕎.∘ (fctr-ar ff 𝕎.⊗ₐ fctr-ar gg)
+                                                                  ~[ ∘e (⊗ₐeq ff gg) r ] /
+    𝕎.⊗rₒ.ₐ _ (fctr-ar-gen g) 𝕎.∘ fctr-ar (ff ⊗ₐ gg)
+                                                     ~[ fctr-apnd (ff ⊗ₐ gg) (⊗rₐg _ g) ]∎
+    fctr-ar (apnd ff g ⊗ₐ gg) ∎
+    where open ecategory-aux-only 𝕎
+
+  ⊗ₐeqˢ : {M₁ N₁ M₂ N₂ : Fℂ.Obj} (ff : || Fℂ.Hom M₁ N₁ ||) (gg : || Fℂ.Hom M₂ N₂ ||)
+                 → fctr-ar (ff ⊗ₐ gg) 𝕎.~ (fctr-ar ff) 𝕎.⊗ₐ (fctr-ar gg)
+  ⊗ₐeqˢ ff gg = ⊗ₐeq ff gg 𝕎.ˢ
+
+
+  mon-⊗ar : {M N : Fℂ.Obj} → || 𝕎.Hom ((fctr-ob M) 𝕎.⊗ₒ (fctr-ob N)) (fctr-ob (M ⊗ₒ N)) ||
+  mon-⊗ar = 𝕎.idar _
+
+  mon-l⊗nat : {M M₂ N₂ : Fℂ.Obj} (gg : || Fℂ.Hom M₂ N₂ ||)
+                 → mon-⊗ar {M} {N₂} 𝕎.∘ (𝕎.l⊗ₒ.ₐ (fctr-ob M) (fctr-ar gg))
+                               𝕎.~ fctr-ar (M l⊗ₐ gg) 𝕎.∘ mon-⊗ar {M} {M₂}
+  mon-l⊗nat gg = 𝕎.lidgen (𝕎.ridgenˢ (l⊗ₐeq gg))
+
+  mon-⊗rnat : {M M₁ N₁ : Fℂ.Obj} (ff : || Fℂ.Hom M₁ N₁ ||)
+                 → mon-⊗ar {N₁} {M} 𝕎.∘ (𝕎.⊗rₒ.ₐ (fctr-ob M) (fctr-ar ff))
+                               𝕎.~ fctr-ar (ff ⊗rₐ M) 𝕎.∘ mon-⊗ar {M₁} {M}
+  mon-⊗rnat ff = 𝕎.lidgen (𝕎.ridgenˢ (⊗rₐeq ff))
+
+  mon-⊗nat : {M₁ N₁ M₂ N₂ : Fℂ.Obj} (ff : || Fℂ.Hom M₁ N₁ ||) (gg : || Fℂ.Hom M₂ N₂ ||)
+                 → mon-⊗ar {N₁} {N₂} 𝕎.∘ ((fctr-ar ff) 𝕎.⊗ₐ (fctr-ar gg))
+                               𝕎.~ fctr-ar (ff ⊗ₐ gg) 𝕎.∘ mon-⊗ar {M₁} {M₂}
+  mon-⊗nat ff gg = 𝕎.lidgen (𝕎.ridgenˢ (⊗ₐeq ff gg))
+
+
+  fctr-ext : {M N : Fℂ.Obj} {ff ff' : || Fℂ.Hom M N ||}
+                → ff Fℂ.~ ff' → fctr-ar ff 𝕎.~ fctr-ar ff'
+  fctr-ext {M} {N} (cmp-ext {p = ff} {ff'} {gg} {gg'} eq₁ eq₂) =
+     fctr-cmp ff gg ˢ ⊙ ∘e (fctr-ext eq₁) (fctr-ext eq₂) ⊙ fctr-cmp ff' gg'
+     where open ecategory-aux-only 𝕎
+  fctr-ext emty-rfl =
+    𝕎.r
+  fctr-ext indv-rfl =
+    𝕎.r
+  fctr-ext (HomEqR-tran eq₁ eq₂) =
+    fctr-ext eq₁ 𝕎.⊙ fctr-ext eq₂
+  fctr-ext (HomEqR-sym eq) =
+    fctr-ext eq 𝕎.ˢ
+  fctr-ext iid =
+    F.id
+  fctr-ext (icmpext eq) =
+    F.∘ax eq
+  fctr-ext (⊗ext {ff = ff} {ff'} {gg} {gg'} eq₁ eq₂) = ~proof
+    fctr-ar (ff ⊗ₐ gg)                   ~[ ⊗ₐeqˢ ff gg ] /
+    (fctr-ar ff) 𝕎.⊗ₐ (fctr-ar gg)       ~[ 𝕎.⊗ext (fctr-ext eq₁) (fctr-ext eq₂) ] /
+    (fctr-ar ff') 𝕎.⊗ₐ (fctr-ar gg')     ~[ ⊗ₐeq ff' gg' ]∎
+    fctr-ar (ff' ⊗ₐ gg') ∎
+    where open ecategory-aux-only 𝕎
+  fctr-ext {M} {N} {ff} {ff'} (⊗sqg g₁ g₂) =
+    𝕎.⊗ₐsq (fctr-ar-gen g₁) (fctr-ar-gen g₂)
+  fctr-ext (α₁ M N L) =
+    𝕎.⊗ass.iddom (fctr-ob N) (fctr-ob L)
+  fctr-ext (α₂ M N L) =
+    𝕎.⊗ass.idcod (fctr-ob N) (fctr-ob L)
+  fctr-ext (Iλ₁ N) =
+    𝕎.⊗lun.iddom
+  fctr-ext (Iλ₂ M) =
+    𝕎.⊗lun.idcod
+  fctr-ext (ρI₁ N) =
+    𝕎.⊗run.iddom
+  fctr-ext (ρI₂ M) =
+    𝕎.⊗run.idcod
+  fctr-ext (αnat {M} {N} {L} {M'} {N'} {L'} ff gg hh) = ~proof
+    fctr-ar (apnd ((ff ⊗ₐ gg) ⊗ₐ hh) (αg M' N' L'))
+            ~[ fctr-apndˢ ((ff ⊗ₐ gg) ⊗ₐ hh) (αg M' N' L') ] /
+    fctr-ar (α M' N' L') 𝕎.∘ fctr-ar ((ff ⊗ₐ gg) ⊗ₐ hh)
+            ~[ ∘e (⊗ₐeqˢ (ff ⊗ₐ gg) hh ⊙ 𝕎.⊗ext (⊗ₐeqˢ ff gg) r) r ] /
+    𝕎.⊗ass.fnc (fctr-ob M') (fctr-ob N') {fctr-ob L'}
+                              𝕎.∘ ((fctr-ar ff 𝕎.⊗ₐ fctr-ar gg) 𝕎.⊗ₐ fctr-ar hh)
+                  ~[ 𝕎.⊗ass.nat (fctr-ar ff) (fctr-ar gg) (fctr-ar hh)   ] /
+    (fctr-ar ff 𝕎.⊗ₐ (fctr-ar gg 𝕎.⊗ₐ fctr-ar hh))
+                              𝕎.∘ 𝕎.⊗ass.fnc (fctr-ob M) (fctr-ob N) {fctr-ob L}
+                  ~[ ∘e r (𝕎.⊗ext r (⊗ₐeq gg hh) ⊙ ⊗ₐeq ff (gg ⊗ₐ hh)) ] /
+    fctr-ar (ff ⊗ₐ (gg ⊗ₐ hh)) 𝕎.∘ fctr-ar (α M N L)
+                  ~[ fctr-cmp (α M N L) (ff ⊗ₐ (gg ⊗ₐ hh)) ]∎
+    fctr-ar ((ff ⊗ₐ (gg ⊗ₐ hh)) Fℂ.∘ α M N L) ∎
+     where open ecategory-aux-only 𝕎
+  fctr-ext (Iλnat ff) = ~proof
+    fctr-ar (Iλ _ Fℂ.∘ (I l⊗ₐ ff))
+                              ~[ fctr-apndˢ (I l⊗ₐ ff) (Iλg _) ⊙ ∘e (l⊗ₐeqˢ ff) r ] /
+    𝕎.⊗lun.fnc 𝕎.∘ 𝕎.l⊗ₒ.ₐ 𝕎.I (fctr-ar ff)                    ~[ 𝕎.⊗lun.nat _ ] /
+    fctr-ar ff 𝕎.∘ 𝕎.⊗lun.fnc                              ~[ fctr-cmp (Iλ _) ff ]∎
+    fctr-ar (ff Fℂ.∘ Iλ _) ∎
+    where open ecategory-aux-only 𝕎
+  fctr-ext (ρInat ff) = ~proof
+    fctr-ar (ρI _ Fℂ.∘ (ff ⊗rₐ I))
+                               ~[ fctr-apndˢ (ff ⊗rₐ I) (ρIg _) ⊙ ∘e (⊗rₐeqˢ ff) r ] /
+    𝕎.⊗run.fnc 𝕎.∘ 𝕎.⊗rₒ.ₐ 𝕎.I (fctr-ar ff)                     ~[ 𝕎.⊗run.nat _ ] /
+    fctr-ar ff 𝕎.∘ 𝕎.⊗run.fnc                               ~[ fctr-cmp (ρI _) ff ]∎
+    fctr-ar (ff Fℂ.∘ ρI _) ∎
+    where open ecategory-aux-only 𝕎
+  fctr-ext IλαρI = 𝕎.trng
+  fctr-ext αpent = 𝕎.pntg
+
+
+  fctr : efunctorₗₑᵥ (FMon ℂ) 𝕎
+  fctr = record
+    { FObj = fctr-ob
+    ; FHom = fctr-ar
+    ; isF = record
+          { ext = fctr-ext
+          ; id = 𝕎.r
+          ; cmp = fctr-cmp
+          }
+    }
+  private module fctr where
+    open efunctor-aux fctr public
+    open monoidal-functor-defs.aux (FMon-mon ℂ) 𝕎mon fctr using (F⊗F; F⊗) public
+
+
+  ⊗iso : natural-iso fctr.F⊗F fctr.F⊗
+  ⊗iso = record
+    { natt = record
+           { fnc = λ {M} → record
+                 { fnc = λ {N} → mon-⊗ar {M} {N}
+                 ; nat = mon-l⊗nat }
+           ; nat = λ ff _ → 𝕎.lidgen (𝕎.ridgenˢ ( ⊗rₐeq ff
+                                                   𝕎.⊙ fctr.ext (Fℂ.⊗df.⊗r-is-⊗ _ ff) ))
+           }
+    ; natt⁻¹ = record
+             { fnc = λ {M} → record
+                   { fnc = λ {N} → 𝕎.idar _
+                   ; nat = λ ff → 𝕎.iso-sq (𝕎.idar-is-isopair _) (𝕎.idar-is-isopair _)
+                                            (mon-l⊗nat ff)  }
+             ; nat = λ ff _ → 𝕎.iso-sq (𝕎.idar-is-isopair _) (𝕎.idar-is-isopair _)
+                                        (𝕎.lidgen (𝕎.ridgenˢ ( ⊗rₐeq ff
+                                                  𝕎.⊙ fctr.ext (Fℂ.⊗df.⊗r-is-⊗ _ ff) )))
+             }
+    ; isiso = record { iddom = λ _ → 𝕎.lid ; idcod = λ _ → 𝕎.lid }
+    }
+
+
+
+  module fctr-uniqueness {G : efunctorₗₑᵥ (FMon ℂ) 𝕎}
+                         (monG : is-monoidal-functor G (FMon-mon ℂ) 𝕎mon)
+                         (trG : G ○ FMon-emb ℂ ≅ₐ F)
+                         where
+    private
+      module G where
+        open efunctor-aux G public
+        open is-monoidal-functor monG public renaming (pf to ismon)
+      module trG = natural-iso trG
+
+    ar : (M : Fℂ.Obj) → || 𝕎.Hom (G.ₒ M) (fctr.ₒ M) ||
+    ar I = G.I≅.ar⁻¹
+    ar (iₒ A) = trG.fnc {A}
+    ar (M ⊗ₒ N) = (ar M 𝕎.⊗ₐ ar N) 𝕎.∘ G.⊗≅.⁻¹.fnc M {N}
+
+    ar⁻¹ : (M : Fℂ.Obj) → || 𝕎.Hom (fctr.ₒ M) (G.ₒ M) ||
+    ar⁻¹ I = G.I≅.ar
+    ar⁻¹ (iₒ A) = trG.fnc⁻¹ {A}
+    ar⁻¹ (M ⊗ₒ N) = G.⊗≅.fnc M {N} 𝕎.∘ (ar⁻¹ M 𝕎.⊗ₐ ar⁻¹ N)
+
+    isop : (M : Fℂ.Obj) → 𝕎.is-iso-pair (ar M) (ar⁻¹ M)
+    isop I = 𝕎.inv-iso-pair G.I≅.isop
+    isop (iₒ A) = trG.isiso {A}
+    isop (M ⊗ₒ N) = 𝕎.isopair-cmp (𝕎.inv-iso-pair (G.⊗≅.isisopair {M} {N}))
+                                   (𝕎.⊗pres-iso-pair (isop M) (isop N))
+
+
+    natg : {M N : Fℂ.Obj} (g : HomGen M N)
+              → ar N 𝕎.∘ G.ₐ (indv g) 𝕎.~ fctr.ₐ (indv g) 𝕎.∘ ar M
+
+    natg (iₐg f) = trG.nat _
+
+    natg (l⊗ₐg M g) = ~proof
+      ((ar M 𝕎.⊗ₐ ar _) 𝕎.∘ G.⊗≅.⁻¹.fnc M) 𝕎.∘ G.ₐ (M l⊗ₐ (indv g))
+           ~[ assˢ ⊙ ∘e (∘e (lidggˢ r G.id) r ⊙ (G.⊗≅.⁻¹.nat (Fℂ.idar M) (indv g)
+                          ⊙ ∘e r (lidgg r (𝕎.l⊗.ext G.id _ ⊙ 𝕎.l⊗.id {G.ₒ M} _)))) r ] /
+      ((𝕎.⊗rₒ.ₐ _ (ar M)) 𝕎.∘ (𝕎.l⊗ₒ.ₐ _ (ar _)))
+          𝕎.∘ 𝕎.l⊗ₒ.ₐ (G.ₒ M) (G.ₐ (indv g)) 𝕎.∘ G.⊗≅.⁻¹.fnc M
+           ~[ ass ⊙ ∘e r (assˢ ⊙ ∘e (𝕎.l⊗ₒ.∘∘ (G.ₒ M) (natg g)) r
+                           ⊙ (ass ⊙ ∘e r (𝕎.⊗ₐsq _ _) ⊙ assˢ)) ⊙ assˢ ]∎
+      fctr.ₐ (indv (l⊗ₐg M g)) 𝕎.∘ (ar M 𝕎.⊗ₐ ar _) 𝕎.∘ G.⊗≅.⁻¹.fnc M ∎
+      where open ecategory-aux-only 𝕎
+
+    natg (⊗rₐg N g) = ~proof
+      ((ar _ 𝕎.⊗ₐ ar N) 𝕎.∘ G.⊗≅.⁻¹.fnc _) 𝕎.∘ G.ₐ ((indv g) ⊗rₐ N)
+           ~[ assˢ ⊙ ∘e (∘e (ridggˢ r G.id) r ⊙ (G.⊗≅.⁻¹.nat (indv g) (Fℂ.idar N))
+                         ⊙ ∘e r (ridgg r (𝕎.l⊗ₒ.ext _ G.id ⊙ 𝕎.l⊗ₒ.id _))) r ] /
+      ((𝕎.⊗rₒ.ₐ _ (ar _)) 𝕎.∘ (𝕎.l⊗ₒ.ₐ _ (ar N)))
+          𝕎.∘ 𝕎.⊗rₒ.ₐ (G.ₒ N) (G.ₐ (indv g)) 𝕎.∘ G.⊗≅.⁻¹.fnc _
+           ~[ ass ⊙ ∘e r ( assˢ ⊙ ∘e (𝕎.⊗ₐsqˢ _ _) r
+                            ⊙ ass ⊙ ∘e r (𝕎.⊗rₒ.∘∘ (fctr.ₒ N) (natg g)) ⊙ assˢ ) ⊙ assˢ ]∎
+      fctr.ₐ (indv (⊗rₐg N g)) 𝕎.∘ (ar _ 𝕎.⊗ₐ ar N) 𝕎.∘ G.⊗≅.⁻¹.fnc _ ∎
+      where open ecategory-aux-only 𝕎
+
+    natg (αg M N L) = ~proof
+      ((ar M 𝕎.⊗ₐ ((ar N 𝕎.⊗ₐ ar L) 𝕎.∘ G.⊗≅.⁻¹.fnc N)) 𝕎.∘ G.⊗≅.⁻¹.fnc M)
+             𝕎.∘ G.ₐ (α M N L)
+                 ~[ ∘e r (∘e r (∘e (𝕎.l⊗ₒ.∘ax-rfˢ (G.ₒ M)) r ⊙ ass) ⊙ assˢ) ⊙ assˢ ] /
+      (𝕎.⊗rₒ.ₐ _ (ar M) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (ar N 𝕎.⊗ₐ ar L))
+         𝕎.∘ (𝕎.l⊗ₒ.ₐ _ (G.⊗≅.⁻¹.fnc N) 𝕎.∘ G.⊗≅.⁻¹.fnc M) 𝕎.∘ G.ₐ (α M N L)
+                                        ~[ ∘e (G.ass-eq⁻¹ ⊙ ass) (∘e (𝕎.l⊗ₒ.∘ax-rfˢ _) r)
+                                           ⊙ (ass ⊙ ∘e r (assˢ ⊙ ∘e assˢ r)) ] /
+      (𝕎.⊗rₒ.ₐ _ (ar M) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (𝕎.⊗rₒ.ₐ _ (ar N)) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (𝕎.l⊗ₒ.ₐ _ (ar L))
+         𝕎.∘ 𝕎.⊗ass.fnc (G.ₒ M) (G.ₒ N) {G.ₒ L} 𝕎.∘ 𝕎.⊗rₒ.ₐ _ (G.⊗≅.⁻¹.fnc _))
+                        𝕎.∘ G.⊗≅.⁻¹.fnc _
+           ~[ ∘e r (~proof
+         𝕎.⊗rₒ.ₐ _ (ar M) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (𝕎.⊗rₒ.ₐ _ (ar N))
+           𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (𝕎.l⊗ₒ.ₐ _ (ar L)) 𝕎.∘ 𝕎.⊗ass.fnc (G.ₒ M) (G.ₒ N) {G.ₒ L}
+               𝕎.∘ 𝕎.⊗rₒ.ₐ _ (G.⊗≅.⁻¹.fnc _)
+         ~[ ass ⊙ ∘e (ass ⊙ ∘e r (𝕎.⊗ass.rnatˢ (G.ₒ M) (G.ₒ N) (ar L)) ⊙ assˢ) r ⊙ assˢ ] /
+         𝕎.⊗rₒ.ₐ _ (ar M) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (𝕎.⊗rₒ.ₐ _ (ar N))
+           𝕎.∘ 𝕎.⊗ass.fnc (G.ₒ M) (G.ₒ N) {fctr.ₒ L}
+             𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (ar L) 𝕎.∘ 𝕎.⊗rₒ.ₐ _ (G.⊗≅.⁻¹.fnc _)
+                 ~[ ∘e (ass ⊙ ∘e ( 𝕎.⊗ₐsqˢ _ (ar L))
+                                   (𝕎.⊗ass.cnatˢ (G.ₒ M) (ar N) (fctr.ₒ L) ) ⊙ assˢ) r ] /
+         𝕎.⊗rₒ.ₐ _ (ar M) 𝕎.∘ 𝕎.⊗ass.fnc (G.ₒ M) (fctr.ₒ N)
+           𝕎.∘ 𝕎.⊗rₒ.ₐ _ (𝕎.l⊗ₒ.ₐ _ (ar N))
+             𝕎.∘ 𝕎.⊗rₒ.ₐ _ (G.⊗≅.⁻¹.fnc _) 𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (ar L)
+                 ~[ ass ⊙ ∘e r (𝕎.⊗ass.lnatˢ (ar M) (fctr.ₒ N) (fctr.ₒ L)) ⊙ assˢ ] /
+         𝕎.⊗ass.fnc (fctr.ₒ M) (fctr.ₒ N)
+            𝕎.∘ 𝕎.⊗rₒ.ₐ _ (𝕎.⊗rₒ.ₐ _ (ar M)) 𝕎.∘ 𝕎.⊗rₒ.ₐ _ (𝕎.l⊗ₒ.ₐ _ (ar N))
+              𝕎.∘ 𝕎.⊗rₒ.ₐ _ (G.⊗≅.⁻¹.fnc _)𝕎.∘ 𝕎.l⊗ₒ.ₐ _ (ar L)
+                  ~[ ∘e ( ass ⊙ ∘e r (𝕎.⊗rₒ.∘ax-rf (fctr.ₒ L))
+                          ⊙ (ass ⊙ ∘e r (𝕎.⊗rₒ.∘ax-rf (fctr.ₒ L))) ) r ]∎
+         𝕎.⊗ass.fnc (fctr.ₒ M) (fctr.ₒ N)
+            𝕎.∘ (((ar M 𝕎.⊗ₐ ar N) 𝕎.∘ G.⊗≅.⁻¹.fnc M) 𝕎.⊗ₐ ar L) ∎) ] /
+      (fctr.ₐ (indv (αg M N L)) 𝕎.∘ (((ar M 𝕎.⊗ₐ ar N) 𝕎.∘ G.⊗≅.⁻¹.fnc M) 𝕎.⊗ₐ ar L))
+             𝕎.∘ G.⊗≅.⁻¹.fnc (M ⊗ₒ N)
+                        ~[ assˢ ]∎
+      fctr.ₐ (indv (αg M N L)) 𝕎.∘ (((ar M 𝕎.⊗ₐ ar N) 𝕎.∘ G.⊗≅.⁻¹.fnc M) 𝕎.⊗ₐ ar L)
+             𝕎.∘ G.⊗≅.⁻¹.fnc (M ⊗ₒ N) ∎
+      where open ecategory-aux-only 𝕎
+
+    natg (α⁻¹g M N L) = 𝕎.iso-sq (G.ᵢₛₒ αisop) (fctr.ᵢₛₒ αisop) (natg (αg M N L) ˢ) ˢ
+      where open ecategory-aux-only 𝕎 using (_ˢ)
+            αisop : Fℂ.is-iso-pair (α M N L) (α⁻¹ M N L)
+            αisop = record { iddom = α₁ M N L ; idcod = α₂ M N L }
+
+    natg (Iλg _) = {!!}
+      where open ecategory-aux-only 𝕎
+
+    natg (Iλ⁻¹g _) = {!!}
+      where open ecategory-aux-only 𝕎
+
+    natg (ρIg _) = {!!}
+      where open ecategory-aux-only 𝕎
+
+    natg (ρI⁻¹g _) = {!!}
+      where open ecategory-aux-only 𝕎
+
+
+    nat : {M N : Fℂ.Obj} (ff : || Fℂ.Hom M N ||) → ar N 𝕎.∘ G.ₐ ff 𝕎.~ fctr.ₐ ff 𝕎.∘ ar M
+    nat emty = 𝕎.ridgg 𝕎.lidˢ G.id
+    -- when the definition has just one clause `nat (apnd ff g)`,
+    -- then `nat emty` becomes a subterm of `nat (indv g)` together with `natg g`
+    nat (apnd emty g) = natg g
+    nat (apnd (apnd ff g) g') = ~proof
+      ar _ 𝕎.∘ G.ₐ (apnd (apnd ff g) g')
+                               ~[ ∘e G.∘ax-rfˢ r ⊙ ass ⊙ ∘e r (nat (indv g')) ⊙ assˢ ] /
+      fctr.ₐ (indv g') 𝕎.∘ ar _ 𝕎.∘ G.ₐ (apnd ff g)   ~[ ∘e (~proof
+        ar _ 𝕎.∘ G.ₐ (apnd ff g)
+                                ~[ ∘e G.∘ax-rfˢ r ⊙ ass ⊙ ∘e r (nat (indv g)) ⊙ assˢ ] /
+        fctr.ₐ (indv g) 𝕎.∘ ar _ 𝕎.∘ G.ₐ ff           ~[ ∘e (nat ff) r ]∎
+        fctr.ₐ (indv g) 𝕎.∘ fctr.ₐ ff 𝕎.∘ ar _ ∎) r ] /
+      fctr.ₐ (indv g') 𝕎.∘ fctr.ₐ (indv g) 𝕎.∘ fctr.ₐ ff 𝕎.∘ ar _
+                               ~[ ∘e (ass ⊙ ∘e r (fctr.∘ax-rf {f = ff} {indv g})) r
+                                  ⊙ ass ⊙ ∘e r (fctr.∘ax-rf {f = apnd ff g} {indv g'}) ]∎
+      fctr.ₐ (apnd (apnd ff g) g') 𝕎.∘ ar _ ∎
+      where open ecategory-aux-only 𝕎
+
+    nat⁻¹ : {M N : Fℂ.Obj} (ff : || Fℂ.Hom M N ||)
+                   → ar⁻¹ N 𝕎.∘ fctr.ₐ ff 𝕎.~ G.ₐ ff 𝕎.∘ ar⁻¹ M
+    nat⁻¹ ff = 𝕎.iso-sq (isop _) (isop _) (nat ff)
+
+
+    pf : G ≅ₐ fctr
+    pf = record
+      { natt = record { fnc = λ {M} → ar M
+                      ; nat = nat
+                      }
+      ; natt⁻¹ = record { fnc = λ {M} → ar⁻¹ M
+                        ; nat = nat⁻¹
+                        }
+      ; isiso = λ {M} → isop M
+      }
+  -- end fctr-uniqueness
+
+
+  unvprop : is-free-monoidal-on-cat-univ-prop 𝕎mon F
+  unvprop = record
+    { fctr = fctr
+    ; tr = record { natt = record
+                         { fnc = λ {A} → 𝕎.idar (F.ₒ A)
+                         ; nat = λ f → 𝕎.lidgen 𝕎.ridˢ
+                         }
+                  ; natt⁻¹ = record
+                           { fnc = λ {A} → 𝕎.idar (F.ₒ A)
+                           ; nat = λ f → 𝕎.lidgen 𝕎.ridˢ
+                           }
+                  ; isiso = λ {A} → 𝕎.idar-is-isopair (F.ₒ A)
+                  }
+    ; mon =  record
+          { Iiso = 𝕎.≅ₒrefl _
+          ; ⊗iso = ⊗iso
+          ; pf = record
+               { run-eq = λ {X} → 𝕎.ridgg 𝕎.r (𝕎.lidgen (𝕎.l⊗ₒ.id _))
+               ; lun-eq = λ {X} → 𝕎.ridgg 𝕎.r (𝕎.lidgen (𝕎.⊗rₒ.id _))
+               ; ass-eq = λ {X} {Y} {Z} → 𝕎.ridgg (𝕎.lidggˢ 𝕎.r (𝕎.lidgen (𝕎.l⊗ₒ.id _)))
+                                                   (𝕎.lidgen (𝕎.⊗rₒ.id _))
+               }
+          }
+    ; uq = λ monG trG → {!!}
+    }
+  
+-- end free-monoidal-ecat-on-ecat-is-free
+
+
+
+free-monoidal-ecat-on-ecat-is-free : {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level} (ℂ : ecategoryₗₑᵥ ℓₒ₁ ℓₐ₁ ℓ~₁)
+                                     (ℓₒ' ℓₐ' ℓ~' : Level)
+           → (FMon-mon ℂ) is-free-monoidal-on-cat ℂ via (FMon-emb ℂ) at-lev[ ℓₒ' , ℓₐ' , ℓ~' ]
+free-monoidal-ecat-on-ecat-is-free ℂ ℓₒ' ℓₐ' ℓ~' = record
+  { unvp = {!!} }
+       
+       

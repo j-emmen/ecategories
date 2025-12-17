@@ -98,15 +98,50 @@ module iso-props {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ 
                     where module f = is-iso isof
                           module g = is-iso isog
 
+  isopair-extl : {a b : Obj} {f f' : || Hom a b ||} {g : || Hom b a ||}
+                   → is-iso-pair f g → f' ~ f → is-iso-pair f' g
+  isopair-extl isop eq = record
+    { iddom = ∘e eq  r ⊙ iddom
+    ; idcod = ∘e r eq ⊙ idcod
+    }
+    where open ecategory-aux-only ℂ
+          open is-iso-pair isop
+
+  isopair-extlˢ : {a b : Obj} {f f' : || Hom a b ||} {g : || Hom b a ||}
+                   → is-iso-pair f g → f ~ f' → is-iso-pair f' g
+  isopair-extlˢ isop eq = isopair-extl isop (eq ˢ)
+    where open ecategory-aux-only ℂ using (_ˢ)
+
+  isopair-extr : {a b : Obj} {f : || Hom a b ||} {g g' : || Hom b a ||}
+                   → is-iso-pair f g → g' ~ g → is-iso-pair f g'
+  isopair-extr isop eq = record
+    { iddom = ∘e r eq ⊙ iddom
+    ; idcod = ∘e eq  r ⊙ idcod
+    }
+    where open ecategory-aux-only ℂ
+          open is-iso-pair isop
+
+  isopair-extrˢ : {a b : Obj} {f : || Hom a b ||} {g g' : || Hom b a ||}
+                   → is-iso-pair f g → g ~ g' → is-iso-pair f g'
+  isopair-extrˢ isop eq = isopair-extr isop (eq ˢ)
+    where open ecategory-aux-only ℂ using (_ˢ)
+
+  isopair-ext : {a b : Obj} {f f' : || Hom a b ||} {g g' : || Hom b a ||}
+                   → is-iso-pair f g → f' ~ f → g' ~ g → is-iso-pair f' g'
+  isopair-ext isop eqf eqg = isopair-extr (isopair-extl isop eqf) eqg
+
+  isopair-extˢ : {a b : Obj} {f f' : || Hom a b ||} {g g' : || Hom b a ||}
+                   → is-iso-pair f g → f ~ f' → g ~ g' → is-iso-pair f' g'
+  isopair-extˢ isop eqf eqg = isopair-ext isop (eqf ˢ) (eqg ˢ)
+    where open ecategory-aux-only ℂ using (_ˢ)
+
   iso-ext : {a b : Obj} {f f' : || Hom a b ||} → is-iso f → f' ~ f → is-iso f'
-  iso-ext {f' = f'} isof pf = mkis-iso isop
-                            where open ecategory-aux-only ℂ
-                                  open is-iso isof
-                                  isop : is-iso-pair f' invf
-                                  isop = record
-                                       { iddom = ∘e pf r ⊙ iddom
-                                       ; idcod = ∘e r pf ⊙ idcod
-                                       }
+  iso-ext {f' = f'} isof eq = mkis-iso (isopair-extl isisopair eq)
+    where open is-iso isof
+
+  iso-extˢ : {a b : Obj} {f f' : || Hom a b ||} → is-iso f → f ~ f' → is-iso f'
+  iso-extˢ {f' = f'} isof eq = iso-ext isof (eq ˢ)
+    where open ecategory-aux-only ℂ using (_ˢ)
 
 
   -- iso pairs fit in same triangles

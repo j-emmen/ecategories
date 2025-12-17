@@ -5,6 +5,7 @@ module ecats.constructions.functor-ecat where
 
 open import tt-basics.setoids using (stdsections)
 open import ecats.basic-defs.ecat-def&not
+open import ecats.isomorphism
 open import ecats.functors.defs.efunctor-d&n
 open import ecats.functors.defs.natural-transformation
 open import ecats.functors.defs.natural-iso
@@ -224,9 +225,9 @@ module uncurry-efunctor-into-functor-cat {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{�
                                          (F : efunctorₗₑᵥ ℂ₁ [ ℂ₂ , 𝔻 ]ᶜᵃᵗ)
                                          where
   private
-    module ℂ₁ = ecat ℂ₁
-    module ℂ₂ = ecat ℂ₂
-    module 𝔻 = ecat 𝔻
+    module ℂ₁ = ecat-with-isos ℂ₁
+    module ℂ₂ = ecat-with-isos ℂ₂
+    module 𝔻 = ecat-with-isos 𝔻
 
   module l = efunctor-aux F
   module lₒ (A : ℂ₁.Obj) = efunctor-aux (l.ₒ A) -- : efunctor ℂ₂ 𝔻
@@ -264,10 +265,25 @@ module uncurry-efunctor-into-functor-cat {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{�
   ₒ A B = lₒ.ₒ A B
   ₐ : {A₁ B₁ : ℂ₁.Obj} {A₂ B₂ : ℂ₂.Obj}
            → || ℂ₁.Hom A₁ B₁ || → || ℂ₂.Hom A₂ B₂ || → || 𝔻.Hom (ₒ A₁ A₂) (ₒ B₁ B₂) ||
-  ₐ {A₁} {B₁} {A₂} {B₂} f₁ f₂ = lₒ.ₐ B₁ f₂ 𝔻.∘ rₒ.ₐ A₂ f₁
+  ₐ {A₁} {B₁} {A₂} {B₂} f₁ f₂ = rₒ.ₐ B₂ f₁ 𝔻.∘ lₒ.ₐ A₁ f₂
   -- NB:
   -- ₐ (ℂ.idar X) f₂ = lₒ.ₐ X f₂ ℂ.∘ r.ₐ A (ℂ.idar X) ~ lₒ.ₐ X f₂ ℂ.∘ ℂ.idar (ₒ X A)
   -- ₐ f (ℂ.idar X) = lₒ.ₐ B (ℂ.idar X) ℂ.∘ r.ₐ X f ~ ℂ.idar (ₒ B X) ℂ.∘ r.ₐ X f
+
+  ext : {A₁ B₁ : ℂ₁.Obj} {A₂ B₂ : ℂ₂.Obj}
+         {f₁ f₁' : || ℂ₁.Hom A₁ B₁ ||} {f₂ f₂' : || ℂ₂.Hom A₂ B₂ ||}
+             → f₁ ℂ₁.~ f₁' → f₂ ℂ₂.~ f₂' → ₐ f₁ f₂ 𝔻.~ ₐ f₁' f₂'
+  ext eq₁ eq₂ = ∘e (lₒ.ext _ eq₂) (rₒ.ext _ eq₁)
+    where open ecategory-aux-only 𝔻 using (∘e)
+
+  pres-iso-pair : {A₁ B₁ : ℂ₁.Obj} {A₂ B₂ : ℂ₂.Obj}
+                  {f₁  : || ℂ₁.Hom A₁ B₁ ||} {f₂ : || ℂ₂.Hom A₂ B₂ ||}
+                  {g₁  : || ℂ₁.Hom B₁ A₁ ||} {g₂ : || ℂ₂.Hom B₂ A₂ ||}
+                    → ℂ₁.is-iso-pair f₁ g₁ → ℂ₂.is-iso-pair f₂ g₂
+                      → 𝔻.is-iso-pair (ₐ f₁ f₂) (ₐ g₁ g₂)
+  pres-iso-pair {A₁} {B₁} {A₂} {B₂} {f₁} {f₂} {g₁} {g₂} isop₁ isop₂ =
+    𝔻.isopair-extr (𝔻.isopair-cmp (lₒ.ᵢₛₒ A₁ isop₂) (rₒ.ᵢₛₒ B₂ isop₁)) (rl~lr g₁ g₂)
+
 -- end uncurry-efunctor-into-functor-cat
 
 
@@ -291,8 +307,8 @@ module uncurry-natt-into-functor-cat {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{ℂ�
         {A₂ B₂ : ℂ₂.Obj} (f₂ : || ℂ₂.Hom A₂ B₂ ||)
              → fnc B₁ {B₂} 𝔻.∘ F.ₐ f₁ f₂ 𝔻.~ G.ₐ f₁ f₂ 𝔻.∘ fnc A₁ {A₂}
   nat {A₁} {B₁} f₁ {A₂} {B₂} f₂ = ~proof
-    fnc B₁ 𝔻.∘ F.ₐ f₁ f₂                           ~[ ass ⊙ ∘e r (rnat B₁ f₂) ⊙ assˢ ] /
-    G.lₒ.ₐ B₁ f₂ 𝔻.∘ fnc B₁ {A₂} 𝔻.∘ F.rₒ.ₐ A₂ f₁    ~[ ∘e (lnat f₁ A₂) r ⊙ ass ]∎
+    fnc B₁ {B₂} 𝔻.∘ F.ₐ f₁ f₂                         ~[ ass ⊙ ∘e r (lnat f₁ B₂) ⊙ assˢ ] /
+    G.rₒ.ₐ B₂ f₁ 𝔻.∘ fnc A₁ {B₂} 𝔻.∘ F.lₒ.ₐ A₁ f₂      ~[ ∘e (rnat A₁ f₂) r ⊙ ass ]∎
     G.ₐ f₁ f₂ 𝔻.∘ fnc A₁ {A₂} ∎
     where open ecategory-aux-only 𝔻
   natˢ : {A₁ B₁ : ℂ₁.Obj} (f₁ : || ℂ₁.Hom A₁ B₁ ||)
@@ -312,11 +328,21 @@ module uncurry-nat-iso-into-functor-cat {ℓₒ₁ ℓₐ₁ ℓ~₁ : Level}{�
   private
     module ℂ₁ = ecat ℂ₁
     module ℂ₂ = ecat ℂ₂
-    module 𝔻 = ecat 𝔻
+    module 𝔻 where
+      open ecat 𝔻 public
+      open iso-d&p 𝔻 public
     module F = uncurry-efunctor-into-functor-cat F
     module G = uncurry-efunctor-into-functor-cat G
 
   open natural-iso φ public hiding (fnc; fnc⁻¹; nat; nat⁻¹; natˢ; nat⁻¹ˢ)
+                            renaming (isiso to lisisopair; iddom to liddom; idcod to lidcod)
   open uncurry-natt-into-functor-cat natt public
   module ⁻¹ = uncurry-natt-into-functor-cat natt⁻¹
+  open ⁻¹ using () renaming (fnc to fnc⁻¹) public
+
+  isisopair : {M : ℂ₁.Obj} {N : ℂ₂.Obj} → 𝔻.is-iso-pair (fnc M {N}) (fnc⁻¹ M {N})
+  isisopair {M} {N} = record
+    { iddom = liddom N
+    ; idcod = lidcod N
+    }  
 -- end uncurry-nat-iso-into-functor-cat

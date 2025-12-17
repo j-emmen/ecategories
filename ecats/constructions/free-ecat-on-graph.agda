@@ -26,7 +26,9 @@ module free-category-on-graph-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategor
       open iso-defs 𝕏 public
       open iso-props 𝕏 public
 
-  record is-free-on-graph-prop {ℓ₁' ℓ₂' ℓ₃' : Level}(𝔻 : ecategoryₗₑᵥ ℓ₁' ℓ₂' ℓ₃'){GO : V → ecat.Obj 𝔻}
+
+  record is-free-on-graph-prop {ℓ₁' ℓ₂' ℓ₃' : Level}(𝔻 : ecategoryₗₑᵥ ℓ₁' ℓ₂' ℓ₃')
+                               {GO : V → ecat.Obj 𝔻}
                                {GE : {u v : V} → || E u v || → || ecat.Hom 𝔻 (GO u) (GO v) ||}
                                (GEext : {u v : V}{uv uv' : || E u v ||} → < E u v > uv ~ uv'
                                           → < ecat.Hom 𝔻 (GO u) (GO v) > GE uv ~ GE uv')
@@ -54,6 +56,10 @@ module free-category-on-graph-defs {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategor
 -- end free-category-on-graph-defs
 
 
+       
+-- the universal property is stated for categories at arbitrary universe levels
+-- but the universe levels cannot be part of the record
+-- otherwise the record wouldn't have a type
 
 record _is-free-category-on-graph_via_at-lev[_,_,_]
          {ℓ₁ ℓ₂ ℓ₃ : Level}(ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃)
@@ -109,22 +115,6 @@ module free-ecat-on-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level}{V :
   path-cmp emty p₁ = p₁
   path-cmp (apnd p e) p₁ = apnd (path-cmp p p₁) e
 
-{-
-  path-rec : {u : V}{ℓ : Level}{PP : {v : V} → fin-path u v → Set ℓ}
-                → (PP emty)
-                → ({w v : V}(p : fin-path u w)(e : ||E|| w v) → PP (apnd p e))
-                  → {v : V}(p : fin-path u v) → PP p
-  path-rec {PP = PP} P∅ Pₐ emty = P∅
-  path-rec {PP = PP} P∅ Pₐ (apnd p e) = Pₐ p e
-
-  path-rec-all : {ℓ : Level}{PP : {u v : V} → fin-path u v → Set ℓ}
-                    → ({u : V} → PP (emty {u}))
-                    → ({u v w : V}(p : fin-path u v)(e : ||E|| v w) → PP (apnd p e))
-                      → {u v : V}(p : fin-path u v) → PP p
-  path-rec-all {PP = PP} P∅ Pₐ emty = P∅
-  path-rec-all {PP = PP} P∅ᵢ Pₐ (apnd p e) = Pₐ p e
--}
-
 
   -- setoid of finite paths
   data path-eq {u : V} : {v : V}(p₁ p₂ : fin-path u v) → Set (ℓ₁ ⊔ ℓ₂ ⊔ ℓ₃) where
@@ -145,11 +135,6 @@ module free-ecat-on-graph-via-inductive-paths {ℓ₁ ℓ₂ ℓ₃ : Level}{V :
   path-eq-refl : {u v : V}(p : fin-path u v) → path-eq p p
   path-eq-refl emty = emty-eq
   path-eq-refl (apnd p e) = apnd-eq (path-eq-refl p) E.r
-{- the definition via path-rec does not pass the termination check...
-                  path-rec {PP = λ p → path-eq p p}
-                           emty-eq
-                           (λ p _ → apnd-eq (path-eq-refl p) E.r)
--}
 
   path-eq-trans : {u v : V}{p₁ p₂ p₃ : fin-path u v}
                      → path-eq p₁ p₂ → path-eq p₂ p₃ → path-eq p₁ p₃

@@ -127,10 +127,11 @@ _○ₕ_ : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂
                → H ⇒ K → F ⇒ G → H ○ F ⇒ K ○ G
 _○ₕ_ = natt-hcmp
 
-natt-fctr-pre : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}
-                {𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}{ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}
-                (F : efunctorₗₑᵥ ℂ 𝔻){H K : efunctorₗₑᵥ 𝔻 𝔼}
-                  → H ⇒ K → H ○ F ⇒ K ○ F
+natt-fctr-pre : {ℓ₁ ℓ₂ ℓ₃ : Level} {ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}
+                {ℓ₄ ℓ₅ ℓ₆ : Level} {𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                (F : efunctorₗₑᵥ ℂ 𝔻)
+                  → ∀ {ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉} {H K : efunctorₗₑᵥ 𝔻 𝔼}
+                    → H ⇒ K → H ○ F ⇒ K ○ F
 natt-fctr-pre F α = record
   { fnc = λ {A} → α.fnc {F.ₒ A}
   ; nat = λ f → α.nat (F.ₐ f)
@@ -139,10 +140,11 @@ natt-fctr-pre F α = record
         module α = natural-transformation α
 
 
-natt-fctr-post : {ℓ₁ ℓ₂ ℓ₃ : Level}{ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃}{ℓ₄ ℓ₅ ℓ₆ : Level}
-                 {𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}{ℓ₇ ℓ₈ ℓ₉ : Level}{𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}
-                 {F G : efunctorₗₑᵥ ℂ 𝔻}(K : efunctorₗₑᵥ 𝔻 𝔼)(α : F ⇒ G)
-                   → K ○ F ⇒ K ○ G
+natt-fctr-post : {ℓ₄ ℓ₅ ℓ₆ : Level} {𝔻 : ecategoryₗₑᵥ ℓ₄ ℓ₅ ℓ₆}
+                 {ℓ₇ ℓ₈ ℓ₉ : Level} {𝔼 : ecategoryₗₑᵥ ℓ₇ ℓ₈ ℓ₉}
+                 (K : efunctorₗₑᵥ 𝔻 𝔼)
+                   → ∀ {ℓ₁ ℓ₂ ℓ₃ : Level} {ℂ : ecategoryₗₑᵥ ℓ₁ ℓ₂ ℓ₃} {F G : efunctorₗₑᵥ ℂ 𝔻}
+                     → F ⇒ G → K ○ F ⇒ K ○ G
 natt-fctr-post K α = record
   { fnc = λ {A} → K.ₐ (α.fnc {A})
   ; nat = λ f → K.∘∘ (α.nat f)

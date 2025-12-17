@@ -38,6 +38,7 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     }
     where open ℂ.is-iso isof
 
+{- these two are in natural-transformation.agda
   Fpres-natt : {𝔹 : ecategory}{H K : efunctor 𝔹 ℂ}(α : natural-transformation H K)
                   → natural-transformation (F ○ H) (F ○ K)
   Fpres-natt {𝔹} {H} {K} α = record
@@ -53,14 +54,15 @@ module efunctor-basic-props {ℂ 𝔻 : ecategory} (F : efunctor ℂ 𝔻) where
     ; nat = λ f → α.nat (F.ₐ f)
     }
     where module α = natural-transformation α
+-}
 
   ₙₜ : {𝔹 : ecategory}{H K : efunctor 𝔹 ℂ}(α : natural-transformation H K)
                   → natural-transformation (F ○ H) (F ○ K)
-  ₙₜ = Fpres-natt
+  ₙₜ = natt-fctr-post F
 
   ⋆ₙₜ : {𝔼 : ecategory}{H K : efunctor 𝔻 𝔼}(α : natural-transformation H K)
                   → natural-transformation (H ○ F) (K ○ F)
-  ⋆ₙₜ = Fridx-natt
+  ⋆ₙₜ = natt-fctr-pre F
 
   eqv-is-faith : is-equivalence F → is-faithful F
   eqv-is-faith eqv = record
